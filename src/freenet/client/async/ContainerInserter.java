@@ -12,8 +12,8 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.tools.tar.TarEntry;
-import org.apache.tools.tar.TarOutputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
 import com.db4o.ObjectContainer;
 
@@ -38,9 +38,9 @@ import freenet.support.io.BucketTools;
  *
  * TODO persistence
  * TODO add a MAX_SIZE for the final container(file)
- * 
+ *
  * @author saces
- * 
+ *
  */
 public class ContainerInserter implements ClientPutState {
 
@@ -54,7 +54,7 @@ public class ContainerInserter implements ClientPutState {
 	private static class ContainerElement {
 		private final Bucket data;
 		private final String targetInArchive;
-		
+
 		private ContainerElement(Bucket data2, String targetInArchive2) {
 			data = data2;
 			targetInArchive = targetInArchive2;
@@ -82,20 +82,20 @@ public class ContainerInserter implements ClientPutState {
 
 	/**
 	 * Insert a bunch of files as single Archive with .metadata
-	 * 
-	 * @param metadata2 
-	 * @param archiveType2 
+	 *
+	 * @param metadata2
+	 * @param archiveType2
 	 * @param targetURI2 The caller need to clone it for persistance
-	 * @param token2 
-	 * @param getCHKOnly2 
-	 * @param earlyEncode2 
-	 * @param ctx2 
-	 * @param reportMetadataOnly2 
-	 * 
+	 * @param token2
+	 * @param getCHKOnly2
+	 * @param earlyEncode2
+	 * @param ctx2
+	 * @param reportMetadataOnly2
+	 *
 	 */
 	public ContainerInserter(
-			BaseClientPutter parent2, 
-			PutCompletionCallback cb2, 
+			BaseClientPutter parent2,
+			PutCompletionCallback cb2,
 			HashMap<String, Object> metadata2,
 			FreenetURI targetURI2,
 			InsertContext ctx2,
@@ -159,24 +159,24 @@ public class ContainerInserter implements ClientPutState {
 
 	private void start(ObjectContainer container, ClientContext context) {
 		if(logDEBUG) Logger.debug(this, "Atempt to start a container inserter", new Exception("debug"));
-		
+
 		makeMetadata(context, container);
-		
+
 		synchronized(this) {
 			if(finished) return;
 		}
-		
+
 		InsertBlock block;
 		try {
 			Bucket outputBucket = context.getBucketFactory(persistent).makeBucket(-1);
 			String mimeType = (archiveType == ARCHIVE_TYPE.TAR ?
 				createTarBucket(outputBucket, container) :
 				createZipBucket(outputBucket, container));
-			
+
 			if(logMINOR) Logger.minor(this, "We are using "+archiveType);
-			
+
 			// Now we have to insert the Archive we have generated.
-			
+
 			// Can we just insert it, and not bother with a redirect to it?
 			// Thereby exploiting implicit manifest support, which will pick up on .metadata??
 			// We ought to be able to !!
@@ -185,12 +185,12 @@ public class ContainerInserter implements ClientPutState {
 			fail(new InsertException(InsertException.BUCKET_ERROR, e, null), container, context);
 			return;
 		}
-		
+
 		boolean dc = dontCompress;
 		if (!dontCompress) {
 			dc = (archiveType == ARCHIVE_TYPE.ZIP);
 		}
-		
+
 		// Treat it as a splitfile for purposes of determining reinsert count.
 		SingleFileInserter sfi = new SingleFileInserter(parent, cb, block, false, ctx, dc, getCHKOnly, reportMetadataOnly, token, archiveType, true, null, earlyEncode, true, persistent, 0, 0, null, cryptoAlgorithm, forceCryptoKey);
 		if(logMINOR)
@@ -233,7 +233,7 @@ public class ContainerInserter implements ClientPutState {
 				}
 			}
 		}
-		
+
 	}
 
 	private int resolve(MetadataUnresolvedException e, int x, Bucket bucket, FreenetURI key, String element2, ObjectContainer container, ClientContext context) throws IOException {
@@ -267,63 +267,63 @@ public class ContainerInserter implements ClientPutState {
 
 	// A persistent hashCode is helpful in debugging, and also means we can put
 	// these objects into sets etc when we need to.
-	
+
 	private final int hashCode;
-	
+
 	@Override
 	public int hashCode() {
 		return hashCode;
 	}
-	
+
 	public boolean objectCanUpdate(ObjectContainer container) {
 		if(logMINOR)
 			Logger.minor(this, "objectCanUpdate() on "+this, new Exception("debug"));
 		return true;
 	}
-	
+
 	public boolean objectCanNew(ObjectContainer container) {
 		if(logMINOR)
 			Logger.minor(this, "objectCanNew() on "+this, new Exception("debug"));
 		return true;
 	}
-	
 
-	
+
+
 	private String createTarBucket(Bucket outputBucket, @SuppressWarnings("unused") ObjectContainer container) throws IOException {
 		if(logMINOR) Logger.minor(this, "Create a TAR Bucket");
-		
+
 		OutputStream os = new BufferedOutputStream(outputBucket.getOutputStream());
-		TarOutputStream tarOS = new TarOutputStream(os);
-		tarOS.setLongFileMode(TarOutputStream.LONGFILE_GNU);
-		TarEntry ze;
+		TarArchiveOutputStream tarOS = new TarArchiveOutputStream(os);
+		tarOS.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
+		TarArchiveEntry ze;
 
 		for(ContainerElement ph : containerItems) {
 			if(logMINOR)
 				Logger.minor(this, "Putting into tar: "+ph+" data length "+ph.data.size()+" name "+ph.targetInArchive);
-			ze = new TarEntry(ph.targetInArchive);
+			ze = new TarArchiveEntry(ph.targetInArchive);
 			ze.setModTime(0);
 			long size = ph.data.size();
 			ze.setSize(size);
-			tarOS.putNextEntry(ze);
+			tarOS.putArchiveEntry(ze);
 			BucketTools.copyTo(ph.data, tarOS, size);
-			tarOS.closeEntry();
+			tarOS.closeArchiveEntry();
 		}
 
-		tarOS.closeEntry();
+		tarOS.closeArchiveEntry();
 		// Both finish() and close() are necessary.
 		tarOS.finish();
 		tarOS.flush();
 		tarOS.close();
-		
+
 		if(logMINOR)
 			Logger.minor(this, "Archive size is "+outputBucket.size());
-		
+
 		return ARCHIVE_TYPE.TAR.mimeTypes[0];
 	}
-	
+
 	private String createZipBucket(Bucket outputBucket, @SuppressWarnings("unused") ObjectContainer container) throws IOException {
 		if(logMINOR) Logger.minor(this, "Create a ZIP Bucket");
-		
+
 		OutputStream os = new BufferedOutputStream(outputBucket.getOutputStream());
 		ZipOutputStream zos = new ZipOutputStream(os);
 		ZipEntry ze;
@@ -341,7 +341,7 @@ public class ContainerInserter implements ClientPutState {
 		zos.finish();
 		zos.flush();
 		zos.close();
-		
+
 		return ARCHIVE_TYPE.ZIP.mimeTypes[0];
 	}
 

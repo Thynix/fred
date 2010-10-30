@@ -52,7 +52,7 @@ build-dependency on ant-optional, libbsf-java and rhino.
 	<property name="version.make" value="freenet/node/Version.class" />
 
 	<property name="lib" value="lib"/>
-	<proppath name="lib.contrib.dir" path="${contrib.dir}" else="${lib}"/>
+	<proppath name="lib.contrib.dir" path="${contrib.dir}/dist" else="${lib}"/>
 	<path id="lib.path">
 		<fileset dir="${lib.contrib.dir}" includes="**/*.jar"/>
 		<fileset dir="${lib}" includes="**/*.jar"/>
