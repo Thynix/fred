@@ -21,6 +21,13 @@ import freenet.support.api.BucketFactory;
 import freenet.support.io.CountedOutputStream;
 import freenet.support.io.HeaderStreams;
 
+/**
+** {@link Compressor} for BZip2 streams.
+**
+** Due to historical reasons (we used to use the ant-tools bz2 libraries,
+** rather than commons-compress) the compressed streams **DO NOT** have the
+** standard "BZ" header.
+*/
 // WARNING: THIS CLASS IS STORED IN DB4O -- THINK TWICE BEFORE ADD/REMOVE/RENAME FIELDS
 public class Bzip2Compressor implements Compressor {
 
