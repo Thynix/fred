@@ -57,7 +57,17 @@ build-dependency on ant-optional, libbsf-java and rhino.
 		<fileset dir="${lib.contrib.dir}" includes="**/*.jar"/>
 		<fileset dir="${lib}" includes="**/*.jar"/>
 		<fileset dir="${java.class.dirs}">
+			<!-- possible names of jars that hold our dependencies -->
 			<include name="junit.jar"/>
+			<include name="freenet-ext.jar"/>
+			<include name="wrapper.jar"/>
+			<include name="db4o.jar"/>
+			<include name="db-je.jar"/>
+			<include name="bdb-je.jar"/>
+			<include name="commons-compress.jar"/>
+			<include name="lzma.jar"/>
+			<include name="lzmajio.jar"/>
+			<include name="mantissa.jar"/>
 		</fileset>
 	</path>
 
@@ -70,6 +80,7 @@ build-dependency on ant-optional, libbsf-java and rhino.
 		<fileset dir="${gjs.dir}" includes="lib/*.jar"/>
 		<pathelement location="${gjs.dir}/war/WEB-INF/classes"/>
 		<fileset dir="${java.class.dirs}">
+			<!-- possible names of jars that hold our dependencies -->
 			<include name="gwt-dev-linux.jar"/>
 			<include name="gwt-dev-windows.jar"/>
 			<include name="gwt-dev.jar"/>
