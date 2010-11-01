@@ -33,9 +33,7 @@ final public class HeaderStreams {
 			}
 
 			@Override public int read() throws IOException {
-				byte[] b = new byte[1];
-				read(b, 0, 1);
-				return ((int)b[0])&0xff;
+				return (i < hd.length)? ((int)hd[i++])&0xff: in.read();
 			}
 
 			@Override public int read(byte[] buf, int off, int len) throws IOException {
@@ -82,14 +80,17 @@ final public class HeaderStreams {
 			private int i = 0;
 
 			@Override public void write(int b) throws IOException {
-				write(new byte[]{(byte)(b&0xff)}, 0, 1);
+				if (i < hd.length) {
+					if ((byte)b != hd[i]) { throw new IOException("byte " + i + ": expected '" + hd[i] + "'; got '" + b + "'."); }
+					i++;
+				} else {
+					out.write(b);
+				}
 			}
 
 			@Override public void write(byte[] buf, int off, int len) throws IOException {
 				for (; i<hd.length && len>0; i++, off++, len--) {
-					if (buf[off] != hd[i]) {
-						throw new IOException("byte " + i + ": expected '" + hd[i] + "'; got '" + buf[off] + "'.");
-					}
+					if (buf[off] != hd[i]) { throw new IOException("byte " + i + ": expected '" + hd[i] + "'; got '" + buf[off] + "'."); }
 				}
 				out.write(buf, off, len);
 			}
