@@ -19,9 +19,12 @@ import freenet.support.Logger;
 import freenet.support.api.Bucket;
 import freenet.support.api.BucketFactory;
 import freenet.support.io.CountedOutputStream;
+import freenet.support.io.HeaderStreams;
 
 // WARNING: THIS CLASS IS STORED IN DB4O -- THINK TWICE BEFORE ADD/REMOVE/RENAME FIELDS
 public class Bzip2Compressor implements Compressor {
+
+	final public static byte[] BZ_HEADER = "BZ".getBytes();
 
 	public Bucket compress(Bucket data, BucketFactory bf, long maxReadLength, long maxWriteLength) throws IOException, CompressionOutputSizeException {
 		Bucket output = bf.makeBucket(maxWriteLength);
@@ -48,10 +51,8 @@ public class Bzip2Compressor implements Compressor {
 		BufferedInputStream bis = new BufferedInputStream(is, 32768);
 		BZip2CompressorOutputStream bz2os = null;
 		try {
-			CountedOutputStream cos = new CountedOutputStream(new NoCloseProxyOutputStream(os));
-			bz2os = new BZip2CompressorOutputStream(new BufferedOutputStream(cos, 32768));
-			// FIXME add finish() to BZip2CompressorOutputStream and use it to avoid having to use NoCloseProxyOutputStream.
-			// Requires changes to freenet-ext.jar.
+			CountedOutputStream cos = new CountedOutputStream(os);
+			bz2os = new BZip2CompressorOutputStream(HeaderStreams.dimOutput(BZ_HEADER, new BufferedOutputStream(cos, 32768)));
 			long read = 0;
 			// Bigger input buffer, so can compress all at once.
 			// Won't hurt on I/O either, although most OSs will only return a page at a time.
@@ -67,9 +68,8 @@ public class Bzip2Compressor implements Compressor {
 					throw new CompressionOutputSizeException();
 			}
 			bz2os.flush();
-			//bz2os.finish()
-			bz2os.close();
 			cos.flush();
+			bz2os.close();
 			bz2os = null;
 			return cos.written();
 		} finally {
@@ -81,25 +81,8 @@ public class Bzip2Compressor implements Compressor {
 		}
 	}
 
-	static class NoCloseProxyOutputStream extends FilterOutputStream {
-
-		public NoCloseProxyOutputStream(OutputStream arg0) {
-			super(arg0);
-		}
-
-		public void write(byte[] buf, int offset, int length) throws IOException {
-			out.write(buf, offset, length);
-		}
-
-		@Override
-		public void close() throws IOException {
-			// Don't close the underlying stream.
-		}
-
-	};
-
 	public long decompress(InputStream is, OutputStream os, long maxLength, long maxCheckSizeBytes) throws IOException, CompressionOutputSizeException {
-		BZip2CompressorInputStream bz2is = new BZip2CompressorInputStream(new BufferedInputStream(is));
+		BZip2CompressorInputStream bz2is = new BZip2CompressorInputStream(HeaderStreams.augInput(BZ_HEADER, new BufferedInputStream(is)));
 		long written = 0;
 		int bufSize = 32768;
 		if(maxLength > 0 && maxLength < (long)bufSize)
