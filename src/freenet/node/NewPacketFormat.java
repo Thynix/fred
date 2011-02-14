@@ -932,6 +932,16 @@ outer:
 			if(logDEBUG) Logger.debug(this, "Removed " + messageSize + " from remote buffer. Total is now " + usedBufferOtherSide);
 			connected = false;
 		}
+		synchronized(ackedMessages) {
+			// If it's not been acked by now, it's not going to be acked, even if we 
+			// reconnect, because we are not going to resend it - see above.
+			// This means that we cannot expect it to be acked and should not block as a
+			// result.
+			messageWindowPtrAcked = nextMessageID - 1;
+			if(messageWindowPtrAcked == -1)
+				messageWindowPtrAcked = MSG_WINDOW_SIZE - 1;
+			
+		}
 		return items;
 	}
 	
