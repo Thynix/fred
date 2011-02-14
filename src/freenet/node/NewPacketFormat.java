@@ -1233,4 +1233,9 @@ outer:
 		}
 		return x;
 	}
+	
+	public String toString() {
+		if(pn != null) return super.toString() +" for "+pn.shortToString();
+		else return super.toString();
+	}
 }
