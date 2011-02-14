@@ -942,6 +942,9 @@ outer:
 				messageWindowPtrAcked = MSG_WINDOW_SIZE - 1;
 			
 		}
+		synchronized(this) {
+			blockedSince = -1;
+		}
 		return items;
 	}
 	
