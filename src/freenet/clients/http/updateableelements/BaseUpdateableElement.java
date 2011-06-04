@@ -8,7 +8,7 @@ import freenet.support.HTMLNode;
 public abstract class BaseUpdateableElement extends HTMLNode {
 
 	/** The context of the request */
-	protected ToadletContext	ctx;
+	protected ToadletContext ctx;
 
 	public BaseUpdateableElement(String name, ToadletContext ctx) {
 		this(name, new String[] {}, new String[] {}, ctx);
@@ -30,8 +30,9 @@ public abstract class BaseUpdateableElement extends HTMLNode {
 		// Updates the state, so the resulting page will have the actual state and content
 		updateState(true);
 		// Notifies the manager that the element has been rendered
-		if(pushed)
+		if (pushed) {
 			((SimpleToadletServer) ctx.getContainer()).pushDataManager.elementRendered(ctx.getUniqueId(), this);
+		}
 	}
 
 	/**

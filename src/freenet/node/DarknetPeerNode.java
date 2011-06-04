@@ -17,6 +17,7 @@ import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -92,6 +93,8 @@ public class DarknetPeerNode extends PeerNode {
 
 	/** Queued-to-send N2NM extra peer data file numbers */
 	private LinkedHashSet<Integer> queuedToSendN2NMExtraPeerDataFileNumbers;
+	
+	private Map<String, N2NChatroom> participatesIn;
 
 	private FRIEND_TRUST trustLevel;
 	
@@ -1414,10 +1417,9 @@ public class DarknetPeerNode extends PeerNode {
 		SimpleFieldSet fs = new SimpleFieldSet(true);
 		fs.put("type", Node.N2N_TEXT_MESSAGE_TYPE_FILE_OFFER_ACCEPTED);
 		fs.put("uid", uid);
-		if(logMINOR)
+		if (logMINOR) {
 			Logger.minor(this, "Sending node to node message (file offer accepted):\n"+fs);
-
-
+		}
 		sendNodeToNodeMessage(fs, Node.N2N_MESSAGE_TYPE_FPROXY, true, now, true);
 		setPeerNodeStatus(System.currentTimeMillis());
 		return getPeerNodeStatus();
@@ -1430,9 +1432,9 @@ public class DarknetPeerNode extends PeerNode {
 		SimpleFieldSet fs = new SimpleFieldSet(true);
 		fs.put("type", Node.N2N_TEXT_MESSAGE_TYPE_FILE_OFFER_REJECTED);
 		fs.put("uid", uid);
-		if(logMINOR)
+		if (logMINOR) {
 			Logger.minor(this, "Sending node to node message (file offer rejected):\n"+fs);
-
+		}
 		sendNodeToNodeMessage(fs, Node.N2N_MESSAGE_TYPE_FPROXY, true, now, true);
 		setPeerNodeStatus(System.currentTimeMillis());
 		return getPeerNodeStatus();

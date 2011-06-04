@@ -5,9 +5,9 @@ import freenet.clients.http.FProxyFetchListener;
 /** This listener notifies the PushDataManager when a download make some progress */
 public class NotifierFetchListener implements FProxyFetchListener {
 
-	private PushDataManager			pushManager;
+	private PushDataManager pushManager;
 
-	private BaseUpdateableElement	element;
+	private BaseUpdateableElement element;
 
 	public NotifierFetchListener(PushDataManager pushManager, BaseUpdateableElement element) {
 		this.pushManager = pushManager;

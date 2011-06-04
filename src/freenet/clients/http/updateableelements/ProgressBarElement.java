@@ -18,14 +18,14 @@ import freenet.support.HTMLNode;
 public class ProgressBarElement extends BaseUpdateableElement {
 
 	/** The tracker that the Fetcher can be acquired */
-	private FProxyFetchTracker		tracker;
+	private FProxyFetchTracker tracker;
 	/** The URI of the download this progress bar shows */
-	private FreenetURI				key;
+	private FreenetURI key;
 	/** The maxSize */
-	private long					maxSize;
+	private long maxSize;
 	/** The FetchListener that gets notified when the download progresses */
-	private NotifierFetchListener	fetchListener;
-	private final FetchContext		fctx;
+	private NotifierFetchListener fetchListener;
+	private final FetchContext fctx;
 
 	public ProgressBarElement(FProxyFetchTracker tracker, FreenetURI key, FetchContext fctx, long maxSize, ToadletContext ctx, boolean pushed) {
 		// This is a <div>

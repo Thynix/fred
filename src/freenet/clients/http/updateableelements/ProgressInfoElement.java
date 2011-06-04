@@ -17,13 +17,13 @@ import freenet.support.SizeUtil;
 /** This pushed element renders the information box when a page is downloading on the progress page. */
 public class ProgressInfoElement extends BaseUpdateableElement {
 
-	private FProxyFetchTracker		tracker;
-	private final FreenetURI		key;
-	private final FetchContext		fctx;
-	private long					maxSize;
+	private FProxyFetchTracker tracker;
+	private final FreenetURI key;
+	private final FetchContext fctx;
+	private long maxSize;
 	private NotifierFetchListener	fetchListener;
 	/** It displays more info on advanced mode */
-	private boolean					isAdvancedMode;
+	private boolean isAdvancedMode;
 
 	public ProgressInfoElement(FProxyFetchTracker tracker, FreenetURI key, FetchContext fctx, long maxSize, boolean isAdvancedMode, ToadletContext ctx, boolean pushed) {
 		super("span", ctx);
@@ -112,5 +112,4 @@ public class ProgressInfoElement extends BaseUpdateableElement {
 	public String toString() {
 		return "ProgressInfoElement[key:" + key + ",maxSize:" + maxSize + ",updaterId:" + getUpdaterId(null) + "]";
 	}
-
 }

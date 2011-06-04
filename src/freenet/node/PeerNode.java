@@ -4573,8 +4573,7 @@ public abstract class PeerNode implements USKRetrieverCallback, BasePeerNode {
 		}
 		try {
 			Message n2nm;
-			n2nm = DMT.createNodeToNodeMessage(
-					n2nType, fs.toString().getBytes("UTF-8"));
+			n2nm = DMT.createNodeToNodeMessage(n2nType, fs.toString().getBytes("UTF-8"));
 			try {
 				sendAsync(n2nm, null, node.nodeStats.nodeToNodeCounter);
 			} catch (NotConnectedException e) {

@@ -9,37 +9,37 @@ import java.util.Map.Entry;
 import freenet.support.Logger;
 import freenet.support.Ticker;
 
-/** A manager class that manages all the pushing. All it's public method must be synchronized to maintain consistency. */
+/** A manager class that manages all the pushing. All its public method must be synchronized to maintain consistency. */
 public class PushDataManager {
 
-	private static volatile boolean						logMINOR;
+	private static volatile boolean logMINOR;
 
 	static {
 		Logger.registerClass(PushDataManager.class);
 	}
 
 	/** What notifications are waiting for the leader */
-	private Map<String, List<UpdateEvent>>				awaitingNotifications	= new HashMap<String, List<UpdateEvent>>();
+	private Map<String, List<UpdateEvent>> awaitingNotifications = new HashMap<String, List<UpdateEvent>>();
 
 	/** What elements are on the page */
-	private Map<String, List<BaseUpdateableElement>>	pages					= new HashMap<String, List<BaseUpdateableElement>>();
+	private Map<String, List<BaseUpdateableElement>> pages = new HashMap<String, List<BaseUpdateableElement>>();
 
 	/** What pages are on the element. It is redundant with the pages map. */
-	private Map<String, List<String>>					elements				= new HashMap<String, List<String>>();
+	private Map<String, List<String>> elements = new HashMap<String, List<String>>();
 
 	/** Stores whether a keepalive was received for a request since the Cleaner last run */
-	private Map<String, Boolean>						isKeepaliveReceived		= new HashMap<String, Boolean>();
+	private Map<String, Boolean> isKeepaliveReceived = new HashMap<String, Boolean>();
 	
-	private Map<String, Boolean>						isFirstKeepaliveReceived		= new HashMap<String, Boolean>();
+	private Map<String, Boolean> isFirstKeepaliveReceived = new HashMap<String, Boolean>();
 
-	/** The Cleaner that runs periodically and cleanes the failing requests */
-	private Ticker										cleaner;
+	/** The Cleaner that runs periodically and cleans the failing requests */
+	private Ticker cleaner;
 
 	/** A task for the Cleaner that the Cleaner invokes */
-	private CleanerTimerTask							cleanerTask				= new CleanerTimerTask();
+	private CleanerTimerTask cleanerTask = new CleanerTimerTask();
 
 	/** The Cleaner only runs when needed. If this field is true, then the Cleaner is scheduled to run */
-	private boolean										isScheduled				= false;
+	private boolean isScheduled = false;
 
 	public PushDataManager(Ticker ticker) {
 		cleaner = ticker;

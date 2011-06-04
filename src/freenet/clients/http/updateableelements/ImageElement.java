@@ -32,22 +32,22 @@ public class ImageElement extends BaseUpdateableElement {
 	}
 
 	/** The tracker that the Fetcher can be acquired */
-	public FProxyFetchTracker		tracker;
+	public FProxyFetchTracker tracker;
 	/** The original URI */
-	public final FreenetURI			origKey;
+	public final FreenetURI origKey;
 	/** The URI of the download this progress bar shows */
-	public FreenetURI				key;
+	public FreenetURI key;
 	/** The maxSize */
-	public long						maxSize;
+	public long maxSize;
 	/** The FetchListener that gets notified when the download progresses */
-	private NotifierFetchListener	fetchListener;
+	private NotifierFetchListener fetchListener;
 
-	private ParsedTag				originalImg;
+	private ParsedTag originalImg;
 
 	// FIXME get this from global weakFastRandom ???
-	private final int				randomNumber	= new Random().nextInt();
+	private final int randomNumber = new Random().nextInt();
 
-	private boolean					wasError		= false;
+	private boolean	 wasError = false;
 
 	public static ImageElement createImageElement(FProxyFetchTracker tracker,FreenetURI key,long maxSize,ToadletContext ctx, boolean pushed){
 		return createImageElement(tracker,key,maxSize,ctx,-1,-1, null, pushed);
@@ -146,7 +146,7 @@ public class ImageElement extends BaseUpdateableElement {
 	@Override
 	public void updateState(boolean initial) {
 		if (logMINOR) {
-			Logger.minor(this, "Updating ImageElement for url:" + key + (origKey == key ? (" originally " + origKey) : ""));
+			Logger.minor(this, "Updating ImageElement for url:" + key + (origKey.equals(key) ? "" : (" originally " + origKey)));
 		}
 		children.clear();
 		HTMLNode whenJsEnabled = new HTMLNode("span", "class", "jsonly ImageElement");
@@ -164,9 +164,12 @@ public class ImageElement extends BaseUpdateableElement {
 				}
 				attr.put("src", "/imagecreator/?text=+"+FProxyToadlet.l10n("imageinitializing")+"+" + sizePart);
 				whenJsEnabled.addChild(makeHtmlNodeForParsedTag(new ParsedTag(originalImg, attr)));
-				whenJsEnabled.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "fetchedBlocks", String.valueOf(0) });
-				whenJsEnabled.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "requiredBlocks", String.valueOf(1) });
-
+				whenJsEnabled.addChild("input",
+				        new String[] { "type", "name", "value" },
+				        new String[] { "hidden", "fetchedBlocks", String.valueOf(0) });
+				whenJsEnabled.addChild("input",
+				        new String[] { "type", "name", "value" },
+				        new String[] { "hidden", "requiredBlocks", String.valueOf(1) });
 			}
 		} else {
 			FProxyFetchResult fr = null;
@@ -181,7 +184,6 @@ public class ImageElement extends BaseUpdateableElement {
 				if (fr == null) {
 					whenJsEnabled.addChild("div", "No fetcher found");
 				} else {
-
 					if (fr.isFinished() && fr.hasData()) {
 						if (logMINOR) {
 							Logger.minor(this, "ImageElement is completed");
@@ -189,7 +191,7 @@ public class ImageElement extends BaseUpdateableElement {
 						whenJsEnabled.addChild(makeHtmlNodeForParsedTag(originalImg));
 					} else if (fr.failed != null) {
 						if (logMINOR) {
-							Logger.minor(this, "ImageElement is errorous");
+							Logger.minor(this, "ImageElement encountered an error");
 						}
 						whenJsEnabled.addChild(makeHtmlNodeForParsedTag(originalImg));
 					} else {
@@ -205,8 +207,12 @@ public class ImageElement extends BaseUpdateableElement {
 						}
 						attr.put("src", "/imagecreator/?text=" + fetchedPercent + "%25" + sizePart);
 						whenJsEnabled.addChild(makeHtmlNodeForParsedTag(new ParsedTag(originalImg, attr)));
-						whenJsEnabled.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "fetchedBlocks", String.valueOf(fr.fetchedBlocks) });
-						whenJsEnabled.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "requiredBlocks", String.valueOf(fr.requiredBlocks) });
+						whenJsEnabled.addChild("input",
+						        new String[] { "type", "name", "value" },
+						        new String[] { "hidden", "fetchedBlocks", String.valueOf(fr.fetchedBlocks) });
+						whenJsEnabled.addChild("input",
+						        new String[] { "type", "name", "value" },
+						        new String[] { "hidden", "requiredBlocks", String.valueOf(fr.requiredBlocks) });
 					}
 				}
 			} finally {
