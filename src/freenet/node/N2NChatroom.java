@@ -1,12 +1,13 @@
 package freenet.node;
 
-import freenet.crypt.Yarrow;
+import freenet.l10n.NodeL10n;
+import freenet.support.HTMLNode;
 import freenet.support.Logger;
+import java.lang.String;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Calendar;
 import java.util.Date;
-
 
 /**
  * The N2NChatroom class keeps track of what has been said in a chatroom, parses new messages, formats them, and is
@@ -17,7 +18,7 @@ public class N2NChatroom {
 	private Calendar lastMessageReceived;
 	//The key is the identity hash, the value is the name of the node.
 	private HashMap<Integer, String> participants;
-	private String log;
+	private HTMLNode log;
 	private String localName;
 	private long globalIdentifier;
 	private SimpleDateFormat dayChangeFormat;
@@ -37,33 +38,62 @@ public class N2NChatroom {
 		participants = new HashMap<Integer, String>();
 		lastMessageReceived = Calendar.getInstance();
 		lastMessageReceived.setTime(new Date());
+		//TODO: Allow date display formatting configuration.
 		//Ex: Wednesday, June 1, 2011 (followed by newline)
-		dayChangeFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy\n");
-		//Ex: [ 04:48 PM ]
-		timestampFormat = new SimpleDateFormat("[ hh:mm a z ]");
+		dayChangeFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
+		//Ex: 04:48 PM
+		timestampFormat = new SimpleDateFormat("hh:mm a");
+		//TODO: What size should this box be? Will the automatic size be reasonable?
+		//TODO: Likely full width with limited height.
+		log = new HTMLNode("div", "class", "overflow:scroll");
 		//Start out the chat by setting the day.
-		log = dayChangeFormat.format(lastMessageReceived.getTime());
+		log.addChild("p", dayChangeFormat.format(lastMessageReceived.getTime()));
 	}
 
 	/**
-	 * Attempts to add a participant to the chatroom so that their messages can be received by it.
+	 * Adds a participant to this chatroom so that messages they send here can be received.
 	 * @param participant The participant to add to the chatroom.
 	 * @return True if participant was added; false if the participant was already participating.
 	 */
-	//TODO: Handle adding nodes to chat that are not directly connected.
 	public boolean addParticipant(DarknetPeerNode participant) {
-		int hash = participant.getIdentityHash();
-		if (participants.containsKey(hash)) {
+		return addParticipant(participant.getIdentityHash(), participant.getName());
+	}
+
+	/**
+	 * Adds a participant to this chatroom so that messages they send here can be received.
+	 * @param identityHash Identity hash of the participant to add.
+	 * @param name Name of the participant to add.
+	 * @return True if participant was added; false if the participant was already participating.
+	 */
+	public boolean addParticipant(int identityHash, String name) {
+		if (participants.containsKey(identityHash)) {
 			return false;
 		}
-		participants.put(hash, participant.getName());
-		//TODO: Add L10n for "{name} joined."
-		log += participant.getName()+" joined.\n";
+		participants.put(identityHash, name);
+		log.addChild("p", l10n("joined", "name", name));
+		return true;
+	}
+
+	/**
+	 * Removes a participant from the chatroom.
+	 * @param identityHash Identity hash of the participant to remove.
+	 * @return True if the participant was removed; false if the participant was not present.
+	 */
+	//TODO: Verify that the node sending a disconnect for an identity is the same as that sending their messages.
+	public boolean removeParticipant(int identityHash) {
+		if (!participants.containsKey(identityHash)) {
+			Logger.warning(this, l10n("removedNonexistentParticipant",
+			        new String[] { "identityHash", "localName", "globalIdentifier" },
+			        new String[] { String.valueOf(identityHash), localName, String.valueOf(globalIdentifier) }));
+			return false;
+		}
+		log.addChild(l10n("left", "name", participants.get(identityHash)));
+		participants.remove(identityHash);
 		return true;
 	}
 
 	//TODO: Log persistance.
-	public String getLog() {
+	public HTMLNode getLog() {
 		return log;
 	}
 
@@ -74,30 +104,61 @@ public class N2NChatroom {
 	/**
 	 * Attempts to add a message to the chatroom log.
 	 * @param composedBy The identity hash of the composer of the message.
+	 * @param timeComposed The time at which the message was composed.
+	 * @param deliveredID The identity hash of the darknet peer that delivered the message.
+	 * @param deliveredName The nickname of the darknet peer that delivered the message.
 	 * @param message The message to add.
-	 * @return True if the message was added; false if the composer was not a member of this chatroom.
+	 * @return True if the message was added; false if the message's composer is not in this chatroom.
 	 */
-	//TODO: Mention who this message was routed by if not directly connected.
-	public boolean addMessage(int composedBy, /*Date composedTime,*/ String message) {
+	public boolean addMessage(int composedBy, Date timeComposed, int deliveredID, String deliveredName, String message) {
 
 		//Check that the composer of the message is present in this chatroom.
 		if (!participants.containsKey(composedBy)) {
-			//TODO: Add L10n for this error message.
-			Logger.warning(this, "Received \""+message+"\" composed by identity hash "+composedBy+", who was not present!");
+			Logger.warning(this, l10n("nonexistentParticipant",
+			        new String[] { "identityHash", "deliveredByName", "deliveredByID", "globalIdentifier", "localName", "message" },
+			        new String[] { String.valueOf(composedBy), deliveredName, String.valueOf(deliveredID), String.valueOf(globalIdentifier), localName, message }));
 			return false;
 		}
 
-		//Check if the day changed, and if so, list the current date.
+		//List the current date if the day changed.
 		Calendar now = Calendar.getInstance();
 		now.setTime(new Date());
 		if (now.get(Calendar.DAY_OF_YEAR) != lastMessageReceived.get(Calendar.DAY_OF_YEAR) ||
 		        now.get(Calendar.YEAR) != lastMessageReceived.get(Calendar.YEAR)) {
-			log += dayChangeFormat.format(now.getTime());
+			log.addChild("p", dayChangeFormat.format(now.getTime()));
 		}
 
-		//Ex: [ 04:38 PM ] Billybob: Blah blah blah.
-		log += timestampFormat.format(now.getTime())+' '+participants.get(composedBy)+": "+message+'\n';
+		HTMLNode messageLine = log.addChild("p");
+
+		//Ex: [ 04:38 PM ]
+		//Ex: Tooltip of time composed.
+		messageLine.addChild("timestamp", "title",
+		        l10n("composed", "time", timestampFormat.format(timeComposed.getTime())),
+		        "[ "+timestampFormat.format(now.getTime())+" ] ");
+
+		//Ex: Billybob:
+		//Ex: Tooltip of either who it wasdeliveredDirectly delivered by or "Delivered directly"
+		if (deliveredID != composedBy) {
+			messageLine.addChild("delivery", "title", l10n("deliveredBy", "deliveredByName", deliveredName), participants.get(composedBy)+": ");
+		} else {
+			messageLine.addChild("delivery", "title", l10n("deliveredDirectly"), participants.get(composedBy)+": ");
+		}
+
+		//Ex: Blah blah blah.
+		messageLine.addChild("#", message);
 
 		return true;
+	}
+
+	private String l10n(String key) {
+		return NodeL10n.getBase().getString("N2NChatroom."+key);
+	}
+
+	private String l10n(String key, String pattern, String value) {
+		return l10n(key, new String[] { pattern }, new String[] { value });
+	}
+
+	private String l10n(String key, String[] pattern, String[] value) {
+		return NodeL10n.getBase().getString("N2NChatroom."+key, pattern, value);
 	}
 }
