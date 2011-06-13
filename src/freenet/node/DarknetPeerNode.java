@@ -14,10 +14,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -57,6 +54,7 @@ import freenet.support.io.ByteArrayRandomAccessThing;
 import freenet.support.io.FileUtil;
 import freenet.support.io.RandomAccessFileWrapper;
 import freenet.support.io.RandomAccessThing;
+import sun.java2d.pipe.SpanShapeRenderer;
 
 public class DarknetPeerNode extends PeerNode {
 
@@ -94,7 +92,7 @@ public class DarknetPeerNode extends PeerNode {
 	/** Queued-to-send N2NM extra peer data file numbers */
 	private LinkedHashSet<Integer> queuedToSendN2NMExtraPeerDataFileNumbers;
 	
-	private Map<String, N2NChatroom> participatesIn;
+	private HashMap<Long, N2NChatRoom> participatesIn;
 
 	private FRIEND_TRUST trustLevel;
 	
@@ -1408,6 +1406,140 @@ public class DarknetPeerNode extends PeerNode {
 		} catch (UnsupportedEncodingException e) {
 			throw new Error("Impossible: JVM doesn't support UTF-8: " + e, e);
 		}
+	}
+
+	/**
+	 * Sends a chat message.
+	 * @param composedTime Time the message was composed.
+	 * @param composedBy Identity hash of the composer of the message.
+	 * @param globalIdentifier The global identifier of the chat room to send the message to.
+	 * @param message The message to send.
+	 * @return PeerNodeStatus TODO: What is this really?
+	 */
+	public int sendChatMessage(Date composedTime, int composedBy, long globalIdentifier, String message) {
+		SimpleFieldSet fs = new SimpleFieldSet(true);
+		fs.put("type", Node.N2N_CHAT_MESSAGE);
+		try {
+			fs.putSingle("text", Base64.encode(message.getBytes("UTF-8")));
+			fs.put("composedTime", composedTime.getTime());
+			fs.put("identityHash", composedBy);
+			fs.put("globalIdentifier", globalIdentifier);
+			sendNodeToNodeMessage(fs, Node.N2N_MESSAGE_TYPE_CHAT, true, System.currentTimeMillis(), false);
+			this.setPeerNodeStatus(System.currentTimeMillis());
+			return getPeerNodeStatus();
+		} catch (UnsupportedEncodingException e) {
+			throw new Error("Impossible: JVM doesn't support UTF-8: " + e, e);
+		}
+	}
+
+	/**
+	 * Sends a chat message composed by this node.
+	 * @param composedTime Time the message was composed.
+	 * @param globalIdentifier The global identifier of the chat room to send the message to.
+	 * @param message The message to send
+	 * @return PeerNodeStatus TODO: What is this?
+	 */
+	public int sendChatMessage(Date composedTime, long globalIdentifier, String message) {
+		return sendChatMessage(composedTime, node.getDarknetIdentityHash(), globalIdentifier, message);
+	}
+
+	/**
+	 * Initial invitation sent to someone to see if they'd like to join.
+	 * @param globalIdentifier The global identifier of the room.
+	 * @param roomName The suggested name of the room.
+	 * @param username What this peerNode's name will be upon connecting.
+	 * //TODO: Allow the node to reply with a request for a different username?
+	 * @return PeerNodeStatus //TODO: What is this? Does this need to return more information than that?
+	 */
+	public int sendChatInviteOffer(long globalIdentifier, String roomName, String username) {
+		SimpleFieldSet fs = new SimpleFieldSet(true);
+		fs.put("type", Node.N2N_CHAT_OFFER_INVITE);
+		try {
+			fs.putSingle("username", Base64.encode(username.getBytes("UTF-8")));
+			fs.putSingle("roomName", Base64.encode(roomName.getBytes("UTF-8")));
+			fs.put("globalIdentifier", globalIdentifier);
+			sendNodeToNodeMessage(fs, Node.N2N_MESSAGE_TYPE_CHAT, true, System.currentTimeMillis(), false);
+			this.setPeerNodeStatus(System.currentTimeMillis());
+			return getPeerNodeStatus();
+		} catch (UnsupportedEncodingException e) {
+			throw new Error("Impossible: JVM doesn't support UTF-8: " + e, e);
+		}
+	}
+
+	public int sendChatInviteRetract(long globalIdentifier) {
+		return sendChatInviteControl(globalIdentifier, Node.N2N_CHAT_RETRACT_INVITE);
+	}
+
+	public int sendChatInviteAccept(long globalIdentifier) {
+		return sendChatInviteControl(globalIdentifier, Node.N2N_CHAT_ACCEPT_INVITE);
+	}
+
+	public int sendChatInviteReject(long globalIdentifier) {
+		return sendChatInviteControl(globalIdentifier, Node.N2N_CHAT_REJECT_INVITE);
+	}
+
+	private int sendChatInviteControl(long globalIdentifier, int type) {
+		SimpleFieldSet fs = new SimpleFieldSet(true);
+		fs.put("type", type);
+		fs.put("globalIdentifier", globalIdentifier);
+		sendNodeToNodeMessage(fs, Node.N2N_MESSAGE_TYPE_CHAT, true, System.currentTimeMillis(), false);
+		setPeerNodeStatus(System.currentTimeMillis());
+		return getPeerNodeStatus();
+	}
+
+
+	//TODO: Refactor these chat methods to not have so much duplicate code. Ideally both the sending and receiving
+	//TODO: code would refer to a shared message format.
+	/**
+	 * Sends information about another peer that has joined the room.
+	 * @param globalIdentifier The global identifier of the room.
+	 * @param identityHash The identity hash of the peer that has joined.
+	 * @param username The username of that peer.
+	 * @return PeerNodeStatus TODO: What is it, and why?
+	 */
+	public int sendChatJoin(long globalIdentifier, int identityHash, String username) {
+		SimpleFieldSet fs = new SimpleFieldSet(true);
+		fs.put("type", Node.N2N_CHAT_JOIN);
+		fs.put("globalIdentifier", globalIdentifier);
+		fs.put("identityHash", identityHash);
+		try {
+		fs.putSingle("username", Base64.encode(username.getBytes("UTF-8")));
+		sendNodeToNodeMessage(fs, Node.N2N_MESSAGE_TYPE_CHAT, true, System.currentTimeMillis(), false);
+		setPeerNodeStatus(System.currentTimeMillis());
+		return getPeerNodeStatus();
+		} catch (UnsupportedEncodingException e) {
+			throw new Error("Impossible: JVM doesn't support UTF-8: " + e, e);
+		}
+	}
+
+	public int sendChatLeave(long globalIdentifier, int identityHash) {
+		SimpleFieldSet fs = new SimpleFieldSet(true);
+		fs.put("type", Node.N2N_CHAT_LEAVE);
+		fs.put("globalIdentifier", globalIdentifier);
+		fs.put("identityHash", identityHash);
+		sendNodeToNodeMessage(fs, Node.N2N_MESSAGE_TYPE_CHAT, true, System.currentTimeMillis(), false);
+		setPeerNodeStatus(System.currentTimeMillis());
+		return getPeerNodeStatus();
+	}
+
+	@Override
+	public boolean disconnected(boolean dumpMessageQueue, boolean dumpTrackers) {
+		//Disconnect from all chat rooms with "lost connection"
+		for (N2NChatRoom room : participatesIn.values()) {
+			room.removeParticipant(getIdentityHash(), getIdentityHash(), true);
+		}
+		
+		return super.disconnected(dumpMessageQueue, dumpTrackers);
+	}
+
+	@Override
+	public void forceDisconnect(boolean dump) {
+		//Disconnect from all chat rooms with "lost connection"
+		for (N2NChatRoom room : participatesIn.values()) {
+			room.removeParticipant(getIdentityHash(), getIdentityHash(), true);
+		}
+		
+		super.forceDisconnect(dump);
 	}
 
 	public int sendFileOfferAccepted(long uid) {

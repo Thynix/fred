@@ -26,19 +26,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.Random;
-import java.util.Set;
-import java.util.TimeZone;
-import java.util.Vector;
+import java.text.ParseException;
+import java.util.*;
 
 import freenet.support.math.MersenneTwister;
 import org.tanukisoftware.wrapper.WrapperManager;
@@ -66,7 +55,6 @@ import com.sleepycat.je.EnvironmentMutableConfig;
 
 import freenet.client.FECQueue;
 import freenet.client.FetchContext;
-import freenet.client.async.ClientRequestScheduler;
 import freenet.client.async.SplitFileInserterSegment;
 import freenet.clients.http.SecurityLevelsToadlet;
 import freenet.clients.http.SimpleToadletServer;
@@ -114,7 +102,6 @@ import freenet.node.DarknetPeerNode.FRIEND_TRUST;
 import freenet.node.DarknetPeerNode.FRIEND_VISIBILITY;
 import freenet.node.NodeDispatcher.NodeDispatcherCallback;
 import freenet.node.OpennetManager.ConnectionType;
-import freenet.node.SecurityLevels.FRIENDS_THREAT_LEVEL;
 import freenet.node.SecurityLevels.NETWORK_THREAT_LEVEL;
 import freenet.node.SecurityLevels.PHYSICAL_THREAT_LEVEL;
 import freenet.node.fcp.FCPMessage;
@@ -150,7 +137,6 @@ import freenet.store.FreenetStore.StoreType;
 import freenet.store.saltedhash.SaltedHashFreenetStore;
 import freenet.support.Executor;
 import freenet.support.Fields;
-import freenet.support.FileLoggerHook;
 import freenet.support.HTMLNode;
 import freenet.support.HexUtil;
 import freenet.support.LRUQueue;
@@ -763,10 +749,11 @@ public class Node implements TimeSkewDetectorCallback {
 	/** Should inserts fork when the HTL reaches cacheability? */
 	public static boolean FORK_ON_CACHEABLE_DEFAULT = true;
 	public final IOStatisticCollector collector;
-	/** Type identifier for fproxy node to node messages, as sent on DMT.nodeToNodeMessage's */
+	/** Type identifier for fproxy node to node messages, as sent on DMT.nodeToNodeMessages */
 	public static final int N2N_MESSAGE_TYPE_FPROXY = 1;
-	/** Type identifier for differential node reference messages, as sent on DMT.nodeToNodeMessage's */
+	/** Type identifier for differential node reference messages, as sent on DMT.nodeToNodeMessages */
 	public static final int N2N_MESSAGE_TYPE_DIFFNODEREF = 2;
+	public static final int N2N_MESSAGE_TYPE_CHAT = 3;
 	/** Identifier within fproxy messages for simple, short text messages to be displayed on the homepage as useralerts */
 	public static final int N2N_TEXT_MESSAGE_TYPE_USERALERT = 1;
 	/** Identifier within fproxy messages for an offer to transfer a file */
@@ -779,12 +766,22 @@ public class Node implements TimeSkewDetectorCallback {
 	public static final int N2N_TEXT_MESSAGE_TYPE_BOOKMARK = 5;
 	/** Identified within friend feed for the recommendation of a file */
 	public static final int N2N_TEXT_MESSAGE_TYPE_DOWNLOAD = 6;
+
 	public static final int EXTRA_PEER_DATA_TYPE_N2NTM = 1;
 	public static final int EXTRA_PEER_DATA_TYPE_PEER_NOTE = 2;
 	public static final int EXTRA_PEER_DATA_TYPE_QUEUED_TO_SEND_N2NM = 3;
 	public static final int EXTRA_PEER_DATA_TYPE_BOOKMARK = 4;
 	public static final int EXTRA_PEER_DATA_TYPE_DOWNLOAD = 5;
 	public static final int PEER_NOTE_TYPE_PRIVATE_DARKNET_COMMENT = 1;
+
+	/** Type identifiers for N2N chat */
+	public static final int N2N_CHAT_MESSAGE = 1;
+	public static final int N2N_CHAT_OFFER_INVITE = 2;
+	public static final int N2N_CHAT_RETRACT_INVITE = 3;
+	public static final int N2N_CHAT_ACCEPT_INVITE = 4;
+	public static final int N2N_CHAT_REJECT_INVITE = 5;
+	public static final int N2N_CHAT_JOIN = 6;
+	public static final int N2N_CHAT_LEAVE = 7;
 
 	/** The bootID of the last time the node booted up. Or -1 if we don't know due to
 	 * permissions problems, or we suspect that the node has been booted and not
@@ -834,6 +831,40 @@ public class Node implements TimeSkewDetectorCallback {
 	private volatile boolean isPRNGReady = false;
 
 	private boolean storePreallocate;
+
+	//Key is global identifier.
+	private HashMap<Long, N2NChatRoom> chatRooms;
+	//Key is identity hash sent to, value is global identifier and offered username.
+	private HashMap<Integer, AbstractMap.SimpleImmutableEntry<Long, String>> pendingSentInvites;
+	//Key is identity hash received from, value is global identifier and offered username.
+	private HashMap<Integer, AbstractMap.SimpleImmutableEntry<Long, String>> pendingReceivedInvites;
+
+	public HashMap<Long, N2NChatRoom> getChatRooms() {
+		return chatRooms;
+	}
+
+	public HashMap<Integer, AbstractMap.SimpleImmutableEntry<Long, String>> getPendingSentInvites() {
+		return pendingSentInvites;
+	}
+
+	public HashMap<Integer, AbstractMap.SimpleImmutableEntry<Long, String>> getPendingReceivedInvites() {
+		return pendingReceivedInvites;
+	}
+
+	/**
+	 * Attempts to create a new chat room.
+	 * @param globalID Global identifier of the chat room to create.
+	 * @param username This node's username within that chat room.
+	 * @param roomName The local name of the chat room.
+	 * @return True if the chat room was added, false if a chat room with that ID already exists on this node.
+	 */
+	public boolean addChatRoom(long globalID, String username, String roomName) {
+		if (chatRooms.containsKey(globalID)) {
+			return false;
+		}
+		chatRooms.put(globalID, new N2NChatRoom(roomName, globalID, username, getDarknetConnections()));
+		return true;
+	}
 
 	/**
 	 * Read all storable settings (identity etc) from the node file.
@@ -2561,7 +2592,8 @@ public class Node implements TimeSkewDetectorCallback {
 		this.arkFetcherContext = ctx;
 
 		registerNodeToNodeMessageListener(N2N_MESSAGE_TYPE_FPROXY, fproxyN2NMListener);
-		registerNodeToNodeMessageListener(Node.N2N_MESSAGE_TYPE_DIFFNODEREF, diffNoderefListener);
+		registerNodeToNodeMessageListener(N2N_MESSAGE_TYPE_DIFFNODEREF, diffNoderefListener);
+		registerNodeToNodeMessageListener(N2N_MESSAGE_TYPE_CHAT, N2NChatListener);
 
 		// FIXME this is a hack
 		// toadlet server should start after all initialized
@@ -5394,8 +5426,135 @@ public class Node implements TimeSkewDetectorCallback {
 				throw new Error(e);
 			}
 		}
-
 	};
+
+	private NodeToNodeMessageListener N2NChatListener = new NodeToNodeMessageListener() {
+		public void handleMessage(byte[] data, boolean fromDarknet, PeerNode source, int type) {
+			if (!fromDarknet) {
+				Logger.error(this, "Received N2N chat message from non-darknet peer "+source);
+				return;
+			}
+			DarknetPeerNode darkSource = (DarknetPeerNode) source;
+			Logger.normal(this, "Received N2N chat from '"+darkSource.getPeer()+"'");
+			SimpleFieldSet fs = null;
+			try {
+				fs = new SimpleFieldSet(new String(data, "UTF-8"), false, true);
+			} catch (UnsupportedEncodingException e) {
+				throw new Error("Impossible: JVM doesn't support UTF-8: " + e, e);
+			} catch (IOException e) {
+				Logger.error(this, "IOException while parsing node to node message data", e);
+				return;
+			}
+
+			/*Fields are parsed in the order that they are needed, with those types that need the fewest
+			pieces of information from fields checked for first.
+			 */
+
+			//Get global identifier.
+			long globalIdentifier;
+			try {
+				globalIdentifier = fs.getLong("globalIdentifier");
+			} catch (FSParseException e) {
+				//Could not parse global identifier. Dropping.
+				//TODO: Add localized, logged error message.
+				System.out.println("Failed to parse global identifier from "+((DarknetPeerNode) source).getName()+'.');
+				return;
+			}
+
+			//Check that the requested room exists.
+			if (!chatRooms.containsKey(globalIdentifier)) {
+				Logger.error(this, NodeL10n.getBase().getString("N2NChatRoom.nonexistentRoom",
+				        new String[] { "identityHash", "deliveredByName", "globalIdentifier", "message"},
+				        new String[] { fs.get("composedBy"), darkSource.getName(),
+				                String.valueOf(darkSource.getIdentityHash()), fs.get("text") }));
+				return;
+			}
+
+			//TODO: Do these need to fire web pushing events?
+
+			//A darknet peer accepted an invite this node offered. Add them to the chat room.
+			if (type == N2N_CHAT_ACCEPT_INVITE) {
+				if (!pendingSentInvites.containsKey(darkSource.getIdentityHash())) {
+					//TODO: Add localized, logged error message.
+					System.out.println(((DarknetPeerNode) source).getName()+" replied to a chat invite that was not pending.");
+					return;
+				}
+				globalIdentifier = pendingSentInvites.get(darkSource.getIdentityHash()).getKey();
+				String username = pendingSentInvites.get(darkSource.getIdentityHash()).getValue();
+				chatRooms.get(globalIdentifier).inviteParticipant(darkSource, username);
+				return;
+			//A darknet peer rejected an invite this node offered; remove it from list of pending invites.
+			} else if (type == N2N_CHAT_REJECT_INVITE) {
+				pendingSentInvites.remove(darkSource.getIdentityHash());
+				return;
+			/*/A darknet peer offered this node an invite. Add it to the list of offered invites to allow
+			the user to accept or reject it. If there is an existing invite for this room, it is replaced.
+			 */
+				//TODO: Will need to check for which room to remove the invite when using multimap.
+			} else if (type == N2N_CHAT_OFFER_INVITE) {
+				pendingReceivedInvites.put(darkSource.getIdentityHash(), new AbstractMap.
+				        SimpleImmutableEntry<Long, String>(globalIdentifier, fs.get("username")));
+			} else if (type == N2N_CHAT_RETRACT_INVITE) {
+				pendingReceivedInvites.remove(darkSource.getIdentityHash());
+			}
+
+			//Get identity hash for use in a message, join, or leave.
+			int identityHash;
+			try {
+				identityHash = fs.getInt("identityHash");
+			} catch (FSParseException e) {
+				//Could not parse identity hash. Dropping.
+				//TODO: Add localized, logged error message.
+				System.out.println("Failed to parse identity hash from "+darkSource.getName()+'.');
+				return;
+			}
+
+			//A message was received. Attempt to add the message.
+			if (type == N2N_CHAT_MESSAGE) {
+				try {
+					chatRooms.get(globalIdentifier).receiveMessage(
+					        identityHash,
+						//TODO: Format for composed time not needed.
+					        N2NChatRoom.timeComposedFormat.parse(fs.get("composedTime")),
+					        darkSource.getIdentityHash(), fs.get("text"));
+				} catch (ParseException e) {
+					//Could not parse date. Dropping.
+					//TODO: Add localized, logged error message.
+					System.out.println("Failed to parse date from "+darkSource.getName()+'.');
+					return;
+				}
+			//Someone joined a chat room.
+			} else if (type == N2N_CHAT_JOIN) {
+				chatRooms.get(globalIdentifier).joinedParticipant(identityHash, fs.get("name"),
+				        darkSource);
+			//Someone left a chat room.
+			} else if (type == N2N_CHAT_LEAVE) {
+				chatRooms.get(globalIdentifier).removeParticipant(identityHash,
+				        darkSource.getIdentityHash(), false);
+			}
+		}
+	};
+
+	/**
+	 * Offers a peer a chat invite and adds it to the list of pending invites so that the peer can respond.
+	 * @param identityHash Identity hash of the peer to offer the invite.
+	 * @param username Username to offer to his peer.
+	 * @param globalIdentifier Global identifier for the chat room to invite to.
+	 * @return True if successful, false if the identity hash could not be found.
+	 */
+	public boolean offerChatInvite(int identityHash, String username, long globalIdentifier) {
+		//TODO: Make chat invites multimap so that multiple invites can exist for a given peer.
+		for (DarknetPeerNode node : getDarknetConnections()) {
+			if (node.getIdentityHash() == identityHash) {
+				node.sendChatInviteOffer(globalIdentifier,
+				        chatRooms.get(globalIdentifier).getLocalName(), username);
+				pendingSentInvites.put(identityHash,
+				        new AbstractMap.SimpleImmutableEntry<Long, String>(globalIdentifier, username));
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Handle a node to node text message SimpleFieldSet
@@ -5676,6 +5835,12 @@ public class Node implements TimeSkewDetectorCallback {
 
 	public byte[] getDarknetIdentity() {
 		return darknetCrypto.myIdentity;
+	}
+
+	//TODO: Would this be better calculated in the constructor?
+	//TODO: Is this the correct way to get the identity hash as presented to others?
+	public int getDarknetIdentityHash() {
+		return Fields.hashCode(darknetCrypto.myIdentity);
 	}
 
 	public int estimateFullHeadersLengthOneMessage() {

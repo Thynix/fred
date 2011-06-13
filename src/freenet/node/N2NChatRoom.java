@@ -1,17 +1,21 @@
 package freenet.node;
 
 import freenet.l10n.NodeL10n;
+import freenet.support.HSLColor;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
 
+import java.awt.Color;
 import java.lang.String;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
- * The N2NChatroom class keeps track of what has been said in a chatroom, parses new messages, formats them, and is
+ * The N2NChatRoom class keeps track of what has been said in a chat room, parses new messages, formats them, and is
  * responsible for system messages such as joins, leaves, and day changes.
  */
 public class N2NChatRoom {
@@ -24,13 +28,14 @@ public class N2NChatRoom {
 	//TODO: Is there a better way to allow chat rooms access to connected peers?
 	private HashMap<Integer, DarknetPeerNode> peerNodes;
 	private HTMLNode log;
+	private HTMLNode participantListing;
 	private String localName;
 	private long globalIdentifier;
 	private String username;
 	private SimpleDateFormat dayChangeFormat;
 	private SimpleDateFormat timestampFormat;
 
-	//TODO: Color names based on identity hash.
+	//TODO: Participant perhaps icons for whether messages sent to them have gone through.
 	/**
 	 * Initializes date formatters and starts the room off with a timestamp of the day.
 	 * @param localName Name of the chatroom. Only applies locally.
@@ -64,20 +69,28 @@ public class N2NChatRoom {
 		for (DarknetPeerNode node : updatedPeerNodes) {
 			peerNodes.put(node.getIdentityHash(), node);
 		}
+		//TODO: Check new peers for direct connections to those currently routed and backup routes.
 	}
 
 	/**
-	 * Adds a directly connected node who was locally invited to the chat room.
+	 * Adds a directly connected participant that was invited locally.
 	 * This node will route messages to and from them.
-	 * @param participant the peer to invite
+	 * @param participant The peer that was invited.
+	 * @param username The name of this user as referred to within this chat.
 	 * @return True if the participant was added, false if not.
 	 */
-	public boolean inviteParticipant(DarknetPeerNode participant) {
+	public boolean inviteParticipant(DarknetPeerNode participant, String username) {
 		if (addParticipant(participant.getIdentityHash(), participant.getName(), participant, true)) {
-			//TODO: Send this participant invites for all the other participants.
-			//TODO: and send all other participants invites for this new one.
 			for (int identityHash : participants.keySet()) {
-
+				if (identityHash != participant.getIdentityHash() &&
+				        participants.get(identityHash).directlyConnected) {
+					//Send all other participants a join for the new participant.
+					participants.get(identityHash).peerNode.sendChatJoin(globalIdentifier,
+					        participant.getIdentityHash(), username);
+					//Send the new participant joins for all other participants.
+					participant.sendChatJoin(globalIdentifier, identityHash,
+					        participants.get(identityHash).name);
+				}
 			}
 			return true;
 		}
@@ -85,7 +98,7 @@ public class N2NChatRoom {
 	}
 
 	/**
-	 * Adds a participant invited by another node. 
+	 * Adds a participant that was invited remotely.
 	 * @param identityHash The identity hash of the new participant.
 	 * @param name The name of the new participant.
 	 * @param routedBy The peer that routed the invite. This peer will be authorized to route all other things
@@ -93,8 +106,18 @@ public class N2NChatRoom {
 	 * @return True if the participant was added, false otherwise.
 	 */
 	public boolean joinedParticipant(int identityHash, String name, DarknetPeerNode routedBy) {
-		return addParticipant(identityHash, name, routedBy, false);
-		//TODO: Echo this join to everyone we've invited.
+		/*TODO: Query directly connected participants for backup routing paths.*/
+		if (addParticipant(identityHash, name, routedBy, false)) {
+			for (int IDHash : participants.keySet()) {
+				//Route this join to all participants this node routes for.
+				if (participants.get(IDHash).locallyInvited) {
+					participants.get(IDHash).peerNode.
+					        sendChatJoin(globalIdentifier, identityHash, name);
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -107,12 +130,15 @@ public class N2NChatRoom {
 	 * @return True if participant was added, false otherwise.
 	 */
 	private boolean addParticipant(int identityHash, String name, DarknetPeerNode peerNode, boolean invitedLocally) {
+		//A participant cannot be in a chat room multiple times at once.
 		if (participants.containsKey(identityHash)) {
 			return false;
 		}
 		boolean directlyConnected = peerNodes.containsKey(identityHash);
-		participants.put(identityHash, new Participant(name, peerNode, directlyConnected, invitedLocally));
+		participants.put(identityHash, new Participant(identityHash, name, peerNode, directlyConnected,
+		        invitedLocally));
 		log.addChild("p", l10n("joined", "name", name));
+		updateParticipantListing();
 		return true;
 	}
 
@@ -122,11 +148,13 @@ public class N2NChatRoom {
 	 * @param senderIdentityHash Identity hash of the participant that sent the removal request. In order for the
 	 * removal to be valid, this must either be the participant authorized to route this person's messages or the
 	 * participant themselves.
+	 * @param connectionProblem Used internally to indicate whether a departure message was received or the node
+	 * disconnected. If true "lost connection" is used rather than "left".
 	 * @return True if the participant was removed; false if not. More detailed error messages are written to
 	 * the log.
 	 */
-	//TODO: Should this return a more descriptive state? Will others care if the removal was successful?
-	public boolean removeParticipant(int removeIdentityHash, int senderIdentityHash) {
+	//TODO: Should this return a more descriptive state? Will other things care whether the removal was successful?
+	public boolean removeParticipant(int removeIdentityHash, int senderIdentityHash, boolean connectionProblem) {
 		String error = checkPresenceAndAuthorization("remove", removeIdentityHash, senderIdentityHash);
 		if (error != null) {
 			Logger.warning(this, l10n("removeReceived",
@@ -143,13 +171,34 @@ public class N2NChatRoom {
 
 		//The identity to remove and the sender of the request are in the chat room, and the sender of the
 		//request is authorized to remove the identity.
-		log.addChild(l10n("left", "name", participants.get(removeIdentityHash).name));
+		if (connectionProblem) {
+			log.addChild(l10n("lostConnection", "name", participants.get(removeIdentityHash).name));
+		} else {
+			log.addChild(l10n("left", "name", participants.get(removeIdentityHash).name));
+		}
 		participants.remove(removeIdentityHash);
 
-		//TODO: Echo this request to anyone this node invited.
+		Set<Integer> identityHashes = participants.keySet();
+		for (int identityHash : identityHashes) {
+			//Remove from the room any other participants the leaving node routed for.
+			if (participants.get(identityHash).peerNode.getIdentityHash() == removeIdentityHash) {
+				participants.remove(identityHash);
+				log.addChild(l10n("lostConnection", "name", participants.get(identityHash).name));
+			//Send this disconnect to all participants this node invited.
+			} else if (participants.get(identityHash).locallyInvited) {
+				participants.get(identityHash).peerNode.sendChatLeave(globalIdentifier, removeIdentityHash);
+			}
+		}
 		return true;
 	}
 
+	/**
+	 * Gets a name for a given identity hash, if possible. Used internally to allow for the nickname of darknet
+	 * nodes in error messages.
+	 * @param targetIdentityHash Explicit identity hash of the subject.
+	 * @param senderIdentityHash Identity hash of the peer that sent the message.
+	 * @return Either a name or "an unknown participant"
+	 */
 	private String findName (int targetIdentityHash, int senderIdentityHash) {
 		//Sender must be connected in order to send something, so their name is always known.
 		if (senderIdentityHash == targetIdentityHash) {
@@ -205,8 +254,29 @@ public class N2NChatRoom {
 		return log;
 	}
 
+	public HTMLNode getParticipantListing() {
+		return participantListing;
+	}
+
 	public long getGlobalIdentifier() {
 		return globalIdentifier;
+	}
+
+	public String getLocalName() {
+		return localName;
+	}
+
+	/**
+	 * @param name Name to check for
+	 * @return True if a participant in the room has that name, false if not.
+	 */
+	public boolean nameExists(String name) {
+		for (Participant participant : participants.values()) {
+			if (participant.name.equals(name)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -244,24 +314,58 @@ public class N2NChatRoom {
 		        l10n("composed", "time", timeComposedFormat.format(timeComposed.getTime())),
 		        "[ "+timestampFormat.format(now.getTime())+" ] ");
 
-		//Ex: Billybob:
-		//Ex: Tooltip of either who it was delivered by or "Delivered directly"
-		if (deliveredBy != composedBy) {
-			messageLine.addChild("delivery", "title", l10n("deliveredBy", "deliveredByName",
-			        participants.get(deliveredBy).peerNode.getName()), participants.get(composedBy)+": ");
-		} else {
-			messageLine.addChild("delivery", "title", l10n("deliveredDirectly"),
-			        participants.get(composedBy)+": ");
-		}
+		Participant user = participants.get(composedBy);
+		//Ex: BillyBob:
+		//With text color based on identity hash with a complementary background for visibility.
+		Color textColor = user.nameColor;
+		String name = user.name;
+		messageLine.addChild("div", "class", "color:rgb("+textColor.getRed()+','+textColor.getGreen()+','+
+		        textColor.getBlue()+')', name+": ");
 
 		//Ex: Blah blah blah.
 		messageLine.addChild("#", message);
 
 		lastMessageReceived = now;
 
-		//TODO: Echo this message to others if we invited the composer.
+		//If this node routes this user's messages, send it to all other directly connected participants.
+		if (user.locallyInvited) {
+			for (Participant participant : participants.values()) {
+				if (participant.directlyConnected && participant != user) {
+					participant.peerNode.sendChatMessage(timeComposed, composedBy, globalIdentifier,
+					        message);
+				}
+			}
+		}
 
 		return true;
+	}
+
+	private void updateParticipantListing() {
+		//Sort participants alphabetically.
+		Participant[] sortedParticipants = participants.values().toArray(new Participant[participants.size()]);
+		Arrays.sort(sortedParticipants);
+
+		participantListing = new HTMLNode("div", "class", "overflow:scroll");
+
+		//List participants alphabetically with colored name text and routing information on tooltip.
+		for (Participant participant : sortedParticipants) {
+			String routing;
+			if (participant.directlyConnected) {
+				routing = l10n("connectedDirectly",
+				        new String[] { "nodeName", "nodeID" },
+				        new String[] { participant.peerNode.getName(),
+				                participant.peerNode.getIdentityString() });
+			} else {
+				routing = l10n("connectedThrough",
+				        new String[] { "nameInRoom", "nodeName", "nodeID" },
+				        new String[] { participants.get(participant.peerNode.getIdentityHash()).name,
+				                participant.peerNode.getName(),
+				                participant.peerNode.getIdentityString() });
+			}
+			Color nameColor = participant.nameColor;
+			String color = "rgb("+nameColor.getRed()+','+nameColor.getGreen()+','+nameColor.getBlue()+')';
+			participantListing.addChild("p", "title", routing).addChild("div", "style", color);
+		}
 	}
 
 	public void sendMessage(String message) {
@@ -273,7 +377,12 @@ public class N2NChatRoom {
 		log.addChild("p", "[ "+timestampFormat.format(now.getTime())+" ] "+ username +": "+message);
 		lastMessageReceived = now;
 
-		//TODO: Echo this message to others.
+		//Send this message to others.
+		for (Participant participant : participants.values()) {
+			if (participant.directlyConnected) {
+				participant.peerNode.sendChatMessage(now.getTime(), globalIdentifier, message);
+			}
+		}
 	}
 
 	/**
@@ -300,32 +409,46 @@ public class N2NChatRoom {
 	}
 
 	/**
-	 * Used to keep track of particpants in a chatroom. Records whether they are directly connected, and if not
-	 * who invited them and thus routes their messages.
+	 * Used to keep track of participants in a chat room. Records whether they are directly connected, whether this
+	 * node routes for them, what DarknetPeerNode is used to contact them, and what color their name is.
 	 */
-	//TODO: Is there a cleaner way to keep track of these things?
-	private class Participant {
+	private class Participant implements Comparable<Participant> {
 
 		public final boolean directlyConnected;
 		public final boolean locallyInvited;
 		public final String name;
 		public final DarknetPeerNode peerNode;
+		public final Color nameColor;
 
 		/**
 		 * Constructor for a participant. Does nothing more than assign values.
+		 * @param identityHash Identity hash of the participant node. Used to calculate name color; not stored.
 		 * @param directlyConnected Whether this participant is directly connected to this node. If so,messages
 		 * will be sent to peerNode. If not, peerNode is authorized to route their messages and remove request.
 		 * @param locallyInvited Whether this node invited the participant. If so, this node will route their
-		 * messages, remove request,and invites to all other directly connected peers.
+		 * anything from them to all other directly connected peers.
 		 * @param name The name of this participant.
 		 * @param peerNode If directly connected, used to send messages. If not directly connected, only this
-		 * node can route things for this participant.
+		 * node is authorized to route things for this participant.
 		 */
-		public Participant(String name, DarknetPeerNode peerNode, boolean directlyConnected, boolean locallyInvited) {
+		public Participant(int identityHash, String name, DarknetPeerNode peerNode, boolean directlyConnected,
+			        boolean locallyInvited) {
 			this.name = name;
 			this.peerNode = peerNode;
 			this.directlyConnected = directlyConnected;
 			this.locallyInvited = locallyInvited;
+
+			//Bits 24-31 map to ~40%-85% luminosity to keep the colors distinguishable and visible on white.
+			//Bits 0-23 are used by Color for RGB.
+			HSLColor colorManipulator = new HSLColor(new Color(identityHash));
+			byte luminanceByte = (byte)(identityHash >>> 24);
+			float luminance = luminanceByte/127*22.5f+62.5f;
+			colorManipulator.adjustLuminance(luminance);
+			nameColor = colorManipulator.getRGB();
+		}
+
+		public int compareTo(Participant other) {
+			return name.compareTo(other.name);
 		}
 	}
 }
