@@ -509,10 +509,13 @@ public final class PageMaker {
 						subNavList.addAttribute("class", "subnavlist");
 						listItem = new HTMLNode("li", "class", "navlist-not-selected");
 					}
+					//Get keys for localization
 					String menuItemTitle = menu.defaultNavigationLinkTitle;
 					String text = menu.navigationLinkText;
-					listItem.addAttribute("id", text);
+					
 					if(menu.plugin == null) {
+						//ID is localization key for non-plugin
+						listItem.addAttribute("id", text);
 						menuItemTitle = NodeL10n.getBase().getString(menuItemTitle);
 						text = NodeL10n.getBase().getString(text);
 					} else {
@@ -523,10 +526,13 @@ public final class PageMaker {
 							menuItemTitle = newTitle;
 						}
 						String newText = menu.plugin.getString(text);
+						//For a plugin the ID is either the reported plugin name or "plugin.unknown".
 						if(newText == null) {
 							Logger.error(this, "Plugin '"+menu.plugin+"' returned null in getString(key)!");
+							listItem.addAttribute("id", "plugin.unknown");
 						} else {
 							text = newText;
+							listItem.addAttribute("id", text);
 						}
 					}
 
