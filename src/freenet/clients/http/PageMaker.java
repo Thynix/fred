@@ -88,6 +88,8 @@ public final class PageMaker {
 	
 	public static final int MODE_SIMPLE = 1;
 	public static final int MODE_ADVANCED = 2;
+	/**Non-breaking space*/
+	public static final String NB_SPACE = "\u00a0";
 	private THEME theme;
 	private String override;
 	private final Node node;
@@ -239,30 +241,38 @@ public final class PageMaker {
 	 * content to.
 	 * @param title Title of the page.
 	 * @param renderNavigationLinks Whether to render navigation links.
-	 * @param renderStatus Whether to render the status display.
+	 * @param renderStatusBar Whether to render the status display.
 	 * @param ctx ToadletContext to use to render the page.
 	 * @return A template PageNode.
 	 */
-	public PageNode getPageNode(String title, boolean renderNavigationLinks, boolean renderStatus, ToadletContext ctx) {
-		boolean fullAccess = ctx == null ? false : ctx.isAllowedFullAccess();
+	public PageNode getPageNode(String title, boolean renderNavigationLinks, boolean renderStatusBar, ToadletContext ctx) {
+		boolean fullAccess = ctx != null && ctx.isAllowedFullAccess();
 		HTMLNode pageNode = new HTMLNode.HTMLDoctype("html", "-//W3C//DTD XHTML 1.1//EN");
 		HTMLNode htmlNode = pageNode.addChild("html", "xml:lang", NodeL10n.getBase().getSelectedLanguage().isoCode);
 		HTMLNode headNode = htmlNode.addChild("head");
-		headNode.addChild("meta", new String[] { "http-equiv", "content" }, new String[] { "Content-Type", "text/html; charset=utf-8" });
+		headNode.addChild("meta",
+		        new String[] { "http-equiv", "content" },
+		        new String[] { "Content-Type", "text/html; charset=utf-8" });
 		headNode.addChild("title", title + " - Freenet");
 		//To make something only rendered when javascript is on, then add the jsonly class to it
 		headNode.addChild("noscript").addChild("style"," .jsonly {display:none;}");
-		if(override != null)
+
+		if(override != null) {
 			headNode.addChild(getOverrideContent());
-		else 
-			headNode.addChild("link", new String[] { "rel", "href", "type", "title" }, new String[] { "stylesheet", "/static/themes/" + theme.code + "/theme.css", "text/css", theme.code });
+		} else {
+			headNode.addChild("link",
+			        new String[] { "rel", "href", "type", "title" },
+			        new String[] { "stylesheet", "/static/themes/" + theme.code + "/theme.css", "text/css", theme.code });
+		}
 		
 		boolean sendAllThemes =  ctx != null && ctx.getContainer().sendAllThemes();
 		
 		if(sendAllThemes) {
 			for (THEME t: THEME.values()) {
 				String themeName = t.code;
-				headNode.addChild("link", new String[] { "rel", "href", "type", "media", "title" }, new String[] { "alternate stylesheet", "/static/themes/" + themeName + "/theme.css", "text/css", "screen", themeName });
+				headNode.addChild("link",
+				        new String[] { "rel", "href", "type", "media", "title" },
+				        new String[] { "alternate stylesheet", "/static/themes/" + themeName + "/theme.css", "text/css", "screen", themeName });
 			}
 		}
 		
@@ -270,243 +280,311 @@ public final class PageMaker {
 			ctx != null && ctx.getContainer().isFProxyJavascriptEnabled() && ctx.getContainer().isFProxyWebPushingEnabled();
 		
 		// Add the generated javascript, if it and pushing is enabled
-		if (webPushingEnabled) headNode.addChild("script", new String[] { "type", "language", "src" }, new String[] {
-				"text/javascript", "javascript", "/static/freenetjs/freenetjs.nocache.js" });
-		
+		if (webPushingEnabled) {
+			headNode.addChild("script",
+			        new String[] { "type", "language", "src" },
+			        new String[] { "text/javascript", "javascript", "/static/freenetjs/freenetjs.nocache.js" });
+		}
+
 		Toadlet t;
 		if (ctx != null) {
 			t = ctx.activeToadlet();
 			t = t.showAsToadlet();
-		} else
+		} else {
 			t = null;
+		}
+
 		String activePath = "";
-		if(t != null) activePath = t.path();
-		HTMLNode bodyNode = htmlNode.addChild("body", "id", "fproxy-page");
-		//Add a hidden input that has the request's id
-		if(webPushingEnabled)
-			bodyNode.addChild("input",new String[]{"type","name","value","id"},new String[]{"hidden","requestId",ctx.getUniqueId(),"requestId"});
+		if(t != null) {
+			activePath = t.path();
+		}
+		HTMLNode bodyNode = htmlNode.addChild("body",
+		        new String[] { "id", "class" },
+		        new String[] { "fproxy-page", activePath });
+
+		//Add a hidden input that has the request's id TODO: What is this for?
+		if(webPushingEnabled) {
+			bodyNode.addChild("input",
+			        new String[]{ "type","name","value","id" },
+			        new String[]{ "hidden", "requestId", ctx.getUniqueId(), "requestId" });
+		}
 		
 		// Add the client-side localization only when pushing is enabled
 		if (webPushingEnabled) {
-			bodyNode.addChild("script", new String[] { "type", "language" }, new String[] { "text/javascript", "javascript" }).addChild("%", PushingTagReplacerCallback.getClientSideLocalizationScript());
+			bodyNode.addChild("script",
+			        new String[] { "type", "language" },
+			        new String[] { "text/javascript", "javascript" }).
+			        addChild("%", PushingTagReplacerCallback.getClientSideLocalizationScript());
 		}
 		
 		HTMLNode pageDiv = bodyNode.addChild("div", "id", "page");
 		HTMLNode topBarDiv = pageDiv.addChild("div", "id", "topbar");
 
-		if (renderStatus) {
-			final HTMLNode statusBarDiv = pageDiv.addChild("div", "id", "statusbar-container").addChild("div", "id", "statusbar");
+		//Large centered title at the top of the page.
+		topBarDiv.addChild("h1", title);
 
-			 if (node != null && node.clientCore != null) {
-				 final HTMLNode alerts = node.clientCore.alerts.createSummary(true);
-				 if (alerts != null) {
-					 statusBarDiv.addChild(alerts).addAttribute("id", "statusbar-alerts");
-					 statusBarDiv.addChild("div", "class", "separator", "\u00a0");
-				 }
-			 }
-
-
-			statusBarDiv.addChild("div", "id", "statusbar-language").addChild("a", "href", "/config/node#l10n", NodeL10n.getBase().getSelectedLanguage().fullName);
-
-			if (node.clientCore != null && ctx != null) {
-				statusBarDiv.addChild("div", "class", "separator", "\u00a0");
-				final HTMLNode switchMode = statusBarDiv.addChild("div", "id", "statusbar-switchmode");
-				if (ctx.activeToadlet().container.isAdvancedModeEnabled()) {
-					switchMode.addAttribute("class", "simple");
-					switchMode.addChild("a", "href", "?mode=1", NodeL10n.getBase().getString("StatusBar.switchToSimpleMode"));
-				} else {
-					switchMode.addAttribute("class", "advanced");
-					switchMode.addChild("a", "href", "?mode=2", NodeL10n.getBase().getString("StatusBar.switchToAdvancedMode"));
-				}
-			}
-
-			if (node != null && node.clientCore != null) {
-				statusBarDiv.addChild("div", "class", "separator", "\u00a0");
-				final HTMLNode secLevels = statusBarDiv.addChild("div", "id", "statusbar-seclevels", NodeL10n.getBase().getString("SecurityLevels.statusBarPrefix"));
-
-				final HTMLNode network = secLevels.addChild("a", "href", "/seclevels/", SecurityLevels.localisedName(node.securityLevels.getNetworkThreatLevel()) + "\u00a0");
-				network.addAttribute("title", NodeL10n.getBase().getString("SecurityLevels.networkThreatLevelShort"));
-				network.addAttribute("class", node.securityLevels.getNetworkThreatLevel().toString().toLowerCase());
-
-				final HTMLNode physical = secLevels.addChild("a", "href", "/seclevels/", SecurityLevels.localisedName(node.securityLevels.getPhysicalThreatLevel()));
-				physical.addAttribute("title", NodeL10n.getBase().getString("SecurityLevels.physicalThreatLevelShort"));
-				physical.addAttribute("class", node.securityLevels.getPhysicalThreatLevel().toString().toLowerCase());
-
-				statusBarDiv.addChild("div", "class", "separator", "\u00a0");
-
-				final int connectedPeers = node.peers.countConnectedPeers();
-				int darknetTotal = 0;
-				for(DarknetPeerNode n : node.peers.getDarknetPeers()) {
-					if(n == null) continue;
-					if(n.isDisabled()) continue;
-					darknetTotal++;
-				}
-				final int connectedDarknetPeers = node.peers.countConnectedDarknetPeers();
-				final int totalPeers = (node.getOpennet() == null) ? (darknetTotal > 0 ? darknetTotal : Integer.MAX_VALUE) : node.getOpennet().getNumberOfConnectedPeersToAimIncludingDarknet();
-				final double connectedRatio = ((double)connectedPeers) / (double)totalPeers;
-				final String additionalClass;
-
-				// If we use Opennet, we color the bar by the ratio of connected nodes
-				if(connectedPeers > connectedDarknetPeers) {
-					if (connectedRatio < 0.3D || connectedPeers < 3) {
-						additionalClass = "very-few-peers";
-					} else if (connectedRatio < 0.5D) {
-						additionalClass = "few-peers";
-					} else if (connectedRatio < 0.75D) {
-						additionalClass = "avg-peers";
-					} else {
-						additionalClass = "full-peers";
-					}
-				} else {
-					// If we are darknet only, we color by absolute connected peers
-					if (connectedDarknetPeers < 3) {
-						additionalClass = "very-few-peers";
-					} else if (connectedDarknetPeers < 5) {
-						additionalClass = "few-peers";
-					} else if (connectedDarknetPeers < 10) {
-						additionalClass = "avg-peers";
-					} else {
-						additionalClass = "full-peers";
-					}
-				}
-
-				HTMLNode progressBar = statusBarDiv.addChild("div", "class", "progressbar");
-				progressBar.addChild("div", new String[] { "class", "style" }, new String[] { "progressbar-done progressbar-peers " + additionalClass, "width: " +
-						Math.min(100,Math.floor(100*connectedRatio)) + "%;" });
-
-				progressBar.addChild("div", new String[] { "class", "title" }, new String[] { "progress_fraction_finalized", NodeL10n.getBase().getString("StatusBar.connectedPeers", new String[]{"X", "Y"},
-						new String[]{Integer.toString(node.peers.countConnectedDarknetPeers()), Integer.toString(node.peers.countConnectedOpennetPeers())}) },
-						Integer.toString(connectedPeers) + ((totalPeers != Integer.MAX_VALUE) ? " / " + Integer.toString(totalPeers) : ""));
-			}
+		//Render the status bar if requested to do so.
+		if (renderStatusBar) {
+			renderStatusBar(pageDiv, ctx);
 		}
 
-		topBarDiv.addChild("h1", title);
+		//Render the navigation bar if requested to do so.
 		if (renderNavigationLinks) {
-			SubMenu selected = null;
-			// Render the full menu.
-			HTMLNode navbarDiv = pageDiv.addChild("div", "id", "navbar");
-			HTMLNode navbarUl = navbarDiv.addChild("ul", "id", "navlist");
-			synchronized (this) {
-				for (SubMenu menu : menuList) {
-					HTMLNode subnavlist = new HTMLNode("ul");
-					boolean isSelected = false;
-					boolean nonEmpty = false;
-					for (String navigationLink :  fullAccess ? menu.navigationLinkTexts : menu.navigationLinkTextsNonFull) {
-						LinkEnabledCallback cb = menu.navigationLinkCallbacks.get(navigationLink);
-						if(cb != null && !cb.isEnabled(ctx)) continue;
-						nonEmpty = true;
-						String navigationTitle = menu.navigationLinkTitles.get(navigationLink);
-						String navigationPath = menu.navigationLinks.get(navigationLink);
-						HTMLNode sublistItem;
-						if(activePath.equals(navigationPath)) {
-							sublistItem = subnavlist.addChild("li", "class", "submenuitem-selected");
-							isSelected = true;
-						} else {
-							sublistItem = subnavlist.addChild("li", "class", "submenuitem-not-selected");;
-						}
-						
-						FredPluginL10n l10n = menu.navigationLinkL10n.get(navigationLink);
-						if(l10n == null) l10n = menu.plugin;
-						if(l10n != null) {
-							if(navigationTitle != null) {
-								String newNavigationTitle = l10n.getString(navigationTitle);
-								if(newNavigationTitle == null) {
-									Logger.error(this, "Plugin '"+l10n+"' did return null in getString(key)!");
-								} else {
-									navigationTitle = newNavigationTitle;
-								}
-							}
-							if(navigationLink != null) {
-								String newNavigationLink = l10n.getString(navigationLink);
-								if(newNavigationLink == null) {
-									Logger.error(this, "Plugin '"+l10n+"' did return null in getString(key)!");
-								} else {
-									navigationLink = newNavigationLink;
-								}
-							}
-						} else {
-							if(navigationTitle != null) navigationTitle = NodeL10n.getBase().getString(navigationTitle);
-							if(navigationLink != null) navigationLink = NodeL10n.getBase().getString(navigationLink);
-						}
-						if(navigationTitle != null)
-							sublistItem.addChild("a", new String[] { "href", "title" }, new String[] { navigationPath, navigationTitle }, navigationLink);
-						else
-							sublistItem.addChild("a", "href", navigationPath, navigationLink);
-					}
-					if(nonEmpty) {
-						HTMLNode listItem;
-						if(isSelected) {
-							selected = menu;
-							subnavlist.addAttribute("class", "subnavlist-selected");
-							listItem = new HTMLNode("li", "id", "navlist-selected");
-						} else {
-							subnavlist.addAttribute("class", "subnavlist");
-							listItem = new HTMLNode("li", "class", "navlist-not-selected");
-						}
-						String menuItemTitle = menu.defaultNavigationLinkTitle;
-						String text = menu.navigationLinkText;
-						if(menu.plugin == null) {
-							menuItemTitle = NodeL10n.getBase().getString(menuItemTitle);
-							text = NodeL10n.getBase().getString(text);
-						} else {
-							String newTitle = menu.plugin.getString(menuItemTitle);
-							if(newTitle == null) {
-								Logger.error(this, "Plugin '"+menu.plugin+"' did return null in getString(key)!");
-							} else {
-								menuItemTitle = newTitle;
-							}
-							String newText = menu.plugin.getString(text);
-							if(newText == null) {
-								Logger.error(this, "Plugin '"+menu.plugin+"' did return null in getString(key)!");
-							} else {
-								text = newText;
-							}
-						}
-						
-						listItem.addChild("a", new String[] { "href", "title" }, new String[] { menu.defaultNavigationLink, menuItemTitle }, text);
-						listItem.addChild(subnavlist);
-						navbarUl.addChild(listItem);
-					}
-				}
-			}
-			// Some themes want the selected submenu separately.
-			if(selected != null) {
-				HTMLNode div = new HTMLNode("div", "id", "selected-subnavbar");
-				HTMLNode subnavlist = div.addChild("ul", "id", "selected-subnavbar-list");
-				boolean nonEmpty = false;
-				for (String navigationLink :  fullAccess ? selected.navigationLinkTexts : selected.navigationLinkTextsNonFull) {
-					LinkEnabledCallback cb = selected.navigationLinkCallbacks.get(navigationLink);
-					if(cb != null && !cb.isEnabled(ctx)) continue;
-					nonEmpty = true;
-					String navigationTitle = selected.navigationLinkTitles.get(navigationLink);
-					String navigationPath = selected.navigationLinks.get(navigationLink);
-					HTMLNode sublistItem;
-					if(activePath.equals(navigationPath)) {
-						sublistItem = subnavlist.addChild("li", "class", "submenuitem-selected");
-					} else {
-						sublistItem = subnavlist.addChild("li");
-					}
-					
-					FredPluginL10n l10n = selected.navigationLinkL10n.get(navigationLink);
-					if (l10n == null) l10n = selected.plugin;
-					if(l10n != null) {
-						if(navigationTitle != null) navigationTitle = l10n.getString(navigationTitle);
-						if(navigationLink != null) navigationLink = l10n.getString(navigationLink);
-					} else {
-						if(navigationTitle != null) navigationTitle = NodeL10n.getBase().getString(navigationTitle);
-						if(navigationLink != null) navigationLink = NodeL10n.getBase().getString(navigationLink);
-					}
-					if(navigationTitle != null)
-						sublistItem.addChild("a", new String[] { "href", "title" }, new String[] { navigationPath, navigationTitle }, navigationLink);
-					else
-						sublistItem.addChild("a", "href", navigationPath, navigationLink);
-				}
-				if(nonEmpty)
-					pageDiv.addChild(div);
-			}
+			renderNavigationLinks(pageDiv, fullAccess, activePath, ctx);
 		}
 		HTMLNode contentDiv = pageDiv.addChild("div", "id", "content");
 		return new PageNode(pageNode, headNode, contentDiv);
+	}
+
+	private void renderStatusBar(HTMLNode pageDiv, ToadletContext ctx) {
+		final HTMLNode statusBarDiv = pageDiv.addChild("div", "id", "statusbar-container").addChild("div", "id", "statusbar");
+
+		//Display a notification for messages, alerts, or warnings if any exist.
+		if (node != null && node.clientCore != null) {
+			final HTMLNode alerts = node.clientCore.alerts.createSummary(true);
+			if (alerts != null) {
+				statusBarDiv.addChild(alerts).addAttribute("id", "statusbar-alerts");
+				statusBarDiv.addChild("div", "class", "separator", NB_SPACE);
+			}
+		}
+
+		//Display current language
+		statusBarDiv.addChild("div", "id", "statusbar-language").
+		        addChild("a", "href", "/config/node#l10n", NodeL10n.getBase().getSelectedLanguage().fullName);
+
+		//Link for switching between simple and advanced mode.
+		if (node != null && node.clientCore != null && ctx != null) {
+			statusBarDiv.addChild("div", "class", "separator", NB_SPACE);
+			final HTMLNode switchMode = statusBarDiv.addChild("div", "id", "statusbar-switchmode");
+			if (ctx.activeToadlet().container.isAdvancedModeEnabled()) {
+				switchMode.addAttribute("class", "simple");
+				switchMode.addChild("a", "href", "?mode=1",
+					NodeL10n.getBase().getString("StatusBar.switchToSimpleMode"));
+			} else {
+				switchMode.addAttribute("class", "advanced");
+				switchMode.addChild("a", "href", "?mode=2",
+					NodeL10n.getBase().getString("StatusBar.switchToAdvancedMode"));
+			}
+		}
+
+		if (node != null && node.clientCore != null) {
+			statusBarDiv.addChild("div", "class", "separator", NB_SPACE);
+			final HTMLNode secLevels = statusBarDiv.addChild("div", "id", "statusbar-seclevels",
+				NodeL10n.getBase().getString("SecurityLevels.statusBarPrefix"));
+
+			final HTMLNode network = secLevels.addChild("a", "href", "/seclevels/",
+				SecurityLevels.localisedName(node.securityLevels.getNetworkThreatLevel()) + NB_SPACE);
+			network.addAttribute("title", NodeL10n.getBase().getString("SecurityLevels.networkThreatLevelShort"));
+			network.addAttribute("class", node.securityLevels.getNetworkThreatLevel().toString().toLowerCase());
+
+			final HTMLNode physical = secLevels.addChild("a", "href", "/seclevels/",
+				SecurityLevels.localisedName(node.securityLevels.getPhysicalThreatLevel()));
+			physical.addAttribute("title", NodeL10n.getBase().getString("SecurityLevels.physicalThreatLevelShort"));
+			physical.addAttribute("class", node.securityLevels.getPhysicalThreatLevel().toString().toLowerCase());
+
+			statusBarDiv.addChild("div", "class", "separator", NB_SPACE);
+
+			final int connectedPeers = node.peers.countConnectedPeers();
+			int darknetTotal = 0;
+			for(DarknetPeerNode n : node.peers.getDarknetPeers()) {
+				if(n == null) continue;
+				if(n.isDisabled()) continue;
+				darknetTotal++;
+			}
+			final int connectedDarknetPeers = node.peers.countConnectedDarknetPeers();
+			final int totalPeers = (node.getOpennet() == null) ? (darknetTotal > 0 ? darknetTotal : Integer.MAX_VALUE) : node.getOpennet().getNumberOfConnectedPeersToAimIncludingDarknet();
+			final double connectedRatio = ((double)connectedPeers) / (double)totalPeers;
+			final String additionalClass;
+
+			// If we use Opennet, we color the bar by the ratio of connected nodes
+			if(connectedPeers > connectedDarknetPeers) {
+				if (connectedRatio < 0.3D || connectedPeers < 3) {
+					additionalClass = "very-few-peers";
+				} else if (connectedRatio < 0.5D) {
+					additionalClass = "few-peers";
+				} else if (connectedRatio < 0.75D) {
+					additionalClass = "avg-peers";
+				} else {
+					additionalClass = "full-peers";
+				}
+			} else {
+				// If we are darknet only, we color by absolute connected peers
+				if (connectedDarknetPeers < 3) {
+					additionalClass = "very-few-peers";
+				} else if (connectedDarknetPeers < 5) {
+					additionalClass = "few-peers";
+				} else if (connectedDarknetPeers < 10) {
+					additionalClass = "avg-peers";
+				} else {
+					additionalClass = "full-peers";
+				}
+			}
+
+			HTMLNode progressBar = statusBarDiv.addChild("div", "class", "progressbar");
+			progressBar.addChild("div",
+			        new String[] { "class", "style" },
+			        new String[] { "progressbar-done progressbar-peers " + additionalClass,
+			                "width: " + Math.min( 100, Math.floor( 100*connectedRatio)) + "%;" });
+
+			progressBar.addChild("div",
+			        new String[] { "class", "title" },
+			        new String[] { "progress_fraction_finalized",
+			                NodeL10n.getBase().getString("StatusBar.connectedPeers",
+			                        new String[] { "X", "Y" },
+			                        new String[] { Integer.toString(node.peers.countConnectedDarknetPeers()),
+			                                Integer.toString(node.peers.countConnectedOpennetPeers())}) },
+			                Integer.toString(connectedPeers) + ((totalPeers != Integer.MAX_VALUE) ? " / " + Integer.toString(totalPeers) : ""));
+		}
+	}
+
+	private void renderNavigationLinks(HTMLNode pageDiv, boolean fullAccess, String activePath, ToadletContext ctx) {
+		SubMenu selected = null;
+		HTMLNode navbarDiv = pageDiv.addChild("div", "id", "navbar");
+		HTMLNode navbarUl = navbarDiv.addChild("ul", "id", "navlist");
+		synchronized (this) {
+			for (SubMenu menu : menuList) {
+				HTMLNode subNavList = new HTMLNode("ul");
+				boolean isSelected = false;
+				boolean nonEmpty = false;
+				for (String navigationLink :  fullAccess ? menu.navigationLinkTexts : menu.navigationLinkTextsNonFull) {
+					LinkEnabledCallback cb = menu.navigationLinkCallbacks.get(navigationLink);
+					if(cb != null && !cb.isEnabled(ctx)) continue;
+					nonEmpty = true;
+					String navigationTitle = menu.navigationLinkTitles.get(navigationLink);
+					String navigationPath = menu.navigationLinks.get(navigationLink);
+					HTMLNode sublistItem;
+
+					//If currently at the path the menu item points to, mark it as selected.
+					if(activePath.equals(navigationPath)) {
+						sublistItem = subNavList.addChild("li", "class", "submenuitem-selected");
+						isSelected = true;
+					} else {
+						sublistItem = subNavList.addChild("li", "class", "submenuitem-not-selected");
+					}
+
+					FredPluginL10n l10n = menu.navigationLinkL10n.get(navigationLink);
+					if(l10n == null) {
+						l10n = menu.plugin;
+					}
+					if(l10n != null) {
+						if(navigationTitle != null) {
+							String newNavigationTitle = l10n.getString(navigationTitle);
+							if(newNavigationTitle == null) {
+								Logger.error(this, "Plugin '"+l10n+"' returned null for getString(key)!");
+							} else {
+								navigationTitle = newNavigationTitle;
+							}
+						}
+						if(navigationLink != null) {
+							String newNavigationLink = l10n.getString(navigationLink);
+							if(newNavigationLink == null) {
+								Logger.error(this, "Plugin '"+l10n+"' returned null in getString(key)!");
+							} else {
+								navigationLink = newNavigationLink;
+							}
+						}
+					} else {
+						if(navigationTitle != null) {
+							navigationTitle = NodeL10n.getBase().getString(navigationTitle);
+						}
+						if(navigationLink != null) {
+							navigationLink = NodeL10n.getBase().getString(navigationLink);
+						}
+					}
+					if(navigationTitle != null) {
+						sublistItem.addChild("a",
+						        new String[] { "href", "title" },
+						        new String[] { navigationPath, navigationTitle }, navigationLink);
+					} else {
+						sublistItem.addChild("a", "href", navigationPath, navigationLink);
+					}
+				}
+				if(nonEmpty) {
+					HTMLNode listItem;
+					if(isSelected) {
+						selected = menu;
+						subNavList.addAttribute("class", "subnavlist-selected");
+						listItem = new HTMLNode("li", "class", "navlist-selected");
+					} else {
+						subNavList.addAttribute("class", "subnavlist");
+						listItem = new HTMLNode("li", "class", "navlist-not-selected");
+					}
+					String menuItemTitle = menu.defaultNavigationLinkTitle;
+					String text = menu.navigationLinkText;
+					listItem.addAttribute("id", text);
+					if(menu.plugin == null) {
+						menuItemTitle = NodeL10n.getBase().getString(menuItemTitle);
+						text = NodeL10n.getBase().getString(text);
+					} else {
+						String newTitle = menu.plugin.getString(menuItemTitle);
+						if(newTitle == null) {
+							Logger.error(this, "Plugin '"+menu.plugin+"' returned null in getString(key)!");
+						} else {
+							menuItemTitle = newTitle;
+						}
+						String newText = menu.plugin.getString(text);
+						if(newText == null) {
+							Logger.error(this, "Plugin '"+menu.plugin+"' returned null in getString(key)!");
+						} else {
+							text = newText;
+						}
+					}
+
+					listItem.addChild("a",
+					        new String[] { "href", "title" },
+					        new String[] { menu.defaultNavigationLink, menuItemTitle }, text);
+					listItem.addChild(subNavList);
+					navbarUl.addChild(listItem);
+				}
+			}
+		}
+		// Some themes want the selected submenu separately.
+		if(selected != null) {
+			HTMLNode div = new HTMLNode("div", "id", "selected-subnavbar");
+			HTMLNode subnavlist = div.addChild("ul", "id", "selected-subnavbar-list");
+			boolean nonEmpty = false;
+			for (String navigationLink :  fullAccess ? selected.navigationLinkTexts : selected.navigationLinkTextsNonFull) {
+				LinkEnabledCallback cb = selected.navigationLinkCallbacks.get(navigationLink);
+				if(cb != null && !cb.isEnabled(ctx)) continue;
+				nonEmpty = true;
+				String navigationTitle = selected.navigationLinkTitles.get(navigationLink);
+				String navigationPath = selected.navigationLinks.get(navigationLink);
+				HTMLNode sublistItem;
+				if(activePath.equals(navigationPath)) {
+					sublistItem = subnavlist.addChild("li", "class", "submenuitem-selected");
+				} else {
+					sublistItem = subnavlist.addChild("li");
+				}
+
+				FredPluginL10n l10n = selected.navigationLinkL10n.get(navigationLink);
+				if (l10n == null) l10n = selected.plugin;
+				if(l10n != null) {
+					if(navigationTitle != null) {
+						navigationTitle = l10n.getString(navigationTitle);
+					}
+					if(navigationLink != null) {
+						navigationLink = l10n.getString(navigationLink);
+					}
+				} else {
+					if(navigationTitle != null) {
+						navigationTitle = NodeL10n.getBase().getString(navigationTitle);
+					}
+					if(navigationLink != null) {
+						navigationLink = NodeL10n.getBase().getString(navigationLink);
+					}
+				}
+				if(navigationTitle != null) {
+					sublistItem.addChild("a",
+					        new String[] { "href", "title" },
+					        new String[] { navigationPath, navigationTitle }, navigationLink);
+				} else {
+					sublistItem.addChild("a", "href", navigationPath, navigationLink);
+				}
+			}
+			if(nonEmpty) {
+				pageDiv.addChild(div);
+			}
+		}
 	}
 
 	public THEME getTheme() {
