@@ -200,7 +200,7 @@ public class SaltedHashFreenetStore<T extends StorableBlock> implements FreenetS
 		slotFilterDisabled = !enableSlotFilters;
 		if(!slotFilterDisabled) {
 			slotFilter = new ResizablePersistentIntBuffer(slotFilterFile, size, SLOT_FILTER_INTERVAL);
-			System.err.println("Slot filter (" + slotFilterFile + ") for " + name + " is loaded (new="+slotFilter.isNew()+".");
+			System.err.println("Slot filter (" + slotFilterFile + ") for " + name + " is loaded (new="+slotFilter.isNew()+").");
 		} else
 			slotFilter = null;
 
@@ -889,7 +889,7 @@ public class SaltedHashFreenetStore<T extends StorableBlock> implements FreenetS
 			}
 			if (!Arrays.equals(digestedRoutingKey, slotDigestedRoutingKey)) {
 				if(validCache && likelyMatch) {
-					Logger.error(this, "False positive from slot cache on slot "+offset+" cache was "+cache);
+					Logger.normal(this, "False positive from slot cache on slot "+offset+" cache was "+cache);
 					bloomFalsePos.incrementAndGet();
 				} else if(logMINOR && validCache && !likelyMatch)
 					Logger.minor(this, "True negative!");
