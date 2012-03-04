@@ -874,6 +874,12 @@ public class SimpleFieldSet {
 			putAppend(key, String.valueOf(v));
 	}
 
+	public void put(String key, long[] value) {
+		removeValue(key);
+		for(long v : value)
+			putAppend(key, String.valueOf(v));
+	}
+
 	public int[] getIntArray(String key) {
 		String[] strings = getAll(key);
 		if(strings == null) return null;

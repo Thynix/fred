@@ -15,6 +15,7 @@ import freenet.support.io.PersistentTempBucketFactory;
 
 public abstract class FCPMessage {
         private static volatile boolean logDEBUG;
+	public static final String IDENTIFIER = "Identifier";
 	static {
 		Logger.registerLogThresholdCallback(new LogThresholdCallback(){
 			@Override
@@ -123,6 +124,8 @@ public abstract class FCPMessage {
 			return new TestDDAResponseMessage(fs);
 		if(name.equals(WatchGlobal.NAME))
 			return new WatchGlobal(fs);
+		if(name.equals(ProbeMessage.NAME))
+			return new ProbeMessage(fs);
 		if(name.equals("Void"))
 			return null;
 
