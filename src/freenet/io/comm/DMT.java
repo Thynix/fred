@@ -92,6 +92,7 @@ public class DMT {
 	public static final String NODE_TO_NODE_MESSAGE_TYPE = "nodeToNodeMessageType";
 	public static final String NODE_TO_NODE_MESSAGE_TEXT = "nodeToNodeMessageText";
 	public static final String NODE_TO_NODE_MESSAGE_DATA = "nodeToNodeMessageData";
+	public static final String NODE_UID = "nodeUID";
 	public static final String NODE_UIDS = "nodeUIDs";
 	public static final String MY_UID = "myUID";
 	public static final String PEER_LOCATIONS = "peerLocations";

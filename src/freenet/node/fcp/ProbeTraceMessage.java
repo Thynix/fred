@@ -47,7 +47,7 @@ public class ProbeTraceMessage extends FCPMessage {
 		fs.put(DMT.LOCATION, location);
 
 		//UID of the node described by the trace.
-		fs.put(DMT.UID, nodeUID);
+		fs.put(DMT.NODE_UID, nodeUID);
 
 		//Reported locations of the peers of the node described by the trace.
 		fs.put(DMT.PEER_LOCATIONS, peerLocs);
