@@ -20,8 +20,6 @@ public class ProbeMessage extends FCPMessage {
 	public ProbeMessage(SimpleFieldSet fs) throws MessageInvalidException {
 		this.fs = fs;
 		identifier = fs.get(FCPMessage.IDENTIFIER);
-		//TODO: Why remove this? Following example set by ListPeerMessage.
-		fs.removeValue(FCPMessage.IDENTIFIER);
 	}
 
 	@Override
