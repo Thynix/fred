@@ -135,6 +135,9 @@ public class DMT {
 	public static final String IGNORE_LOW_BACKOFF = "ignoreLowBackoff";
 	public static final String LIST_OF_UIDS = "listOfUIDs";
 	public static final String UID_STILL_RUNNING_FLAGS = "UIDStillRunningFlags";
+	public static final String IDENTIFIER = "identifier";
+	public static final String UPTIME_SESSION = "uptimeSession";
+	public static final String STORE_SIZE = "storeSize";
 	
 	/** Very urgent */
 	public static final short PRIORITY_NOW=0;
@@ -1045,7 +1048,63 @@ public class DMT {
 		msg.set(LINEAR_COUNTER, linearCounter);
 		return msg;
 	}
-	
+
+	public static final MessageType MHProbeRequest = new MessageType("MHProbeRequest", PRIORITY_HIGH) {{
+		addField(HTL, Short.class);
+		addField(IDENTIFIER, Long.class);
+		//TODO: Also should be key type addField(FREENET_URI, String.class);
+	}};
+
+	/**
+	 * Constructs an MH Probe Request message.
+	 * @param htl HTL field value: hops until result is returned.
+	 * @param uid probe identifier: should be unique.
+	 * @return message with requested attributes
+	 */
+	public static Message createMHProbeRequest(short htl, long uid) {
+		Message msg = new Message(MHProbeRequest);
+		msg.set(HTL, htl);
+		msg.set(UID, uid);
+		return msg;
+	}
+
+	public static final MessageType MHProbeResult = new MessageType("MHProbeResult", PRIORITY_HIGH) {{
+		addField(IDENTIFIER, Long.class);
+		addField(UPTIME_PERCENT_48H, Double.class);
+		addField(UPTIME_SESSION, Long.class);
+		addField(OUTPUT_BANDWIDTH_UPPER_LIMIT, Integer.class);
+		addField(STORE_SIZE, Integer.class);
+		//addField(HTL);
+		//TODO: HTL success rates
+		//TODO: key results
+	}};
+
+	/**
+	 * Constructs requested response.
+	 * Null arguments are ignored and not added to the message.
+	 * @param uid  probe identifier; should match that of request. Mandatory.
+	 * @param identifier probe-specific identifier of endpoint. Optional.
+	 * @param uptimePercentage in the last 48 hours Optional.
+	 * @param uptimeSession session uptime in hours. Optional.
+	 * @param outputBandwidth output bandwidth limit in KiB/s. Optional.
+	 * @param storeSize datastore size in GiB. Optional.
+	 * TODO: link lengths
+	 * TODO: Key results
+	 * @return message with requested attributes
+	 */
+	public static Message createMHProbeResult(long uid, Long identifier, Double uptimePercentage, Long uptimeSession,
+	                                          Integer outputBandwidth, Integer storeSize) {
+		Message msg = new Message(MHProbeResult);
+		msg.set(UID, uid);
+		if (identifier != null) msg.set(IDENTIFIER, identifier);
+		if (uptimePercentage != null) msg.set(UPTIME_PERCENT_48H, uptimePercentage);
+		if (uptimeSession != null) msg.set(UPTIME_SESSION, uptimeSession);
+		//TODO: Is upper limit appropriate to use here?
+		if (outputBandwidth != null) msg.set(OUTPUT_BANDWIDTH_UPPER_LIMIT, outputBandwidth);
+		if (storeSize != null) msg.set(STORE_SIZE, storeSize);
+		return msg;
+	}
+
 	public static final MessageType FNPRHProbeRequest = new MessageType("FNPRHProbeRequest", PRIORITY_HIGH) {{
 		addField(UID, Long.class);
 		addField(TARGET_LOCATION, Double.class);
