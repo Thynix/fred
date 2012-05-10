@@ -1086,8 +1086,8 @@ public class DMT {
 	 * Null arguments are ignored and not added to the message.
 	 * @param uid  probe identifier; should match that of request. Mandatory.
 	 * @param identifier probe-specific identifier of endpoint. Optional.
-	 * @param uptimePercentage in the last 48 hours Optional.
-	 * @param uptimeSession session uptime in hours. Optional.
+	 * @param uptimePercentage in the last 48 hours Optional, but mandatory if uptimeSession is specified.
+	 * @param uptimeSession session uptime in hours. Optional, but mandatory if uptimePercentage is specified.
 	 * @param outputBandwidth output bandwidth limit in KiB/s. Optional.
 	 * @param storeSize datastore size in GiB. Optional.
 	 * @param linkLengths
@@ -1096,6 +1096,8 @@ public class DMT {
 	 */
 	public static Message createMHProbeResult(long uid, Long identifier, Double uptimePercentage, Long uptimeSession,
 	                                          Integer outputBandwidth, Integer storeSize, Double[] linkLengths) {
+		//Either neither are specified, or both are.
+		assert((!(uptimePercentage != null || uptimeSession != null)) || (uptimeSession != null && uptimePercentage != null));
 		Message msg = new Message(MHProbeResult);
 		msg.set(UID, uid);
 		if (identifier != null) msg.set(IDENTIFIER, identifier);
