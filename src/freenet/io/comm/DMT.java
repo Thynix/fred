@@ -138,6 +138,7 @@ public class DMT {
 	public static final String IDENTIFIER = "identifier";
 	public static final String UPTIME_SESSION = "uptimeSession";
 	public static final String STORE_SIZE = "storeSize";
+	public static final String LINK_LENGTHS = "linkLengths";
 	
 	/** Very urgent */
 	public static final short PRIORITY_NOW=0;
@@ -1077,6 +1078,7 @@ public class DMT {
 		//addField(HTL);
 		//TODO: HTL success rates
 		//TODO: key results
+		addField(LINK_LENGTHS, Double[].class);
 	}};
 
 	/**
@@ -1088,12 +1090,12 @@ public class DMT {
 	 * @param uptimeSession session uptime in hours. Optional.
 	 * @param outputBandwidth output bandwidth limit in KiB/s. Optional.
 	 * @param storeSize datastore size in GiB. Optional.
-	 * TODO: link lengths
+	 * @param linkLengths
 	 * TODO: Key results
 	 * @return message with requested attributes
 	 */
 	public static Message createMHProbeResult(long uid, Long identifier, Double uptimePercentage, Long uptimeSession,
-	                                          Integer outputBandwidth, Integer storeSize) {
+	                                          Integer outputBandwidth, Integer storeSize, Double[] linkLengths) {
 		Message msg = new Message(MHProbeResult);
 		msg.set(UID, uid);
 		if (identifier != null) msg.set(IDENTIFIER, identifier);
@@ -1102,6 +1104,7 @@ public class DMT {
 		//TODO: Is upper limit appropriate to use here?
 		if (outputBandwidth != null) msg.set(OUTPUT_BANDWIDTH_UPPER_LIMIT, outputBandwidth);
 		if (storeSize != null) msg.set(STORE_SIZE, storeSize);
+		if (linkLengths != null) msg.set(LINK_LENGTHS, linkLengths);
 		return msg;
 	}
 
