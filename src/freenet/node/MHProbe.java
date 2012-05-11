@@ -109,7 +109,7 @@ public class MHProbe implements ByteCounter {
 	 */
 	@Override
 	public void sentBytes(int bytes) {
-		nodeStats.probeRequestCtr.sentBytes(bytes);
+		node.nodeStats.probeRequestCtr.sentBytes(bytes);
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class MHProbe implements ByteCounter {
 	 */
 	@Override
 	public void receivedBytes(int bytes) {
-		nodeStats.probeRequestCtr.receivedBytes(bytes);
+		node.nodeStats.probeRequestCtr.receivedBytes(bytes);
 	}
 
 	/**
@@ -138,28 +138,10 @@ public class MHProbe implements ByteCounter {
 	public static final int MAX_ACCEPTED = 5;
 	public static volatile int accepted = 0;
 
-	private final PeerManager peerManager;
-	private final RandomSource random;
-	//TODO: Not needed until more types of probe requests are implemented.
-	private final UptimeEstimator estimator;
-	private final long startTime;
-	private final SubConfig nodeConfig;
-	private final MessageCore messageCore;
-	private final NodeStats nodeStats;
-	private final long swapIdentifier;
+	private final Node node;
 
-	//TODO: This seems to be suffering from too-many-arguments disease. Is it reasonable to pass in the entire node?
-	//TODO: Or just give up and implement this in NodeDispatcher?
-	public MHProbe(PeerManager peerManager, RandomSource random, UptimeEstimator estimator, long startTime,
-	               SubConfig nodeConfig, MessageCore messageCore, NodeStats nodeStats, long swapIdentifier) {
-		this.peerManager = peerManager;
-		this.random = random;
-		this.estimator = estimator;
-		this.startTime = startTime;
-		this.nodeConfig = nodeConfig;
-		this.messageCore = messageCore;
-		this.nodeStats = nodeStats;
-		this.swapIdentifier = swapIdentifier;
+	public MHProbe(Node node) {
+		this.node = node;
 	}
 
 	/**
@@ -251,7 +233,7 @@ public class MHProbe implements ByteCounter {
 					return;
 				}
 				try {
-					candidate = peerManager.myPeers[random.nextInt(degree)];
+					candidate = node.peers.myPeers[node.random.nextInt(degree)];
 				} catch (IndexOutOfBoundsException e) {
 					if (logDEBUG) Logger.debug(MHProbe.class, "Peer count changed during candidate search.", e);
 					degree = degree();
@@ -261,13 +243,13 @@ public class MHProbe implements ByteCounter {
 				//acceptProbability is the MH correction.
 				double acceptProbability = (double)degree / candidate.getDegree();
 				if (logDEBUG) Logger.debug(MHProbe.class, "acceptProbability is "+acceptProbability);
-				if (random.nextDouble() < acceptProbability) {
+				if (node.random.nextDouble() < acceptProbability) {
 					if (candidate.isConnected()) {
 						MessageFilter result = MessageFilter.create().setSource(candidate).setType(DMT.MHProbeResult).setField(DMT.UID, message.getLong(DMT.UID)).setTimeout(htl * TIMEOUT_PER_HTL);
 						message.set(DMT.HTL, htl);
 						try {
 							candidate.sendAsync(message, null, null);
-							messageCore.addAsyncFilter(result, callback, this);
+							node.usm.addAsyncFilter(result, callback, this);
 						} catch (NotConnectedException e) {
 							if (logDEBUG) Logger.debug(MHProbe.class, "Peer became disconnected between check and send attempt.", e);
 							continue;
@@ -303,7 +285,7 @@ public class MHProbe implements ByteCounter {
 			//TODO: Would it be better to have more methods which accept only valid result sets?
 			//TODO: Are types enough to differentiate such sets?
 			case IDENTIFIER:
-				result = DMT.createMHProbeResult(identifier, swapIdentifier, null, null, null, null, null);
+				result = DMT.createMHProbeResult(identifier, node.swapIdentifier, null, null, null, null, null);
 				break;
 				/*result = DMT.createMHProbeResult(message.getLong(DMT.UID), swapIdentifier,
 				    estimator.getUptime(), System.currentTimeMillis() - startTime,
@@ -311,9 +293,9 @@ public class MHProbe implements ByteCounter {
 			case LINK_LENGTHS:
 				Double[] linkLengths = new Double[degree()];
 				int i = 0;
-				for (PeerNode peer : peerManager.connectedPeers) {
-					linkLengths[i++] = Math.min(Math.abs(peer.getLocation() - peerManager.node.getLocation()),
-						1.0 - Math.abs(peer.getLocation() - peerManager.node.getLocation()));
+				for (PeerNode peer : node.peers.connectedPeers) {
+					linkLengths[i++] = Math.min(Math.abs(peer.getLocation() - node.peers.node.getLocation()),
+						1.0 - Math.abs(peer.getLocation() - node.peers.node.getLocation()));
 					//TODO: random noise or limit mantissa
 				}
 				result = DMT.createMHProbeResult(identifier, null, null, null, null, null, linkLengths);
@@ -338,8 +320,8 @@ public class MHProbe implements ByteCounter {
 	private short probabilisticDecrement(short htl) {
 		//TODO: A mathematical function - say one that's 0.2 at 1 and goes up to 0.9 at MAX_HTL could be more
 		//flexible and give smoother behavior, but would also be more complicated?
-		if (htl == 1 && random.nextDouble() < 0.2) return 0;
-		else if (random.nextDouble() < 0.9) return (short)(htl - 1);
+		if (htl == 1 && node.random.nextDouble() < 0.2) return 0;
+		else if (node.random.nextDouble() < 0.9) return (short)(htl - 1);
 		return htl;
 	}
 
@@ -347,7 +329,7 @@ public class MHProbe implements ByteCounter {
 	 * @return number of peers the local node is connected to.
 	 */
 	private int degree() {
-		return peerManager.connectedPeers.length;
+		return node.peers.connectedPeers.length;
 	}
 
 	/**

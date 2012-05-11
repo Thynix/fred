@@ -71,7 +71,7 @@ public class NodeDispatcher implements Dispatcher, Runnable {
 		this.node = node;
 		this.nodeStats = node.nodeStats;
 		node.getTicker().queueTimedJob(this, STALE_CONTEXT_CHECK);
-		this.mhProbe = new MHProbe(node.peers, node.random, node.uptime, node.startupTime, node.config.get("node"), node.getUSM(), nodeStats, node.swapIdentifier);
+		this.mhProbe = new MHProbe(node);
 	}
 
 	ByteCounter pingCounter = new ByteCounter() {
