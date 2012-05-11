@@ -1054,7 +1054,7 @@ public class DMT {
 	public static final MessageType MHProbeRequest = new MessageType("MHProbeRequest", PRIORITY_HIGH) {{
 		addField(HTL, Short.class);
 		addField(UID, Long.class);
-		addField(TYPE, MHProbe.ProbeType.class);
+		addField(TYPE, String.class);
 		//TODO: Also should be key type addField(FREENET_URI, String.class);
 	}};
 
@@ -1068,11 +1068,12 @@ public class DMT {
 		Message msg = new Message(MHProbeRequest);
 		msg.set(HTL, htl);
 		msg.set(UID, uid);
-		msg.set(TYPE, type);
+		msg.set(TYPE, type.name());
 		return msg;
 	}
 
 	public static final MessageType MHProbeResult = new MessageType("MHProbeResult", PRIORITY_HIGH) {{
+		addField(UID, Long.class);
 		addField(IDENTIFIER, Long.class);
 		addField(UPTIME_PERCENT_48H, Double.class);
 		addField(UPTIME_SESSION, Long.class);
