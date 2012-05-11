@@ -89,7 +89,7 @@ public class ProbeRequestMessage extends FCPMessage {
 					handler.outputHandler.queue(new ProbeLinkLengths(uid, linkLengths));
 				}
 			};
-			node.dispatcher.mhProbe.start(htl, listener, type);
+			node.dispatcher.mhProbe.start(htl, uid, type, listener);
 		} catch (IllegalArgumentException e) {
 			throw new MessageInvalidException(ProtocolErrorMessage.INVALID_MESSAGE, "Unrecognized parse probe type \"" + fs.get(DMT.TYPE) + "\":" + e, null, false);
 		} catch (FSParseException e) {

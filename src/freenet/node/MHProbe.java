@@ -168,8 +168,7 @@ public class MHProbe implements ByteCounter {
 	 * @param listener Something which implements MHProbe.Listener and will be called with results.
 	 * @see MHProbe.Listener
 	 */
-	public void start(short htl, Listener listener, ProbeType type) {
-		long uid = random.nextLong();
+	public void start(final short htl, final long uid, final ProbeType type, final Listener listener) {
 		Message request = DMT.createMHProbeRequest(htl, uid, type);
 		request(request, null, new ResultListener(listener));
 	}
