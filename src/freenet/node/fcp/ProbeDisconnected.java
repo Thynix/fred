@@ -14,6 +14,7 @@ public class ProbeDisconnected extends FCPMessage {
 	private SimpleFieldSet fs;
 
 	public ProbeDisconnected(long uid) {
+		fs = new SimpleFieldSet(true);
 		fs.put(DMT.UID, uid);
 	}
 

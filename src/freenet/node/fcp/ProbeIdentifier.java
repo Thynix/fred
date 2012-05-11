@@ -14,6 +14,7 @@ public class ProbeIdentifier extends FCPMessage {
 	private SimpleFieldSet fs;
 
 	public ProbeIdentifier(long uid, long identifier) {
+		fs = new SimpleFieldSet(true);
 		fs.put(DMT.UID, uid);
 		fs.put(DMT.IDENTIFIER, identifier);
 	}

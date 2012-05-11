@@ -14,6 +14,7 @@ public class ProbeTimeout extends FCPMessage {
 	private SimpleFieldSet fs;
 
 	public ProbeTimeout(long uid) {
+		fs = new SimpleFieldSet(true);
 		fs.put(DMT.UID, uid);
 	}
 

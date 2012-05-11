@@ -14,6 +14,7 @@ public class ProbeLinkLengths extends FCPMessage {
 	private SimpleFieldSet fs;
 
 	public ProbeLinkLengths(long uid, Double[] linkLengths) {
+		fs = new SimpleFieldSet(true);
 		fs.put(DMT.UID, uid);
 		//TODO: Arg, types. Can put double[] but not Double[]. Add this.
 		double[] convert = new double[linkLengths.length];
