@@ -23,6 +23,7 @@ import freenet.crypt.DSAPublicKey;
 import freenet.keys.Key;
 import freenet.keys.NodeCHK;
 import freenet.keys.NodeSSK;
+import freenet.node.MHProbe;
 import freenet.node.NodeStats.PeerLoadStats;
 import freenet.support.BitArray;
 import freenet.support.Buffer;
@@ -1053,6 +1054,7 @@ public class DMT {
 	public static final MessageType MHProbeRequest = new MessageType("MHProbeRequest", PRIORITY_HIGH) {{
 		addField(HTL, Short.class);
 		addField(IDENTIFIER, Long.class);
+		addField(TYPE, MHProbe.ProbeType.class);
 		//TODO: Also should be key type addField(FREENET_URI, String.class);
 	}};
 
@@ -1062,10 +1064,11 @@ public class DMT {
 	 * @param uid probe identifier: should be unique.
 	 * @return message with requested attributes
 	 */
-	public static Message createMHProbeRequest(short htl, long uid) {
+	public static Message createMHProbeRequest(short htl, long uid, MHProbe.ProbeType type) {
 		Message msg = new Message(MHProbeRequest);
 		msg.set(HTL, htl);
 		msg.set(UID, uid);
+		msg.set(TYPE, type);
 		return msg;
 	}
 
