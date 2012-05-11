@@ -62,6 +62,7 @@ public class NodeDispatcher implements Dispatcher, Runnable {
 	final Node node;
 	private NodeStats nodeStats;
 	private NodeDispatcherCallback callback;
+	public final MHProbe mhProbe;
 	
 	private static final long STALE_CONTEXT=20000;
 	private static final long STALE_CONTEXT_CHECK=20000;
@@ -70,6 +71,7 @@ public class NodeDispatcher implements Dispatcher, Runnable {
 		this.node = node;
 		this.nodeStats = node.nodeStats;
 		node.getTicker().queueTimedJob(this, STALE_CONTEXT_CHECK);
+		this.mhProbe = new MHProbe(node.peers, node.random, node.uptime, node.startupTime, node.config.get("node"), node.getUSM(), nodeStats, node.swapIdentifier);
 	}
 
 	ByteCounter pingCounter = new ByteCounter() {
@@ -284,6 +286,11 @@ public class NodeDispatcher implements Dispatcher, Runnable {
 			return true;
 		} else if(spec == DMT.FNPMyFullNoderef && source instanceof DarknetPeerNode) {
 			((DarknetPeerNode)source).handleFullNoderef(m);
+			return true;
+		} else if(spec == DMT.MHProbeRequest) {
+			//TODO: rate limiting for probe requests
+			//Response is handled by callbacks within mhProbe.
+			mhProbe.request(m, source);
 			return true;
 		}
 		return false;
