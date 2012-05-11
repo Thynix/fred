@@ -124,6 +124,7 @@ public abstract class FCPMessage {
 			return new TestDDAResponseMessage(fs);
 		if(name.equals(WatchGlobal.NAME))
 			return new WatchGlobal(fs);
+		if(name.equals(ProbeRequestMessage.NAME)) return new ProbeRequestMessage(fs);
 		if(name.equals("Void"))
 			return null;
 
