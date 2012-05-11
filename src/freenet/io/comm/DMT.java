@@ -1053,7 +1053,7 @@ public class DMT {
 
 	public static final MessageType MHProbeRequest = new MessageType("MHProbeRequest", PRIORITY_HIGH) {{
 		addField(HTL, Short.class);
-		addField(IDENTIFIER, Long.class);
+		addField(UID, Long.class);
 		addField(TYPE, MHProbe.ProbeType.class);
 		//TODO: Also should be key type addField(FREENET_URI, String.class);
 	}};
