@@ -14,6 +14,7 @@ import freenet.support.api.BucketFactory;
 import freenet.support.io.PersistentTempBucketFactory;
 
 public abstract class FCPMessage {
+	public static final String IDENTIFIER = "Identifier";
         private static volatile boolean logDEBUG;
 	static {
 		Logger.registerLogThresholdCallback(new LogThresholdCallback(){
