@@ -6,6 +6,7 @@ import freenet.io.comm.*;
 import freenet.support.LogThresholdCallback;
 import freenet.support.Logger;
 
+import java.util.HashSet;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -28,7 +29,11 @@ public class MHProbe implements ByteCounter {
 				logDEBUG = Logger.shouldLog(Logger.LogLevel.DEBUG, this);
 			}
 		});
+		pendingProbes = new HashSet<Long>();
 	}
+
+	//TODO: A terrible hack, along with accepted, to limit the number of pending probes.
+	final public static HashSet<Long> pendingProbes;
 
 	/**
 	 * Listener for the different types of probe results.
@@ -152,7 +157,7 @@ public class MHProbe implements ByteCounter {
 	 */
 	public void start(final short htl, final long uid, final ProbeType type, final Listener listener) {
 		Message request = DMT.createMHProbeRequest(htl, uid, type);
-		request(request, null, new ResultListener(listener));
+		request(request, null, new ResultListener(listener, uid));
 	}
 
 	//TODO: Localization
@@ -168,7 +173,7 @@ public class MHProbe implements ByteCounter {
 	 * @param source node from which the probe request was received. Used to relay back results.
 	 */
 	public void request(Message message, PeerNode source) {
-		request(message, source, new ResultRelay(source));
+		request(message, source, new ResultRelay(source, message.getLong(DMT.UID), this));
 	}
 
 	/**
@@ -197,9 +202,14 @@ public class MHProbe implements ByteCounter {
 	 * @param callback callback for probe response
 	 */
 	public void request(final Message message, final PeerNode source, final AsyncMessageFilterCallback callback) {
-		if (accepted >= MAX_ACCEPTED) {
+		final Long uid = message.getLong(DMT.UID);
+		if (!pendingProbes.contains(uid) && accepted >= MAX_ACCEPTED) {
 			if (logDEBUG) Logger.debug(MHProbe.class, "Already accepted maximum number of probes; rejecting incoming.");
 			return;
+		} else if (!pendingProbes.contains(uid)) {
+			if (logDEBUG) Logger.debug(MHProbe.class, "Accepting probe with uid " + uid + ".");
+			pendingProbes.add(uid);
+			accepted++;
 		}
 		short htl = message.getShort(DMT.HTL);
 		if (htl < 0) {
@@ -245,10 +255,10 @@ public class MHProbe implements ByteCounter {
 				if (logDEBUG) Logger.debug(MHProbe.class, "acceptProbability is "+acceptProbability);
 				if (node.random.nextDouble() < acceptProbability) {
 					if (candidate.isConnected()) {
-						MessageFilter result = MessageFilter.create().setSource(candidate).setType(DMT.MHProbeResult).setField(DMT.UID, message.getLong(DMT.UID)).setTimeout(htl * TIMEOUT_PER_HTL);
+						MessageFilter result = MessageFilter.create().setSource(candidate).setType(DMT.MHProbeResult).setField(DMT.UID, uid).setTimeout(htl * TIMEOUT_PER_HTL);
 						message.set(DMT.HTL, htl);
 						try {
-							candidate.sendAsync(message, null, null);
+							candidate.sendAsync(message, null, this);
 							node.usm.addAsyncFilter(result, callback, this);
 						} catch (NotConnectedException e) {
 							if (logDEBUG) Logger.debug(MHProbe.class, "Peer became disconnected between check and send attempt.", e);
@@ -310,7 +320,7 @@ public class MHProbe implements ByteCounter {
 				return;
 			}
 			try {
-				source.sendAsync(result, null, null);
+				source.sendAsync(result, null, this);
 			} catch (NotConnectedException e) {
 				if (logDEBUG) Logger.debug(MHProbe.class, "Previous step in chain is no longer connected.");
 			}
@@ -333,14 +343,16 @@ public class MHProbe implements ByteCounter {
 	}
 
 	/**
-	 * Filter listener which determines the type of result and
+	 * Filter listener which determines the type of result and calls the appropriate probe listener method.
 	 */
 	private class ResultListener implements AsyncMessageFilterCallback {
 
 		private final Listener listener;
+		private final Long uid;
 
-		public ResultListener(Listener listener) {
+		public ResultListener(Listener listener, Long uid) {
 			this.listener = listener;
+			this.uid = uid;
 		}
 
 		/**
@@ -352,6 +364,7 @@ public class MHProbe implements ByteCounter {
 		public void onMatched(Message message) {
 			assert(accepted > 0);
 			accepted--;
+			pendingProbes.remove(uid);
 			if (message.isSet(DMT.IDENTIFIER)) {
 				listener.onIdentifier(message.getLong(DMT.IDENTIFIER));
 			/*} if (message.isSet(DMT.UPTIME_SESSION) && message.isSet(DMT.UPTIME_PERCENT_48H)) {
@@ -373,6 +386,7 @@ public class MHProbe implements ByteCounter {
 		public void onTimeout() {
 			assert(accepted > 0);
 			accepted--;
+			pendingProbes.remove(uid);
 			listener.onTimeout();
 		}
 
@@ -385,6 +399,7 @@ public class MHProbe implements ByteCounter {
 		public void onDisconnect(PeerContext context) {
 			assert(accepted > 0);
 			accepted--;
+			pendingProbes.remove(uid);
 			listener.onDisconnected();
 		}
 
@@ -399,16 +414,20 @@ public class MHProbe implements ByteCounter {
 	private class ResultRelay implements AsyncMessageFilterCallback {
 
 		private final PeerNode source;
+		private final Long uid;
+		private final MHProbe mhProbe;
 
 		/**
 		 *
 		 * @param source peer from which the request was received and to which send the response.
 		 */
-		public ResultRelay(PeerNode source) {
+		public ResultRelay(PeerNode source, Long uid, MHProbe mhProbe) {
 			if (source == null) {
 				if (logDEBUG) Logger.debug(MHProbe.class, "Cannot return probe result to null peer.");
 			}
 			this.source = source;
+			this.uid = uid;
+			this.mhProbe = mhProbe;
 		}
 
 
@@ -420,6 +439,7 @@ public class MHProbe implements ByteCounter {
 		public void onMatched(Message message) {
 			assert(accepted > 0);
 			accepted--;
+			pendingProbes.remove(uid);
 			if (source == null) {
 				if (logMINOR) Logger.minor(MHProbe.class, sourceDisconnect);
 				return;
@@ -427,7 +447,7 @@ public class MHProbe implements ByteCounter {
 
 			//TODO: If result is a tracer request, can add local results to it.
 			try {
-				source.sendAsync(message, null, null);
+				source.sendAsync(message, null, mhProbe);
 			} catch (NotConnectedException e) {
 				if (logMINOR) Logger.minor(MHProbe.class, sourceDisconnect);
 			}
@@ -437,6 +457,7 @@ public class MHProbe implements ByteCounter {
 		public void onTimeout() {
 			assert(accepted > 0);
 			accepted--;
+			pendingProbes.remove(uid);
 		}
 
 		//TODO: What does this mean? Its existence implies multiple levels of being timed-out.
@@ -449,6 +470,7 @@ public class MHProbe implements ByteCounter {
 		public void onDisconnect(PeerContext context) {
 			assert(accepted > 0);
 			accepted--;
+			pendingProbes.remove(uid);
 		}
 
 		@Override
