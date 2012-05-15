@@ -392,7 +392,7 @@ public class MHProbe implements ByteCounter {
 
 		@Override
 		public boolean shouldTimeout() {
-			return true;
+			return false;
 		}
 
 		@Override
@@ -463,7 +463,7 @@ public class MHProbe implements ByteCounter {
 		//TODO: What does this mean? Its existence implies multiple levels of being timed-out.
 		@Override
 		public boolean shouldTimeout() {
-			return true;
+			return false;
 		}
 
 		@Override
