@@ -13,9 +13,9 @@ public class ProbeDisconnected extends FCPMessage {
 	public static String NAME = "ProbeDisconnected";
 	private SimpleFieldSet fs;
 
-	public ProbeDisconnected(long uid) {
+	public ProbeDisconnected(String fcpIdentifier) {
 		fs = new SimpleFieldSet(true);
-		fs.put(DMT.UID, uid);
+		fs.putOverwrite(FCPMessage.IDENTIFIER, fcpIdentifier);
 	}
 
 	@Override

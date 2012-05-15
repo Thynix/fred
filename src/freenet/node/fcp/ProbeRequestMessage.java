@@ -9,7 +9,6 @@ import freenet.support.SimpleFieldSet;
 
 /**
  * FCP Message which is received from a client and requests a network probe of a specific type.
- * uid: Mandatory; identifier for probe - used in probe results.
  * type: Mandatory: denotes the desired response type.
  *                  Valid values are:
  *                  IDENTIFIER - returns swap identifier.
@@ -52,21 +51,20 @@ public class ProbeRequestMessage extends FCPMessage {
 		try {
 			MHProbe.ProbeType type =  MHProbe.ProbeType.valueOf(fs.get(DMT.TYPE));
 			final short htl = fs.getShort(DMT.HTL);
-			final long uid = fs.getLong(DMT.UID);
 			MHProbe.Listener listener = new MHProbe.Listener() {
 				@Override
 				public void onTimeout() {
-					handler.outputHandler.queue(new ProbeTimeout(uid));
+					handler.outputHandler.queue(new ProbeTimeout(identifier));
 				}
 
 				@Override
 				public void onDisconnected() {
-					handler.outputHandler.queue(new ProbeDisconnected(uid));
+					handler.outputHandler.queue(new ProbeDisconnected(identifier));
 				}
 
 				@Override
-				public void onIdentifier(long identifier) {
-					handler.outputHandler.queue(new ProbeIdentifier(uid, identifier));
+				public void onIdentifier(long probeIdentifier) {
+					handler.outputHandler.queue(new ProbeIdentifier(identifier, probeIdentifier));
 				}
 
 				/*@Override
@@ -86,10 +84,10 @@ public class ProbeRequestMessage extends FCPMessage {
 
 				@Override
 				public void onLinkLengths(Double[] linkLengths) {
-					handler.outputHandler.queue(new ProbeLinkLengths(uid, linkLengths));
+					handler.outputHandler.queue(new ProbeLinkLengths(identifier, linkLengths));
 				}
 			};
-			node.dispatcher.mhProbe.start(htl, uid, type, listener);
+			node.dispatcher.mhProbe.start(htl, node.random.nextLong(), type, listener);
 		} catch (IllegalArgumentException e) {
 			throw new MessageInvalidException(ProtocolErrorMessage.INVALID_MESSAGE, "Unrecognized parse probe type \"" + fs.get(DMT.TYPE) + "\":" + e, null, false);
 		} catch (FSParseException e) {

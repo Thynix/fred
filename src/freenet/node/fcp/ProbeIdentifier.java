@@ -13,9 +13,14 @@ public class ProbeIdentifier extends FCPMessage {
 	public static String NAME = "ProbeDisconnected";
 	private SimpleFieldSet fs;
 
-	public ProbeIdentifier(long uid, long identifier) {
+	/**
+	 *
+	 * @param fcpIdentifier FCP-level identifier for pairing requests and responses
+	 * @param identifier probe endpoint identifier
+	 */
+	public ProbeIdentifier(String fcpIdentifier, long identifier) {
 		fs = new SimpleFieldSet(true);
-		fs.put(DMT.UID, uid);
+		fs.putOverwrite(FCPMessage.IDENTIFIER, fcpIdentifier);
 		fs.put(DMT.IDENTIFIER, identifier);
 	}
 
