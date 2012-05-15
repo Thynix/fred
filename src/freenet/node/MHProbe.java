@@ -318,7 +318,7 @@ public class MHProbe implements ByteCounter {
 			//Returning result to probe sent locally.
 			if (source == null) {
 				if (logDEBUG) Logger.debug(MHProbe.class, "Returning locally sent probe.");
-				callback.onMatched(message);
+				callback.onMatched(result);
 				return;
 			}
 			try {
