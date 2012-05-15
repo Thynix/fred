@@ -9,6 +9,7 @@ import freenet.support.SimpleFieldSet;
 
 /**
  * FCP Message which is received from a client and requests a network probe of a specific type.
+ * Identifier: Optional; identifier to match probe request with results.
  * type: Mandatory: denotes the desired response type.
  *                  Valid values are:
  *                  IDENTIFIER - returns swap identifier.
@@ -24,6 +25,9 @@ public class ProbeRequestMessage extends FCPMessage {
 
 	public ProbeRequestMessage(SimpleFieldSet fs) throws MessageInvalidException {
 		this.fs = fs;
+		/* If not defined in the field set Identifier will be null. As adding a null value to the field set does
+		 * not actually add something under the key, it will remain undefined in the response messages.
+		 */
 		this.identifier = fs.get(FCPMessage.IDENTIFIER);
 	}
 
