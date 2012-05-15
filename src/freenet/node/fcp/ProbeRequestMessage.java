@@ -54,7 +54,8 @@ public class ProbeRequestMessage extends FCPMessage {
 
 		try {
 			MHProbe.ProbeType type =  MHProbe.ProbeType.valueOf(fs.get(DMT.TYPE));
-			final short htl = fs.getShort(DMT.HTL);
+			//If HTL is not defined default to MAX_HTL.
+			final short htl = fs.get(DMT.HTL) == null ? MHProbe.MAX_HTL : fs.getShort(DMT.HTL);
 			MHProbe.Listener listener = new MHProbe.Listener() {
 				@Override
 				public void onTimeout() {
