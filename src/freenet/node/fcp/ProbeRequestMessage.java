@@ -26,7 +26,7 @@ public class ProbeRequestMessage extends FCPMessage {
 	public ProbeRequestMessage(SimpleFieldSet fs) throws MessageInvalidException {
 		this.fs = fs;
 		/* If not defined in the field set Identifier will be null. As adding a null value to the field set does
-		 * not actually add something under the key, it will remain undefined in the response messages.
+		 * not actually add something under the key, it will also be omitted in the response messages.
 		 */
 		this.identifier = fs.get(FCPMessage.IDENTIFIER);
 	}
