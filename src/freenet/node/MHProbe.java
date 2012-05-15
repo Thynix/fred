@@ -209,11 +209,13 @@ public class MHProbe implements ByteCounter {
 		}
 		short htl = message.getShort(DMT.HTL);
 		if (htl < 0) {
-			if (logDEBUG) Logger.debug(MHProbe.class, "HTL cannot be negative.");
+			if (logDEBUG) Logger.debug(MHProbe.class, "HTL cannot be negative; rejecting probe.");
 			return;
 		} else if (htl == 0) {
+			if (logDEBUG) Logger.debug(MHProbe.class, "Interpreting HTL of 0 as 1.");
 			htl = 1;
 		} else if (htl > MAX_HTL) {
+			if (logDEBUG) Logger.debug(MHProbe.class, "Capping HTL of " + htl + " at " + MAX_HTL + ".");
 			htl = MAX_HTL;
 		}
 
@@ -250,10 +252,12 @@ public class MHProbe implements ByteCounter {
 				double acceptProbability = (double)degree / candidate.getDegree();
 				if (logDEBUG) Logger.debug(MHProbe.class, "acceptProbability is "+acceptProbability);
 				if (node.random.nextDouble() < acceptProbability) {
+					if (logDEBUG) Logger.debug(MHProbe.class, "Accepted candidate.");
 					if (candidate.isConnected()) {
 						MessageFilter result = MessageFilter.create().setSource(candidate).setType(DMT.MHProbeResult).setField(DMT.UID, uid).setTimeout(htl * TIMEOUT_PER_HTL);
 						message.set(DMT.HTL, htl);
 						try {
+							if (logDEBUG) Logger.debug(MHProbe.class, "Sending.");
 							candidate.sendAsync(message, null, this);
 							node.usm.addAsyncFilter(result, callback, this);
 						} catch (NotConnectedException e) {
@@ -283,6 +287,7 @@ public class MHProbe implements ByteCounter {
 			ProbeType type;
 			try {
 				type = ProbeType.valueOf(message.getString(DMT.TYPE));
+				if (logDEBUG) Logger.debug(MHProbe.class, "Probe type is " + type.name() + ".");
 			} catch (IllegalArgumentException e) {
 				if (logDEBUG) Logger.debug(MHProbe.class, "Invalid probe type.", e);
 				return;
@@ -312,10 +317,12 @@ public class MHProbe implements ByteCounter {
 			}
 			//Returning result to probe sent locally.
 			if (source == null) {
+				if (logDEBUG) Logger.debug(MHProbe.class, "Returning locally sent probe.");
 				callback.onMatched(message);
 				return;
 			}
 			try {
+				if (logDEBUG) Logger.debug(MHProbe.class, "Responding to probe.");
 				source.sendAsync(result, null, this);
 			} catch (NotConnectedException e) {
 				if (logDEBUG) Logger.debug(MHProbe.class, "Previous step in chain is no longer connected.");
