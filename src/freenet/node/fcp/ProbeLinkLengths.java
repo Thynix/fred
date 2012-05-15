@@ -13,13 +13,10 @@ public class ProbeLinkLengths extends FCPMessage {
 	public static String NAME = "ProbeLinkLengths";
 	private SimpleFieldSet fs;
 
-	public ProbeLinkLengths(String fcpIdentifier, Double[] linkLengths) {
+	public ProbeLinkLengths(String fcpIdentifier, double[] linkLengths) {
 		fs = new SimpleFieldSet(true);
 		fs.putOverwrite(FCPMessage.IDENTIFIER, fcpIdentifier);
-		//TODO: Arg, types. Can put double[] but not Double[]. Add this.
-		double[] convert = new double[linkLengths.length];
-		for (int i = 0; i < linkLengths.length; i++) convert[i] = linkLengths[i];
-		fs.put(DMT.LINK_LENGTHS, convert);
+		fs.put(DMT.LINK_LENGTHS, linkLengths);
 	}
 
 	@Override

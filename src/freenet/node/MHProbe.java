@@ -75,7 +75,7 @@ public class MHProbe implements ByteCounter {
 		 * @param linkLengths endpoint's reported link lengths. These may be of limited precision or have
 		 *                    random noise added.
 		 */
-		void onLinkLengths(Double[] linkLengths);
+		void onLinkLengths(double[] linkLengths);
 		//TODO: HTL, key response,
 	}
 
@@ -199,6 +199,14 @@ public class MHProbe implements ByteCounter {
 	 */
 	public void request(final Message message, final PeerNode source, final AsyncMessageFilterCallback callback) {
 		final Long uid = message.getLong(DMT.UID);
+		ProbeType type;
+		try {
+			type = ProbeType.valueOf(message.getString(DMT.TYPE));
+			if (logDEBUG) Logger.debug(MHProbe.class, "Probe type is " + type.name() + ".");
+		} catch (IllegalArgumentException e) {
+			if (logDEBUG) Logger.debug(MHProbe.class, "Invalid probe type.", e);
+			return;
+		}
 		if (!pendingProbes.contains(uid) && accepted >= MAX_ACCEPTED) {
 			if (logDEBUG) Logger.debug(MHProbe.class, "Already accepted maximum number of probes; rejecting incoming.");
 			return;
@@ -254,12 +262,18 @@ public class MHProbe implements ByteCounter {
 				if (node.random.nextDouble() < acceptProbability) {
 					if (logDEBUG) Logger.debug(MHProbe.class, "Accepted candidate.");
 					if (candidate.isConnected()) {
-						MessageFilter result = MessageFilter.create().setSource(candidate).setType(DMT.MHProbeResult).setField(DMT.UID, uid).setTimeout(htl * TIMEOUT_PER_HTL);
+						final int timeout = htl * TIMEOUT_PER_HTL;
+						//Filter for response to this probe with requested result type.
+						final MessageFilter filter = MessageFilter.create().setSource(candidate).setField(DMT.UID, uid).setTimeout(timeout);
+						switch (type) {
+							case IDENTIFIER: filter.setType(DMT.MHProbeIdentifier);
+							case LINK_LENGTHS: filter.setType(DMT.MHProbeLinkLengths);
+						}
 						message.set(DMT.HTL, htl);
 						try {
 							if (logDEBUG) Logger.debug(MHProbe.class, "Sending.");
 							candidate.sendAsync(message, null, this);
-							node.usm.addAsyncFilter(result, callback, this);
+							node.usm.addAsyncFilter(filter, callback, this);
 						} catch (NotConnectedException e) {
 							if (logDEBUG) Logger.debug(MHProbe.class, "Peer became disconnected between check and send attempt.", e);
 							continue;
@@ -284,32 +298,24 @@ public class MHProbe implements ByteCounter {
 			//Probe message/exchange identifier
 			final long identifier = message.getLong(DMT.UID);
 
-			ProbeType type;
-			try {
-				type = ProbeType.valueOf(message.getString(DMT.TYPE));
-				if (logDEBUG) Logger.debug(MHProbe.class, "Probe type is " + type.name() + ".");
-			} catch (IllegalArgumentException e) {
-				if (logDEBUG) Logger.debug(MHProbe.class, "Invalid probe type.", e);
-				return;
-			}
 			switch (type) {
 			//TODO: Would it be better to have more methods which accept only valid result sets?
 			//TODO: Are types enough to differentiate such sets?
 			case IDENTIFIER:
-				result = DMT.createMHProbeResult(identifier, node.swapIdentifier, null, null, null, null, null);
+				result = DMT.createMHProbeIdentifier(identifier, node.swapIdentifier);
 				break;
 				/*result = DMT.createMHProbeResult(message.getLong(DMT.UID), swapIdentifier,
 				    estimator.getUptime(), System.currentTimeMillis() - startTime,
 				    nodeConfig.getInt("outputBandwidthLimit"), nodeConfig.getInt("storeSize"), linkLengths);*/
 			case LINK_LENGTHS:
-				Double[] linkLengths = new Double[degree()];
+				double[] linkLengths = new double[degree()];
 				int i = 0;
 				for (PeerNode peer : node.peers.connectedPeers) {
 					linkLengths[i++] = Math.min(Math.abs(peer.getLocation() - node.peers.node.getLocation()),
 						1.0 - Math.abs(peer.getLocation() - node.peers.node.getLocation()));
 					//TODO: random noise or limit mantissa
 				}
-				result = DMT.createMHProbeResult(identifier, null, null, null, null, null, linkLengths);
+				result = DMT.createMHProbeLinkLengths(identifier, linkLengths);
 				break;
 			default:
 				if (logDEBUG) Logger.debug(MHProbe.class, "UnImplemented probe result type \"" + type + "\".");
@@ -368,7 +374,7 @@ public class MHProbe implements ByteCounter {
 			assert(accepted > 0);
 			accepted--;
 			pendingProbes.remove(uid);
-			if (message.isSet(DMT.IDENTIFIER)) {
+			if (message.getSpec().equals(DMT.MHProbeIdentifier)) {
 				listener.onIdentifier(message.getLong(DMT.IDENTIFIER));
 			/*} if (message.isSet(DMT.UPTIME_SESSION) && message.isSet(DMT.UPTIME_PERCENT_48H)) {
 				listener.onUptime(message.getLong(DMT.UPTIME_SESSION), message.getDouble(DMT.UPTIME_PERCENT_48H));
@@ -376,12 +382,12 @@ public class MHProbe implements ByteCounter {
 				listener.onOutputBandwidth(message.getInt(DMT.OUTPUT_BANDWIDTH_UPPER_LIMIT));
 			} else if (message.isSet(DMT.STORE_SIZE)) {
 				listener.onStoreSize(message.getInt(DMT.STORE_SIZE));*/
-			} else if (message.isSet(DMT.LINK_LENGTHS)) {
+			} else if (message.getSpec().equals(DMT.MHProbeLinkLengths)) {
 				//TODO: What if cast fails?
-				listener.onLinkLengths((Double[])message.getObject(DMT.LINK_LENGTHS));
+				listener.onLinkLengths((double[])message.getObject(DMT.LINK_LENGTHS));
 			} else {
 				//TODO: The rest of the result types.
-				if (logDEBUG) Logger.debug(MHProbe.class, "Unknown probe result set.");
+				if (logDEBUG) Logger.debug(MHProbe.class, "Unknown probe result set " + message.getSpec().getName());
 			}
 		}
 

@@ -1072,45 +1072,39 @@ public class DMT {
 		return msg;
 	}
 
-	public static final MessageType MHProbeResult = new MessageType("MHProbeResult", PRIORITY_HIGH) {{
+	public static final MessageType MHProbeIdentifier = new MessageType("MHProbeIdentifier", PRIORITY_HIGH) {{
 		addField(UID, Long.class);
 		addField(IDENTIFIER, Long.class);
-		addField(UPTIME_PERCENT_48H, Double.class);
-		addField(UPTIME_SESSION, Long.class);
-		addField(OUTPUT_BANDWIDTH_UPPER_LIMIT, Integer.class);
-		addField(STORE_SIZE, Integer.class);
-		//addField(HTL);
-		//TODO: HTL success rates
-		//TODO: key results
-		addField(LINK_LENGTHS, Double[].class);
+	}};
+
+	public static final MessageType MHProbeLinkLengths = new MessageType("MHProbeLinkLengths", PRIORITY_HIGH) {{
+		addField(UID, long.class);
+		addField(LINK_LENGTHS, double[].class);
 	}};
 
 	/**
-	 * Constructs requested response.
-	 * Null arguments are ignored and not added to the message.
-	 * @param uid  probe identifier; should match that of request. Mandatory.
-	 * @param identifier probe-specific identifier of endpoint. Optional.
-	 * @param uptimePercentage in the last 48 hours Optional, but mandatory if uptimeSession is specified.
-	 * @param uptimeSession session uptime in hours. Optional, but mandatory if uptimePercentage is specified.
-	 * @param outputBandwidth output bandwidth limit in KiB/s. Optional.
-	 * @param storeSize datastore size in GiB. Optional.
-	 * @param linkLengths
-	 * TODO: Key results
-	 * @return message with requested attributes
+	 * Creates a probe response to a query for identifier.
+	 * @param uid Probe-level identifier
+	 * @param identifier Endpoint identifier
+	 * @return Requested method
 	 */
-	public static Message createMHProbeResult(long uid, Long identifier, Double uptimePercentage, Long uptimeSession,
-	                                          Integer outputBandwidth, Integer storeSize, Double[] linkLengths) {
-		//Either neither are specified, or both are.
-		assert((!(uptimePercentage != null || uptimeSession != null)) || (uptimeSession != null && uptimePercentage != null));
-		Message msg = new Message(MHProbeResult);
+	public static Message createMHProbeIdentifier(long uid, long identifier) {
+		Message msg = new Message(MHProbeIdentifier);
 		msg.set(UID, uid);
-		if (identifier != null) msg.set(IDENTIFIER, identifier);
-		if (uptimePercentage != null) msg.set(UPTIME_PERCENT_48H, uptimePercentage);
-		if (uptimeSession != null) msg.set(UPTIME_SESSION, uptimeSession);
-		//TODO: Is upper limit appropriate to use here?
-		if (outputBandwidth != null) msg.set(OUTPUT_BANDWIDTH_UPPER_LIMIT, outputBandwidth);
-		if (storeSize != null) msg.set(STORE_SIZE, storeSize);
-		if (linkLengths != null) msg.set(LINK_LENGTHS, linkLengths);
+		msg.set(IDENTIFIER, identifier);
+		return msg;
+	}
+
+	/**
+	 * Creates a probe response to a query for identifier.
+	 * @param uid Probe-level identifier
+	 * @param linkLengths Endpoint link lengths
+	 * @return Requested method
+	 */
+	public static Message createMHProbeLinkLengths(long uid, double[] linkLengths) {
+		Message msg = new Message(MHProbeIdentifier);
+		msg.set(UID, uid);
+		msg.set(LINK_LENGTHS, linkLengths);
 		return msg;
 	}
 

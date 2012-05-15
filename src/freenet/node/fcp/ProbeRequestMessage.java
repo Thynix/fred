@@ -88,7 +88,7 @@ public class ProbeRequestMessage extends FCPMessage {
 				}*/
 
 				@Override
-				public void onLinkLengths(Double[] linkLengths) {
+				public void onLinkLengths(double[] linkLengths) {
 					handler.outputHandler.queue(new ProbeLinkLengths(identifier, linkLengths));
 				}
 			};
