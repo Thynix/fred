@@ -7,10 +7,6 @@ import freenet.support.LogThresholdCallback;
 import freenet.support.Logger;
 
 import java.util.HashSet;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * TODO: Should this be a listener for things not sent locally?
