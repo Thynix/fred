@@ -92,7 +92,7 @@ public class RealNodeProbeTest extends RealNodeTest {
 			}
 
 			@Override
-			public void onLinkLengths(Double[] linkLengths) {
+			public void onLinkLengths(double[] linkLengths) {
 				System.out.println("Probe got link lengths: { ");
 				for (Double length : linkLengths) System.out.print(length + ", ");
 				System.out.println("}.");
