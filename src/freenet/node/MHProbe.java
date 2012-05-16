@@ -406,8 +406,8 @@ public class MHProbe implements ByteCounter {
 			} else if (message.isSet(DMT.STORE_SIZE)) {
 				listener.onStoreSize(message.getInt(DMT.STORE_SIZE));*/
 			} else if (message.getSpec().equals(DMT.MHProbeLinkLengths)) {
-				//TODO: What if cast fails?
-				listener.onLinkLengths((double[])message.getObject(DMT.LINK_LENGTHS));
+				//TODO: Is it better to just cast an object?
+				listener.onLinkLengths(message.getDoubleArray(DMT.LINK_LENGTHS));
 			} else {
 				//TODO: The rest of the result types.
 				if (logDEBUG) Logger.debug(MHProbe.class, "Unknown probe result set " + message.getSpec().getName());
