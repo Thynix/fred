@@ -319,7 +319,7 @@ public class MHProbe implements ByteCounter {
 				result = DMT.createMHProbeLinkLengths(identifier, linkLengths);
 				break;
 			default:
-				if (logDEBUG) Logger.debug(MHProbe.class, "UnImplemented probe result type \"" + type + "\".");
+				if (logDEBUG) Logger.debug(MHProbe.class, "Unimplemented probe result type \"" + type + "\".");
 				return;
 			}
 			//Returning result to probe sent locally.
