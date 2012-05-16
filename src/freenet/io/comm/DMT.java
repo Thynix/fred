@@ -1078,7 +1078,7 @@ public class DMT {
 	}};
 
 	public static final MessageType MHProbeLinkLengths = new MessageType("MHProbeLinkLengths", PRIORITY_HIGH) {{
-		addField(UID, long.class);
+		addField(UID, Long.class);
 		addField(LINK_LENGTHS, double[].class);
 	}};
 
@@ -1102,7 +1102,7 @@ public class DMT {
 	 * @return Requested method
 	 */
 	public static Message createMHProbeLinkLengths(long uid, double[] linkLengths) {
-		Message msg = new Message(MHProbeIdentifier);
+		Message msg = new Message(MHProbeLinkLengths);
 		msg.set(UID, uid);
 		msg.set(LINK_LENGTHS, linkLengths);
 		return msg;
