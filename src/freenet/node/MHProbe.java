@@ -272,9 +272,9 @@ public class MHProbe implements ByteCounter {
 						}
 						message.set(DMT.HTL, htl);
 						try {
+							node.usm.addAsyncFilter(filter, callback, this);
 							if (logDEBUG) Logger.debug(MHProbe.class, "Sending.");
 							candidate.sendAsync(message, null, this);
-							node.usm.addAsyncFilter(filter, callback, this);
 						} catch (NotConnectedException e) {
 							if (logDEBUG) Logger.debug(MHProbe.class, "Peer became disconnected between check and send attempt.", e);
 							continue;
