@@ -169,6 +169,7 @@ public class MHProbe implements ByteCounter {
 	 * @param source node from which the probe request was received. Used to relay back results.
 	 */
 	public void request(Message message, PeerNode source) {
+		if(logDEBUG) Logger.debug(MHProbe.class, "Starting to relay probe with uid " + message.getLong(DMT.UID) + " from " + source.userToString());
 		request(message, source, new ResultRelay(source, message.getLong(DMT.UID), this));
 	}
 
@@ -328,8 +329,29 @@ public class MHProbe implements ByteCounter {
 				return;
 			}
 			try {
-				if (logDEBUG) Logger.debug(MHProbe.class, "Responding to probe.");
-				source.sendAsync(result, null, this);
+				if (logDEBUG) Logger.debug(MHProbe.class, "Sending response to probe.");
+				AsyncMessageCallback cb = new AsyncMessageCallback() {
+					@Override
+					public void sent() {
+						if (logDEBUG) Logger.debug(MHProbe.class, "Response was sent.");
+					}
+
+					@Override
+					public void acknowledged() {
+						if (logDEBUG) Logger.debug(MHProbe.class, "Response was acknowledged.");
+					}
+
+					@Override
+					public void disconnected() {
+						if (logDEBUG) Logger.debug(MHProbe.class, "Response target disconnected.");
+					}
+
+					@Override
+					public void fatalError() {
+						if (logDEBUG) Logger.debug(MHProbe.class, "Fatal error sending response.");
+					}
+				};
+				source.sendAsync(result, cb, this);
 			} catch (NotConnectedException e) {
 				if (logDEBUG) Logger.debug(MHProbe.class, "Previous step in chain is no longer connected.");
 			}
@@ -372,6 +394,7 @@ public class MHProbe implements ByteCounter {
 		@Override
 		public void onMatched(Message message) {
 			assert(accepted > 0);
+			if(logDEBUG) Logger.debug(MHProbe.class, "Matched " + message.getSpec().getName());
 			accepted--;
 			pendingProbes.remove(uid);
 			if (message.getSpec().equals(DMT.MHProbeIdentifier)) {
@@ -396,6 +419,7 @@ public class MHProbe implements ByteCounter {
 			assert(accepted > 0);
 			accepted--;
 			pendingProbes.remove(uid);
+			if (logDEBUG) Logger.debug(MHProbe.class, "Got timeout");
 			listener.onTimeout();
 		}
 
@@ -455,6 +479,7 @@ public class MHProbe implements ByteCounter {
 			}
 
 			//TODO: If result is a tracer request, can add local results to it.
+			if (logDEBUG) Logger.debug(MHProbe.class, "Relayed message matched; relaying back to " + source.userToString());
 			try {
 				source.sendAsync(message, null, mhProbe);
 			} catch (NotConnectedException e) {
@@ -467,6 +492,7 @@ public class MHProbe implements ByteCounter {
 			assert(accepted > 0);
 			accepted--;
 			pendingProbes.remove(uid);
+			if(logDEBUG) Logger.debug(MHProbe.class, "Relay timed out.");
 		}
 
 		//TODO: What does this mean? Its existence implies multiple levels of being timed-out.
@@ -480,6 +506,7 @@ public class MHProbe implements ByteCounter {
 			assert(accepted > 0);
 			accepted--;
 			pendingProbes.remove(uid);
+			if(logDEBUG) Logger.debug(MHProbe.class, "Relay source disconnected.");
 		}
 
 		@Override
