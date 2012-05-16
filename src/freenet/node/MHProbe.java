@@ -267,8 +267,8 @@ public class MHProbe implements ByteCounter {
 						//Filter for response to this probe with requested result type.
 						final MessageFilter filter = MessageFilter.create().setSource(candidate).setField(DMT.UID, uid).setTimeout(timeout);
 						switch (type) {
-							case IDENTIFIER: filter.setType(DMT.MHProbeIdentifier);
-							case LINK_LENGTHS: filter.setType(DMT.MHProbeLinkLengths);
+							case IDENTIFIER: filter.setType(DMT.MHProbeIdentifier); break;
+							case LINK_LENGTHS: filter.setType(DMT.MHProbeLinkLengths); break;
 						}
 						message.set(DMT.HTL, htl);
 						try {
