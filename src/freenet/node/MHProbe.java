@@ -66,15 +66,15 @@ public class MHProbe implements ByteCounter {
 
 		/**
 		 * Output bandwidth limit result.
-		 * @param outputBandwidth output bandwidth limit in KiB/s.
+		 * @param outputBandwidth output bandwidth limit
 		 */
-		//void onOutputBandwidth(int outputBandwidth);
+		void onOutputBandwidth(long outputBandwidth);
 
 		/**
 		 * Store size result.
-		 * @param storeSize store size in GiB
+		 * @param storeSize store size
 		 */
-		//void onStoreSize(int storeSize);
+		void onStoreSize(long storeSize);
 
 		/**
 		 * Link length result.
@@ -302,6 +302,8 @@ public class MHProbe implements ByteCounter {
 							case LINK_LENGTHS: filter.setType(DMT.MHProbeLinkLengths); break;
 							case UPTIME: filter.setType(DMT.MHProbeUptime); break;
 							case BUILD: filter.setType(DMT.MHProbeBuild); break;
+							case BANDWIDTH: filter.setType(DMT.MHProbeBandwidth); break;
+							case STORE_SIZE: filter.setType(DMT.MHProbeStoreSize); break;
 						}
 						message.set(DMT.HTL, htl);
 						try {
@@ -358,6 +360,12 @@ public class MHProbe implements ByteCounter {
 				break;
 			case BUILD:
 				result = DMT.createMHProbeBuild(uid, node.nodeUpdater.getMainVersion());
+				break;
+			case BANDWIDTH:
+				result = DMT.createMHProbeBandwidth(uid, randomNoise(node.config.get("node").getInt("outputBandwidthLimit")));
+				break;
+			case STORE_SIZE:
+				result = DMT.createMHProbeStoreSize(uid, randomNoise(node.config.get("node").getLong("storeSize")));
 				break;
 			default:
 				if (logDEBUG) Logger.debug(MHProbe.class, "Unimplemented probe result type \"" + type + "\".");
@@ -442,10 +450,10 @@ public class MHProbe implements ByteCounter {
 				listener.onIdentifier(message.getLong(DMT.IDENTIFIER));
 			} else if (message.getSpec().equals(DMT.MHProbeUptime)) {
 				listener.onUptime(message.getLong(DMT.UPTIME_SESSION), message.getDouble(DMT.UPTIME_PERCENT_48H));
-			/*} else if (message.isSet(DMT.OUTPUT_BANDWIDTH_UPPER_LIMIT)) {
-				listener.onOutputBandwidth(message.getInt(DMT.OUTPUT_BANDWIDTH_UPPER_LIMIT));
-			} else if (message.isSet(DMT.STORE_SIZE)) {
-				listener.onStoreSize(message.getInt(DMT.STORE_SIZE));*/
+			} else if (message.getSpec().equals(DMT.MHProbeBandwidth)) {
+				listener.onOutputBandwidth(message.getLong(DMT.OUTPUT_BANDWIDTH_UPPER_LIMIT));
+			} else if (message.getSpec().equals(DMT.MHProbeStoreSize)) {
+				listener.onStoreSize(message.getLong(DMT.STORE_SIZE));
 			} else if (message.getSpec().equals(DMT.MHProbeLinkLengths)) {
 				//TODO: Is it better to just cast an object?
 				listener.onLinkLengths(message.getDoubleArray(DMT.LINK_LENGTHS));

@@ -1108,6 +1108,30 @@ public class DMT {
 		return msg;
 	}
 
+	public static final MessageType MHProbeBandwidth = new MessageType("MHProbeBandwidth", PRIORITY_HIGH) {{
+		addField(UID, Long.class);
+		addField(OUTPUT_BANDWIDTH_UPPER_LIMIT, Long.class);
+	}};
+
+	public static Message createMHProbeBandwidth(long uid, long limit) {
+		Message msg = new Message(MHProbeBandwidth);
+		msg.set(UID, uid);
+		msg.set(OUTPUT_BANDWIDTH_UPPER_LIMIT, limit);
+		return msg;
+	}
+
+	public static final MessageType MHProbeStoreSize = new MessageType("MHProbeStoreSize", PRIORITY_HIGH) {{
+		addField(UID, Long.class);
+		addField(STORE_SIZE, Long.class);
+	}};
+
+	public static Message createMHProbeStoreSize(long uid, long storeSize) {
+		Message msg = new Message(MHProbeStoreSize);
+		msg.set(UID, uid);
+		msg.set(STORE_SIZE, storeSize);
+		return msg;
+	}
+
 	/**
 	 * Creates a probe response to a query for identifier.
 	 * @param uid Probe-level identifier

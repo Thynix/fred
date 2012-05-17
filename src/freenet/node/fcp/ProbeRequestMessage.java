@@ -82,15 +82,15 @@ public class ProbeRequestMessage extends FCPMessage {
 					handler.outputHandler.queue(new ProbeBuild(identifier, build));
 				}
 
-				/*@Override
-				public void onOutputBandwidth(int outputBandwidth) {
-					handler.outputHandler.queue();
+				@Override
+				public void onOutputBandwidth(long outputBandwidth) {
+					handler.outputHandler.queue(new ProbeBandwidth(identifier, outputBandwidth));
 				}
 
 				@Override
-				public void onStoreSize(int storeSize) {
-					handler.outputHandler.queue();
-				}*/
+				public void onStoreSize(long storeSize) {
+					handler.outputHandler.queue(new ProbeStoreSize(identifier, storeSize));
+				}
 
 				@Override
 				public void onLinkLengths(double[] linkLengths) {
