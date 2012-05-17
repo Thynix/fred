@@ -100,6 +100,5 @@ public class RealNodeProbeTest extends RealNodeTest {
 		};
 
 		nodes[random.nextInt(NUMBER_OF_NODES)].dispatcher.mhProbe.start(MAX_HTL, random.nextLong(), MHProbe.ProbeType.IDENTIFIER, print);
-		System.exit(0);
 	}
 }
