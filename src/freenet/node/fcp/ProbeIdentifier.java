@@ -10,7 +10,7 @@ import freenet.support.SimpleFieldSet;
  */
 //TODO: FCPMessage
 public class ProbeIdentifier extends FCPMessage {
-	public static String NAME = "ProbeDisconnected";
+	public static String NAME = "ProbeIdentifier";
 	private SimpleFieldSet fs;
 
 	/**
