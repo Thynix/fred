@@ -72,12 +72,12 @@ public class ProbeRequestMessage extends FCPMessage {
 					handler.outputHandler.queue(new ProbeIdentifier(identifier, probeIdentifier));
 				}
 
-				/*@Override
-				public void onUptime(long sessionUptime, double uptime48hour) {
-					handler.outputHandler.queue();
+				@Override
+				public void onUptime(long uptimeSession, double uptime48hour) {
+					handler.outputHandler.queue(new ProbeUptime(identifier, uptimeSession, uptime48hour));
 				}
 
-				@Override
+				/*@Override
 				public void onOutputBandwidth(int outputBandwidth) {
 					handler.outputHandler.queue();
 				}

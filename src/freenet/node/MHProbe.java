@@ -53,10 +53,10 @@ public class MHProbe implements ByteCounter {
 
 		/**
 		 * Uptime result.
-		 * @param sessionUptime session uptime in hours
+		 * @param sessionUptime session uptime
 		 * @param uptime48hour percentage uptime in the last 48 hours
 		 */
-		//void onUptime(long sessionUptime, double uptime48hour);
+		void onUptime(long sessionUptime, double uptime48hour);
 
 		/**
 		 * Output bandwidth limit result.
@@ -79,9 +79,34 @@ public class MHProbe implements ByteCounter {
 		//TODO: HTL, key response,
 	}
 
+	/**
+	 * Applies random noise proportional to the input value.
+	 * @param input Value to apply noise to.
+	 * @return Value +/- up to 1% of itself.
+	 */
+	private double randomNoise(double input) {
+		double part = input * (node.random.nextDouble() / 100.0);
+		return node.random.nextBoolean() ? input + part : input - part;
+	}
+
+	/**
+	 * Applies random noise proportional to the input value.
+	 * @param input Value to apply noise to.
+	 * @return Value +/- up to 1% of itself.
+	 */
+	private long randomNoise(long input) {
+		long part = Math.round(input * (node.random.nextDouble() / 100.0));
+		return node.random.nextBoolean() ? input + part : input - part;
+	}
+
 	public enum ProbeType {
 		IDENTIFIER,
-		LINK_LENGTHS
+		LINK_LENGTHS,
+		UPTIME,
+		BUILD,
+		BANDWIDTH,
+		STORE_SIZE,
+		HTL
 
 		//TODO: Uncomment for numerical codes.
 		/*private int code;
@@ -269,6 +294,7 @@ public class MHProbe implements ByteCounter {
 						switch (type) {
 							case IDENTIFIER: filter.setType(DMT.MHProbeIdentifier); break;
 							case LINK_LENGTHS: filter.setType(DMT.MHProbeLinkLengths); break;
+							case UPTIME: filter.setType(DMT.MHProbeUptime); break;
 						}
 						message.set(DMT.HTL, htl);
 						try {
@@ -317,6 +343,11 @@ public class MHProbe implements ByteCounter {
 					//TODO: random noise or limit mantissa
 				}
 				result = DMT.createMHProbeLinkLengths(identifier, linkLengths);
+				break;
+			case UPTIME:
+				//TODO: 7-day percentage
+				//getUptime() is session; uptime.getUptime() is 48-hour percentage.
+				result = DMT.createMHProbeUptime(uid, randomNoise(node.getUptime()), randomNoise(node.uptime.getUptime()));
 				break;
 			default:
 				if (logDEBUG) Logger.debug(MHProbe.class, "Unimplemented probe result type \"" + type + "\".");
@@ -399,9 +430,9 @@ public class MHProbe implements ByteCounter {
 			pendingProbes.remove(uid);
 			if (message.getSpec().equals(DMT.MHProbeIdentifier)) {
 				listener.onIdentifier(message.getLong(DMT.IDENTIFIER));
-			/*} if (message.isSet(DMT.UPTIME_SESSION) && message.isSet(DMT.UPTIME_PERCENT_48H)) {
+			} else if (message.getSpec().equals(DMT.MHProbeUptime)) {
 				listener.onUptime(message.getLong(DMT.UPTIME_SESSION), message.getDouble(DMT.UPTIME_PERCENT_48H));
-			} else if (message.isSet(DMT.OUTPUT_BANDWIDTH_UPPER_LIMIT)) {
+			/*} else if (message.isSet(DMT.OUTPUT_BANDWIDTH_UPPER_LIMIT)) {
 				listener.onOutputBandwidth(message.getInt(DMT.OUTPUT_BANDWIDTH_UPPER_LIMIT));
 			} else if (message.isSet(DMT.STORE_SIZE)) {
 				listener.onStoreSize(message.getInt(DMT.STORE_SIZE));*/

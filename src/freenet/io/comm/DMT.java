@@ -1082,6 +1082,20 @@ public class DMT {
 		addField(LINK_LENGTHS, double[].class);
 	}};
 
+	public static final MessageType MHProbeUptime = new MessageType("MHProbeUptime", PRIORITY_HIGH) {{
+		addField(UID, Long.class);
+		addField(UPTIME_SESSION, Long.class);
+		addField(UPTIME_PERCENT_48H, Double.class);
+	}};
+
+	public static Message createMHProbeUptime(long uid, long uptime_session, double uptime_48hour) {
+		Message msg = new Message(MHProbeUptime);
+		msg.set(UID, uid);
+		msg.set(UPTIME_SESSION, uptime_session);
+		msg.set(UPTIME_PERCENT_48H, uptime_48hour);
+		return msg;
+	}
+
 	/**
 	 * Creates a probe response to a query for identifier.
 	 * @param uid Probe-level identifier
