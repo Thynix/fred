@@ -93,9 +93,29 @@ public class RealNodeProbeTest extends RealNodeTest {
 
 			@Override
 			public void onLinkLengths(double[] linkLengths) {
-				System.out.println("Probe got link lengths: { ");
+				System.out.print("Probe got link lengths: { ");
 				for (Double length : linkLengths) System.out.print(length + ", ");
 				System.out.println("}.");
+			}
+
+			@Override
+			public void onOutputBandwidth(long outputBandwidth) {
+				System.out.println("Probe got bandwidth limit " + outputBandwidth);
+			}
+
+			@Override
+			public void onBuild(int build) {
+				System.out.println("Probe got build " + build);
+			}
+
+			@Override
+			public void onUptime(long session, double percent48hour) {
+				System.out.print("Probe got session uptime " + session + " ms and 48-hour " + percent48hour + "%.");
+			}
+
+			@Override
+			public void onStoreSize(long storeSize) {
+				System.out.println("Probe got store size " + storeSize + "bytes.");
 			}
 		};
 
