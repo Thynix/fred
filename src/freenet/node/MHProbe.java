@@ -273,7 +273,7 @@ public class MHProbe implements ByteCounter {
 			 * though it is decremented probabilistically.
 			 */
 			htl = probabilisticDecrement(htl);
-			while (htl > 0) {
+			for (; htl > 0; htl = probabilisticDecrement(htl)) {
 				PeerNode candidate;
 				//Can't return a probe request if not connected to anyone.
 				if (degree == 0) {
@@ -285,7 +285,6 @@ public class MHProbe implements ByteCounter {
 				} catch (IndexOutOfBoundsException e) {
 					if (logDEBUG) Logger.debug(MHProbe.class, "Peer count changed during candidate search.", e);
 					degree = degree();
-					htl = probabilisticDecrement(htl);
 					continue;
 				}
 				//acceptProbability is the MH correction.
@@ -310,17 +309,15 @@ public class MHProbe implements ByteCounter {
 							node.usm.addAsyncFilter(filter, callback, this);
 							if (logDEBUG) Logger.debug(MHProbe.class, "Sending.");
 							candidate.sendAsync(message, null, this);
+							return;
 						} catch (NotConnectedException e) {
 							if (logDEBUG) Logger.debug(MHProbe.class, "Peer became disconnected between check and send attempt.", e);
-							continue;
 						} catch (DisconnectedException e) {
 							//TODO: This is confusing - it's async yet it would throw an exception while waiting?
 							if (logDEBUG) Logger.debug(MHProbe.class, "Peer became disconnected while waiting for a response.", e);
 							//TODO: Is it reasonable to re-send in this case?
-							//continue;
 							callback.onDisconnect(candidate);
 						}
-						return;
 					}
 				}
 			}
