@@ -1096,6 +1096,18 @@ public class DMT {
 		return msg;
 	}
 
+	public static final MessageType MHProbeBuild = new MessageType("MHProbeBuild", PRIORITY_HIGH) {{
+		addField(UID, Long.class);
+		addField(BUILD, Integer.class);
+	}};
+
+	public static Message createMHProbeBuild(long uid, int build) {
+		Message msg = new Message(MHProbeBuild);
+		msg.set(UID, uid);
+		msg.set(BUILD, build);
+		return msg;
+	}
+
 	/**
 	 * Creates a probe response to a query for identifier.
 	 * @param uid Probe-level identifier

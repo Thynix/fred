@@ -59,6 +59,12 @@ public class MHProbe implements ByteCounter {
 		void onUptime(long sessionUptime, double uptime48hour);
 
 		/**
+		 * Build result.
+		 * @param build endpoint's reported build / main version.
+		 */
+		void onBuild(int build);
+
+		/**
 		 * Output bandwidth limit result.
 		 * @param outputBandwidth output bandwidth limit in KiB/s.
 		 */
@@ -295,6 +301,7 @@ public class MHProbe implements ByteCounter {
 							case IDENTIFIER: filter.setType(DMT.MHProbeIdentifier); break;
 							case LINK_LENGTHS: filter.setType(DMT.MHProbeLinkLengths); break;
 							case UPTIME: filter.setType(DMT.MHProbeUptime); break;
+							case BUILD: filter.setType(DMT.MHProbeBuild); break;
 						}
 						message.set(DMT.HTL, htl);
 						try {
@@ -348,6 +355,9 @@ public class MHProbe implements ByteCounter {
 				//TODO: 7-day percentage
 				//getUptime() is session; uptime.getUptime() is 48-hour percentage.
 				result = DMT.createMHProbeUptime(uid, randomNoise(node.getUptime()), randomNoise(node.uptime.getUptime()));
+				break;
+			case BUILD:
+				result = DMT.createMHProbeBuild(uid, node.nodeUpdater.getMainVersion());
 				break;
 			default:
 				if (logDEBUG) Logger.debug(MHProbe.class, "Unimplemented probe result type \"" + type + "\".");
@@ -439,6 +449,8 @@ public class MHProbe implements ByteCounter {
 			} else if (message.getSpec().equals(DMT.MHProbeLinkLengths)) {
 				//TODO: Is it better to just cast an object?
 				listener.onLinkLengths(message.getDoubleArray(DMT.LINK_LENGTHS));
+			} else if (message.getSpec().equals(DMT.MHProbeBuild)) {
+				listener.onBuild(message.getInt(DMT.BUILD));
 			} else {
 				//TODO: The rest of the result types.
 				if (logDEBUG) Logger.debug(MHProbe.class, "Unknown probe result set " + message.getSpec().getName());
