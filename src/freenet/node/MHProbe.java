@@ -91,7 +91,7 @@ public class MHProbe implements ByteCounter {
 	 * @return Value +/- up to 1% of itself.
 	 */
 	private double randomNoise(double input) {
-		double part = input * (node.random.nextDouble() / 100.0);
+		double part = input * (node.random.nextDouble() * 0.01);
 		return node.random.nextBoolean() ? input + part : input - part;
 	}
 
@@ -101,7 +101,7 @@ public class MHProbe implements ByteCounter {
 	 * @return Value +/- up to 1% of itself.
 	 */
 	private long randomNoise(long input) {
-		long part = Math.round(input * (node.random.nextDouble() / 100.0));
+		long part = Math.round(input * (node.random.nextDouble() * 0.01));
 		return node.random.nextBoolean() ? input + part : input - part;
 	}
 
