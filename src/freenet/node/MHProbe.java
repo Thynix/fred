@@ -220,7 +220,8 @@ public class MHProbe implements ByteCounter {
 			if (logDEBUG) Logger.debug(MHProbe.class, "Already accepted maximum number of probes; rejecting incoming.");
 			return;
 		} else if (!pendingProbes.contains(uid)) {
-			if (logDEBUG) Logger.debug(MHProbe.class, "Accepting probe with uid " + uid + ".");
+			if (logDEBUG) Logger.debug(MHProbe.class, "Accepting probe with uid " + uid + " from " +
+			                                         source == null ? "self" : source.userToString() + ".");
 			pendingProbes.add(uid);
 		}
 		short htl = message.getShort(DMT.HTL);
@@ -240,16 +241,16 @@ public class MHProbe implements ByteCounter {
 		 * endpoint distribution. HTL is decremented before checking peers so that it's possible to respond
 		 * locally.
 		 */
+		htl = probabilisticDecrement(htl);
 		if (htl > 0) {
 			//Degree of the local node.
 			int degree = degree();
-			htl = probabilisticDecrement(htl);
+			PeerNode candidate;
 			//Loop until HTL runs out, in which case return a result, or the probe is relayed on to a peer.
 			for (; htl > 0; htl = probabilisticDecrement(htl)) {
-				PeerNode candidate;
 				//Can't handle a probe request if not connected to any peers.
 				if (degree == 0) {
-					if (logDEBUG) Logger.minor(MHProbe.class, "Aborting received probe request; no connections.");
+					if (logDEBUG) Logger.minor(MHProbe.class, "Aborting received probe request because there are no connections.");
 					return;
 				}
 				try {
@@ -261,7 +262,7 @@ public class MHProbe implements ByteCounter {
 				}
 				//acceptProbability is the MH correction.
 				double acceptProbability = (double)degree / candidate.getDegree();
-				if (logDEBUG) Logger.debug(MHProbe.class, "acceptProbability is "+acceptProbability);
+				if (logDEBUG) Logger.debug(MHProbe.class, "acceptProbability is " + acceptProbability);
 				if (node.random.nextDouble() < acceptProbability) {
 					if (logDEBUG) Logger.debug(MHProbe.class, "Accepted candidate.");
 					if (candidate.isConnected()) {
@@ -285,8 +286,7 @@ public class MHProbe implements ByteCounter {
 						} catch (NotConnectedException e) {
 							if (logDEBUG) Logger.debug(MHProbe.class, "Peer became disconnected between check and send attempt.", e);
 						} catch (DisconnectedException e) {
-							//TODO: This is confusing - it's async yet it would throw an exception while waiting?
-							if (logDEBUG) Logger.debug(MHProbe.class, "Peer became disconnected while waiting for a response.", e);
+							if (logDEBUG) Logger.debug(MHProbe.class, "Peer became disconnected while attempting to add filter.", e);
 							callback.onDisconnect(candidate);
 						}
 					}
@@ -329,7 +329,7 @@ public class MHProbe implements ByteCounter {
 				result = DMT.createMHProbeStoreSize(uid, randomNoise(node.config.get("node").getLong("storeSize")));
 				break;
 			default:
-				if (logDEBUG) Logger.debug(MHProbe.class, "Unimplemented probe result type \"" + type + "\".");
+				if (logDEBUG) Logger.debug(MHProbe.class, "Response for probe result type \"" + type + "\" is not implemented.");
 				return;
 			}
 			//Returning result to probe sent locally.
@@ -442,7 +442,6 @@ public class MHProbe implements ByteCounter {
 		private final MHProbe mhProbe;
 
 		/**
-		 *
 		 * @param source peer from which the request was received and to which send the response.
 		 */
 		public ResultRelay(PeerNode source, Long uid, MHProbe mhProbe) {
@@ -467,8 +466,9 @@ public class MHProbe implements ByteCounter {
 				return;
 			}
 
-			//TODO: If result is a tracer request, can add local results to it.
-			if (logDEBUG) Logger.debug(MHProbe.class, "Relayed message matched; relaying back to " + source.userToString());
+			//TODO: If result is a tracer request, can add local results to it here.
+			if (logDEBUG) Logger.debug(MHProbe.class, "Relaying " + message.getSpec().getName() + " back" +
+			                                          " to " + source.userToString());
 			try {
 				source.sendAsync(message, null, mhProbe);
 			} catch (NotConnectedException e) {
