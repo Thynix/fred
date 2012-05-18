@@ -128,19 +128,22 @@ public class RealNodeProbeTest extends RealNodeTest {
 			MHProbe.ProbeType.UPTIME
 		};
 
+		int index = random.nextInt(NUMBER_OF_NODES);
 		while (true) {
+			System.out.println("Sending probes from node " + index + ".");
 			System.out.println("0) BANDWIDTH");
 			System.out.println("1) BUILD");
 			System.out.println("2) IDENTIFIER");
 			System.out.println("3) LINK_LENGTHS");
 			System.out.println("4) STORE_SIZE");
 			System.out.println("5) UPTIME");
+			System.out.println("6) Pick another node");
 			System.out.println("Anything else to exit.");
 			System.out.println("Select: ");
 			try {
 				int selection = Integer.valueOf(System.console().readLine());
-				int index = random.nextInt(NUMBER_OF_NODES);
-				nodes[index].dispatcher.mhProbe.start(MAX_HTL, random.nextLong(), types[selection], print);
+				if (selection != 6) nodes[index].dispatcher.mhProbe.start(MAX_HTL, random.nextLong(), types[selection], print);
+				else index = random.nextInt(NUMBER_OF_NODES);
 			} catch (Exception e) {
 				//If a non-number is entered or one outside the bounds.
 				System.out.print(e.toString());
