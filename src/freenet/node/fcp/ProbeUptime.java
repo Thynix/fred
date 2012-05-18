@@ -8,7 +8,6 @@ import freenet.support.SimpleFieldSet;
 /**
  * FCP message sent from the node to the client which includes uptime information returned by the endpoint.
  */
-//TODO: FCPMessage
 public class ProbeUptime extends FCPMessage {
 	public static String NAME = "ProbeUptime";
 	private SimpleFieldSet fs;

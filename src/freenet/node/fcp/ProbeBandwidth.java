@@ -6,7 +6,7 @@ import freenet.node.Node;
 import freenet.support.SimpleFieldSet;
 
 /**
- * FCP message sent from the node to the client which includes build / main version returned by the endpoint.
+ * FCP message sent from the node to the client which includes outgoing bandwidth limit returned by the endpoint.
  */
 public class ProbeBandwidth extends FCPMessage {
 	public static String NAME = "ProbeBandwidth";
