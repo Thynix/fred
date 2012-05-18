@@ -12,8 +12,12 @@ import freenet.support.SimpleFieldSet;
  * Identifier: Optional; identifier to match probe request with results.
  * type: Mandatory: denotes the desired response type.
  *                  Valid values are:
- *                  IDENTIFIER - returns swap identifier.
- *                  LINK_LENGTHS - returns (with random noise) link lengths between the endpoint and its peers
+ *                  BANDWIDTH - returns outgoing bandwidth limit in bytes per second.
+ *                  BUILD - returns Freenet build / main version.
+ *                  IDENTIFIER - returns identifier.
+ *                  LINK_LENGTHS - returns link lengths between the endpoint and its connected peers.
+ *                  STORE_SIZE - returns store size in bytes.
+ *                  UPTIME - returns session uptime in milliseconds and 48-hour uptime percentage.
  * hopsToLive: Optional; approximately how many hops the probe will take before possibly returning a result.
  *                       Valid values are [1, MHProbe.MAX_HTL]. If omitted MHProbe.MAX_HTL is used.
  */
