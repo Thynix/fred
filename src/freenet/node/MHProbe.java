@@ -344,9 +344,8 @@ public class MHProbe implements ByteCounter {
 				double[] linkLengths = new double[degree()];
 				int i = 0;
 				for (PeerNode peer : node.peers.connectedPeers) {
-					linkLengths[i++] = Math.min(Math.abs(peer.getLocation() - node.peers.node.getLocation()),
-						1.0 - Math.abs(peer.getLocation() - node.peers.node.getLocation()));
-					//TODO: random noise or limit mantissa
+					linkLengths[i++] = randomNoise(Math.min(Math.abs(peer.getLocation() - node.peers.node.getLocation()),
+						1.0 - Math.abs(peer.getLocation() - node.peers.node.getLocation())));
 				}
 				result = DMT.createMHProbeLinkLengths(identifier, linkLengths);
 				break;
