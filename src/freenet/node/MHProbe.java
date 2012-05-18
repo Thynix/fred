@@ -299,12 +299,10 @@ public class MHProbe implements ByteCounter {
 		 */
 		if (htl == 0) {
 			Message result;
-			//Probe message/exchange identifier
-			final long identifier = message.getLong(DMT.UID);
 
 			switch (type) {
 			case IDENTIFIER:
-				result = DMT.createMHProbeIdentifier(identifier, node.swapIdentifier);
+				result = DMT.createMHProbeIdentifier(uid, node.swapIdentifier);
 				break;
 			case LINK_LENGTHS:
 				double[] linkLengths = new double[degree()];
@@ -313,7 +311,7 @@ public class MHProbe implements ByteCounter {
 					linkLengths[i++] = randomNoise(Math.min(Math.abs(peer.getLocation() - node.peers.node.getLocation()),
 						1.0 - Math.abs(peer.getLocation() - node.peers.node.getLocation())));
 				}
-				result = DMT.createMHProbeLinkLengths(identifier, linkLengths);
+				result = DMT.createMHProbeLinkLengths(uid, linkLengths);
 				break;
 			case UPTIME:
 				//getUptime() is session; uptime.getUptime() is 48-hour percentage.
