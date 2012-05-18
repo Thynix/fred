@@ -332,14 +332,9 @@ public class MHProbe implements ByteCounter {
 			final long identifier = message.getLong(DMT.UID);
 
 			switch (type) {
-			//TODO: Would it be better to have more methods which accept only valid result sets?
-			//TODO: Are types enough to differentiate such sets?
 			case IDENTIFIER:
 				result = DMT.createMHProbeIdentifier(identifier, node.swapIdentifier);
 				break;
-				/*result = DMT.createMHProbeResult(message.getLong(DMT.UID), swapIdentifier,
-				    estimator.getUptime(), System.currentTimeMillis() - startTime,
-				    nodeConfig.getInt("outputBandwidthLimit"), nodeConfig.getInt("storeSize"), linkLengths);*/
 			case LINK_LENGTHS:
 				double[] linkLengths = new double[degree()];
 				int i = 0;
