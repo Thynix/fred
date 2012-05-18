@@ -38,11 +38,14 @@ public class MHProbe implements ByteCounter {
 				logDEBUG = Logger.shouldLog(Logger.LogLevel.DEBUG, this);
 			}
 		});
-		pendingProbes = new HashSet<Long>();
+		pendingProbes = Collections.synchronizedSet(new HashSet<Long>());
 	}
 
-	//TODO: A terrible hack, along with accepted, to limit the number of pending probes.
-	final public static HashSet<Long> pendingProbes;
+	/* TODO: A terrible hack to limit the number of pending probes. Is there a better way? It has to be accessible
+	 * from callbacks.
+	 */
+	public static final int MAX_ACCEPTED = 5;
+	final public static Set<Long> pendingProbes;
 
 	/**
 	 * Listener for the different types of probe results.
@@ -157,10 +160,6 @@ public class MHProbe implements ByteCounter {
 	 */
 	public static final int TIMEOUT_PER_HTL = 5000;
 
-	//TODO: This is a terrible hack isn't it?
-	public static final int MAX_ACCEPTED = 5;
-	public static volatile int accepted = 0;
-
 	private final Node node;
 
 	public MHProbe(Node node) {
@@ -218,13 +217,12 @@ public class MHProbe implements ByteCounter {
 			if (logDEBUG) Logger.debug(MHProbe.class, "Invalid probe type.", e);
 			return;
 		}
-		if (!pendingProbes.contains(uid) && accepted >= MAX_ACCEPTED) {
+		if (!pendingProbes.contains(uid) && pendingProbes.size() >= MAX_ACCEPTED) {
 			if (logDEBUG) Logger.debug(MHProbe.class, "Already accepted maximum number of probes; rejecting incoming.");
 			return;
 		} else if (!pendingProbes.contains(uid)) {
 			if (logDEBUG) Logger.debug(MHProbe.class, "Accepting probe with uid " + uid + ".");
 			pendingProbes.add(uid);
-			accepted++;
 		}
 		short htl = message.getShort(DMT.HTL);
 		if (htl < 0) {
@@ -414,9 +412,7 @@ public class MHProbe implements ByteCounter {
 		 */
 		@Override
 		public void onMatched(Message message) {
-			assert(accepted > 0);
 			if(logDEBUG) Logger.debug(MHProbe.class, "Matched " + message.getSpec().getName());
-			accepted--;
 			pendingProbes.remove(uid);
 			if (message.getSpec().equals(DMT.MHProbeIdentifier)) {
 				listener.onIdentifier(message.getLong(DMT.IDENTIFIER));
@@ -438,8 +434,6 @@ public class MHProbe implements ByteCounter {
 
 		@Override
 		public void onTimeout() {
-			assert(accepted > 0);
-			accepted--;
 			pendingProbes.remove(uid);
 			if (logDEBUG) Logger.debug(MHProbe.class, "Got timeout");
 			listener.onTimeout();
@@ -452,8 +446,6 @@ public class MHProbe implements ByteCounter {
 
 		@Override
 		public void onDisconnect(PeerContext context) {
-			assert(accepted > 0);
-			accepted--;
 			pendingProbes.remove(uid);
 			listener.onDisconnected();
 		}
@@ -492,8 +484,6 @@ public class MHProbe implements ByteCounter {
 		 */
 		@Override
 		public void onMatched(Message message) {
-			assert(accepted > 0);
-			accepted--;
 			pendingProbes.remove(uid);
 			if (source == null) {
 				if (logMINOR) Logger.minor(MHProbe.class, sourceDisconnect);
@@ -511,8 +501,6 @@ public class MHProbe implements ByteCounter {
 
 		@Override
 		public void onTimeout() {
-			assert(accepted > 0);
-			accepted--;
 			pendingProbes.remove(uid);
 			if(logDEBUG) Logger.debug(MHProbe.class, "Relay timed out.");
 		}
@@ -527,8 +515,6 @@ public class MHProbe implements ByteCounter {
 
 		@Override
 		public void onDisconnect(PeerContext context) {
-			assert(accepted > 0);
-			accepted--;
 			pendingProbes.remove(uid);
 			if(logDEBUG) Logger.debug(MHProbe.class, "Relay source disconnected.");
 		}
