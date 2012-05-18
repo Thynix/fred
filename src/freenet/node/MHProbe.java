@@ -186,7 +186,6 @@ public class MHProbe implements ByteCounter {
 	 * @param source node from which the probe request was received. Used to relay back results.
 	 */
 	public void request(Message message, PeerNode source) {
-		if(logDEBUG) Logger.debug(MHProbe.class, "Starting to relay probe with uid " + message.getLong(DMT.UID) + " from " + source.userToString());
 		request(message, source, new ResultRelay(source, message.getLong(DMT.UID), this));
 	}
 
@@ -341,28 +340,7 @@ public class MHProbe implements ByteCounter {
 			}
 			try {
 				if (logDEBUG) Logger.debug(MHProbe.class, "Sending response to probe.");
-				AsyncMessageCallback cb = new AsyncMessageCallback() {
-					@Override
-					public void sent() {
-						if (logDEBUG) Logger.debug(MHProbe.class, "Response was sent.");
-					}
-
-					@Override
-					public void acknowledged() {
-						if (logDEBUG) Logger.debug(MHProbe.class, "Response was acknowledged.");
-					}
-
-					@Override
-					public void disconnected() {
-						if (logDEBUG) Logger.debug(MHProbe.class, "Response target disconnected.");
-					}
-
-					@Override
-					public void fatalError() {
-						if (logDEBUG) Logger.debug(MHProbe.class, "Fatal error sending response.");
-					}
-				};
-				source.sendAsync(result, cb, this);
+				source.sendAsync(result, null, this);
 			} catch (NotConnectedException e) {
 				if (logDEBUG) Logger.debug(MHProbe.class, "Previous step in chain is no longer connected.");
 			}
@@ -435,7 +413,6 @@ public class MHProbe implements ByteCounter {
 		@Override
 		public void onTimeout() {
 			pendingProbes.remove(uid);
-			if (logDEBUG) Logger.debug(MHProbe.class, "Got timeout");
 			listener.onTimeout();
 		}
 
@@ -516,7 +493,7 @@ public class MHProbe implements ByteCounter {
 		@Override
 		public void onDisconnect(PeerContext context) {
 			pendingProbes.remove(uid);
-			if(logDEBUG) Logger.debug(MHProbe.class, "Relay source disconnected.");
+			if (logDEBUG) Logger.debug(MHProbe.class, "Relay source disconnected.");
 		}
 
 		@Override
