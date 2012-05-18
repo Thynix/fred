@@ -376,9 +376,9 @@ public class MHProbe implements ByteCounter {
 	 * @return new HTL
 	 */
 	private short probabilisticDecrement(short htl) {
+		assert(htl > 0);
 		if (htl == 1 && node.random.nextDouble() < 0.2) return 0;
-		else if (node.random.nextDouble() < 0.9) return (short)(htl - 1);
-		return htl;
+		return (short)(htl - 1);
 	}
 
 	/**
