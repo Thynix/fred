@@ -1,12 +1,19 @@
 package freenet.node;
 
-import freenet.config.SubConfig;
-import freenet.crypt.RandomSource;
-import freenet.io.comm.*;
+import freenet.io.comm.AsyncMessageFilterCallback;
+import freenet.io.comm.ByteCounter;
+import freenet.io.comm.DMT;
+import freenet.io.comm.DisconnectedException;
+import freenet.io.comm.Message;
+import freenet.io.comm.MessageFilter;
+import freenet.io.comm.NotConnectedException;
+import freenet.io.comm.PeerContext;
 import freenet.support.LogThresholdCallback;
 import freenet.support.Logger;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * TODO: Should this be a listener for things not sent locally?
