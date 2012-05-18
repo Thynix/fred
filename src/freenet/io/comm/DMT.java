@@ -1055,14 +1055,13 @@ public class DMT {
 		addField(HTL, Short.class);
 		addField(UID, Long.class);
 		addField(TYPE, String.class);
-		//TODO: Also should be key type addField(FREENET_URI, String.class);
 	}};
 
 	/**
-	 * Constructs an MH Probe Request message.
-	 * @param htl HTL field value: hops until result is returned.
-	 * @param uid probe identifier: should be unique.
-	 * @return message with requested attributes
+	 * Constructs a a probe request.
+	 * @param htl hopsToLive: hops until result is requested.
+	 * @param uid Probe identifier: should be unique.
+	 * @return Message with requested attributes.
 	 */
 	public static Message createMHProbeRequest(short htl, long uid, MHProbe.ProbeType type) {
 		Message msg = new Message(MHProbeRequest);
@@ -1088,6 +1087,14 @@ public class DMT {
 		addField(UPTIME_PERCENT_48H, Double.class);
 	}};
 
+
+	/**
+	 * Creates a probe response to a query for uptime.
+	 * @param uid Probe identifier.
+	 * @param uptime_session Endpoint session uptime in ms.
+	 * @param uptime_48hour Percent of the past 48 hours endpoint was online.
+	 * @return Message with requested attributes.
+	 */
 	public static Message createMHProbeUptime(long uid, long uptime_session, double uptime_48hour) {
 		Message msg = new Message(MHProbeUptime);
 		msg.set(UID, uid);
@@ -1101,6 +1108,12 @@ public class DMT {
 		addField(BUILD, Integer.class);
 	}};
 
+	/**
+	 * Creates a probe response to a query for build.
+	 * @param uid Probe identifier.
+	 * @param build Endpoint build of Freenet.
+	 * @return Message with requested attributes.
+	 */
 	public static Message createMHProbeBuild(long uid, int build) {
 		Message msg = new Message(MHProbeBuild);
 		msg.set(UID, uid);
@@ -1113,6 +1126,12 @@ public class DMT {
 		addField(OUTPUT_BANDWIDTH_UPPER_LIMIT, Long.class);
 	}};
 
+	/**
+	 * Creates a probe response to a query for bandwidth limits.
+	 * @param uid Probe identifier.
+	 * @param limit Endpoint output bandwidth limit in bytes per second.
+	 * @return Message with requested attributes.
+	 */
 	public static Message createMHProbeBandwidth(long uid, long limit) {
 		Message msg = new Message(MHProbeBandwidth);
 		msg.set(UID, uid);
@@ -1125,6 +1144,12 @@ public class DMT {
 		addField(STORE_SIZE, Long.class);
 	}};
 
+	/**
+	 * Creates a probe response to a query for store size.
+	 * @param uid Probe identifier.
+	 * @param storeSize Endpoint store size in bytes.
+	 * @return Message with requested attributes.
+	 */
 	public static Message createMHProbeStoreSize(long uid, long storeSize) {
 		Message msg = new Message(MHProbeStoreSize);
 		msg.set(UID, uid);
@@ -1134,9 +1159,9 @@ public class DMT {
 
 	/**
 	 * Creates a probe response to a query for identifier.
-	 * @param uid Probe-level identifier
-	 * @param identifier Endpoint identifier
-	 * @return Requested method
+	 * @param uid Probe identifier.
+	 * @param identifier Endpoint identifier.
+	 * @return Message with requested attributes.
 	 */
 	public static Message createMHProbeIdentifier(long uid, long identifier) {
 		Message msg = new Message(MHProbeIdentifier);
@@ -1146,10 +1171,10 @@ public class DMT {
 	}
 
 	/**
-	 * Creates a probe response to a query for identifier.
-	 * @param uid Probe-level identifier
-	 * @param linkLengths Endpoint link lengths
-	 * @return Requested method
+	 * Creates a probe response to a query for link lengths.
+	 * @param uid Probe identifier.
+	 * @param linkLengths Endpoint link lengths.
+	 * @return Message with requested attributes.
 	 */
 	public static Message createMHProbeLinkLengths(long uid, double[] linkLengths) {
 		Message msg = new Message(MHProbeLinkLengths);
