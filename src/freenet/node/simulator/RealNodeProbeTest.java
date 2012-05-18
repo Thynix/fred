@@ -4,8 +4,6 @@
 package freenet.node.simulator;
 
 import freenet.crypt.DummyRandomSource;
-import freenet.crypt.RandomSource;
-import freenet.node.LocationManager;
 import freenet.node.MHProbe;
 import freenet.node.Node;
 import freenet.node.NodeStarter;
@@ -14,16 +12,14 @@ import freenet.support.Logger;
 import freenet.support.Logger.LogLevel;
 import freenet.support.PooledExecutor;
 import freenet.support.io.FileUtil;
-import freenet.support.math.BootstrappingDecayingRunningAverage;
-import freenet.support.math.RunningAverage;
-import freenet.support.math.SimpleRunningAverage;
 
 import java.io.File;
+import java.text.NumberFormat;
 
 /**
  * Create a mesh of nodes and let them sort out their locations.
  * 
- * Then run some node-to-node searches.
+ * Then present a user interface to run different types of probes from random nodes.
  */
 public class RealNodeProbeTest extends RealNodeTest {
 
@@ -32,7 +28,6 @@ public class RealNodeProbeTest extends RealNodeTest {
 	static final short MAX_HTL = (short) 5;
 	static final boolean START_WITH_IDEAL_LOCATIONS = true;
 	static final boolean FORCE_NEIGHBOUR_CONNECTIONS = true;
-	static final int MAX_PINGS = 2000;
 	static final boolean ENABLE_SWAPPING = false;
 	static final boolean ENABLE_SWAP_QUEUEING = false;
 	static final boolean ENABLE_FOAF = true;
@@ -49,7 +44,10 @@ public class RealNodeProbeTest extends RealNodeTest {
 			System.err.println("Mass delete failed, test may not be accurate.");
 			System.exit(EXIT_CANNOT_DELETE_OLD_DATA);
 		}
-		wd.mkdir();
+		if (!wd.mkdir()) {
+			System.err.println("Unabled to create test directory \"" + dir + "\".");
+			return;
+		}
 		NodeStarter.globalTestInit(dir, false, LogLevel.ERROR, "", true);
 		// Make the network reproducible so we can easily compare different routing options by specifying a seed.
 		DummyRandomSource random = new DummyRandomSource(3142);
@@ -74,7 +72,7 @@ public class RealNodeProbeTest extends RealNodeTest {
 
 		waitForAllConnected(nodes);
 
-		//TODO: How to start probes? Not clear if there's FCP exposed or what.
+		final NumberFormat nf = NumberFormat.getInstance();
 		MHProbe.Listener print = new MHProbe.Listener() {
 			@Override
 			public void onTimeout() {
@@ -88,37 +86,70 @@ public class RealNodeProbeTest extends RealNodeTest {
 
 			@Override
 			public void onIdentifier(long identifier) {
-				System.out.println("Probe got identifier " + identifier);
+				System.out.println("Probe got identifier " + identifier + ".");
 			}
 
 			@Override
 			public void onLinkLengths(double[] linkLengths) {
 				System.out.print("Probe got link lengths: { ");
-				for (Double length : linkLengths) System.out.print(length + ", ");
+				for (Double length : linkLengths) System.out.print(length + " ");
 				System.out.println("}.");
 			}
 
 			@Override
 			public void onOutputBandwidth(long outputBandwidth) {
-				System.out.println("Probe got bandwidth limit " + outputBandwidth);
+				System.out.println("Probe got bandwidth limit " + nf.format(outputBandwidth) +
+				                   " bytes per second.");
 			}
 
 			@Override
 			public void onBuild(int build) {
-				System.out.println("Probe got build " + build);
+				System.out.println("Probe got build " + build + ".");
 			}
 
 			@Override
 			public void onUptime(long session, double percent48hour) {
-				System.out.print("Probe got session uptime " + session + " ms and 48-hour " + percent48hour + "%.");
+				System.out.print("Probe got session uptime " + nf.format(session) + " ms " +
+				                 "and 48-hour " + nf.format(percent48hour) + "%.");
 			}
 
 			@Override
 			public void onStoreSize(long storeSize) {
-				System.out.println("Probe got store size " + storeSize + "bytes.");
+				System.out.println("Probe got store size " + nf.format(storeSize) + " bytes.");
 			}
 		};
 
-		nodes[random.nextInt(NUMBER_OF_NODES)].dispatcher.mhProbe.start(MAX_HTL, random.nextLong(), MHProbe.ProbeType.IDENTIFIER, print);
+		final MHProbe.ProbeType types[] = {
+			MHProbe.ProbeType.BANDWIDTH,
+			MHProbe.ProbeType.BUILD,
+			MHProbe.ProbeType.HTL,
+			MHProbe.ProbeType.IDENTIFIER,
+			MHProbe.ProbeType.LINK_LENGTHS,
+			MHProbe.ProbeType.STORE_SIZE,
+			MHProbe.ProbeType.UPTIME
+		};
+
+		while (true) {
+			System.out.println("0) BANDWIDTH");
+			System.out.println("1) BUILD");
+			System.out.println("2) HTL");
+			System.out.println("3) IDENTIFIER");
+			System.out.println("4) LINK_LENGTHS");
+			System.out.println("5) STORE_SIZE");
+			System.out.println("6) UPTIME");
+			System.out.println("Anything else to exit.");
+			System.out.println("Select: ");
+			try {
+				int selection = Integer.valueOf(System.console().readLine());
+				int index = random.nextInt(NUMBER_OF_NODES);
+				nodes[index].dispatcher.mhProbe.start(MAX_HTL, random.nextLong(), types[selection], print);
+			} catch (Exception e) {
+				//If a non-number is entered or one outside the bounds.
+				System.out.print(e.toString());
+				e.printStackTrace();
+				//Return isn't enough to exit: the nodes are still in the background.
+				System.exit(0);
+			}
+		}
 	}
 }
