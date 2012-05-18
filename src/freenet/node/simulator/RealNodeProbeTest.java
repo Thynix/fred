@@ -122,7 +122,6 @@ public class RealNodeProbeTest extends RealNodeTest {
 		final MHProbe.ProbeType types[] = {
 			MHProbe.ProbeType.BANDWIDTH,
 			MHProbe.ProbeType.BUILD,
-			MHProbe.ProbeType.HTL,
 			MHProbe.ProbeType.IDENTIFIER,
 			MHProbe.ProbeType.LINK_LENGTHS,
 			MHProbe.ProbeType.STORE_SIZE,
@@ -132,11 +131,10 @@ public class RealNodeProbeTest extends RealNodeTest {
 		while (true) {
 			System.out.println("0) BANDWIDTH");
 			System.out.println("1) BUILD");
-			System.out.println("2) HTL");
-			System.out.println("3) IDENTIFIER");
-			System.out.println("4) LINK_LENGTHS");
-			System.out.println("5) STORE_SIZE");
-			System.out.println("6) UPTIME");
+			System.out.println("2) IDENTIFIER");
+			System.out.println("3) LINK_LENGTHS");
+			System.out.println("4) STORE_SIZE");
+			System.out.println("5) UPTIME");
 			System.out.println("Anything else to exit.");
 			System.out.println("Select: ");
 			try {

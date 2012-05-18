@@ -122,7 +122,6 @@ public class MHProbe implements ByteCounter {
 	public enum ProbeType {
 		BANDWIDTH,
 		BUILD,
-		HTL,
 		IDENTIFIER,
 		LINK_LENGTHS,
 		STORE_SIZE,
