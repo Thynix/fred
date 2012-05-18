@@ -220,7 +220,7 @@ public class MHProbe implements ByteCounter {
 			return;
 		} else if (!pendingProbes.contains(uid)) {
 			if (logDEBUG) Logger.debug(MHProbe.class, "Accepting probe with uid " + uid + " from " +
-			                                         source == null ? "self" : source.userToString() + ".");
+			                                       (source == null ? "self" : source.userToString()) + ".");
 			pendingProbes.add(uid);
 		}
 		short htl = message.getShort(DMT.HTL);
