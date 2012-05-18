@@ -16,8 +16,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * TODO: Should this be a listener for things not sent locally?
+ * Handles starting, routing, and responding to Metropolis-Hastings corrected probes.
  * Instantiated for each outgoing probe; incoming probes are dealt with by one instance thereof.
+ *
+ * Possible future additions to these probes' results include:
+ * - 7-day uptime percentage
+ * - Checking whether a key is present in the datastore, either just at the endpoint or at each probe along the way.
+ * - Success rates for remote requests by HTL.
+ *     - not just for the present moment but over some amount of time.
  */
 public class MHProbe implements ByteCounter {
 
@@ -60,8 +66,8 @@ public class MHProbe implements ByteCounter {
 
 		/**
 		 * Uptime result.
-		 * @param sessionUptime session uptime
-		 * @param uptime48hour percentage uptime in the last 48 hours
+		 * @param sessionUptime endpoint's reported session uptime in milliseconds.
+		 * @param uptime48hour endpoint's reported percentage uptime in the last 48 hours.
 		 */
 		void onUptime(long sessionUptime, double uptime48hour);
 
@@ -73,23 +79,21 @@ public class MHProbe implements ByteCounter {
 
 		/**
 		 * Output bandwidth limit result.
-		 * @param outputBandwidth output bandwidth limit
+		 * @param outputBandwidth endpoint's reported output bandwidth limit in bytes per second.
 		 */
 		void onOutputBandwidth(long outputBandwidth);
 
 		/**
 		 * Store size result.
-		 * @param storeSize store size
+		 * @param storeSize endpoint's reported store size in bytes.
 		 */
 		void onStoreSize(long storeSize);
 
 		/**
 		 * Link length result.
-		 * @param linkLengths endpoint's reported link lengths. These may be of limited precision or have
-		 *                    random noise added.
+		 * @param linkLengths endpoint's reported link lengths.
 		 */
 		void onLinkLengths(double[] linkLengths);
-		//TODO: HTL, key response,
 	}
 
 	/**
@@ -120,26 +124,6 @@ public class MHProbe implements ByteCounter {
 		BANDWIDTH,
 		STORE_SIZE,
 		HTL
-
-		//TODO: Uncomment for numerical codes.
-		/*private int code;
-		private static final Map<Integer, ProbeType> lookup = new HashMap<Integer, ProbeType>();
-
-		static {
-			for(ProbeType s : EnumSet.allOf(ProbeType.class)) lookup.put(s.code(), s);
-		}
-
-		private ProbeType(int code) {
-			this.code = code;
-		}
-
-		public int code() {
-			return code;
-		}
-
-		public static ProbeType get(int code) {
-			return lookup.get(code);
-		}*/
 	}
 
 	/**
@@ -197,13 +181,9 @@ public class MHProbe implements ByteCounter {
 	//TODO: Localization
 	private final static String sourceDisconnect = "Previous step in probe chain no longer connected.";
 
-	//TODO: Ideal is: recieving request passes on message and waits on response or timeout.
-	//TODO:          also sending one waits on response or timeout...
-
 	/**
 	 * Same as its three-argument namesake, but responds to results by passing them on to source.
-	 * @param message probe request, (possibly made by DMT.createMHProbeRequest) containing HTL (TODO: and
-	 *                optionally key to fetch)
+	 * @param message probe request, (possibly made by DMT.createMHProbeRequest) containing HTL
 	 * @param source node from which the probe request was received. Used to relay back results.
 	 */
 	public void request(Message message, PeerNode source) {
@@ -214,24 +194,16 @@ public class MHProbe implements ByteCounter {
 	/**
 	 * Processes an incoming probe request.
 	 * If the probe has a positive HTL, routes with MH correction and probabilistically decrements HTL.
-	 * TODO: How to handle multiple response types in FCP?
-	 * TODO: Sending node selects this. If disallowed - what? Return error?
-	 * TODO: Probabilistic HTL decrement.
 	 * If the probe comes to have an HTL of zero: (an incoming HTL of zero is taken to be one.)
-	 *     TODO: key and tracer requests. Separate datastore?!
 	 *     returns as node settings allow at random exactly one of:
-	 *         -unique identifier (specific to probe requests and unrelated to UID) (TODO)
 	 *         TODO: config options to disable
-	 *          and uptime information: session, 48-hour, (TODO) 7-day - uptime estimator
-	 *         -output bandwidth rounded to nearest KiB
-	 *         -store size rounded to nearest GiB
-	 *         -htl success rates for remote requests (TODO: hourly stats record)
-	 *         -link lengths (TODO)
-	 *
-	 *     -If a key is provided, it may also be: (TODO)
-	 *         -a normal fetch
-	 *         -a tracer request
-	 * @param message probe request, containing HTL (TODO: and optionally key to fetch)
+	 *         -unique identifier (not UID)
+	 *         -uptime: session and 48-hour percentage,
+	 *         -output bandwidth
+	 *         -store size
+	 *         -link lengths
+	 *         -build number
+	 * @param message probe request, containing HTL
 	 * @param source node from which the probe request was received. Used to relay back results. If null, it is
 	 *               considered to have been sent from the local node.
 	 * @param callback callback for probe response
@@ -268,21 +240,17 @@ public class MHProbe implements ByteCounter {
 
 		/*
 		 * Route to a peer, using Metropolis-Hastings correction and ignoring backoff to get a more uniform
-		 * endpoint distribution.
+		 * endpoint distribution. HTL is decremented before checking peers so that it's possible to respond
+		 * locally.
 		 */
 		if (htl > 0) {
 			//Degree of the local node.
 			int degree = degree();
-			/*
-			 * Loop until HTL runs out, in which case return a result, (by falling out of the loop) or until
-			 * a peer suitable to hand the message off to is found, in which case the message is sent and
-			 * the method returns. HTL is decremented beforehand so the request can be accepted locally,
-			 * though it is decremented probabilistically.
-			 */
 			htl = probabilisticDecrement(htl);
+			//Loop until HTL runs out, in which case return a result, or the probe is relayed on to a peer.
 			for (; htl > 0; htl = probabilisticDecrement(htl)) {
 				PeerNode candidate;
-				//Can't return a probe request if not connected to anyone.
+				//Can't handle a probe request if not connected to any peers.
 				if (degree == 0) {
 					if (logDEBUG) Logger.minor(MHProbe.class, "Aborting received probe request; no connections.");
 					return;
@@ -322,7 +290,6 @@ public class MHProbe implements ByteCounter {
 						} catch (DisconnectedException e) {
 							//TODO: This is confusing - it's async yet it would throw an exception while waiting?
 							if (logDEBUG) Logger.debug(MHProbe.class, "Peer became disconnected while waiting for a response.", e);
-							//TODO: Is it reasonable to re-send in this case?
 							callback.onDisconnect(candidate);
 						}
 					}
@@ -331,7 +298,7 @@ public class MHProbe implements ByteCounter {
 		}
 
 		/*
-		 * HTL is zero: return a result.
+		 * HTL has been decremented to zero: return a result.
 		 */
 		if (htl == 0) {
 			Message result;
@@ -352,7 +319,6 @@ public class MHProbe implements ByteCounter {
 				result = DMT.createMHProbeLinkLengths(identifier, linkLengths);
 				break;
 			case UPTIME:
-				//TODO: 7-day percentage
 				//getUptime() is session; uptime.getUptime() is 48-hour percentage.
 				result = DMT.createMHProbeUptime(uid, randomNoise(node.getUptime()), randomNoise(node.uptime.getUptime()));
 				break;
@@ -405,9 +371,13 @@ public class MHProbe implements ByteCounter {
 		}
 	}
 
+	/**
+	 * Decrements 20% of the time at HTL 1; otherwise always. This is to protect the responding node, whereas the
+	 * anonymity of the node which initiated the request is not a concern.
+	 * @param htl current HTL
+	 * @return new HTL
+	 */
 	private short probabilisticDecrement(short htl) {
-		//TODO: A mathematical function - say one that's 0.2 at 1 and goes up to 0.9 at MAX_HTL could be more
-		//flexible and give smoother behavior, but would also be more complicated?
 		if (htl == 1 && node.random.nextDouble() < 0.2) return 0;
 		else if (node.random.nextDouble() < 0.9) return (short)(htl - 1);
 		return htl;
@@ -422,21 +392,25 @@ public class MHProbe implements ByteCounter {
 
 	/**
 	 * Filter listener which determines the type of result and calls the appropriate probe listener method.
+	 * This is used for returning probe results via FCP.
 	 */
 	private class ResultListener implements AsyncMessageFilterCallback {
 
 		private final Listener listener;
 		private final Long uid;
 
+		/**
+		 * @param listener to call appropriate methods for events such as matched messages or timeout.
+		 * @param uid uid of probe to listen for - clears it from the accepted list upon an event.
+		 */
 		public ResultListener(Listener listener, Long uid) {
 			this.listener = listener;
 			this.uid = uid;
 		}
 
 		/**
-		 * Parses provided message and calls appropriate MHProbe.Listener method for the type of result
-		 * present,
-		 * @param message result message
+		 * Parses provided message and calls appropriate MHProbe.Listener method for the type of result.
+		 * @param message Probe result.
 		 */
 		@Override
 		public void onMatched(Message message) {
@@ -453,12 +427,11 @@ public class MHProbe implements ByteCounter {
 			} else if (message.getSpec().equals(DMT.MHProbeStoreSize)) {
 				listener.onStoreSize(message.getLong(DMT.STORE_SIZE));
 			} else if (message.getSpec().equals(DMT.MHProbeLinkLengths)) {
-				//TODO: Is it better to just cast an object?
+				//TODO: Is it better to just cast an object than have Message support for double[]?
 				listener.onLinkLengths(message.getDoubleArray(DMT.LINK_LENGTHS));
 			} else if (message.getSpec().equals(DMT.MHProbeBuild)) {
 				listener.onBuild(message.getInt(DMT.BUILD));
 			} else {
-				//TODO: The rest of the result types.
 				if (logDEBUG) Logger.debug(MHProbe.class, "Unknown probe result set " + message.getSpec().getName());
 			}
 		}
@@ -490,8 +463,8 @@ public class MHProbe implements ByteCounter {
 	}
 
 	/**
-	 * Filter listener which relays messages onto the source given during construction. USed when receiving probes
-	 * not sent locally.
+	 * Filter listener which relays messages (intended to be responses to the probe) to the node (intended to be
+	 * that from which the probe request was received) given during construction. Used for received probe requests.
 	 */
 	private class ResultRelay implements AsyncMessageFilterCallback {
 
@@ -515,7 +488,7 @@ public class MHProbe implements ByteCounter {
 
 		/**
 		 * Sends an incoming probe response to the originator.
-		 * @param message probe response
+		 * @param message probe response.
 		 */
 		@Override
 		public void onMatched(Message message) {
@@ -544,7 +517,9 @@ public class MHProbe implements ByteCounter {
 			if(logDEBUG) Logger.debug(MHProbe.class, "Relay timed out.");
 		}
 
-		//TODO: What does this mean? Its existence implies multiple levels of being timed-out.
+		/* TODO: What does this mean? Its existence implies multiple levels of being timed-out. The filter seems
+		 * to instantly time out if this returns true - it's expected to perform some logic?
+		 */
 		@Override
 		public boolean shouldTimeout() {
 			return false;
