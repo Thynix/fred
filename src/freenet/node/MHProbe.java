@@ -21,10 +21,11 @@ import java.util.Set;
  * Instantiated for each outgoing probe; incoming probes are dealt with by one instance thereof.
  *
  * Possible future additions to these probes' results include:
- * - 7-day uptime percentage
- * - Checking whether a key is present in the datastore, either just at the endpoint or at each node along the way.
- * - Success rates for remote requests by HTL.
- *     - not just for the present moment but over some amount of time.
+ * <ul>
+ * <li>7-day uptime percentage</li>
+ * <li>Checking whether a key is present in the datastore, either only at the endpoint or each node along the way.</li>
+ * <li>Success rates for remote requests by HTL; perhaps over some larger amount of time than the past hour.</li>
+ * </ul>
  */
 public class MHProbe implements ByteCounter {
 
@@ -69,7 +70,7 @@ public class MHProbe implements ByteCounter {
 
 		/**
 		 * Identifier result.
-		 * @param identifier identifier given by endpoint
+		 * @param identifier identifier given by endpoint.
 		 */
 		void onIdentifier(long identifier);
 
@@ -198,13 +199,16 @@ public class MHProbe implements ByteCounter {
 	 * Processes an incoming probe request.
 	 * If the probe has a positive HTL, routes with MH correction and probabilistically decrements HTL.
 	 * If the probe comes to have an HTL of zero: (an incoming HTL of zero is taken to be one.)
-	 *     returns as node settings allow at random exactly one of:
-	 *         -unique identifier (not UID)
-	 *         -uptime: session and 48-hour percentage,
-	 *         -output bandwidth
-	 *         -store size
-	 *         -link lengths
-	 *         -build number
+	 * Returns (as node settings allow) exactly one of:
+	 * <ul>
+	 *         <li>unique identifier</li>
+	 *         <li>uptime: session and 48-hour percentage,</li>
+	 *         <li>output bandwidth</li>
+	 *         <li>store size</li>
+	 *         <li>link lengths</li>
+	 *         <li>build number</li>
+	 * </ul>
+	 *
 	 * @param message probe request, containing HTL
 	 * @param source node from which the probe request was received. Used to relay back results. If null, it is
 	 *               considered to have been sent from the local node.
