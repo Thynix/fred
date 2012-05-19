@@ -22,7 +22,7 @@ import java.util.Set;
  *
  * Possible future additions to these probes' results include:
  * - 7-day uptime percentage
- * - Checking whether a key is present in the datastore, either just at the endpoint or at each probe along the way.
+ * - Checking whether a key is present in the datastore, either just at the endpoint or at each node along the way.
  * - Success rates for remote requests by HTL.
  *     - not just for the present moment but over some amount of time.
  */
