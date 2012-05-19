@@ -23,6 +23,7 @@ import freenet.crypt.DSAPublicKey;
 import freenet.keys.Key;
 import freenet.keys.NodeCHK;
 import freenet.keys.NodeSSK;
+import freenet.node.MHProbe;
 import freenet.node.NodeStats.PeerLoadStats;
 import freenet.support.BitArray;
 import freenet.support.Buffer;
@@ -135,6 +136,10 @@ public class DMT {
 	public static final String IGNORE_LOW_BACKOFF = "ignoreLowBackoff";
 	public static final String LIST_OF_UIDS = "listOfUIDs";
 	public static final String UID_STILL_RUNNING_FLAGS = "UIDStillRunningFlags";
+	public static final String IDENTIFIER = "identifier";
+	public static final String UPTIME_SESSION = "uptimeSession";
+	public static final String STORE_SIZE = "storeSize";
+	public static final String LINK_LENGTHS = "linkLengths";
 	
 	/** Very urgent */
 	public static final short PRIORITY_NOW=0;
@@ -1045,7 +1050,154 @@ public class DMT {
 		msg.set(LINEAR_COUNTER, linearCounter);
 		return msg;
 	}
-	
+
+	public static final MessageType MHProbeRequest = new MessageType("MHProbeRequest", PRIORITY_HIGH) {{
+		addField(HTL, Short.class);
+		addField(UID, Long.class);
+		addField(TYPE, String.class);
+	}};
+
+	/**
+	 * Constructs a a probe request.
+	 * @param htl hopsToLive: hops until result is requested.
+	 * @param uid Probe identifier: should be unique.
+	 * @return Message with requested attributes.
+	 */
+	public static Message createMHProbeRequest(short htl, long uid, MHProbe.ProbeType type) {
+		Message msg = new Message(MHProbeRequest);
+		msg.set(HTL, htl);
+		msg.set(UID, uid);
+		msg.set(TYPE, type.name());
+		return msg;
+	}
+
+	public static final MessageType MHProbeIdentifier = new MessageType("MHProbeIdentifier", PRIORITY_HIGH) {{
+		addField(UID, Long.class);
+		addField(IDENTIFIER, Long.class);
+	}};
+
+	public static final MessageType MHProbeLinkLengths = new MessageType("MHProbeLinkLengths", PRIORITY_HIGH) {{
+		addField(UID, Long.class);
+		addField(LINK_LENGTHS, double[].class);
+	}};
+
+	public static final MessageType MHProbeUptime = new MessageType("MHProbeUptime", PRIORITY_HIGH) {{
+		addField(UID, Long.class);
+		addField(UPTIME_SESSION, Long.class);
+		addField(UPTIME_PERCENT_48H, Double.class);
+	}};
+
+
+	/**
+	 * Creates a probe response to a query for uptime.
+	 * @param uid Probe identifier.
+	 * @param uptime_session Endpoint session uptime in ms.
+	 * @param uptime_48hour Percent of the past 48 hours endpoint was online.
+	 * @return Message with requested attributes.
+	 */
+	public static Message createMHProbeUptime(long uid, long uptime_session, double uptime_48hour) {
+		Message msg = new Message(MHProbeUptime);
+		msg.set(UID, uid);
+		msg.set(UPTIME_SESSION, uptime_session);
+		msg.set(UPTIME_PERCENT_48H, uptime_48hour);
+		return msg;
+	}
+
+	public static final MessageType MHProbeBuild = new MessageType("MHProbeBuild", PRIORITY_HIGH) {{
+		addField(UID, Long.class);
+		addField(BUILD, Integer.class);
+	}};
+
+	/**
+	 * Creates a probe response to a query for build.
+	 * @param uid Probe identifier.
+	 * @param build Endpoint build of Freenet.
+	 * @return Message with requested attributes.
+	 */
+	public static Message createMHProbeBuild(long uid, int build) {
+		Message msg = new Message(MHProbeBuild);
+		msg.set(UID, uid);
+		msg.set(BUILD, build);
+		return msg;
+	}
+
+	public static final MessageType MHProbeBandwidth = new MessageType("MHProbeBandwidth", PRIORITY_HIGH) {{
+		addField(UID, Long.class);
+		addField(OUTPUT_BANDWIDTH_UPPER_LIMIT, Long.class);
+	}};
+
+	/**
+	 * Creates a probe response to a query for bandwidth limits.
+	 * @param uid Probe identifier.
+	 * @param limit Endpoint output bandwidth limit in bytes per second.
+	 * @return Message with requested attributes.
+	 */
+	public static Message createMHProbeBandwidth(long uid, long limit) {
+		Message msg = new Message(MHProbeBandwidth);
+		msg.set(UID, uid);
+		msg.set(OUTPUT_BANDWIDTH_UPPER_LIMIT, limit);
+		return msg;
+	}
+
+	public static final MessageType MHProbeStoreSize = new MessageType("MHProbeStoreSize", PRIORITY_HIGH) {{
+		addField(UID, Long.class);
+		addField(STORE_SIZE, Long.class);
+	}};
+
+	/**
+	 * Creates a probe response to a query for store size.
+	 * @param uid Probe identifier.
+	 * @param storeSize Endpoint store size in bytes.
+	 * @return Message with requested attributes.
+	 */
+	public static Message createMHProbeStoreSize(long uid, long storeSize) {
+		Message msg = new Message(MHProbeStoreSize);
+		msg.set(UID, uid);
+		msg.set(STORE_SIZE, storeSize);
+		return msg;
+	}
+
+	/**
+	 * Creates a probe response to a query for identifier.
+	 * @param uid Probe identifier.
+	 * @param identifier Endpoint identifier.
+	 * @return Message with requested attributes.
+	 */
+	public static Message createMHProbeIdentifier(long uid, long identifier) {
+		Message msg = new Message(MHProbeIdentifier);
+		msg.set(UID, uid);
+		msg.set(IDENTIFIER, identifier);
+		return msg;
+	}
+
+	/**
+	 * Creates a probe response to a query for link lengths.
+	 * @param uid Probe identifier.
+	 * @param linkLengths Endpoint link lengths.
+	 * @return Message with requested attributes.
+	 */
+	public static Message createMHProbeLinkLengths(long uid, double[] linkLengths) {
+		Message msg = new Message(MHProbeLinkLengths);
+		msg.set(UID, uid);
+		msg.set(LINK_LENGTHS, linkLengths);
+		return msg;
+	}
+
+	public static final MessageType MHProbeRefused = new MessageType("MHProbeRefused", PRIORITY_HIGH) {{
+		addField(DMT.UID, Long.class);
+	}};
+
+	/**
+	 * Creates a probe response which indicates that the endpoint opted not to respond with the requested result.
+	 * @param uid Probe identifier.
+	 * @return Message with the requested attribute.
+	 */
+	public static Message createMHProbeRefused(long uid) {
+		Message msg = new Message(MHProbeRefused);
+		msg.set(UID, uid);
+		return msg;
+	}
+
 	public static final MessageType FNPRHProbeRequest = new MessageType("FNPRHProbeRequest", PRIORITY_HIGH) {{
 		addField(UID, Long.class);
 		addField(TARGET_LOCATION, Double.class);
