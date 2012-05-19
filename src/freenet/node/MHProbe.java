@@ -1,5 +1,6 @@
 package freenet.node;
 
+import freenet.config.SubConfig;
 import freenet.io.comm.AsyncMessageFilterCallback;
 import freenet.io.comm.ByteCounter;
 import freenet.io.comm.DMT;
@@ -60,6 +61,11 @@ public class MHProbe implements ByteCounter {
 		 * Peer from which response is expected has disconnected.
 		 */
 		void onDisconnected();
+
+		/**
+		 * Endpoint opted not to respond with the requested information.
+		 */
+		void onRefused();
 
 		/**
 		 * Identifier result.
@@ -193,7 +199,6 @@ public class MHProbe implements ByteCounter {
 	 * If the probe has a positive HTL, routes with MH correction and probabilistically decrements HTL.
 	 * If the probe comes to have an HTL of zero: (an incoming HTL of zero is taken to be one.)
 	 *     returns as node settings allow at random exactly one of:
-	 *         TODO: config options to disable
 	 *         -unique identifier (not UID)
 	 *         -uptime: session and 48-hour percentage,
 	 *         -output bandwidth
@@ -276,6 +281,8 @@ public class MHProbe implements ByteCounter {
 							case BANDWIDTH: filter.setType(DMT.MHProbeBandwidth); break;
 							case STORE_SIZE: filter.setType(DMT.MHProbeStoreSize); break;
 						}
+						//Refusal should also be listened for so it can be relayed.
+						filter.or(MessageFilter.create().setSource(candidate).setField(DMT.UID, uid).setTimeout(timeout).setType(DMT.MHProbeRefused));
 						message.set(DMT.HTL, htl);
 						try {
 							node.usm.addAsyncFilter(filter, callback, this);
@@ -299,6 +306,9 @@ public class MHProbe implements ByteCounter {
 		if (htl == 0) {
 			Message result;
 
+			if (!respondTo(type)) {
+				result = DMT.createMHProbeRefused(uid);
+			} else {
 			switch (type) {
 			case IDENTIFIER:
 				result = DMT.createMHProbeIdentifier(uid, node.swapIdentifier);
@@ -329,6 +339,7 @@ public class MHProbe implements ByteCounter {
 				if (logDEBUG) Logger.debug(MHProbe.class, "Response for probe result type \"" + type + "\" is not implemented.");
 				return;
 			}
+			}
 			//Returning result to probe sent locally.
 			if (source == null) {
 				if (logDEBUG) Logger.debug(MHProbe.class, "Returning locally sent probe.");
@@ -341,6 +352,21 @@ public class MHProbe implements ByteCounter {
 			} catch (NotConnectedException e) {
 				if (logDEBUG) Logger.debug(MHProbe.class, "Previous step in chain is no longer connected.");
 			}
+		}
+	}
+
+	private boolean respondTo(ProbeType type) {
+		final SubConfig nc = node.config.get("node");
+		switch (type){
+		case BANDWIDTH: return nc.getBoolean("probeBandwidth");
+		case BUILD: return nc.getBoolean("probeBuild");
+		case IDENTIFIER: return nc.getBoolean("probeIdentifier");
+		case LINK_LENGTHS: return nc.getBoolean("probeLinkLengths");
+		case STORE_SIZE: return nc.getBoolean("probeStoreSize");
+		case UPTIME: return nc.getBoolean("probeUptime");
+		default:
+			if (logDEBUG) Logger.debug(MHProbe.class, "Unrecognized probe type " + type.name() + "; refusing response.");
+			return false;
 		}
 	}
 
@@ -402,6 +428,8 @@ public class MHProbe implements ByteCounter {
 				listener.onLinkLengths(message.getDoubleArray(DMT.LINK_LENGTHS));
 			} else if (message.getSpec().equals(DMT.MHProbeBuild)) {
 				listener.onBuild(message.getInt(DMT.BUILD));
+			} else if (message.getSpec().equals(DMT.MHProbeRefused)) {
+				listener.onRefused();
 			} else {
 				if (logDEBUG) Logger.debug(MHProbe.class, "Unknown probe result set " + message.getSpec().getName());
 			}

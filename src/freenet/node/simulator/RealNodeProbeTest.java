@@ -85,6 +85,11 @@ public class RealNodeProbeTest extends RealNodeTest {
 			}
 
 			@Override
+			public void onRefused() {
+				System.out.println("Probe refused.");
+			}
+
+			@Override
 			public void onIdentifier(long identifier) {
 				System.out.println("Probe got identifier " + identifier + ".");
 			}

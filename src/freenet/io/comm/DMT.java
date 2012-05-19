@@ -1183,6 +1183,21 @@ public class DMT {
 		return msg;
 	}
 
+	public static final MessageType MHProbeRefused = new MessageType("MHProbeRefused", PRIORITY_HIGH) {{
+		addField(DMT.UID, Long.class);
+	}};
+
+	/**
+	 * Creates a probe response which indicates that the endpoint opted not to respond with the requested result.
+	 * @param uid Probe identifier.
+	 * @return Message with the requested attribute.
+	 */
+	public static Message createMHProbeRefused(long uid) {
+		Message msg = new Message(MHProbeRefused);
+		msg.set(UID, uid);
+		return msg;
+	}
+
 	public static final MessageType FNPRHProbeRequest = new MessageType("FNPRHProbeRequest", PRIORITY_HIGH) {{
 		addField(UID, Long.class);
 		addField(TARGET_LOCATION, Double.class);

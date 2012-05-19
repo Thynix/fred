@@ -72,6 +72,11 @@ public class ProbeRequestMessage extends FCPMessage {
 				}
 
 				@Override
+				public void onRefused() {
+					handler.outputHandler.queue(new ProbeRefused(identifier));
+				}
+
+				@Override
 				public void onIdentifier(long probeIdentifier) {
 					handler.outputHandler.queue(new ProbeIdentifier(identifier, probeIdentifier));
 				}
