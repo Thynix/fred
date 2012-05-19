@@ -2535,18 +2535,6 @@ public class Node implements TimeSkewDetectorCallback {
 		maxPacketSize = nodeConfig.getInt("maxPacketSize");
 		updateMTU();
 
-		// Initialize the plugin manager
-		Logger.normal(this, "Initializing Plugin Manager");
-		System.out.println("Initializing Plugin Manager");
-		pluginManager = new PluginManager(this, lastVersion);
-
-		shutdownHook.addEarlyJob(new NativeThread("Shutdown plugins", NativeThread.HIGH_PRIORITY, true) {
-			@Override
-			public void realRun() {
-				pluginManager.stop(30*1000); // FIXME make it configurable??
-			}
-		});
-
 		/*
 		 * Probe responses. If true, the node will give information in response to a probe request of this type.
 		 * If false, the node will send a refusal. This refusal is for error estimation so opting out doesn't
@@ -2634,6 +2622,18 @@ public class Node implements TimeSkewDetectorCallback {
 		nodeConfig.finishedInitialization();
 		if(shouldWriteConfig) config.store();
 		writeNodeFile();
+
+		// Initialize the plugin manager
+		Logger.normal(this, "Initializing Plugin Manager");
+		System.out.println("Initializing Plugin Manager");
+		pluginManager = new PluginManager(this, lastVersion);
+
+		shutdownHook.addEarlyJob(new NativeThread("Shutdown plugins", NativeThread.HIGH_PRIORITY, true) {
+			@Override
+			public void realRun() {
+				pluginManager.stop(30*1000); // FIXME make it configurable??
+			}
+		});
 
 		// FIXME
 		// Short timeouts and JVM timeouts with nothing more said than the above have been seen...
