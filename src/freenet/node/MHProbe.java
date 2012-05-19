@@ -309,36 +309,36 @@ public class MHProbe implements ByteCounter {
 			if (!respondTo(type)) {
 				result = DMT.createMHProbeRefused(uid);
 			} else {
-			switch (type) {
-			case IDENTIFIER:
-				result = DMT.createMHProbeIdentifier(uid, node.swapIdentifier);
-				break;
-			case LINK_LENGTHS:
-				double[] linkLengths = new double[degree()];
-				int i = 0;
-				for (PeerNode peer : node.peers.connectedPeers) {
-					linkLengths[i++] = randomNoise(Math.min(Math.abs(peer.getLocation() - node.peers.node.getLocation()),
-						1.0 - Math.abs(peer.getLocation() - node.peers.node.getLocation())));
+				switch (type) {
+				case IDENTIFIER:
+					result = DMT.createMHProbeIdentifier(uid, node.swapIdentifier);
+					break;
+				case LINK_LENGTHS:
+					double[] linkLengths = new double[degree()];
+					int i = 0;
+					for (PeerNode peer : node.peers.connectedPeers) {
+						linkLengths[i++] = randomNoise(Math.min(Math.abs(peer.getLocation() - node.peers.node.getLocation()),
+							1.0 - Math.abs(peer.getLocation() - node.peers.node.getLocation())));
+					}
+					result = DMT.createMHProbeLinkLengths(uid, linkLengths);
+					break;
+				case UPTIME:
+					//getUptime() is session; uptime.getUptime() is 48-hour percentage.
+					result = DMT.createMHProbeUptime(uid, randomNoise(node.getUptime()), randomNoise(node.uptime.getUptime()));
+					break;
+				case BUILD:
+					result = DMT.createMHProbeBuild(uid, node.nodeUpdater.getMainVersion());
+					break;
+				case BANDWIDTH:
+					result = DMT.createMHProbeBandwidth(uid, randomNoise(node.config.get("node").getInt("outputBandwidthLimit")));
+					break;
+				case STORE_SIZE:
+					result = DMT.createMHProbeStoreSize(uid, randomNoise(node.config.get("node").getLong("storeSize")));
+					break;
+				default:
+					if (logDEBUG) Logger.debug(MHProbe.class, "Response for probe result type \"" + type + "\" is not implemented.");
+					return;
 				}
-				result = DMT.createMHProbeLinkLengths(uid, linkLengths);
-				break;
-			case UPTIME:
-				//getUptime() is session; uptime.getUptime() is 48-hour percentage.
-				result = DMT.createMHProbeUptime(uid, randomNoise(node.getUptime()), randomNoise(node.uptime.getUptime()));
-				break;
-			case BUILD:
-				result = DMT.createMHProbeBuild(uid, node.nodeUpdater.getMainVersion());
-				break;
-			case BANDWIDTH:
-				result = DMT.createMHProbeBandwidth(uid, randomNoise(node.config.get("node").getInt("outputBandwidthLimit")));
-				break;
-			case STORE_SIZE:
-				result = DMT.createMHProbeStoreSize(uid, randomNoise(node.config.get("node").getLong("storeSize")));
-				break;
-			default:
-				if (logDEBUG) Logger.debug(MHProbe.class, "Response for probe result type \"" + type + "\" is not implemented.");
-				return;
-			}
 			}
 			//Returning result to probe sent locally.
 			if (source == null) {
