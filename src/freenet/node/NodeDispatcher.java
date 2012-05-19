@@ -288,7 +288,6 @@ public class NodeDispatcher implements Dispatcher, Runnable {
 			((DarknetPeerNode)source).handleFullNoderef(m);
 			return true;
 		} else if(spec == DMT.MHProbeRequest) {
-			//TODO: rate limiting for probe requests
 			//Response is handled by callbacks within mhProbe.
 			mhProbe.request(m, source);
 			return true;
