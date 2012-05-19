@@ -18,7 +18,6 @@ import java.util.Set;
 
 /**
  * Handles starting, routing, and responding to Metropolis-Hastings corrected probes.
- * Instantiated for each outgoing probe; incoming probes are dealt with by one instance thereof.
  *
  * Possible future additions to these probes' results include:
  * <ul>
