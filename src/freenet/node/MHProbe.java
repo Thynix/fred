@@ -46,7 +46,7 @@ public class MHProbe implements ByteCounter {
 	/* TODO: A terrible hack to limit the number of pending probes. Is there a better way? It has to be accessible
 	 * from callbacks.
 	 */
-	public static final int MAX_ACCEPTED = 5;
+	public static final int MAX_PENDING = 5;
 	final public static Set<Long> pendingProbes;
 
 	/**
@@ -224,7 +224,7 @@ public class MHProbe implements ByteCounter {
 			if (logDEBUG) Logger.debug(MHProbe.class, "Invalid probe type.", e);
 			return;
 		}
-		if (!pendingProbes.contains(uid) && pendingProbes.size() >= MAX_ACCEPTED) {
+		if (!pendingProbes.contains(uid) && pendingProbes.size() >= MAX_PENDING) {
 			if (logDEBUG) Logger.debug(MHProbe.class, "Already accepted maximum number of probes; rejecting incoming.");
 			return;
 		} else if (!pendingProbes.contains(uid)) {
