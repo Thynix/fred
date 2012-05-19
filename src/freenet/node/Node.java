@@ -2619,6 +2619,9 @@ public class Node implements TimeSkewDetectorCallback {
 		});
 		respondUptime = nodeConfig.getBoolean("probeUptime");
 
+		/* Take care that no configuration options are registered after this point; they will not persist
+		 * between restarts.
+		 */
 		nodeConfig.finishedInitialization();
 		if(shouldWriteConfig) config.store();
 		writeNodeFile();
