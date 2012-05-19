@@ -1,7 +1,6 @@
 package freenet.node.fcp;
 
 import com.db4o.ObjectContainer;
-import freenet.io.comm.DMT;
 import freenet.node.Node;
 import freenet.support.SimpleFieldSet;
 

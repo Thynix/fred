@@ -1,14 +1,12 @@
 package freenet.node.fcp;
 
 import com.db4o.ObjectContainer;
-import freenet.io.comm.DMT;
 import freenet.node.Node;
 import freenet.support.SimpleFieldSet;
 
 /**
  * FCP message sent from the node to the client which indicates that the node the probe was waiting on has disconnected.
  */
-//TODO: FCPMessage
 public class ProbeDisconnected extends FCPMessage {
 	public static String NAME = "ProbeDisconnected";
 	private SimpleFieldSet fs;

@@ -8,7 +8,6 @@ import freenet.support.SimpleFieldSet;
 /**
  * FCP message sent from the node to the client which includes link lengths reported by the endpoint.
  */
-//TODO: FCPMessage
 public class ProbeLinkLengths extends FCPMessage {
 	public static String NAME = "ProbeLinkLengths";
 	private SimpleFieldSet fs;
