@@ -838,12 +838,12 @@ public class Node implements TimeSkewDetectorCallback {
 	private boolean storePreallocate;
 
 	//Whether to respond to different types of probe requests.
-	private boolean respondBandwidth = true;
-	private boolean respondBuild = true;
-	private boolean respondIdentifier = true;
-	private boolean respondLinkLengths = true;
-	private boolean respondStoreSize = true;
-	private boolean respondUptime = true;
+	private boolean respondBandwidth;
+	private boolean respondBuild;
+	private boolean respondIdentifier;
+	private boolean respondLinkLengths;
+	private boolean respondStoreSize;
+	private boolean respondUptime;
 
 	/**
 	 * Read all storable settings (identity etc) from the node file.
@@ -2534,11 +2534,6 @@ public class Node implements TimeSkewDetectorCallback {
 
 		maxPacketSize = nodeConfig.getInt("maxPacketSize");
 		updateMTU();
-		
-		nodeConfig.finishedInitialization();
-		if(shouldWriteConfig)
-			config.store();
-		writeNodeFile();
 
 		// Initialize the plugin manager
 		Logger.normal(this, "Initializing Plugin Manager");
@@ -2635,6 +2630,10 @@ public class Node implements TimeSkewDetectorCallback {
 			}
 		});
 		respondUptime = nodeConfig.getBoolean("probeUptime");
+
+		nodeConfig.finishedInitialization();
+		if(shouldWriteConfig) config.store();
+		writeNodeFile();
 
 		// FIXME
 		// Short timeouts and JVM timeouts with nothing more said than the above have been seen...
