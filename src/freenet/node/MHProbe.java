@@ -193,7 +193,14 @@ public class MHProbe implements ByteCounter {
 	 * @param source node from which the probe request was received. Used to relay back results.
 	 */
 	public void request(Message message, PeerNode source) {
-		request(message, source, new ResultRelay(source, message.getLong(DMT.UID)));
+		AsyncMessageFilterCallback cb;
+		try {
+			cb = new ResultRelay(source, message.getLong(DMT.UID));
+		} catch (IllegalArgumentException e) {
+			if (logDEBUG) Logger.debug(MHProbe.class, "Received probe request from null source.", e);
+			return;
+		}
+		request(message, source, cb);
 	}
 
 	/**
@@ -511,10 +518,13 @@ public class MHProbe implements ByteCounter {
 
 		/**
 		 * @param source peer from which the request was received and to which send the response.
+		 * @throws IllegalArgumentException if source is null.
 		 */
-		public ResultRelay(PeerNode source, Long uid) {
+		public ResultRelay(PeerNode source, Long uid) throws IllegalArgumentException {
 			if (source == null) {
-				if (logDEBUG) Logger.debug(MHProbe.class, "Cannot return probe result to null peer.");
+				if (logDEBUG) Logger.debug(MHProbe.class, "Probe " + uid + " source is null.");
+				//No way to relay results back.
+				throw new IllegalArgumentException("Probe source is null.");
 			}
 			this.source = source;
 			this.uid = uid;
