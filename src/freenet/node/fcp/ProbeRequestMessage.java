@@ -111,10 +111,10 @@ public class ProbeRequestMessage extends FCPMessage {
 			};
 			node.dispatcher.mhProbe.start(htl, node.random.nextLong(), type, listener);
 		} catch (IllegalArgumentException e) {
-			throw new MessageInvalidException(ProtocolErrorMessage.INVALID_MESSAGE, "Unrecognized parse probe type \"" + fs.get(DMT.TYPE) + "\":" + e, null, false);
+			throw new MessageInvalidException(ProtocolErrorMessage.INVALID_MESSAGE, "Unrecognized parse probe type \"" + fs.get(DMT.TYPE) + "\": " + e, null, false);
 		} catch (FSParseException e) {
 			//Getting a String from a SimpleFieldSet does not throw - it can at worst return null.
-			throw new MessageInvalidException(ProtocolErrorMessage.INVALID_MESSAGE, "Unable to parse hopsToLive:" + e, null, false);
+			throw new MessageInvalidException(ProtocolErrorMessage.INVALID_MESSAGE, "Unable to parse hopsToLive: " + e, null, false);
 		}
 	}
 }
