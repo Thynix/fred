@@ -221,6 +221,10 @@ public class MHProbe implements ByteCounter {
 	 */
 	public void request(final Message message, final PeerNode source, final AsyncMessageFilterCallback callback) {
 		final Long uid = message.getLong(DMT.UID);
+		if (!pendingProbes.contains(uid) && pendingProbes.size() >= MAX_PENDING) {
+			if (logDEBUG) Logger.debug(MHProbe.class, "Already accepted maximum number of probes; rejecting incoming.");
+			return;
+		}
 		ProbeType type;
 		try {
 			type = ProbeType.valueOf(message.getString(DMT.TYPE));
@@ -234,14 +238,6 @@ public class MHProbe implements ByteCounter {
 			}
 			return;
 		}
-		if (!pendingProbes.contains(uid) && pendingProbes.size() >= MAX_PENDING) {
-			if (logDEBUG) Logger.debug(MHProbe.class, "Already accepted maximum number of probes; rejecting incoming.");
-			return;
-		} else if (!pendingProbes.contains(uid)) {
-			if (logDEBUG) Logger.debug(MHProbe.class, "Accepting probe with uid " + uid + " from " +
-			                                       (source == null ? "self" : source.userToString()) + ".");
-			pendingProbes.add(uid);
-		}
 		short htl = message.getShort(DMT.HTL);
 		if (htl < 0) {
 			if (logDEBUG) Logger.debug(MHProbe.class, "HTL cannot be negative; rejecting probe.");
@@ -252,6 +248,11 @@ public class MHProbe implements ByteCounter {
 		} else if (htl > MAX_HTL) {
 			if (logDEBUG) Logger.debug(MHProbe.class, "Capping HTL of " + htl + " at " + MAX_HTL + ".");
 			htl = MAX_HTL;
+		}
+		if (!pendingProbes.contains(uid)) {
+			if (logDEBUG) Logger.debug(MHProbe.class, "Accepting probe with uid " + uid + " from " +
+			                                       (source == null ? "self" : source.userToString()) + ".");
+			pendingProbes.add(uid);
 		}
 
 		/*
