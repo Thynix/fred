@@ -285,11 +285,19 @@ public class MHProbe implements ByteCounter {
 				double acceptProbability;
 				try {
 					acceptProbability = (double)degree / candidate.getDegree();
+				} catch (ArithmeticException e) {
+					/*
+					 * Candidate's degree is zero: its peer locations are unknown.
+					 * Cannot do M-H correction; fall back to random walk.
+					 */
+					if (logDEBUG) Logger.debug(MHProbe.class, "Peer (" + candidate.userToString() +
+					                                          ") has no FOAF data.", e);
+					acceptProbability = 1.0;
 				} catch (NullPointerException e) {
-					//If a candidate's FOAF data is unknown, ignore that peer.
-					if (logDEBUG) Logger.debug(MHProbe.class, "Ignoring peer (" +
-					                           candidate.userToString() + ") without FOAF data.");
-					continue;
+					//Candidate's peer location array is null. See above for reasoning.
+					if (logDEBUG) Logger.debug(MHProbe.class, "Peer (" + candidate.userToString() +
+					                                          ") has no FOAF data.", e);
+					acceptProbability = 1.0;
 				}
 				if (logDEBUG) Logger.debug(MHProbe.class, "acceptProbability is " + acceptProbability);
 				if (node.random.nextDouble() < acceptProbability) {
