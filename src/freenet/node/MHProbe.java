@@ -128,6 +128,12 @@ public class MHProbe implements ByteCounter {
 		UPTIME
 	}
 
+	public enum ProbeError {
+		DISCONNECTED,
+		TIMEOUT,
+		UNRECOGNIZED_TYPE
+	}
+
 	/**
 	 * Counts as probe request transfer.
 	 * @param bytes Bytes received.
@@ -216,7 +222,12 @@ public class MHProbe implements ByteCounter {
 			type = ProbeType.valueOf(message.getString(DMT.TYPE));
 			if (logDEBUG) Logger.debug(MHProbe.class, "Probe type is " + type.name() + ".");
 		} catch (IllegalArgumentException e) {
-			if (logDEBUG) Logger.debug(MHProbe.class, "Invalid probe type.", e);
+			if (logDEBUG) Logger.debug(MHProbe.class, "Invalid probe type \"" + message.getString(DMT.TYPE) + "\".", e);
+			try {
+				source.sendAsync(DMT.createMHProbeError(uid, ProbeError.UNRECOGNIZED_TYPE), null, this);
+			} catch (NotConnectedException f) {
+				if (logDEBUG) Logger.debug(MHProbe.class, "Source of unrecognized result type is no longer connected.");
+			}
 			return;
 		}
 		if (!pendingProbes.contains(uid) && pendingProbes.size() >= MAX_PENDING) {
@@ -288,8 +299,9 @@ public class MHProbe implements ByteCounter {
 							case BANDWIDTH: filter.setType(DMT.MHProbeBandwidth); break;
 							case STORE_SIZE: filter.setType(DMT.MHProbeStoreSize); break;
 						}
-						//Refusal should also be listened for so it can be relayed.
+						//Refusal or an error should also be listened for so it can be relayed.
 						filter.or(MessageFilter.create().setSource(candidate).setField(DMT.UID, uid).setTimeout(timeout).setType(DMT.MHProbeRefused));
+						filter.or(MessageFilter.create().setSource(candidate).setField(DMT.UID, uid).setTimeout(timeout).setType(DMT.MHProbeError));
 						message.set(DMT.HTL, htl);
 						try {
 							node.usm.addAsyncFilter(filter, callback, this);
@@ -437,6 +449,16 @@ public class MHProbe implements ByteCounter {
 				listener.onBuild(message.getInt(DMT.BUILD));
 			} else if (message.getSpec().equals(DMT.MHProbeRefused)) {
 				listener.onRefused();
+			} else if (message.getSpec().equals(DMT.MHProbeError)) {
+				try {
+					switch (ProbeError.valueOf(message.getString(DMT.TYPE))) {
+					case DISCONNECTED: listener.onDisconnected(); break;
+					case TIMEOUT: listener.onTimeout(); break;
+					}
+				} catch (IllegalArgumentException e) {
+					if (logDEBUG) Logger.debug(MHProbe.class, "Unknown error type \"" +
+					                                           message.getString(DMT.TYPE) + "\".");
+				}
 			} else {
 				if (logDEBUG) Logger.debug(MHProbe.class, "Unknown probe result set " + message.getSpec().getName());
 			}
@@ -510,6 +532,11 @@ public class MHProbe implements ByteCounter {
 		public void onTimeout() {
 			pendingProbes.remove(uid);
 			if(logDEBUG) Logger.debug(MHProbe.class, "Relay timed out.");
+			try {
+				source.sendAsync(DMT.createMHProbeError(uid, ProbeError.TIMEOUT), null, MHProbe.this);
+			} catch (NotConnectedException e) {
+				if (logMINOR) Logger.minor(MHProbe.class, sourceDisconnect);
+			}
 		}
 
 		/* TODO: What does this mean? Its existence implies multiple levels of being timed-out. The filter seems
@@ -523,7 +550,12 @@ public class MHProbe implements ByteCounter {
 		@Override
 		public void onDisconnect(PeerContext context) {
 			pendingProbes.remove(uid);
-			if (logDEBUG) Logger.debug(MHProbe.class, "Relay source disconnected.");
+			if (logDEBUG) Logger.debug(MHProbe.class, "Next node in chain disconnected.");
+			try {
+				source.sendAsync(DMT.createMHProbeError(uid, ProbeError.DISCONNECTED), null, MHProbe.this);
+			} catch (NotConnectedException e) {
+				if (logMINOR) Logger.minor(MHProbe.class, sourceDisconnect);
+			}
 		}
 
 		@Override

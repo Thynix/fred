@@ -1198,6 +1198,31 @@ public class DMT {
 		return msg;
 	}
 
+	public static final MessageType MHProbeError = new MessageType("MHProbeError", PRIORITY_HIGH) {{
+		addField(UID, Long.class);
+		addField(TYPE, String.class);
+	}};
+
+	/**
+	 * Creates a probe response which indicates there was an error.
+	 * @param uid Probe identifier.
+	 * @param error The type of error that occurred. Can be:
+	 * <ul>
+	 *              <li>DISCONNECTED: A node the probe was routed on to has disconnected, so it can no longer
+	 *              route the result back. This does not mean that a source of the probe disconnected, which is
+	 *              unpropagated.</li>
+	 *              <li>TIMEOUT: The probe timed out while waiting for a response.</li>
+	 *              <li>UNRECOGNIZED_TYPE: The endpoint did not recognize the requested response type.</li>
+	 * </ul>
+	 * @return Message with the requested attributes.
+	 */
+	public static Message createMHProbeError(long uid, MHProbe.ProbeError error) {
+		Message msg = new Message(MHProbeError);
+		msg.set(UID, uid);
+		msg.set(TYPE, error.name());
+		return msg;
+	}
+
 	public static final MessageType FNPRHProbeRequest = new MessageType("FNPRHProbeRequest", PRIORITY_HIGH) {{
 		addField(UID, Long.class);
 		addField(TARGET_LOCATION, Double.class);
