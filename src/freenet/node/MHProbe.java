@@ -108,21 +108,19 @@ public class MHProbe implements ByteCounter {
 	/**
 	 * Applies random noise proportional to the input value.
 	 * @param input Value to apply noise to.
-	 * @return Value +/- up to 1% of itself.
+	 * @return Value +/- Gaussian percentage.
 	 */
 	private double randomNoise(double input) {
-		double part = input * (node.random.nextDouble() * 0.01);
-		return node.random.nextBoolean() ? input + part : input - part;
+		return input + Math.round(node.random.nextGaussian() * 0.01 * input);
 	}
 
 	/**
 	 * Applies random noise proportional to the input value.
 	 * @param input Value to apply noise to.
-	 * @return Value +/- up to 1% of itself.
+	 * @return Value +/- Gaussian percentage.
 	 */
 	private long randomNoise(long input) {
-		long part = Math.round(input * (node.random.nextDouble() * 0.01));
-		return node.random.nextBoolean() ? input + part : input - part;
+		return input + Math.round(node.random.nextGaussian() * 0.01 * input);
 	}
 
 	public enum ProbeType {
