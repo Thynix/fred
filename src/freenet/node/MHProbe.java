@@ -264,7 +264,15 @@ public class MHProbe implements ByteCounter {
 					continue;
 				}
 				//acceptProbability is the MH correction.
-				double acceptProbability = (double)degree / candidate.getDegree();
+				double acceptProbability;
+				try {
+					acceptProbability = (double)degree / candidate.getDegree();
+				} catch (NullPointerException e) {
+					//If a candidate's FOAF data is unknown, ignore that peer.
+					if (logDEBUG) Logger.debug(MHProbe.class, "Ignoring peer (" +
+					                           candidate.userToString() + ") without FOAF data.");
+					continue;
+				}
 				if (logDEBUG) Logger.debug(MHProbe.class, "acceptProbability is " + acceptProbability);
 				if (node.random.nextDouble() < acceptProbability) {
 					if (logDEBUG) Logger.debug(MHProbe.class, "Accepted candidate.");
