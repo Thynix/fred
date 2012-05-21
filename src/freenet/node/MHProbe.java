@@ -434,7 +434,7 @@ public class MHProbe implements ByteCounter {
 
 	/**
 	 * Filter listener which determines the type of result and calls the appropriate probe listener method.
-	 * This is used for returning probe results via FCP.
+	 * This is used for returning probe results via FCP. It is for probes started by this node.
 	 */
 	private class ResultListener implements AsyncMessageFilterCallback {
 
