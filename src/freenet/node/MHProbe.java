@@ -406,7 +406,9 @@ public class MHProbe implements ByteCounter {
 		case STORE_SIZE: return nc.getBoolean("probeStoreSize");
 		case UPTIME: return nc.getBoolean("probeUptime");
 		default:
-			if (logDEBUG) Logger.debug(MHProbe.class, "Unrecognized probe type " + type.name() + "; refusing response.");
+			//There a valid ProbeType value that is not present here.
+			if (logDEBUG) Logger.debug(MHProbe.class, "Probe type \"" + type.name() + "\" does not check" +
+			                                          "if a response is allowed by the user; refusing.");
 			return false;
 		}
 	}
