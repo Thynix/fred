@@ -269,7 +269,14 @@ public class MHProbe implements ByteCounter {
 			for (; htl > 0; htl = probabilisticDecrement(htl)) {
 				//Can't handle a probe request if not connected to any peers.
 				if (degree == 0) {
-					if (logDEBUG) Logger.minor(MHProbe.class, "Aborting received probe request because there are no connections.");
+					if (logMINOR) Logger.minor(MHProbe.class, "Aborting received probe request because there are no connections.");
+					/*
+					 * If this is a locally-started request, not a relayed one, respond to an error.
+					 * Otherwise, in this case there's nowhere to send the error.
+					 */
+					//TODO: Is it safe to manually call callback methods like this?
+					if (callback instanceof ResultListener) callback.onDisconnect(null);
+					pendingProbes.remove(uid);
 					return;
 				}
 				try {
