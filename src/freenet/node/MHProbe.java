@@ -39,14 +39,10 @@ public class MHProbe implements ByteCounter {
 				logDEBUG = Logger.shouldLog(Logger.LogLevel.DEBUG, this);
 			}
 		});
-		pendingProbes = Collections.synchronizedSet(new HashSet<Long>());
 	}
 
-	/* TODO: A terrible hack to limit the number of pending probes. Is there a better way? It has to be accessible
-	 * from callbacks.
-	 */
 	public static final int MAX_PENDING = 5;
-	final public static Set<Long> pendingProbes;
+	private final Set<Long> pendingProbes;
 
 	/**
 	 * Listener for the different types of probe results.
@@ -171,6 +167,8 @@ public class MHProbe implements ByteCounter {
 
 	public MHProbe(Node node) {
 		this.node = node;
+		//Synchronized: accessed by request() and callbacks.
+		this.pendingProbes = Collections.synchronizedSet(new HashSet<Long>());
 	}
 
 	/**
@@ -193,7 +191,7 @@ public class MHProbe implements ByteCounter {
 	 * @param source node from which the probe request was received. Used to relay back results.
 	 */
 	public void request(Message message, PeerNode source) {
-		request(message, source, new ResultRelay(source, message.getLong(DMT.UID), this));
+		request(message, source, new ResultRelay(source, message.getLong(DMT.UID)));
 	}
 
 	/**
@@ -472,18 +470,16 @@ public class MHProbe implements ByteCounter {
 
 		private final PeerNode source;
 		private final Long uid;
-		private final MHProbe mhProbe;
 
 		/**
 		 * @param source peer from which the request was received and to which send the response.
 		 */
-		public ResultRelay(PeerNode source, Long uid, MHProbe mhProbe) {
+		public ResultRelay(PeerNode source, Long uid) {
 			if (source == null) {
 				if (logDEBUG) Logger.debug(MHProbe.class, "Cannot return probe result to null peer.");
 			}
 			this.source = source;
 			this.uid = uid;
-			this.mhProbe = mhProbe;
 		}
 
 
@@ -503,7 +499,7 @@ public class MHProbe implements ByteCounter {
 			if (logDEBUG) Logger.debug(MHProbe.class, "Relaying " + message.getSpec().getName() + " back" +
 			                                          " to " + source.userToString());
 			try {
-				source.sendAsync(message, null, mhProbe);
+				source.sendAsync(message, null, MHProbe.this);
 			} catch (NotConnectedException e) {
 				if (logMINOR) Logger.minor(MHProbe.class, sourceDisconnect);
 			}
