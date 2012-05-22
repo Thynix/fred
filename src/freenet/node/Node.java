@@ -845,6 +845,8 @@ public class Node implements TimeSkewDetectorCallback {
 	private boolean respondStoreSize;
 	private boolean respondUptime;
 
+	private long probeIdentifier;
+
 	/**
 	 * Read all storable settings (identity etc) from the node file.
 	 * @param filename The name of the file to read from.
@@ -2569,7 +2571,7 @@ public class Node implements TimeSkewDetectorCallback {
 			}
 		});
 		respondBuild = nodeConfig.getBoolean("probeBuild");
-		nodeConfig.register("probeIdentifier", true, sortOrder++, false, true, "Node.probeIdentifierShort", "Node.probeIdentifierLong", new BooleanCallback() {
+		nodeConfig.register("probeIdentifier", true, sortOrder++, false, true, "Node.probeRespondIdentifierShort", "Node.probeRespondIdentifierLong", new BooleanCallback() {
 			@Override
 			public Boolean get() {
 				return respondIdentifier;
@@ -2618,6 +2620,34 @@ public class Node implements TimeSkewDetectorCallback {
 			}
 		});
 		respondUptime = nodeConfig.getBoolean("probeUptime");
+
+		nodeConfig.register("identifier", -1, sortOrder++, true, true, "Node.probeIdentifierShort", "Node.probeIdentifierLong", new LongCallback() {
+			@Override
+			public Long get() {
+				return probeIdentifier;
+			}
+
+			@Override
+			public void set(Long val) {
+				probeIdentifier = val;
+				//-1 is reserved for picking a random value; don't pick it randomly.
+				while(probeIdentifier == -1) probeIdentifier = random.nextLong();
+			}
+		}, false);
+		probeIdentifier = nodeConfig.getLong("identifier");
+
+		/*
+		 * set() is not used when setting up an option with its default value, so do so manually to avoid using
+		 * an identifier of -1.
+		 */
+		try {
+			if(probeIdentifier == -1) nodeConfig.getOption("identifier").setValue("-1");
+		} catch (InvalidConfigValueException e) {
+			Logger.error(Node.class, "node.identifier set() unexpectedly threw.", e);
+		} catch (NodeNeedRestartException e) {
+			Logger.error(Node.class, "node.identifier set() unexpectedly threw.", e);
+		}
+
 
 		/* Take care that no configuration options are registered after this point; they will not persist
 		 * between restarts.
