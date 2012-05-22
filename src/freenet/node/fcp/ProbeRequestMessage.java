@@ -65,13 +65,8 @@ public class ProbeRequestMessage extends FCPMessage {
 			final short htl = fs.get(DMT.HTL) == null ? MHProbe.MAX_HTL : fs.getShort(DMT.HTL);
 			MHProbe.Listener listener = new MHProbe.Listener() {
 				@Override
-				public void onTimeout() {
-					handler.outputHandler.queue(new ProbeTimeout(identifier));
-				}
-
-				@Override
-				public void onDisconnected() {
-					handler.outputHandler.queue(new ProbeDisconnected(identifier));
+				public void onError(MHProbe.ProbeError error, String description) {
+					handler.outputHandler.queue(new ProbeError(identifier, error, description));
 				}
 
 				@Override

@@ -30,11 +30,13 @@ public class MHProbe implements ByteCounter {
 
 	private static volatile boolean logMINOR;
 	private static volatile boolean logDEBUG;
+	private static volatile boolean logWARNING;
 
 	static {
 		Logger.registerLogThresholdCallback(new LogThresholdCallback(){
 			@Override
 			public void shouldUpdate(){
+				logWARNING = Logger.shouldLog(Logger.LogLevel.WARNING, this);
 				logMINOR = Logger.shouldLog(Logger.LogLevel.MINOR, this);
 				logDEBUG = Logger.shouldLog(Logger.LogLevel.DEBUG, this);
 			}
@@ -49,14 +51,19 @@ public class MHProbe implements ByteCounter {
 	 */
 	public interface Listener {
 		/**
-		 * Probe response has timed out.
+		 * An error occurred.
+		 @param error type: What error occurred. Can be:
+		 *              <ul>
+		 *              <li>DISCONNECTED: Peer from which response is expected has disconnected.</li>
+		 *              <li>TIMEOUT: Probe response has timed out.</li>
+		 *              <li>UNRECOGNIZED_TYPE: The endpoint did not recognize probe request type.</li>
+		 *              <li>UNKNOWN: The local node not recognize the error specified by a remote node.
+		 *              description is set to the remote error.</li>
+		 *              </ul>
+		 * @param description description: Arbitrary string, Defined if the error type is UNKNOWN,
+		 *                                 Contains the unrecognized error from the message.
 		 */
-		void onTimeout();
-
-		/**
-		 * Peer from which response is expected has disconnected.
-		 */
-		void onDisconnected();
+		void onError(ProbeError error, String description);
 
 		/**
 		 * Endpoint opted not to respond with the requested information.
@@ -129,9 +136,24 @@ public class MHProbe implements ByteCounter {
 	}
 
 	public enum ProbeError {
+		/**
+		 * The node being waited on to provide a response disconnected.
+		 */
 		DISCONNECTED,
+		/**
+		 * Timed out while waiting for a response.
+		 */
 		TIMEOUT,
-		UNRECOGNIZED_TYPE
+		/**
+		 * A remote node did not recognize the requested probe type. For locally started probes it will not be
+		 * a ProbeError but a ProtocolError.
+		 */
+		UNRECOGNIZED_TYPE,
+		/**
+		 * Only used locally, not sent over the network. The local node did not recognize the error used.
+		 * This should always be specified along with the description string containing the remote error.
+		 */
+		UNKNOWN
 	}
 
 	/**
@@ -482,14 +504,17 @@ public class MHProbe implements ByteCounter {
 			} else if (message.getSpec().equals(DMT.MHProbeRefused)) {
 				listener.onRefused();
 			} else if (message.getSpec().equals(DMT.MHProbeError)) {
+				final String errorType = message.getString(DMT.TYPE);
 				try {
-					switch (ProbeError.valueOf(message.getString(DMT.TYPE))) {
-					case DISCONNECTED: listener.onDisconnected(); break;
-					case TIMEOUT: listener.onTimeout(); break;
+					if (errorType.equals(ProbeError.UNKNOWN.name()) && logWARNING) {
+						Logger.warning(MHProbe.class, "Unexpectedly received local error \"" +
+						               errorType + "\" from remote node.");
 					}
+					listener.onError(ProbeError.valueOf(errorType), null);
 				} catch (IllegalArgumentException e) {
-					if (logDEBUG) Logger.debug(MHProbe.class, "Unknown error type \"" +
-					                                           message.getString(DMT.TYPE) + "\".");
+					listener.onError(ProbeError.UNKNOWN, errorType);
+					if (logDEBUG) Logger.debug(MHProbe.class, "Unknown error type \"" + errorType +
+					                                          "\".");
 				}
 			} else {
 				if (logDEBUG) Logger.debug(MHProbe.class, "Unknown probe result set " + message.getSpec().getName());
@@ -499,7 +524,7 @@ public class MHProbe implements ByteCounter {
 		@Override
 		public void onTimeout() {
 			pendingProbes.remove(uid);
-			listener.onTimeout();
+			listener.onError(ProbeError.TIMEOUT, null);
 		}
 
 		@Override
@@ -510,7 +535,7 @@ public class MHProbe implements ByteCounter {
 		@Override
 		public void onDisconnect(PeerContext context) {
 			pendingProbes.remove(uid);
-			listener.onDisconnected();
+			listener.onError(ProbeError.DISCONNECTED, null);
 		}
 
 		@Override
