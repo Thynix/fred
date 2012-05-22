@@ -75,13 +75,9 @@ public class RealNodeProbeTest extends RealNodeTest {
 		final NumberFormat nf = NumberFormat.getInstance();
 		MHProbe.Listener print = new MHProbe.Listener() {
 			@Override
-			public void onTimeout() {
-				System.out.println("Probe timed out.");
-			}
-
-			@Override
-			public void onDisconnected() {
-				System.out.println("Probe disconnected.");
+			public void onError(MHProbe.ProbeError error, String description) {
+				System.out.print("Probe error: " + error.name());
+				System.out.println(description == null ? "" : "(" + description + ")");
 			}
 
 			@Override
