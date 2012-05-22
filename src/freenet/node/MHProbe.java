@@ -375,7 +375,7 @@ public class MHProbe implements ByteCounter {
 			} else {
 				switch (type) {
 				case IDENTIFIER:
-					result = DMT.createMHProbeIdentifier(uid, node.swapIdentifier);
+					result = DMT.createMHProbeIdentifier(uid, node.config.get("node").getLong("identifier"));
 					break;
 				case LINK_LENGTHS:
 					double[] linkLengths = new double[degree()];
