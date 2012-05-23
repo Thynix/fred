@@ -345,8 +345,8 @@ public class MHProbe implements ByteCounter {
 							case STORE_SIZE: filter.setType(DMT.MHProbeStoreSize); break;
 						}
 						//Refusal or an error should also be listened for so it can be relayed.
-						filter.or(MessageFilter.create().setSource(candidate).setField(DMT.UID, uid).setTimeout(timeout).setType(DMT.MHProbeRefused));
-						filter.or(MessageFilter.create().setSource(candidate).setField(DMT.UID, uid).setTimeout(timeout).setType(DMT.MHProbeError));
+						filter.or(MessageFilter.create().setSource(candidate).setField(DMT.UID, uid).setTimeout(timeout).setType(DMT.MHProbeRefused)
+						      .or(MessageFilter.create().setSource(candidate).setField(DMT.UID, uid).setTimeout(timeout).setType(DMT.MHProbeError)));
 						message.set(DMT.HTL, htl);
 						try {
 							node.usm.addAsyncFilter(filter, callback, this);
