@@ -15,7 +15,7 @@ public class ProbeStoreSize extends FCPMessage {
 	/**
 	 *
 	 * @param fcpIdentifier FCP-level identifier for pairing requests and responses
-	 * @param storeSize reported endpoint store size in bytes.
+	 * @param storeSize reported endpoint store size in GiB.
 	 */
 	public ProbeStoreSize(String fcpIdentifier, long storeSize) {
 		fs = new SimpleFieldSet(true);

@@ -15,7 +15,7 @@ public class ProbeBandwidth extends FCPMessage {
 	/**
 	 *
 	 * @param fcpIdentifier FCP-level identifier for pairing requests and responses
-	 * @param outputBandwidth reported endpoint output bandwidth limit in bytes per second.
+	 * @param outputBandwidth reported endpoint output bandwidth limit in KiB per second.
 	 */
 	public ProbeBandwidth(String fcpIdentifier, long outputBandwidth) {
 		fs = new SimpleFieldSet(true);
