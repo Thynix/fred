@@ -114,7 +114,7 @@ public class MHProbe implements ByteCounter {
 	 * @return Value +/- Gaussian percentage.
 	 */
 	private double randomNoise(double input) {
-		return input + Math.round(node.random.nextGaussian() * 0.01 * input);
+		return input + (node.random.nextGaussian() * 0.01 * input);
 	}
 
 	/**
