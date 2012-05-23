@@ -100,7 +100,7 @@ public class RealNodeProbeTest extends RealNodeTest {
 			@Override
 			public void onOutputBandwidth(long outputBandwidth) {
 				System.out.println("Probe got bandwidth limit " + nf.format(outputBandwidth) +
-				                   " bytes per second.");
+				                   " KiB per second.");
 			}
 
 			@Override
@@ -116,7 +116,7 @@ public class RealNodeProbeTest extends RealNodeTest {
 
 			@Override
 			public void onStoreSize(long storeSize) {
-				System.out.println("Probe got store size " + nf.format(storeSize) + " bytes.");
+				System.out.println("Probe got store size " + nf.format(storeSize) + " GiB.");
 			}
 		};
 

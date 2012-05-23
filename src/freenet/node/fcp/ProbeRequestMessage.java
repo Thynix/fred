@@ -13,11 +13,11 @@ import freenet.support.SimpleFieldSet;
  * <li>Identifier: Optional; identifier to match probe request with results.</li>
  * <li>type: Mandatory: denotes the desired response type. Valid values are:
  *     <ul>
- *     <li>BANDWIDTH - returns outgoing bandwidth limit in bytes per second.</li>
+ *     <li>BANDWIDTH - returns outgoing bandwidth limit in KiB per second.</li>
  *     <li>BUILD - returns Freenet build / main version.</li>
  *     <li>IDENTIFIER - returns identifier.</li>
  *     <li>LINK_LENGTHS - returns link lengths between the endpoint and its connected peers.</li>
- *     <li>STORE_SIZE - returns store size in bytes.</li>
+ *     <li>STORE_SIZE - returns store size in GiB.</li>
  *     <li>UPTIME - returns session uptime in milliseconds and 48-hour uptime percentage.</li>
  *     </ul></li>
  * <li>>hopsToLive: Optional; approximately how many hops the probe will take before possibly returning a result.

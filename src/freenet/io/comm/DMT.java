@@ -1129,7 +1129,7 @@ public class DMT {
 	/**
 	 * Creates a probe response to a query for bandwidth limits.
 	 * @param uid Probe identifier.
-	 * @param limit Endpoint output bandwidth limit in bytes per second.
+	 * @param limit Endpoint output bandwidth limit in KiB per second.
 	 * @return Message with requested attributes.
 	 */
 	public static Message createMHProbeBandwidth(long uid, long limit) {
@@ -1147,7 +1147,7 @@ public class DMT {
 	/**
 	 * Creates a probe response to a query for store size.
 	 * @param uid Probe identifier.
-	 * @param storeSize Endpoint store size in bytes.
+	 * @param storeSize Endpoint store size in GiB.
 	 * @return Message with requested attributes.
 	 */
 	public static Message createMHProbeStoreSize(long uid, long storeSize) {

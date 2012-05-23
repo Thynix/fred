@@ -91,13 +91,13 @@ public class MHProbe implements ByteCounter {
 
 		/**
 		 * Output bandwidth limit result.
-		 * @param outputBandwidth endpoint's reported output bandwidth limit in bytes per second.
+		 * @param outputBandwidth endpoint's reported output bandwidth limit in KiB per second.
 		 */
 		void onOutputBandwidth(long outputBandwidth);
 
 		/**
 		 * Store size result.
-		 * @param storeSize endpoint's reported store size in bytes.
+		 * @param storeSize endpoint's reported store size in GiB.
 		 */
 		void onStoreSize(long storeSize);
 
@@ -493,9 +493,11 @@ public class MHProbe implements ByteCounter {
 			} else if (message.getSpec().equals(DMT.MHProbeUptime)) {
 				listener.onUptime(message.getLong(DMT.UPTIME_SESSION), message.getDouble(DMT.UPTIME_PERCENT_48H));
 			} else if (message.getSpec().equals(DMT.MHProbeBandwidth)) {
-				listener.onOutputBandwidth(message.getLong(DMT.OUTPUT_BANDWIDTH_UPPER_LIMIT));
+				//1,024 (2^10) bytes per KiB
+				listener.onOutputBandwidth(Math.round((double)message.getLong(DMT.OUTPUT_BANDWIDTH_UPPER_LIMIT)/1024));
 			} else if (message.getSpec().equals(DMT.MHProbeStoreSize)) {
-				listener.onStoreSize(message.getLong(DMT.STORE_SIZE));
+				//1,073,741,824 bytes (2^30) per GiB
+				listener.onStoreSize(Math.round((double)message.getLong(DMT.STORE_SIZE)/1073741824));
 			} else if (message.getSpec().equals(DMT.MHProbeLinkLengths)) {
 				//TODO: Is it better to just cast an object than have Message support for double[]?
 				listener.onLinkLengths(message.getDoubleArray(DMT.LINK_LENGTHS));
