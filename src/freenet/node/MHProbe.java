@@ -188,9 +188,13 @@ public class MHProbe implements ByteCounter {
 	public static final double DECREMENT_PROBABILITY = 0.2;
 	public static final short MAX_HTL = 50;
 	/**
-	 * In ms, per HTL.
+	 * In ms, per HTL above HTL = 1.
 	 */
-	public static final int TIMEOUT_PER_HTL = 5000;
+	public static final int TIMEOUT_PER_HTL = 3000;
+	/**
+	 * In ms, to account for probabilistic decrement at HTL = 1.
+	 */
+	public static final int TIMEOUT_HTL1 = (int)(TIMEOUT_PER_HTL / DECREMENT_PROBABILITY);
 
 	private final Node node;
 
@@ -338,7 +342,7 @@ public class MHProbe implements ByteCounter {
 				if (node.random.nextDouble() < acceptProbability) {
 					if (logDEBUG) Logger.debug(MHProbe.class, "Accepted candidate.");
 					if (candidate.isConnected()) {
-						final int timeout = htl * TIMEOUT_PER_HTL;
+						final int timeout = (htl - 1) * TIMEOUT_PER_HTL + TIMEOUT_HTL1;
 						//Filter for response to this probe with requested result type.
 						final MessageFilter filter = MessageFilter.create().setSource(candidate).setField(DMT.UID, uid).setTimeout(timeout);
 						switch (type) {
