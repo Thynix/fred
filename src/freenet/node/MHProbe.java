@@ -613,9 +613,6 @@ public class MHProbe implements ByteCounter {
 			}
 		}
 
-		/* TODO: What does this mean? Its existence implies multiple levels of being timed-out. The filter seems
-		 * to instantly time out if this returns true - it's expected to perform some logic?
-		 */
 		@Override
 		public boolean shouldTimeout() {
 			return false;
