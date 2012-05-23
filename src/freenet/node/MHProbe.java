@@ -159,6 +159,10 @@ public class MHProbe implements ByteCounter {
 	@Override
 	public void sentPayload(int bytes) {}
 
+	/**
+	 * Probability of HTL decrement at HTL = 1.
+	 */
+	public static final double DECREMENT_PROBABILITY = 0.2;
 	public static final short MAX_HTL = 50;
 	/**
 	 * In ms, per HTL.
@@ -381,7 +385,10 @@ public class MHProbe implements ByteCounter {
 	 */
 	private short probabilisticDecrement(short htl) {
 		assert(htl > 0);
-		if (htl == 1 && node.random.nextDouble() < 0.2) return 0;
+		if (htl == 1) {
+			if (node.random.nextDouble() < DECREMENT_PROBABILITY) return 0;
+			return 1;
+		}
 		return (short)(htl - 1);
 	}
 
