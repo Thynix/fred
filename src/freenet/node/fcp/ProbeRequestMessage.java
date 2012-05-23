@@ -75,8 +75,8 @@ public class ProbeRequestMessage extends FCPMessage {
 				}
 
 				@Override
-				public void onIdentifier(long probeIdentifier) {
-					handler.outputHandler.queue(new ProbeIdentifier(identifier, probeIdentifier));
+				public void onIdentifier(long probeIdentifier, long percentageUptime) {
+					handler.outputHandler.queue(new ProbeIdentifier(identifier, probeIdentifier, percentageUptime));
 				}
 
 				@Override

@@ -73,8 +73,9 @@ public class MHProbe implements ByteCounter {
 		/**
 		 * Identifier result.
 		 * @param identifier identifier given by endpoint.
+		 * @param uptimePercentage quantized noisy 7-day uptime percentage
 		 */
-		void onIdentifier(long identifier);
+		void onIdentifier(long identifier, long uptimePercentage);
 
 		/**
 		 * Uptime result.
@@ -377,7 +378,10 @@ public class MHProbe implements ByteCounter {
 			} else {
 				switch (type) {
 				case IDENTIFIER:
-					result = DMT.createMHProbeIdentifier(uid, node.config.get("node").getLong("identifier"));
+					//7-day uptime with random noise, then quantized.
+					result = DMT.createMHProbeIdentifier(uid,
+					                                     node.config.get("node").getLong("identifier"),
+					                                     Math.round(randomNoise(100*node.uptime.getUptimeWeek())));
 					break;
 				case LINK_LENGTHS:
 					double[] linkLengths = new double[degree()];
@@ -389,10 +393,10 @@ public class MHProbe implements ByteCounter {
 					result = DMT.createMHProbeLinkLengths(uid, linkLengths);
 					break;
 				case UPTIME_48H:
-					result = DMT.createMHProbeUptime(uid, randomNoise(node.uptime.getUptime()));
+					result = DMT.createMHProbeUptime(uid, randomNoise(100*node.uptime.getUptime()));
 					break;
 				case UPTIME_7D:
-					result = DMT.createMHProbeUptime(uid, randomNoise(node.uptime.getUptimeWeek()));
+					result = DMT.createMHProbeUptime(uid, randomNoise(100*node.uptime.getUptimeWeek()));
 					break;
 				case BUILD:
 					result = DMT.createMHProbeBuild(uid, node.nodeUpdater.getMainVersion());
@@ -487,7 +491,7 @@ public class MHProbe implements ByteCounter {
 			if(logDEBUG) Logger.debug(MHProbe.class, "Matched " + message.getSpec().getName());
 			pendingProbes.remove(uid);
 			if (message.getSpec().equals(DMT.MHProbeIdentifier)) {
-				listener.onIdentifier(message.getLong(DMT.IDENTIFIER));
+				listener.onIdentifier(message.getLong(DMT.IDENTIFIER), message.getLong(DMT.UPTIME_PERCENT));
 			} else if (message.getSpec().equals(DMT.MHProbeUptime)) {
 				listener.onUptime(message.getDouble(DMT.UPTIME_PERCENT));
 			} else if (message.getSpec().equals(DMT.MHProbeBandwidth)) {

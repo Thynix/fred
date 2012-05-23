@@ -16,11 +16,13 @@ public class ProbeIdentifier extends FCPMessage {
 	 *
 	 * @param fcpIdentifier FCP-level identifier for pairing requests and responses
 	 * @param identifier probe endpoint identifier
+	 * @param uptimePercentage 7-day uptime percentage
 	 */
-	public ProbeIdentifier(String fcpIdentifier, long identifier) {
+	public ProbeIdentifier(String fcpIdentifier, long identifier, long uptimePercentage) {
 		fs = new SimpleFieldSet(true);
 		fs.putOverwrite(FCPMessage.IDENTIFIER, fcpIdentifier);
 		fs.put(DMT.IDENTIFIER, identifier);
+		fs.put(DMT.UPTIME_PERCENT, uptimePercentage);
 	}
 
 	@Override
