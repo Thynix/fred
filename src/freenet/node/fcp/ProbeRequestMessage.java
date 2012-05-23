@@ -80,8 +80,8 @@ public class ProbeRequestMessage extends FCPMessage {
 				}
 
 				@Override
-				public void onUptime(long uptimeSession, double uptime48hour) {
-					handler.outputHandler.queue(new ProbeUptime(identifier, uptimeSession, uptime48hour));
+				public void onUptime(double uptimePercent) {
+					handler.outputHandler.queue(new ProbeUptime(identifier, uptimePercent));
 				}
 
 				@Override

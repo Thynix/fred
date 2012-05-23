@@ -137,9 +137,9 @@ public class DMT {
 	public static final String LIST_OF_UIDS = "listOfUIDs";
 	public static final String UID_STILL_RUNNING_FLAGS = "UIDStillRunningFlags";
 	public static final String IDENTIFIER = "identifier";
-	public static final String UPTIME_SESSION = "uptimeSession";
 	public static final String STORE_SIZE = "storeSize";
 	public static final String LINK_LENGTHS = "linkLengths";
+	public static final String UPTIME_PERCENT = "uptimePercent";
 	
 	/** Very urgent */
 	public static final short PRIORITY_NOW=0;
@@ -1083,23 +1083,20 @@ public class DMT {
 
 	public static final MessageType MHProbeUptime = new MessageType("MHProbeUptime", PRIORITY_HIGH) {{
 		addField(UID, Long.class);
-		addField(UPTIME_SESSION, Long.class);
-		addField(UPTIME_PERCENT_48H, Double.class);
+		addField(UPTIME_PERCENT, Double.class);
 	}};
 
 
 	/**
 	 * Creates a probe response to a query for uptime.
 	 * @param uid Probe identifier.
-	 * @param uptime_session Endpoint session uptime in ms.
-	 * @param uptime_48hour Percent of the past 48 hours endpoint was online.
+	 * @param uptimePercent Percent of the requested period (48 hours or 7 days) which the endpoint was online.
 	 * @return Message with requested attributes.
 	 */
-	public static Message createMHProbeUptime(long uid, long uptime_session, double uptime_48hour) {
+	public static Message createMHProbeUptime(long uid, double uptimePercent) {
 		Message msg = new Message(MHProbeUptime);
 		msg.set(UID, uid);
-		msg.set(UPTIME_SESSION, uptime_session);
-		msg.set(UPTIME_PERCENT_48H, uptime_48hour);
+		msg.set(UPTIME_PERCENT, uptimePercent);
 		return msg;
 	}
 

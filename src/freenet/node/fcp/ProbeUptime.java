@@ -15,14 +15,13 @@ public class ProbeUptime extends FCPMessage {
 	/**
 	 *
 	 * @param fcpIdentifier FCP-level identifier for pairing requests and responses
-	 * @param uptimeSession session uptime of endpoint
-	 * @param uptime48hour 48-hour uptime percentage of endpoint
+	 * @param uptimePercent uptime percentage of endpoint. Depending on the type of the request this may be either
+	 *                      48-hour or 7-day.
 	 */
-	public ProbeUptime(String fcpIdentifier, long uptimeSession, double uptime48hour) {
+	public ProbeUptime(String fcpIdentifier, double uptimePercent) {
 		fs = new SimpleFieldSet(true);
 		fs.putOverwrite(FCPMessage.IDENTIFIER, fcpIdentifier);
-		fs.put(DMT.UPTIME_SESSION, uptimeSession);
-		fs.put(DMT.UPTIME_PERCENT_48H, uptime48hour);
+		fs.put(DMT.UPTIME_PERCENT, uptimePercent);
 	}
 
 	@Override
