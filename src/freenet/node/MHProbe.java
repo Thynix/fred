@@ -21,7 +21,6 @@ import java.util.Set;
  *
  * Possible future additions to these probes' results include:
  * <ul>
- * <li>7-day uptime percentage</li>
  * <li>Checking whether a key is present in the datastore, either only at the endpoint or each node along the way.</li>
  * <li>Success rates for remote requests by HTL; perhaps over some larger amount of time than the past hour.</li>
  * </ul>
@@ -78,10 +77,10 @@ public class MHProbe implements ByteCounter {
 
 		/**
 		 * Uptime result.
-		 * @param sessionUptime endpoint's reported session uptime in milliseconds.
-		 * @param uptime48hour endpoint's reported percentage uptime in the last 48 hours.
+		 * @param uptimePercentage endpoint's reported percentage uptime in the last requested period; either
+		 *                         48 hour or 7 days.
 		 */
-		void onUptime(long sessionUptime, double uptime48hour);
+		void onUptime(double uptimePercentage);
 
 		/**
 		 * Build result.
@@ -132,7 +131,8 @@ public class MHProbe implements ByteCounter {
 		IDENTIFIER,
 		LINK_LENGTHS,
 		STORE_SIZE,
-		UPTIME
+		UPTIME_48H,
+		UPTIME_7D
 	}
 
 	public enum ProbeError {
@@ -236,7 +236,7 @@ public class MHProbe implements ByteCounter {
 	 * Returns (as node settings allow) exactly one of:
 	 * <ul>
 	 *         <li>unique identifier</li>
-	 *         <li>uptime: session and 48-hour percentage,</li>
+	 *         <li>uptime: 48-hour percentage or 7-day percentage</li>
 	 *         <li>output bandwidth</li>
 	 *         <li>store size</li>
 	 *         <li>link lengths</li>
@@ -343,7 +343,8 @@ public class MHProbe implements ByteCounter {
 						switch (type) {
 							case IDENTIFIER: filter.setType(DMT.MHProbeIdentifier); break;
 							case LINK_LENGTHS: filter.setType(DMT.MHProbeLinkLengths); break;
-							case UPTIME: filter.setType(DMT.MHProbeUptime); break;
+							case UPTIME_48H:
+							case UPTIME_7D: filter.setType(DMT.MHProbeUptime); break;
 							case BUILD: filter.setType(DMT.MHProbeBuild); break;
 							case BANDWIDTH: filter.setType(DMT.MHProbeBandwidth); break;
 							case STORE_SIZE: filter.setType(DMT.MHProbeStoreSize); break;
@@ -390,9 +391,11 @@ public class MHProbe implements ByteCounter {
 					}
 					result = DMT.createMHProbeLinkLengths(uid, linkLengths);
 					break;
-				case UPTIME:
-					//getUptime() is session; uptime.getUptime() is 48-hour percentage.
-					result = DMT.createMHProbeUptime(uid, randomNoise(node.getUptime()), randomNoise(node.uptime.getUptime()));
+				case UPTIME_48H:
+					result = DMT.createMHProbeUptime(uid, randomNoise(node.uptime.getUptime()));
+					break;
+				case UPTIME_7D:
+					result = DMT.createMHProbeUptime(uid, randomNoise(node.uptime.getUptimeWeek()));
 					break;
 				case BUILD:
 					result = DMT.createMHProbeBuild(uid, node.nodeUpdater.getMainVersion());
@@ -431,7 +434,8 @@ public class MHProbe implements ByteCounter {
 		case IDENTIFIER: return nc.getBoolean("probeIdentifier");
 		case LINK_LENGTHS: return nc.getBoolean("probeLinkLengths");
 		case STORE_SIZE: return nc.getBoolean("probeStoreSize");
-		case UPTIME: return nc.getBoolean("probeUptime");
+		case UPTIME_48H:
+		case UPTIME_7D: return nc.getBoolean("probeUptime");
 		default:
 			//There a valid ProbeType value that is not present here.
 			if (logDEBUG) Logger.debug(MHProbe.class, "Probe type \"" + type.name() + "\" does not check" +
@@ -491,7 +495,7 @@ public class MHProbe implements ByteCounter {
 			if (message.getSpec().equals(DMT.MHProbeIdentifier)) {
 				listener.onIdentifier(message.getLong(DMT.IDENTIFIER));
 			} else if (message.getSpec().equals(DMT.MHProbeUptime)) {
-				listener.onUptime(message.getLong(DMT.UPTIME_SESSION), message.getDouble(DMT.UPTIME_PERCENT_48H));
+				listener.onUptime(message.getDouble(DMT.UPTIME_PERCENT));
 			} else if (message.getSpec().equals(DMT.MHProbeBandwidth)) {
 				//1,024 (2^10) bytes per KiB
 				listener.onOutputBandwidth(Math.round((double)message.getLong(DMT.OUTPUT_BANDWIDTH_UPPER_LIMIT)/1024));

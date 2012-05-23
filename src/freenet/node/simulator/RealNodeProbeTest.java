@@ -109,9 +109,8 @@ public class RealNodeProbeTest extends RealNodeTest {
 			}
 
 			@Override
-			public void onUptime(long session, double percent48hour) {
-				System.out.print("Probe got session uptime " + nf.format(session) + " ms " +
-				                 "and 48-hour " + nf.format(percent48hour) + "%.");
+			public void onUptime(double uptimePercentage) {
+				System.out.print("Probe got uptime " + nf.format(uptimePercentage) + "%.");
 			}
 
 			@Override
@@ -126,7 +125,8 @@ public class RealNodeProbeTest extends RealNodeTest {
 			MHProbe.ProbeType.IDENTIFIER,
 			MHProbe.ProbeType.LINK_LENGTHS,
 			MHProbe.ProbeType.STORE_SIZE,
-			MHProbe.ProbeType.UPTIME
+			MHProbe.ProbeType.UPTIME_48H,
+			MHProbe.ProbeType.UPTIME_7D
 		};
 
 		int index = random.nextInt(NUMBER_OF_NODES);
@@ -137,13 +137,14 @@ public class RealNodeProbeTest extends RealNodeTest {
 			System.out.println("2) IDENTIFIER");
 			System.out.println("3) LINK_LENGTHS");
 			System.out.println("4) STORE_SIZE");
-			System.out.println("5) UPTIME");
-			System.out.println("6) Pick another node");
+			System.out.println("5) UPTIME 48-hour");
+			System.out.println("6) UPTIME 7-day");
+			System.out.println("7) Pick another node");
 			System.out.println("Anything else to exit.");
 			System.out.println("Select: ");
 			try {
 				int selection = Integer.valueOf(System.console().readLine());
-				if (selection != 6) nodes[index].dispatcher.mhProbe.start(MAX_HTL, random.nextLong(), types[selection], print);
+				if (selection != 7) nodes[index].dispatcher.mhProbe.start(MAX_HTL, random.nextLong(), types[selection], print);
 				else index = random.nextInt(NUMBER_OF_NODES);
 			} catch (Exception e) {
 				//If a non-number is entered or one outside the bounds.
