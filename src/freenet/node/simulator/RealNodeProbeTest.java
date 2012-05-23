@@ -86,8 +86,8 @@ public class RealNodeProbeTest extends RealNodeTest {
 			}
 
 			@Override
-			public void onIdentifier(long identifier) {
-				System.out.println("Probe got identifier " + identifier + ".");
+			public void onIdentifier(long identifier, long uptimePercentage) {
+				System.out.println("Probe got identifier " + identifier + " with uptime percentage " + uptimePercentage + ".");
 			}
 
 			@Override

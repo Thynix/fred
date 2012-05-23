@@ -140,6 +140,7 @@ public class UptimeEstimator implements Runnable {
 
 	/**
 	 * Get the node's uptime fraction over the selected uptime array.
+	 * @return fraction between 0.0 and 1.0.
 	 */
 	private synchronized double getUptime(boolean[] uptime) {
 		int upCount = 0;
@@ -149,6 +150,7 @@ public class UptimeEstimator implements Runnable {
 
 	/**
 	 * Get the node's uptime fraction over the past 48 hours.
+	 * @return fraction between 0.0 and 1.0.
 	 */
 	public synchronized double getUptime() {
 		return getUptime(wasOnline);
@@ -156,6 +158,7 @@ public class UptimeEstimator implements Runnable {
 
 	/**
 	 * Get the node's uptime fraction over the past 168 hours.
+	 * @return fraction between 0.0 and 1.0.
 	 */
 	public synchronized double getUptimeWeek() {
 		return getUptime(wasOnlineWeek);

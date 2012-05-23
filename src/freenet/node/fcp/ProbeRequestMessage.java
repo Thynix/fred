@@ -15,7 +15,7 @@ import freenet.support.SimpleFieldSet;
  *     <ul>
  *     <li>BANDWIDTH - returns outgoing bandwidth limit in KiB per second.</li>
  *     <li>BUILD - returns Freenet build / main version.</li>
- *     <li>IDENTIFIER - returns identifier.</li>
+ *     <li>IDENTIFIER - returns identifier and integer 7-day uptime percentage.</li>
  *     <li>LINK_LENGTHS - returns link lengths between the endpoint and its connected peers.</li>
  *     <li>STORE_SIZE - returns store size in GiB.</li>
  *     <li>UPTIME_48H - returns 48-hour uptime percentage.</li>
@@ -76,8 +76,8 @@ public class ProbeRequestMessage extends FCPMessage {
 				}
 
 				@Override
-				public void onIdentifier(long probeIdentifier) {
-					handler.outputHandler.queue(new ProbeIdentifier(identifier, probeIdentifier));
+				public void onIdentifier(long probeIdentifier, long percentageUptime) {
+					handler.outputHandler.queue(new ProbeIdentifier(identifier, probeIdentifier, percentageUptime));
 				}
 
 				@Override

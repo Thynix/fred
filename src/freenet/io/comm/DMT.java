@@ -1074,6 +1074,7 @@ public class DMT {
 	public static final MessageType MHProbeIdentifier = new MessageType("MHProbeIdentifier", PRIORITY_HIGH) {{
 		addField(UID, Long.class);
 		addField(IDENTIFIER, Long.class);
+		addField(UPTIME_PERCENT, Long.class);
 	}};
 
 	public static final MessageType MHProbeLinkLengths = new MessageType("MHProbeLinkLengths", PRIORITY_HIGH) {{
@@ -1158,12 +1159,14 @@ public class DMT {
 	 * Creates a probe response to a query for identifier.
 	 * @param uid Probe identifier.
 	 * @param identifier Endpoint identifier.
+	 * @param uptimePercentage 7-day uptime percentage.
 	 * @return Message with requested attributes.
 	 */
-	public static Message createMHProbeIdentifier(long uid, long identifier) {
+	public static Message createMHProbeIdentifier(long uid, long identifier, long uptimePercentage) {
 		Message msg = new Message(MHProbeIdentifier);
 		msg.set(UID, uid);
 		msg.set(IDENTIFIER, identifier);
+		msg.set(UPTIME_PERCENT, uptimePercentage);
 		return msg;
 	}
 
