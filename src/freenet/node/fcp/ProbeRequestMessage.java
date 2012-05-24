@@ -64,6 +64,8 @@ public class ProbeRequestMessage extends FCPMessage {
 			MHProbe.ProbeType type =  MHProbe.ProbeType.valueOf(fs.get(DMT.TYPE));
 			//If HTL is not defined default to MAX_HTL.
 			final short htl = fs.get(DMT.HTL) == null ? MHProbe.MAX_HTL : fs.getShort(DMT.HTL);
+			if (htl < 0) throw new MessageInvalidException(ProtocolErrorMessage.INVALID_MESSAGE,
+			                                               "hopsToLive cannot be negative.", null, false);
 			MHProbe.Listener listener = new MHProbe.Listener() {
 				@Override
 				public void onError(MHProbe.ProbeError error, String description) {
