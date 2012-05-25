@@ -240,7 +240,7 @@ public class MHProbe implements ByteCounter {
 	 * If the probe comes to have an HTL of zero: (an incoming HTL of zero is taken to be one.)
 	 * Returns (as node settings allow) exactly one of:
 	 * <ul>
-	 *         <li>unique identifier</li>
+	 *         <li>unique identifier and integer 7-day uptime percentage</li>
 	 *         <li>uptime: 48-hour percentage or 7-day percentage</li>
 	 *         <li>output bandwidth</li>
 	 *         <li>store size</li>

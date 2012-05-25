@@ -6,7 +6,7 @@ import freenet.node.Node;
 import freenet.support.SimpleFieldSet;
 
 /**
- * FCP message sent from the node to the client which includes an identifier returned by the endpoint.
+ * FCP message sent from the node to the client which includes an endpoint identifier and uptime information.
  */
 public class ProbeIdentifier extends FCPMessage {
 	public static String NAME = "ProbeIdentifier";
