@@ -18,7 +18,8 @@ import freenet.support.SimpleFieldSet;
  *     <li>IDENTIFIER - returns identifier.</li>
  *     <li>LINK_LENGTHS - returns link lengths between the endpoint and its connected peers.</li>
  *     <li>STORE_SIZE - returns store size in GiB.</li>
- *     <li>UPTIME - returns session uptime in milliseconds and 48-hour uptime percentage.</li>
+ *     <li>UPTIME_48H - returns 48-hour uptime percentage.</li>
+ *     <li>UPTIME_7D - returns 7-day uptime percentage.</li>
  *     </ul></li>
  * <li>>hopsToLive: Optional; approximately how many hops the probe will take before possibly returning a result.
  *                            Valid values are [1, MHProbe.MAX_HTL]. If omitted MHProbe.MAX_HTL is used.</li>

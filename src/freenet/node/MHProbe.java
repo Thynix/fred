@@ -241,7 +241,7 @@ public class MHProbe implements ByteCounter {
 	 * Returns (as node settings allow) exactly one of:
 	 * <ul>
 	 *         <li>unique identifier</li>
-	 *         <li>uptime: session and 48-hour percentage,</li>
+	 *         <li>uptime: 48-hour percentage or 7-day percentage</li>
 	 *         <li>output bandwidth</li>
 	 *         <li>store size</li>
 	 *         <li>link lengths</li>
