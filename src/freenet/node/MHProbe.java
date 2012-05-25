@@ -182,7 +182,7 @@ public class MHProbe implements ByteCounter {
 	@Override
 	public void sentPayload(int bytes) {}
 
-	public static final short MAX_HTL = 50;
+	public static final byte MAX_HTL = 50;
 	/**
 	 * Probability of HTL decrement at HTL = 1.
 	 */
@@ -210,7 +210,7 @@ public class MHProbe implements ByteCounter {
 	 * @param listener Something which implements MHProbe.Listener and will be called with results.
 	 * @see MHProbe.Listener
 	 */
-	public void start(final short htl, final long uid, final ProbeType type, final Listener listener) {
+	public void start(final byte htl, final long uid, final ProbeType type, final Listener listener) {
 		Message request = DMT.createMHProbeRequest(htl, uid, type);
 		request(request, null, new ResultListener(listener, uid));
 	}
@@ -272,7 +272,7 @@ public class MHProbe implements ByteCounter {
 			}
 			return;
 		}
-		short htl = message.getShort(DMT.HTL);
+		byte htl = message.getByte(DMT.HTL);
 		if (htl < 0) {
 			if (logDEBUG) Logger.debug(MHProbe.class, "HTL cannot be negative; rejecting probe.");
 			return;
@@ -458,13 +458,13 @@ public class MHProbe implements ByteCounter {
 	 * @param htl current HTL
 	 * @return new HTL
 	 */
-	private short probabilisticDecrement(short htl) {
+	private byte probabilisticDecrement(short htl) {
 		assert(htl > 0);
 		if (htl == 1) {
 			if (node.random.nextDouble() < DECREMENT_PROBABILITY) return 0;
 			return 1;
 		}
-		return (short)(htl - 1);
+		return (byte)(htl - 1);
 	}
 
 	/**

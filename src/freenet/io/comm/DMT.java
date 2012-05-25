@@ -1052,7 +1052,7 @@ public class DMT {
 	}
 
 	public static final MessageType MHProbeRequest = new MessageType("MHProbeRequest", PRIORITY_HIGH) {{
-		addField(HTL, Short.class);
+		addField(HTL, Byte.class);
 		addField(UID, Long.class);
 		addField(TYPE, String.class);
 	}};
@@ -1063,7 +1063,7 @@ public class DMT {
 	 * @param uid Probe identifier: should be unique.
 	 * @return Message with requested attributes.
 	 */
-	public static Message createMHProbeRequest(short htl, long uid, MHProbe.ProbeType type) {
+	public static Message createMHProbeRequest(byte htl, long uid, MHProbe.ProbeType type) {
 		Message msg = new Message(MHProbeRequest);
 		msg.set(HTL, htl);
 		msg.set(UID, uid);

@@ -144,7 +144,7 @@ public class RealNodeProbeTest extends RealNodeTest {
 			System.out.println("Select: ");
 			try {
 				int selection = Integer.valueOf(System.console().readLine());
-				if (selection != 7) nodes[index].dispatcher.mhProbe.start(MAX_HTL, random.nextLong(), types[selection], print);
+				if (selection != 7) nodes[index].dispatcher.mhProbe.start(MHProbe.MAX_HTL, random.nextLong(), types[selection], print);
 				else index = random.nextInt(NUMBER_OF_NODES);
 			} catch (Exception e) {
 				//If a non-number is entered or one outside the bounds.
