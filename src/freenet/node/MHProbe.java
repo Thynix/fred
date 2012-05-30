@@ -273,14 +273,11 @@ public class MHProbe implements ByteCounter {
 			return;
 		}
 		byte htl = message.getByte(DMT.HTL);
-		if (htl < 0) {
-			if (logDEBUG) Logger.debug(MHProbe.class, "HTL cannot be negative; rejecting probe.");
-			return;
-		} else if (htl == 0) {
-			if (logDEBUG) Logger.debug(MHProbe.class, "Interpreting HTL of 0 as 1.");
+		if (htl < 1) {
+			if (logWARNING) Logger.warning(MHProbe.class, "Received out-of-bounds HTL of " + htl + "; interpreting as 1.");
 			htl = 1;
 		} else if (htl > MAX_HTL) {
-			if (logDEBUG) Logger.debug(MHProbe.class, "Capping HTL of " + htl + " at " + MAX_HTL + ".");
+			if (logWARNING) Logger.warning(MHProbe.class, "Received out-of-bounds HTL of " + htl + "; interpreting as " + MAX_HTL + ".");
 			htl = MAX_HTL;
 		}
 		if (!pendingProbes.contains(uid)) {
