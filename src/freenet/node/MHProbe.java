@@ -12,9 +12,8 @@ import freenet.io.comm.PeerContext;
 import freenet.support.LogThresholdCallback;
 import freenet.support.Logger;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Handles starting, routing, and responding to Metropolis-Hastings corrected probes.
@@ -42,8 +41,30 @@ public class MHProbe implements ByteCounter {
 		});
 	}
 
-	public static final int MAX_PENDING = 5;
-	private final Set<Long> pendingProbes;
+	private class SynchronizedCounter {
+		private byte c = 0;
+
+		public synchronized void increment() { c++; }
+		public synchronized void decrement() { c--; }
+		public synchronized byte value() { return c; }
+	}
+
+	/**
+	 * Minute in milliseconds.
+	 */
+	private static long MINUTE = 6000;
+
+	/**
+	 * Maximum number of accepted probes in the last minute.
+	 */
+	public static final byte MAX_ACCEPTED = 5;
+
+	/**
+	 * Number of accepted probes in the last minute.
+	 */
+	private final SynchronizedCounter accepted;
+
+	private final Timer timer;
 
 	/**
 	 * Listener for the different types of probe results.
@@ -154,7 +175,11 @@ public class MHProbe implements ByteCounter {
 		 * Only used locally, not sent over the network. The local node did not recognize the error used.
 		 * This should always be specified along with the description string containing the remote error.
 		 */
-		UNKNOWN
+		UNKNOWN,
+		/**
+		 * A node cannot accept the request because its probe DoS protection has tripped.
+		 */
+		OVERLOAD
 	}
 
 	/**
@@ -200,8 +225,8 @@ public class MHProbe implements ByteCounter {
 
 	public MHProbe(Node node) {
 		this.node = node;
-		//Synchronized: accessed by request() and callbacks.
-		this.pendingProbes = Collections.synchronizedSet(new HashSet<Long>());
+		this.accepted = new SynchronizedCounter();
+		this.timer = new Timer(true);
 	}
 
 	/**
@@ -255,8 +280,13 @@ public class MHProbe implements ByteCounter {
 	 */
 	public void request(final Message message, final PeerNode source, final AsyncMessageFilterCallback callback) {
 		final Long uid = message.getLong(DMT.UID);
-		if (!pendingProbes.contains(uid) && pendingProbes.size() >= MAX_PENDING) {
+		if (accepted.value() >= MAX_ACCEPTED) {
 			if (logDEBUG) Logger.debug(MHProbe.class, "Already accepted maximum number of probes; rejecting incoming.");
+			try {
+				source.sendAsync(DMT.createMHProbeError(uid, ProbeError.OVERLOAD), null, this);
+			} catch (NotConnectedException f) {
+				if (logDEBUG) Logger.debug(MHProbe.class, "Source of excess probe no longer connected.");
+			}
 			return;
 		}
 		ProbeType type;
@@ -280,11 +310,14 @@ public class MHProbe implements ByteCounter {
 			if (logWARNING) Logger.warning(MHProbe.class, "Received out-of-bounds HTL of " + htl + "; interpreting as " + MAX_HTL + ".");
 			htl = MAX_HTL;
 		}
-		if (!pendingProbes.contains(uid)) {
-			if (logDEBUG) Logger.debug(MHProbe.class, "Accepting probe with uid " + uid + " from " +
-			                                       (source == null ? "self" : source.userToString()) + ".");
-			pendingProbes.add(uid);
-		}
+		accepted.increment();
+		//One-minute window on acceptance; free up this probe's slot in 60 seconds.
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				accepted.decrement();
+			}
+		}, MINUTE);
 
 		/*
 		 * Route to a peer, using Metropolis-Hastings correction and ignoring backoff to get a more uniform
@@ -307,7 +340,6 @@ public class MHProbe implements ByteCounter {
 					 */
 					//TODO: Is it safe to manually call callback methods like this?
 					if (callback instanceof ResultListener) callback.onDisconnect(null);
-					pendingProbes.remove(uid);
 					return;
 				}
 				try {
@@ -478,7 +510,6 @@ public class MHProbe implements ByteCounter {
 	private class ResultListener implements AsyncMessageFilterCallback {
 
 		private final Listener listener;
-		private final Long uid;
 
 		/**
 		 * @param listener to call appropriate methods for events such as matched messages or timeout.
@@ -486,7 +517,6 @@ public class MHProbe implements ByteCounter {
 		 */
 		public ResultListener(Listener listener, Long uid) {
 			this.listener = listener;
-			this.uid = uid;
 		}
 
 		/**
@@ -496,7 +526,6 @@ public class MHProbe implements ByteCounter {
 		@Override
 		public void onMatched(Message message) {
 			if(logDEBUG) Logger.debug(MHProbe.class, "Matched " + message.getSpec().getName());
-			pendingProbes.remove(uid);
 			if (message.getSpec().equals(DMT.MHProbeIdentifier)) {
 				listener.onIdentifier(message.getLong(DMT.IDENTIFIER), message.getLong(DMT.UPTIME_PERCENT));
 			} else if (message.getSpec().equals(DMT.MHProbeUptime)) {
@@ -534,7 +563,6 @@ public class MHProbe implements ByteCounter {
 
 		@Override
 		public void onTimeout() {
-			pendingProbes.remove(uid);
 			listener.onError(ProbeError.TIMEOUT, null);
 		}
 
@@ -545,7 +573,6 @@ public class MHProbe implements ByteCounter {
 
 		@Override
 		public void onDisconnect(PeerContext context) {
-			pendingProbes.remove(uid);
 			listener.onError(ProbeError.DISCONNECTED, null);
 		}
 
@@ -583,7 +610,6 @@ public class MHProbe implements ByteCounter {
 		 */
 		@Override
 		public void onMatched(Message message) {
-			pendingProbes.remove(uid);
 			if (source == null) {
 				if (logMINOR) Logger.minor(MHProbe.class, sourceDisconnect);
 				return;
@@ -601,7 +627,6 @@ public class MHProbe implements ByteCounter {
 
 		@Override
 		public void onTimeout() {
-			pendingProbes.remove(uid);
 			if(logDEBUG) Logger.debug(MHProbe.class, "Relay timed out.");
 			try {
 				source.sendAsync(DMT.createMHProbeError(uid, ProbeError.TIMEOUT), null, MHProbe.this);
@@ -617,7 +642,6 @@ public class MHProbe implements ByteCounter {
 
 		@Override
 		public void onDisconnect(PeerContext context) {
-			pendingProbes.remove(uid);
 			if (logDEBUG) Logger.debug(MHProbe.class, "Next node in chain disconnected.");
 			try {
 				source.sendAsync(DMT.createMHProbeError(uid, ProbeError.DISCONNECTED), null, MHProbe.this);
