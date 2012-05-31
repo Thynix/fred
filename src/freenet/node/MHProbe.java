@@ -52,7 +52,7 @@ public class MHProbe implements ByteCounter {
 	/**
 	 * Minute in milliseconds.
 	 */
-	private static long MINUTE = 60000;
+	private static final long MINUTE = 60000;
 
 	/**
 	 * Maximum number of accepted probes in the last minute.
