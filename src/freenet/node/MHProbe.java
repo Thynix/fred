@@ -237,7 +237,7 @@ public class MHProbe implements ByteCounter {
 	 */
 	public void start(final byte htl, final long uid, final ProbeType type, final Listener listener) {
 		Message request = DMT.createMHProbeRequest(htl, uid, type);
-		request(request, null, new ResultListener(listener, uid));
+		request(request, null, new ResultListener(listener));
 	}
 
 	//TODO: Localization
@@ -513,9 +513,8 @@ public class MHProbe implements ByteCounter {
 
 		/**
 		 * @param listener to call appropriate methods for events such as matched messages or timeout.
-		 * @param uid uid of probe to listen for - clears it from the accepted list upon an event.
 		 */
-		public ResultListener(Listener listener, Long uid) {
+		public ResultListener(Listener listener) {
 			this.listener = listener;
 		}
 
