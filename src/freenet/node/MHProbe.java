@@ -292,6 +292,8 @@ public class MHProbe implements ByteCounter {
 				}
 			} catch (NotConnectedException e) {
 				if (logDEBUG) Logger.debug(MHProbe.class, "Source of excess probe no longer connected.", e);
+			} catch (NullPointerException e) {
+				if (logDEBUG) Logger.debug(MHProbe.class, "Source of excess probe no longer connected.", e);
 			}
 			return;
 		}
@@ -310,7 +312,9 @@ public class MHProbe implements ByteCounter {
 					source.sendAsync(unrecognized, null, this);
 				}
 			} catch (NotConnectedException f) {
-				if (logDEBUG) Logger.debug(MHProbe.class, "Source of unrecognized result type is no longer connected.");
+				if (logDEBUG) Logger.debug(MHProbe.class, "Source of unrecognized result type is no longer connected.", f);
+			} catch (NullPointerException f) {
+				if (logDEBUG) Logger.debug(MHProbe.class, "Source of unrecognized result type is no longer connected.", f);
 			}
 			return;
 		}
@@ -409,6 +413,8 @@ public class MHProbe implements ByteCounter {
 						} catch (DisconnectedException e) {
 							if (logDEBUG) Logger.debug(MHProbe.class, "Peer became disconnected while attempting to add filter.", e);
 							callback.onDisconnect(candidate);
+						} catch (NullPointerException e) {
+							if (logDEBUG) Logger.debug(MHProbe.class, "Peer became disconnected between check and send attempt.", e);
 						}
 					}
 				}
@@ -470,7 +476,9 @@ public class MHProbe implements ByteCounter {
 				if (logDEBUG) Logger.debug(MHProbe.class, "Sending response to probe.");
 				source.sendAsync(result, null, this);
 			} catch (NotConnectedException e) {
-				if (logDEBUG) Logger.debug(MHProbe.class, "Previous step in chain is no longer connected.");
+				if (logDEBUG) Logger.debug(MHProbe.class, sourceDisconnect, e);
+			} catch (NullPointerException e) {
+				if (logDEBUG) Logger.debug(MHProbe.class, sourceDisconnect, e);
 			}
 		}
 	}
@@ -608,7 +616,7 @@ public class MHProbe implements ByteCounter {
 			if (source == null) {
 				if (logDEBUG) Logger.debug(MHProbe.class, "Probe " + uid + " source is null.");
 				//No way to relay results back.
-				throw new IllegalArgumentException("Probe source is null.");
+				throw new IllegalArgumentException(sourceDisconnect);
 			}
 			this.source = source;
 			this.uid = uid;
@@ -632,7 +640,9 @@ public class MHProbe implements ByteCounter {
 			try {
 				source.sendAsync(message, null, MHProbe.this);
 			} catch (NotConnectedException e) {
-				if (logMINOR) Logger.minor(MHProbe.class, sourceDisconnect);
+				if (logMINOR) Logger.minor(MHProbe.class, sourceDisconnect, e);
+			} catch (NullPointerException e) {
+				if (logMINOR) Logger.minor(MHProbe.class, sourceDisconnect, e);
 			}
 		}
 
@@ -642,7 +652,9 @@ public class MHProbe implements ByteCounter {
 			try {
 				source.sendAsync(DMT.createMHProbeError(uid, ProbeError.TIMEOUT), null, MHProbe.this);
 			} catch (NotConnectedException e) {
-				if (logMINOR) Logger.minor(MHProbe.class, sourceDisconnect);
+				if (logMINOR) Logger.minor(MHProbe.class, sourceDisconnect, e);
+			} catch (NullPointerException e) {
+				if (logMINOR) Logger.minor(MHProbe.class, sourceDisconnect, e);
 			}
 		}
 
@@ -657,7 +669,9 @@ public class MHProbe implements ByteCounter {
 			try {
 				source.sendAsync(DMT.createMHProbeError(uid, ProbeError.DISCONNECTED), null, MHProbe.this);
 			} catch (NotConnectedException e) {
-				if (logMINOR) Logger.minor(MHProbe.class, sourceDisconnect);
+				if (logMINOR) Logger.minor(MHProbe.class, sourceDisconnect, e);
+			} catch (NullPointerException e) {
+				if (logMINOR) Logger.minor(MHProbe.class, sourceDisconnect, e);
 			}
 		}
 
