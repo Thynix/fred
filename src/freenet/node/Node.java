@@ -2547,7 +2547,8 @@ public class Node implements TimeSkewDetectorCallback {
 		 * define one callback which uses a single HashMap of names and values, not to mention the loading
 		 * afterwards.
 		 */
-		nodeConfig.register("probeBandwidth", true, sortOrder++, false, true, "Node.probeBandwidthShort", "Node.probeBandwidthLong", new BooleanCallback() {
+		nodeConfig.register("probeBandwidth", true, sortOrder++, false, true, "Node.probeBandwidthShort",
+		    "Node.probeBandwidthLong", new BooleanCallback() {
 			@Override
 			public Boolean get() {
 				return respondBandwidth;
@@ -2559,7 +2560,8 @@ public class Node implements TimeSkewDetectorCallback {
 			}
 		});
 		respondBandwidth = nodeConfig.getBoolean("probeBandwidth");
-		nodeConfig.register("probeBuild", true, sortOrder++, false, true, "Node.probeBuildShort", "Node.probeBuildLong", new BooleanCallback() {
+		nodeConfig.register("probeBuild", true, sortOrder++, false, true, "Node.probeBuildShort",
+		    "Node.probeBuildLong", new BooleanCallback() {
 			@Override
 			public Boolean get() {
 				return respondBuild;
@@ -2571,7 +2573,8 @@ public class Node implements TimeSkewDetectorCallback {
 			}
 		});
 		respondBuild = nodeConfig.getBoolean("probeBuild");
-		nodeConfig.register("probeIdentifier", true, sortOrder++, false, true, "Node.probeRespondIdentifierShort", "Node.probeRespondIdentifierLong", new BooleanCallback() {
+		nodeConfig.register("probeIdentifier", true, sortOrder++, false, true,
+		    "Node.probeRespondIdentifierShort", "Node.probeRespondIdentifierLong", new BooleanCallback() {
 			@Override
 			public Boolean get() {
 				return respondIdentifier;
@@ -2583,7 +2586,8 @@ public class Node implements TimeSkewDetectorCallback {
 			}
 		});
 		respondIdentifier = nodeConfig.getBoolean("probeIdentifier");
-		nodeConfig.register("probeLinkLengths", true, sortOrder++, false, true, "Node.probeLinkLengthsShort", "Node.probeLinkLengthsLong", new BooleanCallback() {
+		nodeConfig.register("probeLinkLengths", true, sortOrder++, false, true, "Node.probeLinkLengthsShort",
+		    "Node.probeLinkLengthsLong", new BooleanCallback() {
 			@Override
 			public Boolean get() {
 				return respondLinkLengths;
@@ -2595,7 +2599,8 @@ public class Node implements TimeSkewDetectorCallback {
 			}
 		});
 		respondLinkLengths = nodeConfig.getBoolean("probeLinkLengths");
-		nodeConfig.register("probeStoreSize", true, sortOrder++, false, true, "Node.probeStoreSizeShort", "Node.probeStoreSizeLong", new BooleanCallback() {
+		nodeConfig.register("probeStoreSize", true, sortOrder++, false, true, "Node.probeStoreSizeShort",
+		    "Node.probeStoreSizeLong", new BooleanCallback() {
 			@Override
 			public Boolean get() {
 				return respondStoreSize;
@@ -2608,7 +2613,8 @@ public class Node implements TimeSkewDetectorCallback {
 			}
 		});
 		respondStoreSize = nodeConfig.getBoolean("probeLinkLengths");
-		nodeConfig.register("probeUptime", true, sortOrder++, false, true, "Node.probeUptimeShort", "Node.probeUptimeLong", new BooleanCallback() {
+		nodeConfig.register("probeUptime", true, sortOrder++, false, true, "Node.probeUptimeShort",
+		    "Node.probeUptimeLong", new BooleanCallback() {
 			@Override
 			public Boolean get() {
 				return respondUptime;
@@ -2621,7 +2627,8 @@ public class Node implements TimeSkewDetectorCallback {
 		});
 		respondUptime = nodeConfig.getBoolean("probeUptime");
 
-		nodeConfig.register("identifier", -1, sortOrder++, true, true, "Node.probeIdentifierShort", "Node.probeIdentifierLong", new LongCallback() {
+		nodeConfig.register("identifier", -1, sortOrder++, true, true, "Node.probeIdentifierShort",
+		    "Node.probeIdentifierLong", new LongCallback() {
 			@Override
 			public Long get() {
 				return probeIdentifier;
