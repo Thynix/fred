@@ -240,7 +240,6 @@ public class MHProbe implements ByteCounter {
 		request(request, null, new ResultListener(listener));
 	}
 
-	//TODO: Localization
 	private final static String sourceDisconnect = "Previous step in probe chain no longer connected.";
 
 	/**
@@ -556,7 +555,6 @@ public class MHProbe implements ByteCounter {
 				//1,073,741,824 bytes (2^30) per GiB
 				listener.onStoreSize(Math.round((double)message.getLong(DMT.STORE_SIZE)/1073741824));
 			} else if (message.getSpec().equals(DMT.MHProbeLinkLengths)) {
-				//TODO: Is it better to just cast an object than have Message support for double[]?
 				listener.onLinkLengths(message.getDoubleArray(DMT.LINK_LENGTHS));
 			} else if (message.getSpec().equals(DMT.MHProbeBuild)) {
 				listener.onBuild(message.getInt(DMT.BUILD));
