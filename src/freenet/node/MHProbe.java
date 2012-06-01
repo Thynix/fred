@@ -283,9 +283,15 @@ public class MHProbe implements ByteCounter {
 		if (accepted.value() >= MAX_ACCEPTED) {
 			if (logDEBUG) Logger.debug(MHProbe.class, "Already accepted maximum number of probes; rejecting incoming.");
 			try {
-				source.sendAsync(DMT.createMHProbeError(uid, ProbeError.OVERLOAD), null, this);
-			} catch (NotConnectedException f) {
-				if (logDEBUG) Logger.debug(MHProbe.class, "Source of excess probe no longer connected.");
+				Message overload = DMT.createMHProbeError(uid, ProbeError.OVERLOAD);
+				//Locally sent message.
+				if (source == null) {
+					callback.onMatched(overload);
+				} else {
+					source.sendAsync(overload, null, this);
+				}
+			} catch (NotConnectedException e) {
+				if (logDEBUG) Logger.debug(MHProbe.class, "Source of excess probe no longer connected.", e);
 			}
 			return;
 		}
@@ -296,7 +302,13 @@ public class MHProbe implements ByteCounter {
 		} catch (IllegalArgumentException e) {
 			if (logDEBUG) Logger.debug(MHProbe.class, "Invalid probe type \"" + message.getString(DMT.TYPE) + "\".", e);
 			try {
-				source.sendAsync(DMT.createMHProbeError(uid, ProbeError.UNRECOGNIZED_TYPE), null, this);
+				Message unrecognized = DMT.createMHProbeError(uid, ProbeError.UNRECOGNIZED_TYPE);
+				//Locally sent message.
+				if (source == null) {
+					callback.onMatched(unrecognized);
+				} else {
+					source.sendAsync(unrecognized, null, this);
+				}
 			} catch (NotConnectedException f) {
 				if (logDEBUG) Logger.debug(MHProbe.class, "Source of unrecognized result type is no longer connected.");
 			}
