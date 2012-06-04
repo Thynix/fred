@@ -350,7 +350,7 @@ public class MHProbe implements ByteCounter {
 				if (degree == 0) {
 					if (logMINOR) Logger.minor(MHProbe.class, "Aborting received probe request because there are no connections.");
 					/*
-					 * If this is a locally-started request, not a relayed one, respond to an error.
+					 * If this is a locally-started request, not a relayed one, give an error.
 					 * Otherwise, in this case there's nowhere to send the error.
 					 */
 					//TODO: Is it safe to manually call callback methods like this?
