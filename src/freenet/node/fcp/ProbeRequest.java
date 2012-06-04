@@ -25,13 +25,13 @@ import freenet.support.SimpleFieldSet;
  *                            Valid values are [1, MHProbe.MAX_HTL]. If omitted MHProbe.MAX_HTL is used.</li>
  * </ul>
  */
-public class ProbeRequestMessage extends FCPMessage {
+public class ProbeRequest extends FCPMessage {
 	public static String NAME = "ProbeRequest";
 
 	private final SimpleFieldSet fs;
 	private final String identifier;
 
-	public ProbeRequestMessage(SimpleFieldSet fs) throws MessageInvalidException {
+	public ProbeRequest(SimpleFieldSet fs) throws MessageInvalidException {
 		this.fs = fs;
 		/* If not defined in the field set Identifier will be null. As adding a null value to the field set does
 		 * not actually add something under the key, it will also be omitted in the response messages.
