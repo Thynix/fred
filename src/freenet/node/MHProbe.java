@@ -515,7 +515,7 @@ public class MHProbe implements ByteCounter {
 	 * @param htl current HTL
 	 * @return new HTL
 	 */
-	private byte probabilisticDecrement(short htl) {
+	private byte probabilisticDecrement(byte htl) {
 		assert(htl > 0);
 		if (htl == 1) {
 			if (node.random.nextDouble() < DECREMENT_PROBABILITY) return 0;
