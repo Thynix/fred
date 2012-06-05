@@ -329,100 +329,115 @@ public class MHProbe implements ByteCounter {
 
 		/*
 		 * Route to a peer, using Metropolis-Hastings correction and ignoring backoff to get a more uniform
-		 * endpoint distribution. HTL is decremented before checking peers so that it's possible to respond
-		 * locally.
+		 * endpoint distribution. HTL is decremented before routing so that it's possible to respondlocally.
 		 */
 		htl = probabilisticDecrement(htl);
-		if (htl > 0) {
-			//Degree of the local node.
-			int degree = degree();
-			PeerNode candidate;
-			//Loop until HTL runs out, in which case return a result, or the probe is relayed on to a peer.
-			for (; htl > 0; htl = probabilisticDecrement(htl)) {
-				//Can't handle a probe request if not connected to any peers.
-				if (degree == 0) {
-					if (logMINOR) Logger.minor(MHProbe.class, "Aborting received probe request because there are no connections.");
-					/*
-					 * If this is a locally-started request, not a relayed one, give an error.
-					 * Otherwise, in this case there's nowhere to send the error.
-					 */
-					//TODO: Is it safe to manually call callback methods like this?
-					if (callback instanceof ResultListener) callback.onDisconnect(null);
-					return;
-				}
-				try {
-					candidate = node.peers.myPeers[node.random.nextInt(degree)];
-				} catch (IndexOutOfBoundsException e) {
-					if (logDEBUG) Logger.debug(MHProbe.class, "Peer count changed during candidate search.", e);
-					degree = degree();
-					continue;
-				}
-				//acceptProbability is the MH correction.
-				double acceptProbability;
-				try {
-					acceptProbability = (double)degree / candidate.getDegree();
-				} catch (ArithmeticException e) {
-					/*
-					 * Candidate's degree is zero: its peer locations are unknown.
-					 * Cannot do M-H correction; fall back to random walk.
-					 */
-					if (logDEBUG) Logger.debug(MHProbe.class, "Peer (" + candidate.userToString() +
-					                                          ") has no FOAF data.", e);
-					acceptProbability = 1.0;
-				} catch (NullPointerException e) {
-					//Candidate's peer location array is null. See above for reasoning.
-					if (logDEBUG) Logger.debug(MHProbe.class, "Peer (" + candidate.userToString() +
-					                                          ") has no FOAF data.", e);
-					acceptProbability = 1.0;
-				}
-				if (logDEBUG) Logger.debug(MHProbe.class, "acceptProbability is " + acceptProbability);
-				if (node.random.nextDouble() < acceptProbability) {
-					if (logDEBUG) Logger.debug(MHProbe.class, "Accepted candidate.");
-					if (candidate.isConnected()) {
-						final int timeout = (htl - 1) * TIMEOUT_PER_HTL + TIMEOUT_HTL1;
-						//Filter for response to this probe with requested result type.
-						final MessageFilter filter = MessageFilter.create().setSource(candidate).setField(DMT.UID, uid).setTimeout(timeout);
-						switch (type) {
-							case BANDWIDTH: filter.setType(DMT.MHProbeBandwidth); break;
-							case BUILD: filter.setType(DMT.MHProbeBuild); break;
-							case IDENTIFIER: filter.setType(DMT.MHProbeIdentifier); break;
-							case LINK_LENGTHS: filter.setType(DMT.MHProbeLinkLengths); break;
-							case STORE_SIZE: filter.setType(DMT.MHProbeStoreSize); break;
-							case UPTIME_48H:
-							case UPTIME_7D: filter.setType(DMT.MHProbeUptime); break;
-						}
-						//Refusal or an error should also be listened for so it can be relayed.
-						filter.or(MessageFilter.create().setSource(candidate).setField(DMT.UID, uid).setTimeout(timeout).setType(DMT.MHProbeRefused)
-						      .or(MessageFilter.create().setSource(candidate).setField(DMT.UID, uid).setTimeout(timeout).setType(DMT.MHProbeError)));
-						message.set(DMT.HTL, htl);
-						try {
-							node.usm.addAsyncFilter(filter, callback, this);
-							if (logDEBUG) Logger.debug(MHProbe.class, "Sending.");
-							candidate.sendAsync(message, null, this);
-							return;
-						} catch (NotConnectedException e) {
-							if (logDEBUG) Logger.debug(MHProbe.class, "Peer became disconnected between check and send attempt.", e);
-						} catch (DisconnectedException e) {
-							if (logDEBUG) Logger.debug(MHProbe.class, "Peer became disconnected while attempting to add filter.", e);
-							callback.onDisconnect(candidate);
-						} catch (NullPointerException e) {
-							if (logDEBUG) Logger.debug(MHProbe.class, "Peer became disconnected between check and send attempt.", e);
-						}
+		if (htl == 0) {
+			respond(type, uid, source, callback);
+		} else {
+			route(message, type, uid, htl, source, callback);
+		}
+	}
+
+	/**
+	 * Attempts to route the message to a peer. If HTL is decremented to zero before this is possible, responds.
+	 */
+	private void route(final Message message, final ProbeType type, final long uid, byte htl,
+	                   final PeerNode source, final AsyncMessageFilterCallback callback) {
+		//Degree of the local node.
+		int degree = degree();
+		PeerNode candidate;
+		//Loop until HTL runs out, in which case return a result, or the probe is relayed on to a peer.
+		for (; htl > 0; htl = probabilisticDecrement(htl)) {
+			//Can't handle a probe request if not connected to any peers.
+			if (degree == 0) {
+				if (logMINOR) Logger.minor(MHProbe.class, "Aborting received probe request because there are no connections.");
+				/*
+				 * If this is a locally-started request, not a relayed one, give an error.
+				 * Otherwise, in this case there's nowhere to send the error.
+				 */
+				//TODO: Is it safe to manually call callback methods like this?
+				if (callback instanceof ResultListener) callback.onDisconnect(null);
+				return;
+			}
+			try {
+				candidate = node.peers.myPeers[node.random.nextInt(degree)];
+			} catch (IndexOutOfBoundsException e) {
+				if (logDEBUG) Logger.debug(MHProbe.class, "Peer count changed during candidate search.", e);
+				degree = degree();
+				continue;
+			}
+			//acceptProbability is the MH correction.
+			double acceptProbability;
+			try {
+				acceptProbability = (double)degree / candidate.getDegree();
+			} catch (ArithmeticException e) {
+				/*
+				 * Candidate's degree is zero: its peer locations are unknown.
+				 * Cannot do M-H correction; fall back to random walk.
+				 */
+				if (logDEBUG) Logger.debug(MHProbe.class, "Peer (" + candidate.userToString() +
+					") has no FOAF data.", e);
+				acceptProbability = 1.0;
+			} catch (NullPointerException e) {
+				//Candidate's peer location array is null. See above for reasoning.
+				if (logDEBUG) Logger.debug(MHProbe.class, "Peer (" + candidate.userToString() +
+					") has no FOAF data.", e);
+				acceptProbability = 1.0;
+			}
+			if (logDEBUG) Logger.debug(MHProbe.class, "acceptProbability is " + acceptProbability);
+			if (node.random.nextDouble() < acceptProbability) {
+				if (logDEBUG) Logger.debug(MHProbe.class, "Accepted candidate.");
+				if (candidate.isConnected()) {
+					final int timeout = (htl - 1) * TIMEOUT_PER_HTL + TIMEOUT_HTL1;
+					//Filter for response to this probe with requested result type.
+					final MessageFilter filter = MessageFilter.create().setSource(candidate).setField(DMT.UID, uid).setTimeout(timeout);
+					switch (type) {
+						case BANDWIDTH: filter.setType(DMT.MHProbeBandwidth); break;
+						case BUILD: filter.setType(DMT.MHProbeBuild); break;
+						case IDENTIFIER: filter.setType(DMT.MHProbeIdentifier); break;
+						case LINK_LENGTHS: filter.setType(DMT.MHProbeLinkLengths); break;
+						case STORE_SIZE: filter.setType(DMT.MHProbeStoreSize); break;
+						case UPTIME_48H:
+						case UPTIME_7D: filter.setType(DMT.MHProbeUptime); break;
+					}
+					//Refusal or an error should also be listened for so it can be relayed.
+					filter.or(MessageFilter.create().setSource(candidate).setField(DMT.UID, uid).setTimeout(timeout).setType(DMT.MHProbeRefused)
+						.or(MessageFilter.create().setSource(candidate).setField(DMT.UID, uid).setTimeout(timeout).setType(DMT.MHProbeError)));
+					message.set(DMT.HTL, htl);
+					try {
+						node.usm.addAsyncFilter(filter, callback, this);
+						if (logDEBUG) Logger.debug(MHProbe.class, "Sending.");
+						candidate.sendAsync(message, null, this);
+						return;
+					} catch (NotConnectedException e) {
+						if (logDEBUG) Logger.debug(MHProbe.class, "Peer became disconnected between check and send attempt.", e);
+					} catch (DisconnectedException e) {
+						if (logDEBUG) Logger.debug(MHProbe.class, "Peer became disconnected while attempting to add filter.", e);
+						callback.onDisconnect(candidate);
+					} catch (NullPointerException e) {
+						if (logDEBUG) Logger.debug(MHProbe.class, "Peer became disconnected between check and send attempt.", e);
 					}
 				}
 			}
 		}
-
 		/*
-		 * HTL has been decremented to zero: return a result.
+		 * HTL has been decremented to zero; return a result.
 		 */
-		if (htl == 0) {
-			Message result;
+		respond(type, uid, source, callback);
+	}
 
-			if (!respondTo(type)) {
-				result = DMT.createMHProbeRefused(uid);
-			} else {
-				switch (type) {
+	/**
+	 * Depending on node settings, sends a message to source containing either a refusal or the requested result.
+	 */
+	private void respond(final ProbeType type, final long uid, final PeerNode source,
+	                     final AsyncMessageFilterCallback callback) {
+		Message result;
+
+		if (!respondTo(type)) {
+			result = DMT.createMHProbeRefused(uid);
+		} else {
+			switch (type) {
 				case BANDWIDTH:
 					//1,024 (2^10) bytes per KiB
 					result = DMT.createMHProbeBandwidth(uid, randomNoise(Math.round((double)node.config.get("node").getInt("outputBandwidthLimit")/1024)));
@@ -458,22 +473,21 @@ public class MHProbe implements ByteCounter {
 				default:
 					if (logDEBUG) Logger.debug(MHProbe.class, "Response for probe result type \"" + type + "\" is not implemented.");
 					return;
-				}
 			}
-			//Returning result to probe sent locally.
-			if (source == null) {
-				if (logDEBUG) Logger.debug(MHProbe.class, "Returning locally sent probe.");
-				callback.onMatched(result);
-				return;
-			}
-			try {
-				if (logDEBUG) Logger.debug(MHProbe.class, "Sending response to probe.");
-				source.sendAsync(result, null, this);
-			} catch (NotConnectedException e) {
-				if (logDEBUG) Logger.debug(MHProbe.class, sourceDisconnect, e);
-			} catch (NullPointerException e) {
-				if (logDEBUG) Logger.debug(MHProbe.class, sourceDisconnect, e);
-			}
+		}
+		//Returning result to probe sent locally.
+		if (source == null) {
+			if (logDEBUG) Logger.debug(MHProbe.class, "Returning locally sent probe.");
+			callback.onMatched(result);
+			return;
+		}
+		try {
+			if (logDEBUG) Logger.debug(MHProbe.class, "Sending response to probe.");
+			source.sendAsync(result, null, this);
+		} catch (NotConnectedException e) {
+			if (logDEBUG) Logger.debug(MHProbe.class, sourceDisconnect, e);
+		} catch (NullPointerException e) {
+			if (logDEBUG) Logger.debug(MHProbe.class, sourceDisconnect, e);
 		}
 	}
 
