@@ -424,7 +424,8 @@ public class MHProbe implements ByteCounter {
 			} else {
 				switch (type) {
 				case BANDWIDTH:
-					result = DMT.createMHProbeBandwidth(uid, randomNoise(node.config.get("node").getInt("outputBandwidthLimit")));
+					//1,024 (2^10) bytes per KiB
+					result = DMT.createMHProbeBandwidth(uid, randomNoise(Math.round((double)node.config.get("node").getInt("outputBandwidthLimit")/1024)));
 					break;
 				case BUILD:
 					result = DMT.createMHProbeBuild(uid, node.nodeUpdater.getMainVersion());
@@ -445,7 +446,8 @@ public class MHProbe implements ByteCounter {
 					result = DMT.createMHProbeLinkLengths(uid, linkLengths);
 					break;
 				case STORE_SIZE:
-					result = DMT.createMHProbeStoreSize(uid, randomNoise(node.config.get("node").getLong("storeSize")));
+					//1,073,741,824 bytes (2^30) per GiB
+					result = DMT.createMHProbeStoreSize(uid, randomNoise(Math.round((double)node.config.get("node").getLong("storeSize")/1073741824)));
 					break;
 				case UPTIME_48H:
 					result = DMT.createMHProbeUptime(uid, randomNoise(100*node.uptime.getUptime()));
@@ -543,8 +545,7 @@ public class MHProbe implements ByteCounter {
 		public void onMatched(Message message) {
 			if(logDEBUG) Logger.debug(MHProbe.class, "Matched " + message.getSpec().getName());
 			if (message.getSpec().equals(DMT.MHProbeBandwidth)) {
-				//1,024 (2^10) bytes per KiB
-				listener.onOutputBandwidth(Math.round((double)message.getLong(DMT.OUTPUT_BANDWIDTH_UPPER_LIMIT)/1024));
+				listener.onOutputBandwidth(message.getLong(DMT.OUTPUT_BANDWIDTH_UPPER_LIMIT));
 			} else if (message.getSpec().equals(DMT.MHProbeBuild)) {
 				listener.onBuild(message.getInt(DMT.BUILD));
 			} else if (message.getSpec().equals(DMT.MHProbeIdentifier)) {
@@ -552,8 +553,7 @@ public class MHProbe implements ByteCounter {
 			} else if (message.getSpec().equals(DMT.MHProbeLinkLengths)) {
 				listener.onLinkLengths(message.getDoubleArray(DMT.LINK_LENGTHS));
 			} else if (message.getSpec().equals(DMT.MHProbeStoreSize)) {
-				//1,073,741,824 bytes (2^30) per GiB
-				listener.onStoreSize(Math.round((double)message.getLong(DMT.STORE_SIZE)/1073741824));
+				listener.onStoreSize(message.getLong(DMT.STORE_SIZE));
 			} else if (message.getSpec().equals(DMT.MHProbeUptime)) {
 				listener.onUptime(message.getDouble(DMT.UPTIME_PERCENT));
 			} else if (message.getSpec().equals(DMT.MHProbeError)) {
