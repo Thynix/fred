@@ -1071,51 +1071,37 @@ public class DMT {
 		return msg;
 	}
 
-	public static final MessageType MHProbeIdentifier = new MessageType("MHProbeIdentifier", PRIORITY_HIGH) {{
-		addField(UID, Long.class);
-		addField(IDENTIFIER, Long.class);
-		addField(UPTIME_PERCENT, Long.class);
-	}};
 
-	public static final MessageType MHProbeLinkLengths = new MessageType("MHProbeLinkLengths", PRIORITY_HIGH) {{
+	public static final MessageType MHProbeError = new MessageType("MHProbeError", PRIORITY_HIGH) {{
 		addField(UID, Long.class);
-		addField(LINK_LENGTHS, double[].class);
+		addField(TYPE, String.class);
 	}};
-
-	public static final MessageType MHProbeUptime = new MessageType("MHProbeUptime", PRIORITY_HIGH) {{
-		addField(UID, Long.class);
-		addField(UPTIME_PERCENT, Double.class);
-	}};
-
 
 	/**
-	 * Creates a probe response to a query for uptime.
+	 * Creates a probe response which indicates there was an error.
 	 * @param uid Probe identifier.
-	 * @param uptimePercent Percent of the requested period (48 hours or 7 days) which the endpoint was online.
-	 * @return Message with requested attributes.
+	 * @param error The type of error that occurred. Can be one of MHProbe.ProbeError.
+	 * @return Message with the requested attributes.
 	 */
-	public static Message createMHProbeUptime(long uid, double uptimePercent) {
-		Message msg = new Message(MHProbeUptime);
+	public static Message createMHProbeError(long uid, MHProbe.ProbeError error) {
+		Message msg = new Message(MHProbeError);
 		msg.set(UID, uid);
-		msg.set(UPTIME_PERCENT, uptimePercent);
+		msg.set(TYPE, error.name());
 		return msg;
 	}
 
-	public static final MessageType MHProbeBuild = new MessageType("MHProbeBuild", PRIORITY_HIGH) {{
-		addField(UID, Long.class);
-		addField(BUILD, Integer.class);
+	public static final MessageType MHProbeRefused = new MessageType("MHProbeRefused", PRIORITY_HIGH) {{
+		addField(DMT.UID, Long.class);
 	}};
 
 	/**
-	 * Creates a probe response to a query for build.
+	 * Creates a probe response which indicates that the endpoint opted not to respond with the requested result.
 	 * @param uid Probe identifier.
-	 * @param build Endpoint build of Freenet.
-	 * @return Message with requested attributes.
+	 * @return Message with the requested attribute.
 	 */
-	public static Message createMHProbeBuild(long uid, int build) {
-		Message msg = new Message(MHProbeBuild);
+	public static Message createMHProbeRefused(long uid) {
+		Message msg = new Message(MHProbeRefused);
 		msg.set(UID, uid);
-		msg.set(BUILD, build);
 		return msg;
 	}
 
@@ -1137,6 +1123,64 @@ public class DMT {
 		return msg;
 	}
 
+	public static final MessageType MHProbeBuild = new MessageType("MHProbeBuild", PRIORITY_HIGH) {{
+		addField(UID, Long.class);
+		addField(BUILD, Integer.class);
+	}};
+
+	/**
+	 * Creates a probe response to a query for build.
+	 * @param uid Probe identifier.
+	 * @param build Endpoint build of Freenet.
+	 * @return Message with requested attributes.
+	 */
+	public static Message createMHProbeBuild(long uid, int build) {
+		Message msg = new Message(MHProbeBuild);
+		msg.set(UID, uid);
+		msg.set(BUILD, build);
+		return msg;
+	}
+
+	public static final MessageType MHProbeIdentifier = new MessageType("MHProbeIdentifier", PRIORITY_HIGH) {{
+		addField(UID, Long.class);
+		addField(IDENTIFIER, Long.class);
+		addField(UPTIME_PERCENT, Long.class);
+	}};
+
+	/**
+	 * Creates a probe response to a query for identifier.
+	 * @param uid Probe identifier.
+	 * @param identifier Endpoint identifier.
+	 * @param uptimePercentage 7-day uptime percentage.
+	 * @return Message with requested attributes.
+	 */
+	public static Message createMHProbeIdentifier(long uid, long identifier, long uptimePercentage) {
+		Message msg = new Message(MHProbeIdentifier);
+		msg.set(UID, uid);
+		msg.set(IDENTIFIER, identifier);
+		msg.set(UPTIME_PERCENT, uptimePercentage);
+		return msg;
+	}
+
+	public static final MessageType MHProbeLinkLengths = new MessageType("MHProbeLinkLengths", PRIORITY_HIGH) {{
+		addField(UID, Long.class);
+		addField(LINK_LENGTHS, double[].class);
+	}};
+
+	/**
+	 * Creates a probe response to a query for link lengths.
+	 * @param uid Probe identifier.
+	 * @param linkLengths Endpoint link lengths.
+	 * @return Message with requested attributes.
+	 */
+	public static Message createMHProbeLinkLengths(long uid, double[] linkLengths) {
+		Message msg = new Message(MHProbeLinkLengths);
+		msg.set(UID, uid);
+		msg.set(LINK_LENGTHS, linkLengths);
+		return msg;
+	}
+
+
 	public static final MessageType MHProbeStoreSize = new MessageType("MHProbeStoreSize", PRIORITY_HIGH) {{
 		addField(UID, Long.class);
 		addField(STORE_SIZE, Long.class);
@@ -1155,71 +1199,21 @@ public class DMT {
 		return msg;
 	}
 
-	/**
-	 * Creates a probe response to a query for identifier.
-	 * @param uid Probe identifier.
-	 * @param identifier Endpoint identifier.
-	 * @param uptimePercentage 7-day uptime percentage.
-	 * @return Message with requested attributes.
-	 */
-	public static Message createMHProbeIdentifier(long uid, long identifier, long uptimePercentage) {
-		Message msg = new Message(MHProbeIdentifier);
-		msg.set(UID, uid);
-		msg.set(IDENTIFIER, identifier);
-		msg.set(UPTIME_PERCENT, uptimePercentage);
-		return msg;
-	}
-
-	/**
-	 * Creates a probe response to a query for link lengths.
-	 * @param uid Probe identifier.
-	 * @param linkLengths Endpoint link lengths.
-	 * @return Message with requested attributes.
-	 */
-	public static Message createMHProbeLinkLengths(long uid, double[] linkLengths) {
-		Message msg = new Message(MHProbeLinkLengths);
-		msg.set(UID, uid);
-		msg.set(LINK_LENGTHS, linkLengths);
-		return msg;
-	}
-
-	public static final MessageType MHProbeRefused = new MessageType("MHProbeRefused", PRIORITY_HIGH) {{
-		addField(DMT.UID, Long.class);
-	}};
-
-	/**
-	 * Creates a probe response which indicates that the endpoint opted not to respond with the requested result.
-	 * @param uid Probe identifier.
-	 * @return Message with the requested attribute.
-	 */
-	public static Message createMHProbeRefused(long uid) {
-		Message msg = new Message(MHProbeRefused);
-		msg.set(UID, uid);
-		return msg;
-	}
-
-	public static final MessageType MHProbeError = new MessageType("MHProbeError", PRIORITY_HIGH) {{
+	public static final MessageType MHProbeUptime = new MessageType("MHProbeUptime", PRIORITY_HIGH) {{
 		addField(UID, Long.class);
-		addField(TYPE, String.class);
+		addField(UPTIME_PERCENT, Double.class);
 	}};
 
 	/**
-	 * Creates a probe response which indicates there was an error.
+	 * Creates a probe response to a query for uptime.
 	 * @param uid Probe identifier.
-	 * @param error The type of error that occurred. Can be:
-	 * <ul>
-	 *              <li>DISCONNECTED: A node the probe was routed on to has disconnected, so it can no longer
-	 *              route the result back. This does not mean that a source of the probe disconnected, which is
-	 *              unpropagated.</li>
-	 *              <li>TIMEOUT: The probe timed out while waiting for a response.</li>
-	 *              <li>UNRECOGNIZED_TYPE: The endpoint did not recognize the requested response type.</li>
-	 * </ul>
-	 * @return Message with the requested attributes.
+	 * @param uptimePercent Percent of the requested period (48 hours or 7 days) which the endpoint was online.
+	 * @return Message with requested attributes.
 	 */
-	public static Message createMHProbeError(long uid, MHProbe.ProbeError error) {
-		Message msg = new Message(MHProbeError);
+	public static Message createMHProbeUptime(long uid, double uptimePercent) {
+		Message msg = new Message(MHProbeUptime);
 		msg.set(UID, uid);
-		msg.set(TYPE, error.name());
+		msg.set(UPTIME_PERCENT, uptimePercent);
 		return msg;
 	}
 

@@ -78,13 +78,8 @@ public class ProbeRequest extends FCPMessage {
 				}
 
 				@Override
-				public void onIdentifier(long probeIdentifier, long percentageUptime) {
-					handler.outputHandler.queue(new ProbeIdentifier(identifier, probeIdentifier, percentageUptime));
-				}
-
-				@Override
-				public void onUptime(double uptimePercent) {
-					handler.outputHandler.queue(new ProbeUptime(identifier, uptimePercent));
+				public void onOutputBandwidth(long outputBandwidth) {
+					handler.outputHandler.queue(new ProbeBandwidth(identifier, outputBandwidth));
 				}
 
 				@Override
@@ -93,8 +88,13 @@ public class ProbeRequest extends FCPMessage {
 				}
 
 				@Override
-				public void onOutputBandwidth(long outputBandwidth) {
-					handler.outputHandler.queue(new ProbeBandwidth(identifier, outputBandwidth));
+				public void onIdentifier(long probeIdentifier, long percentageUptime) {
+					handler.outputHandler.queue(new ProbeIdentifier(identifier, probeIdentifier, percentageUptime));
+				}
+
+				@Override
+				public void onLinkLengths(double[] linkLengths) {
+					handler.outputHandler.queue(new ProbeLinkLengths(identifier, linkLengths));
 				}
 
 				@Override
@@ -103,8 +103,8 @@ public class ProbeRequest extends FCPMessage {
 				}
 
 				@Override
-				public void onLinkLengths(double[] linkLengths) {
-					handler.outputHandler.queue(new ProbeLinkLengths(identifier, linkLengths));
+				public void onUptime(double uptimePercent) {
+					handler.outputHandler.queue(new ProbeUptime(identifier, uptimePercent));
 				}
 			};
 			node.dispatcher.mhProbe.start(htl, node.random.nextLong(), type, listener);

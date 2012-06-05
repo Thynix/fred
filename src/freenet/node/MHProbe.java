@@ -72,14 +72,7 @@ public class MHProbe implements ByteCounter {
 	public interface Listener {
 		/**
 		 * An error occurred.
-		 @param error type: What error occurred. Can be:
-		 *              <ul>
-		 *              <li>DISCONNECTED: Peer from which response is expected has disconnected.</li>
-		 *              <li>TIMEOUT: Probe response has timed out.</li>
-		 *              <li>UNRECOGNIZED_TYPE: The endpoint did not recognize probe request type.</li>
-		 *              <li>UNKNOWN: The local node not recognize the error specified by a remote node.
-		 *              description is set to the remote error.</li>
-		 *              </ul>
+		 @param error type: What error occurred. Can be one of MHProbe.ProbeError.
 		 * @param description description: Arbitrary string, Defined if the error type is UNKNOWN,
 		 *                                 Contains the unrecognized error from the message.
 		 */
@@ -91,18 +84,10 @@ public class MHProbe implements ByteCounter {
 		void onRefused();
 
 		/**
-		 * Identifier result.
-		 * @param identifier identifier given by endpoint.
-		 * @param uptimePercentage quantized noisy 7-day uptime percentage
+		 * Output bandwidth limit result.
+		 * @param outputBandwidth endpoint's reported output bandwidth limit in KiB per second.
 		 */
-		void onIdentifier(long identifier, long uptimePercentage);
-
-		/**
-		 * Uptime result.
-		 * @param uptimePercentage endpoint's reported percentage uptime in the last requested period; either
-		 *                         48 hour or 7 days.
-		 */
-		void onUptime(double uptimePercentage);
+		void onOutputBandwidth(long outputBandwidth);
 
 		/**
 		 * Build result.
@@ -111,10 +96,17 @@ public class MHProbe implements ByteCounter {
 		void onBuild(int build);
 
 		/**
-		 * Output bandwidth limit result.
-		 * @param outputBandwidth endpoint's reported output bandwidth limit in KiB per second.
+		 * Identifier result.
+		 * @param identifier identifier given by endpoint.
+		 * @param uptimePercentage quantized noisy 7-day uptime percentage
 		 */
-		void onOutputBandwidth(long outputBandwidth);
+		void onIdentifier(long identifier, long uptimePercentage);
+
+		/**
+		 * Link length result.
+		 * @param linkLengths endpoint's reported link lengths.
+		 */
+		void onLinkLengths(double[] linkLengths);
 
 		/**
 		 * Store size result.
@@ -123,10 +115,11 @@ public class MHProbe implements ByteCounter {
 		void onStoreSize(long storeSize);
 
 		/**
-		 * Link length result.
-		 * @param linkLengths endpoint's reported link lengths.
+		 * Uptime result.
+		 * @param uptimePercentage endpoint's reported percentage uptime in the last requested period; either
+		 *                         48 hour or 7 days.
 		 */
-		void onLinkLengths(double[] linkLengths);
+		void onUptime(double uptimePercentage);
 	}
 
 	/**
@@ -163,23 +156,23 @@ public class MHProbe implements ByteCounter {
 		 */
 		DISCONNECTED,
 		/**
+		 * A node cannot accept the request because its probe DoS protection has tripped.
+		 */
+		OVERLOAD,
+		/**
 		 * Timed out while waiting for a response.
 		 */
 		TIMEOUT,
-		/**
-		 * A remote node did not recognize the requested probe type. For locally started probes it will not be
-		 * a ProbeError but a ProtocolError.
-		 */
-		UNRECOGNIZED_TYPE,
 		/**
 		 * Only used locally, not sent over the network. The local node did not recognize the error used.
 		 * This should always be specified along with the description string containing the remote error.
 		 */
 		UNKNOWN,
 		/**
-		 * A node cannot accept the request because its probe DoS protection has tripped.
+		 * A remote node did not recognize the requested probe type. For locally started probes it will not be
+		 * a ProbeError but a ProtocolError.
 		 */
-		OVERLOAD
+		UNRECOGNIZED_TYPE
 	}
 
 	/**
@@ -390,13 +383,13 @@ public class MHProbe implements ByteCounter {
 						//Filter for response to this probe with requested result type.
 						final MessageFilter filter = MessageFilter.create().setSource(candidate).setField(DMT.UID, uid).setTimeout(timeout);
 						switch (type) {
+							case BANDWIDTH: filter.setType(DMT.MHProbeBandwidth); break;
+							case BUILD: filter.setType(DMT.MHProbeBuild); break;
 							case IDENTIFIER: filter.setType(DMT.MHProbeIdentifier); break;
 							case LINK_LENGTHS: filter.setType(DMT.MHProbeLinkLengths); break;
+							case STORE_SIZE: filter.setType(DMT.MHProbeStoreSize); break;
 							case UPTIME_48H:
 							case UPTIME_7D: filter.setType(DMT.MHProbeUptime); break;
-							case BUILD: filter.setType(DMT.MHProbeBuild); break;
-							case BANDWIDTH: filter.setType(DMT.MHProbeBandwidth); break;
-							case STORE_SIZE: filter.setType(DMT.MHProbeStoreSize); break;
 						}
 						//Refusal or an error should also be listened for so it can be relayed.
 						filter.or(MessageFilter.create().setSource(candidate).setField(DMT.UID, uid).setTimeout(timeout).setType(DMT.MHProbeRefused)
@@ -430,6 +423,12 @@ public class MHProbe implements ByteCounter {
 				result = DMT.createMHProbeRefused(uid);
 			} else {
 				switch (type) {
+				case BANDWIDTH:
+					result = DMT.createMHProbeBandwidth(uid, randomNoise(node.config.get("node").getInt("outputBandwidthLimit")));
+					break;
+				case BUILD:
+					result = DMT.createMHProbeBuild(uid, node.nodeUpdater.getMainVersion());
+					break;
 				case IDENTIFIER:
 					//7-day uptime with random noise, then quantized.
 					result = DMT.createMHProbeIdentifier(uid,
@@ -445,20 +444,14 @@ public class MHProbe implements ByteCounter {
 					}
 					result = DMT.createMHProbeLinkLengths(uid, linkLengths);
 					break;
+				case STORE_SIZE:
+					result = DMT.createMHProbeStoreSize(uid, randomNoise(node.config.get("node").getLong("storeSize")));
+					break;
 				case UPTIME_48H:
 					result = DMT.createMHProbeUptime(uid, randomNoise(100*node.uptime.getUptime()));
 					break;
 				case UPTIME_7D:
 					result = DMT.createMHProbeUptime(uid, randomNoise(100*node.uptime.getUptimeWeek()));
-					break;
-				case BUILD:
-					result = DMT.createMHProbeBuild(uid, node.nodeUpdater.getMainVersion());
-					break;
-				case BANDWIDTH:
-					result = DMT.createMHProbeBandwidth(uid, randomNoise(node.config.get("node").getInt("outputBandwidthLimit")));
-					break;
-				case STORE_SIZE:
-					result = DMT.createMHProbeStoreSize(uid, randomNoise(node.config.get("node").getLong("storeSize")));
 					break;
 				default:
 					if (logDEBUG) Logger.debug(MHProbe.class, "Response for probe result type \"" + type + "\" is not implemented.");
@@ -537,6 +530,11 @@ public class MHProbe implements ByteCounter {
 			this.listener = listener;
 		}
 
+		@Override
+		public void onDisconnect(PeerContext context) {
+			listener.onError(ProbeError.DISCONNECTED, null);
+		}
+
 		/**
 		 * Parses provided message and calls appropriate MHProbe.Listener method for the type of result.
 		 * @param message Probe result.
@@ -544,39 +542,42 @@ public class MHProbe implements ByteCounter {
 		@Override
 		public void onMatched(Message message) {
 			if(logDEBUG) Logger.debug(MHProbe.class, "Matched " + message.getSpec().getName());
-			if (message.getSpec().equals(DMT.MHProbeIdentifier)) {
-				listener.onIdentifier(message.getLong(DMT.IDENTIFIER), message.getLong(DMT.UPTIME_PERCENT));
-			} else if (message.getSpec().equals(DMT.MHProbeUptime)) {
-				listener.onUptime(message.getDouble(DMT.UPTIME_PERCENT));
-			} else if (message.getSpec().equals(DMT.MHProbeBandwidth)) {
+			if (message.getSpec().equals(DMT.MHProbeBandwidth)) {
 				//1,024 (2^10) bytes per KiB
 				listener.onOutputBandwidth(Math.round((double)message.getLong(DMT.OUTPUT_BANDWIDTH_UPPER_LIMIT)/1024));
+			} else if (message.getSpec().equals(DMT.MHProbeBuild)) {
+				listener.onBuild(message.getInt(DMT.BUILD));
+			} else if (message.getSpec().equals(DMT.MHProbeIdentifier)) {
+				listener.onIdentifier(message.getLong(DMT.IDENTIFIER), message.getLong(DMT.UPTIME_PERCENT));
+			} else if (message.getSpec().equals(DMT.MHProbeLinkLengths)) {
+				listener.onLinkLengths(message.getDoubleArray(DMT.LINK_LENGTHS));
 			} else if (message.getSpec().equals(DMT.MHProbeStoreSize)) {
 				//1,073,741,824 bytes (2^30) per GiB
 				listener.onStoreSize(Math.round((double)message.getLong(DMT.STORE_SIZE)/1073741824));
-			} else if (message.getSpec().equals(DMT.MHProbeLinkLengths)) {
-				listener.onLinkLengths(message.getDoubleArray(DMT.LINK_LENGTHS));
-			} else if (message.getSpec().equals(DMT.MHProbeBuild)) {
-				listener.onBuild(message.getInt(DMT.BUILD));
-			} else if (message.getSpec().equals(DMT.MHProbeRefused)) {
-				listener.onRefused();
+			} else if (message.getSpec().equals(DMT.MHProbeUptime)) {
+				listener.onUptime(message.getDouble(DMT.UPTIME_PERCENT));
 			} else if (message.getSpec().equals(DMT.MHProbeError)) {
 				final String errorType = message.getString(DMT.TYPE);
 				try {
 					if (errorType.equals(ProbeError.UNKNOWN.name()) && logWARNING) {
 						Logger.warning(MHProbe.class, "Unexpectedly received local error \"" +
-						               errorType + "\" from remote node.");
+							errorType + "\" from remote node.");
 					}
 					listener.onError(ProbeError.valueOf(errorType), null);
 				} catch (IllegalArgumentException e) {
 					listener.onError(ProbeError.UNKNOWN, errorType);
 					if (logDEBUG) Logger.debug(MHProbe.class, "Unknown error type \"" + errorType +
-					                                          "\".");
+						"\".");
 				}
-			} else {
+			} else if (message.getSpec().equals(DMT.MHProbeRefused)) {
+				listener.onRefused();
+			}  else {
 				if (logDEBUG) Logger.debug(MHProbe.class, "Unknown probe result set " + message.getSpec().getName());
 			}
 		}
+
+		@Override
+		public void onRestarted(PeerContext context) {}
 
 		@Override
 		public void onTimeout() {
@@ -587,14 +588,6 @@ public class MHProbe implements ByteCounter {
 		public boolean shouldTimeout() {
 			return false;
 		}
-
-		@Override
-		public void onDisconnect(PeerContext context) {
-			listener.onError(ProbeError.DISCONNECTED, null);
-		}
-
-		@Override
-		public void onRestarted(PeerContext context) {}
 	}
 
 	/**
@@ -620,6 +613,17 @@ public class MHProbe implements ByteCounter {
 			this.uid = uid;
 		}
 
+		@Override
+		public void onDisconnect(PeerContext context) {
+			if (logDEBUG) Logger.debug(MHProbe.class, "Next node in chain disconnected.");
+			try {
+				source.sendAsync(DMT.createMHProbeError(uid, ProbeError.DISCONNECTED), null, MHProbe.this);
+			} catch (NotConnectedException e) {
+				if (logMINOR) Logger.minor(MHProbe.class, sourceDisconnect, e);
+			} catch (NullPointerException e) {
+				if (logMINOR) Logger.minor(MHProbe.class, sourceDisconnect, e);
+			}
+		}
 
 		/**
 		 * Sends an incoming probe response to the originator.
@@ -645,6 +649,9 @@ public class MHProbe implements ByteCounter {
 		}
 
 		@Override
+		public void onRestarted(PeerContext context) {}
+
+		@Override
 		public void onTimeout() {
 			if(logDEBUG) Logger.debug(MHProbe.class, "Relay timed out.");
 			try {
@@ -660,20 +667,5 @@ public class MHProbe implements ByteCounter {
 		public boolean shouldTimeout() {
 			return false;
 		}
-
-		@Override
-		public void onDisconnect(PeerContext context) {
-			if (logDEBUG) Logger.debug(MHProbe.class, "Next node in chain disconnected.");
-			try {
-				source.sendAsync(DMT.createMHProbeError(uid, ProbeError.DISCONNECTED), null, MHProbe.this);
-			} catch (NotConnectedException e) {
-				if (logMINOR) Logger.minor(MHProbe.class, sourceDisconnect, e);
-			} catch (NullPointerException e) {
-				if (logMINOR) Logger.minor(MHProbe.class, sourceDisconnect, e);
-			}
-		}
-
-		@Override
-		public void onRestarted(PeerContext context) {}
 	}
 }

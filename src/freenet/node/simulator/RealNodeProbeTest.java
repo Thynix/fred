@@ -86,6 +86,17 @@ public class RealNodeProbeTest extends RealNodeTest {
 			}
 
 			@Override
+			public void onOutputBandwidth(long outputBandwidth) {
+				System.out.println("Probe got bandwidth limit " + nf.format(outputBandwidth) +
+					" KiB per second.");
+			}
+
+			@Override
+			public void onBuild(int build) {
+				System.out.println("Probe got build " + build + ".");
+			}
+
+			@Override
 			public void onIdentifier(long identifier, long uptimePercentage) {
 				System.out.println("Probe got identifier " + identifier + " with uptime percentage " + uptimePercentage + ".");
 			}
@@ -98,24 +109,13 @@ public class RealNodeProbeTest extends RealNodeTest {
 			}
 
 			@Override
-			public void onOutputBandwidth(long outputBandwidth) {
-				System.out.println("Probe got bandwidth limit " + nf.format(outputBandwidth) +
-				                   " KiB per second.");
-			}
-
-			@Override
-			public void onBuild(int build) {
-				System.out.println("Probe got build " + build + ".");
+			public void onStoreSize(long storeSize) {
+				System.out.println("Probe got store size " + nf.format(storeSize) + " GiB.");
 			}
 
 			@Override
 			public void onUptime(double uptimePercentage) {
 				System.out.print("Probe got uptime " + nf.format(uptimePercentage) + "%.");
-			}
-
-			@Override
-			public void onStoreSize(long storeSize) {
-				System.out.println("Probe got store size " + nf.format(storeSize) + " GiB.");
 			}
 		};
 
