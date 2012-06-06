@@ -1071,7 +1071,6 @@ public class DMT {
 		return msg;
 	}
 
-
 	public static final MessageType MHProbeError = new MessageType("MHProbeError", PRIORITY_HIGH) {{
 		addField(UID, Long.class);
 		addField(TYPE, String.class);
@@ -1179,7 +1178,6 @@ public class DMT {
 		msg.set(LINK_LENGTHS, linkLengths);
 		return msg;
 	}
-
 
 	public static final MessageType MHProbeStoreSize = new MessageType("MHProbeStoreSize", PRIORITY_HIGH) {{
 		addField(UID, Long.class);
