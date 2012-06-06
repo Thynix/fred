@@ -41,13 +41,24 @@ public class MHProbe implements ByteCounter {
 		});
 	}
 
-	private class SynchronizedCounter {
-		private byte c = 0;
+	private final static String sourceDisconnect = "Previous step in probe chain no longer connected.";
 
-		public synchronized void increment() { c++; }
-		public synchronized void decrement() { c--; }
-		public synchronized byte value() { return c; }
-	}
+	public static final byte MAX_HTL = 50;
+
+	/**
+	 * Probability of HTL decrement at HTL = 1.
+	 */
+	public static final double DECREMENT_PROBABILITY = 0.2;
+
+	/**
+	 * In ms, per HTL above HTL = 1.
+	 */
+	public static final int TIMEOUT_PER_HTL = 3000;
+
+	/**
+	 * In ms, to account for probabilistic decrement at HTL = 1.
+	 */
+	public static final int TIMEOUT_HTL1 = (int)(TIMEOUT_PER_HTL / DECREMENT_PROBABILITY);
 
 	/**
 	 * Minute in milliseconds.
@@ -59,12 +70,57 @@ public class MHProbe implements ByteCounter {
 	 */
 	public static final byte MAX_ACCEPTED = 5;
 
+	private class SynchronizedCounter {
+		private byte c = 0;
+
+		public synchronized void increment() { c++; }
+		public synchronized void decrement() { c--; }
+		public synchronized byte value() { return c; }
+	}
+
 	/**
 	 * Number of accepted probes in the last minute.
 	 */
 	private final SynchronizedCounter accepted;
 
+	private final Node node;
+
 	private final Timer timer;
+
+	public enum ProbeError {
+		/**
+		 * The node being waited on to provide a response disconnected.
+		 */
+		DISCONNECTED,
+		/**
+		 * A node cannot accept the request because its probe DoS protection has tripped.
+		 */
+		OVERLOAD,
+		/**
+		 * Timed out while waiting for a response.
+		 */
+		TIMEOUT,
+		/**
+		 * Only used locally, not sent over the network. The local node did not recognize the error used.
+		 * This should always be specified along with the description string containing the remote error.
+		 */
+		UNKNOWN,
+		/**
+		 * A remote node did not recognize the requested probe type. For locally started probes it will not be
+		 * a ProbeError but a ProtocolError.
+		 */
+		UNRECOGNIZED_TYPE
+	}
+
+	public enum ProbeType {
+		BANDWIDTH,
+		BUILD,
+		IDENTIFIER,
+		LINK_LENGTHS,
+		STORE_SIZE,
+		UPTIME_48H,
+		UPTIME_7D
+	}
 
 	/**
 	 * Listener for the different types of probe results.
@@ -140,41 +196,6 @@ public class MHProbe implements ByteCounter {
 		return input + Math.round(node.random.nextGaussian() * 0.01 * input);
 	}
 
-	public enum ProbeType {
-		BANDWIDTH,
-		BUILD,
-		IDENTIFIER,
-		LINK_LENGTHS,
-		STORE_SIZE,
-		UPTIME_48H,
-		UPTIME_7D
-	}
-
-	public enum ProbeError {
-		/**
-		 * The node being waited on to provide a response disconnected.
-		 */
-		DISCONNECTED,
-		/**
-		 * A node cannot accept the request because its probe DoS protection has tripped.
-		 */
-		OVERLOAD,
-		/**
-		 * Timed out while waiting for a response.
-		 */
-		TIMEOUT,
-		/**
-		 * Only used locally, not sent over the network. The local node did not recognize the error used.
-		 * This should always be specified along with the description string containing the remote error.
-		 */
-		UNKNOWN,
-		/**
-		 * A remote node did not recognize the requested probe type. For locally started probes it will not be
-		 * a ProbeError but a ProtocolError.
-		 */
-		UNRECOGNIZED_TYPE
-	}
-
 	/**
 	 * Counts as probe request transfer.
 	 * @param bytes Bytes received.
@@ -200,22 +221,6 @@ public class MHProbe implements ByteCounter {
 	@Override
 	public void sentPayload(int bytes) {}
 
-	public static final byte MAX_HTL = 50;
-	/**
-	 * Probability of HTL decrement at HTL = 1.
-	 */
-	public static final double DECREMENT_PROBABILITY = 0.2;
-	/**
-	 * In ms, per HTL above HTL = 1.
-	 */
-	public static final int TIMEOUT_PER_HTL = 3000;
-	/**
-	 * In ms, to account for probabilistic decrement at HTL = 1.
-	 */
-	public static final int TIMEOUT_HTL1 = (int)(TIMEOUT_PER_HTL / DECREMENT_PROBABILITY);
-
-	private final Node node;
-
 	public MHProbe(Node node) {
 		this.node = node;
 		this.accepted = new SynchronizedCounter();
@@ -232,8 +237,6 @@ public class MHProbe implements ByteCounter {
 		Message request = DMT.createMHProbeRequest(htl, uid, type);
 		request(request, null, new ResultListener(listener));
 	}
-
-	private final static String sourceDisconnect = "Previous step in probe chain no longer connected.";
 
 	/**
 	 * Same as its three-argument namesake, but responds to results by passing them on to source.
