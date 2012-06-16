@@ -82,6 +82,12 @@ public class MHProbe implements ByteCounter {
 	}
 
 	/**
+	 * To make the timing less obvious when a node responds with a local result instead of forwarding at
+	 * HTL = 1, delay for a number of milliseconds, specifically a Gaussian random number times this constant.
+	 */
+	public static final long WAIT_BASE = 1000L;
+
+	/**
 	 * Number of accepted probes in the last minute, keyed by peer.
 	 */
 	private final Map<PeerNode, SynchronizedCounter> accepted;
@@ -507,6 +513,17 @@ public class MHProbe implements ByteCounter {
 					if (logDEBUG) Logger.debug(MHProbe.class, "Response for probe result type \"" + type + "\" is not implemented.");
 					return;
 			}
+		}
+		/* Delay for a small random amount of time so that from the perspective of the node this node received
+		 * the request from, this node may have forwarded the request further and might not be the one
+		 * responding. This is an attempt to prevent determining whether this node is responding by timing
+		 * how long the response takes. (A local response would be faster than if it was forwarded further.)
+		 */
+		//Wait for a Gaussian number of seconds.
+		try {
+			wait((long)(node.random.nextGaussian() * WAIT_BASE));
+		} catch (InterruptedException e) {
+			if (logDEBUG) Logger.debug(MHProbe.class, "Interrupted while waiting before sending response.", e);
 		}
 		//Returning result to probe sent locally.
 		if (source == null) {
