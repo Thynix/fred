@@ -88,6 +88,11 @@ public class MHProbe implements ByteCounter {
 	public static final long WAIT_BASE = 1000L;
 
 	/**
+	 * Maximum number of milliseconds to wait before sending a response.
+	 */
+	public static final long WAIT_MAX = 2000L;
+
+	/**
 	 * Number of accepted probes in the last minute, keyed by peer.
 	 */
 	private final Map<PeerNode, SynchronizedCounter> accepted;
@@ -519,9 +524,11 @@ public class MHProbe implements ByteCounter {
 		 * responding. This is an attempt to prevent determining whether this node is responding by timing
 		 * how long the response takes. (A local response would be faster than if it was forwarded further.)
 		 */
-		//Wait for a Gaussian number of seconds.
+		//Wait for a number of seconds based on an exponential distribution.
 		try {
-			wait((long)(node.random.nextGaussian() * WAIT_BASE));
+			long wait = WAIT_MAX;
+			while (wait >= WAIT_MAX) wait = -((long)(Math.log(node.random.nextDouble()) * WAIT_BASE));
+			wait(wait);
 		} catch (InterruptedException e) {
 			if (logDEBUG) Logger.debug(MHProbe.class, "Interrupted while waiting before sending response.", e);
 		}
