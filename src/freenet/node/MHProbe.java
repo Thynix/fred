@@ -83,7 +83,8 @@ public class MHProbe implements ByteCounter {
 
 	/**
 	 * To make the timing less obvious when a node responds with a local result instead of forwarding at
-	 * HTL = 1, delay for a number of milliseconds, specifically a Gaussian random number times this constant.
+	 * HTL = 1, delay for a number of milliseconds, specifically an exponential distribution with this constant as
+	 * its mean.
 	 */
 	public static final long WAIT_BASE = 1000L;
 
@@ -527,7 +528,7 @@ public class MHProbe implements ByteCounter {
 		//Wait for a number of seconds based on an exponential distribution.
 		try {
 			long wait = WAIT_MAX;
-			while (wait >= WAIT_MAX) wait = -((long)(Math.log(node.random.nextDouble()))) * WAIT_BASE;
+			while (wait >= WAIT_MAX) wait = (long)(-Math.log(node.random.nextDouble()) * WAIT_BASE / Math.E);
 			wait(wait);
 		} catch (InterruptedException e) {
 			if (logDEBUG) Logger.debug(MHProbe.class, "Interrupted while waiting before sending response.", e);
