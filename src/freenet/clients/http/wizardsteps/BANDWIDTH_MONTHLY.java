@@ -87,25 +87,21 @@ public class BANDWIDTH_MONTHLY extends BandwidthManipulator implements Step {
 			target.append(URLEncoder.encode(capTo, true));
 			return target.toString();
 		}
-		//Linear from 0.5 at 25 GB to 0.8 at 100 GB. bytesMonth is divided by the number of bytes in a GiB.
-		double downloadFraction = 0.004*(bytesMonth/GB) + 0.4;
-		if (downloadFraction < 0.4) downloadFraction = 0.4;
-		if (downloadFraction > 0.8) downloadFraction = 0.8;
 		//Seconds in 30 days
-		double bytesSecondTotal = bytesMonth/2592000d;
-		String downloadLimit = String.valueOf(bytesSecondTotal*downloadFraction);
-		String uploadLimit = String.valueOf(bytesSecondTotal*(1-downloadFraction));
+		final double bytesSecondTotal = bytesMonth/2592000d;
+		//Assume ratio between upload and download is about 1 to 1: each will use half.
+		final String limit = String.valueOf(bytesSecondTotal/2);
 
 		try {
-			setBandwidthLimit(downloadLimit, false);
+			setBandwidthLimit(limit, false);
 		} catch (InvalidConfigValueException e) {
-			freenet.support.Logger.error(this, "Failed to set download limit "+downloadLimit+": "+e);
+			freenet.support.Logger.error(this, "Failed to set download limit "+limit+": "+e);
 		}
 
 		try {
-			setBandwidthLimit(uploadLimit, true);
+			setBandwidthLimit(limit, true);
 		} catch (InvalidConfigValueException e) {
-			freenet.support.Logger.error(this, "Failed to set upload limit "+uploadLimit+": "+e);
+			freenet.support.Logger.error(this, "Failed to set upload limit "+limit+": "+e);
 		}
 
 		setWizardComplete();
