@@ -549,7 +549,7 @@ public class Probe implements ByteCounter {
 		switch (type) {
 		case BANDWIDTH:
 			//1,024 (2^10) bytes per KiB
-			listener.onOutputBandwidth(randomNoise(Math.round((double)node.getOutputBandwidthLimit()/(1 << 10))));
+			listener.onOutputBandwidth((float)randomNoise((double)node.getOutputBandwidthLimit()/(1 << 10)));
 			break;
 		case BUILD:
 			listener.onBuild(node.nodeUpdater.getMainVersion());
@@ -736,7 +736,7 @@ public class Probe implements ByteCounter {
 		}
 
 		@Override
-		public void onOutputBandwidth(long outputBandwidth) {
+		public void onOutputBandwidth(float outputBandwidth) {
 			send(DMT.createProbeBandwidth(uid, outputBandwidth));
 		}
 
