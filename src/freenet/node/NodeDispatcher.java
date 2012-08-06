@@ -21,6 +21,7 @@ import freenet.keys.KeyBlock;
 import freenet.keys.NodeSSK;
 import freenet.node.NodeStats.PeerLoadStats;
 import freenet.node.NodeStats.RejectReason;
+import freenet.node.probe.Probe;
 import freenet.store.BlockMetadata;
 import freenet.support.Fields;
 import freenet.support.LogThresholdCallback;
@@ -62,6 +63,7 @@ public class NodeDispatcher implements Dispatcher, Runnable {
 	final Node node;
 	private NodeStats nodeStats;
 	private NodeDispatcherCallback callback;
+	final Probe probe;
 	
 	private static final long STALE_CONTEXT=20000;
 	private static final long STALE_CONTEXT_CHECK=20000;
@@ -70,6 +72,7 @@ public class NodeDispatcher implements Dispatcher, Runnable {
 		this.node = node;
 		this.nodeStats = node.nodeStats;
 		node.getTicker().queueTimedJob(this, STALE_CONTEXT_CHECK);
+		this.probe = new Probe(node);
 	}
 
 	ByteCounter pingCounter = new ByteCounter() {
@@ -284,6 +287,10 @@ public class NodeDispatcher implements Dispatcher, Runnable {
 			return true;
 		} else if(spec == DMT.FNPMyFullNoderef && source instanceof DarknetPeerNode) {
 			((DarknetPeerNode)source).handleFullNoderef(m);
+			return true;
+		} else if(spec == DMT.ProbeRequest) {
+			//Response is handled by callbacks within probe.
+			probe.request(m, source);
 			return true;
 		}
 		return false;
@@ -784,6 +791,7 @@ public class NodeDispatcher implements Dispatcher, Runnable {
 	 * Handle an FNPRoutedRejected message.
 	 */
 	private boolean handleRoutedRejected(Message m) {
+		if(node.enableRoutedPing()) return true;
 		long id = m.getLong(DMT.UID);
 		Long lid = Long.valueOf(id);
 		RoutedContext rc = routedContexts.get(lid);
@@ -821,6 +829,7 @@ public class NodeDispatcher implements Dispatcher, Runnable {
 	 * @return False if we want the message put back on the queue.
 	 */
 	boolean handleRouted(Message m, PeerNode source) {
+		if(node.enableRoutedPing()) return true;
 		if(logMINOR) Logger.minor(this, "handleRouted("+m+ ')');
 
 		long id = m.getLong(DMT.UID);
@@ -865,6 +874,7 @@ public class NodeDispatcher implements Dispatcher, Runnable {
 	}
 
 	boolean handleRoutedReply(Message m) {
+		if(node.enableRoutedPing()) return true;
 		long id = m.getLong(DMT.UID);
 		if(logMINOR) Logger.minor(this, "Got reply: "+m);
 		Long lid = Long.valueOf(id);
@@ -925,6 +935,7 @@ public class NodeDispatcher implements Dispatcher, Runnable {
 	 * Prepare a routed-to-node message for forwarding.
 	 */
 	private Message preForward(Message m, short newHTL) {
+		m = m.cloneAndDropSubMessages();
 		m.set(DMT.HTL, newHTL); // update htl
 		if(m.getSpec() == DMT.FNPRoutedPing) {
 			int x = m.getInt(DMT.COUNTER);

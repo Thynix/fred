@@ -259,9 +259,9 @@ public abstract class PeerNode implements USKRetrieverCallback, BasePeerNode {
 	/** Time after which we log message requeues while rate limiting */
 	private long nextMessageRequeueLogTime;
 	/** Interval between rate limited message requeue logs (in milliseconds) */
-	private long messageRequeueLogRateLimitInterval = 1000;
+	private static final long messageRequeueLogRateLimitInterval = 1000;
 	/** Number of messages to be requeued after which we rate limit logging of such */
-	private int messageRequeueLogRateLimitThreshold = 15;
+	private static final int messageRequeueLogRateLimitThreshold = 15;
 	/** Version of the node */
 	private String version;
 	/** Total input */
@@ -1138,13 +1138,16 @@ public abstract class PeerNode implements USKRetrieverCallback, BasePeerNode {
 	@Override
 	public MessageItem sendAsync(Message msg, AsyncMessageCallback cb, ByteCounter ctr) throws NotConnectedException {
 		if(ctr == null)
-			Logger.error(this, "Bytes not logged", new Exception("debug"));
+			Logger.error(this, "ByteCounter null, so bandwidth usage cannot be logged. Refusing to send.", new Exception("debug"));
 		if(logMINOR)
 			Logger.minor(this, "Sending async: " + msg + " : " + cb + " on " + this+" for "+node.getDarknetPortNumber()+" priority "+msg.getPriority());
 		if(!isConnected()) {
 			if(cb != null)
 				cb.disconnected();
 			throw new NotConnectedException();
+		}
+		if(msg.getSource() != null) {
+			Logger.error(this, "Messages should NOT be relayed as-is, they should always be re-created to clear any sub-messages etc, see comments in Message.java!: "+msg, new Exception("error"));
 		}
 		addToLocalNodeSentMessagesToStatistic(msg);
 		MessageItem item = new MessageItem(msg, cb == null ? null : new AsyncMessageCallback[]{cb}, ctr);
@@ -1823,6 +1826,15 @@ public abstract class PeerNode implements USKRetrieverCallback, BasePeerNode {
 			// Ignore.
 			// It might have been lost, we wait until it is acked.
 		}
+	}
+
+	/**
+	 * Determines the degree of the peer via the locations of its peers it provides.
+	 * @return The number of peers this peer reports having, or 0 if this peer does not provide that information.
+	 */
+	public synchronized int getDegree() {
+		if (currentPeersLocation == null) return 0;
+		return currentPeersLocation.length;
 	}
 
 	public void updateLocation(double newLoc, double[] newLocs) {
@@ -4695,6 +4707,8 @@ public abstract class PeerNode implements USKRetrieverCallback, BasePeerNode {
 	 * parts of our node reference not needed for handshake.
 	 * Should only be called by completedHandshake() after we're happy
 	 * with the connection
+	 * 
+	 * FIXME this should be sent when our noderef changes.
 	 */
 	protected void sendConnectedDiffNoderef() {
 		SimpleFieldSet fs = new SimpleFieldSet(true);
@@ -4757,11 +4771,11 @@ public abstract class PeerNode implements USKRetrieverCallback, BasePeerNode {
 	static final double MAX_RTO = 60*1000;
 	static final double MIN_RTO = 1000;
 	private int consecutiveRTOBackoffs;
-	
+
 	// Clock generally has 20ms granularity or better, right?
 	// FIXME determine the clock granularity.
-	private static int CLOCK_GRANULARITY = 20;
-	
+	private static final int CLOCK_GRANULARITY = 20;
+
 	@Override
 	public void reportPing(long t) {
 		this.pingAverage.report(t);
@@ -6347,9 +6361,9 @@ public abstract class PeerNode implements USKRetrieverCallback, BasePeerNode {
 
 	private int consecutiveGuaranteedRejectsRT = 0;
 	private int consecutiveGuaranteedRejectsBulk = 0;
-	
-	private int CONSECUTIVE_REJECTS_MANDATORY_BACKOFF = 5;
-	
+
+	private static final int CONSECUTIVE_REJECTS_MANDATORY_BACKOFF = 5;
+
 	/** After 5 consecutive GUARANTEED soft rejections, we enter mandatory backoff.
 	 * The reason why we don't immediately enter mandatory backoff is as follows:
 	 * PROBLEM: Requests could have completed between the time when the request 

@@ -40,6 +40,8 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.Vector;
 
+import freenet.node.probe.Listener;
+import freenet.node.probe.Type;
 import freenet.support.math.MersenneTwister;
 import org.tanukisoftware.wrapper.WrapperManager;
 
@@ -836,6 +838,16 @@ public class Node implements TimeSkewDetectorCallback {
 	private volatile boolean isPRNGReady = false;
 
 	private boolean storePreallocate;
+	
+	private boolean enableRoutedPing;
+
+	/**
+	 * Dispatches a probe request with the specified settings
+	 * @see freenet.node.probe.Probe#start(byte, long, Type, Listener)
+	 */
+	public void startProbe(final byte htl, final long uid, final Type type, final Listener listener) {
+		dispatcher.probe.start(htl, uid, type, listener);
+	}
 
 	/**
 	 * Read all storable settings (identity etc) from the node file.
@@ -2525,11 +2537,34 @@ public class Node implements TimeSkewDetectorCallback {
 		}, true);
 
 		maxPacketSize = nodeConfig.getInt("maxPacketSize");
-		updateMTU();
 		
+		nodeConfig.register("enableRoutedPing", false, sortOrder++, true, false, "Node.enableRoutedPing", "Node.enableRoutedPingLong", new BooleanCallback() {
+
+			@Override
+			public Boolean get() {
+				synchronized(Node.this) {
+					return enableRoutedPing;
+				}
+			}
+
+			@Override
+			public void set(Boolean val) throws InvalidConfigValueException,
+					NodeNeedRestartException {
+				synchronized(Node.this) {
+					enableRoutedPing = val;
+				}
+			}
+			
+		});
+		enableRoutedPing = nodeConfig.getBoolean("enableRoutedPing");
+		
+		updateMTU();
+
+		/* Take care that no configuration options are registered after this point; they will not persist
+		 * between restarts.
+		 */
 		nodeConfig.finishedInitialization();
-		if(shouldWriteConfig)
-			config.store();
+		if(shouldWriteConfig) config.store();
 		writeNodeFile();
 
 		// Initialize the plugin manager
@@ -3850,7 +3885,7 @@ public class Node implements TimeSkewDetectorCallback {
 				@Override
 				public void run() {
 					freenet.support.Logger.OSThread.logPID(this);
-					PeerNode[] nodes = peers.myPeers;
+					PeerNode[] nodes = peers.myPeers();
 					for(int i = 0; i < nodes.length; i++) {
 						PeerNode pn = nodes[i];
 						pn.updateVersionRoutablity();
@@ -5230,7 +5265,7 @@ public class Node implements TimeSkewDetectorCallback {
 			list = completedBuffer.toArray(new Long[completedBuffer.size()]);
 			completedBuffer.clear();
 		}
-		for(PeerNode pn : peers.myPeers) {
+		for(PeerNode pn : peers.myPeers()) {
 			if(!pn.isRoutingCompatible()) continue;
 			pn.removeUIDsFromMessageQueues(list);
 		}
@@ -5538,18 +5573,18 @@ public class Node implements TimeSkewDetectorCallback {
 	}
 
 	public PeerNode[] getPeerNodes() {
-		return peers.myPeers;
+		return peers.myPeers();
 	}
 
 	public PeerNode[] getConnectedPeers() {
-		return peers.connectedPeers;
+		return peers.connectedPeers();
 	}
 
 	/**
 	 * Return a peer of the node given its ip and port, name or identity, as a String
 	 */
 	public PeerNode getPeerNode(String nodeIdentifier) {
-		PeerNode[] pn = peers.myPeers;
+		PeerNode[] pn = peers.myPeers();
 		for(int i=0;i<pn.length;i++)
 		{
 			Peer peer = pn[i].getPeer();
@@ -5622,7 +5657,7 @@ public class Node implements TimeSkewDetectorCallback {
 	// using the PacketSender/Ticker. Would save a few threads.
 
 	public int getNumARKFetchers() {
-		PeerNode[] p = peers.myPeers;
+		PeerNode[] p = peers.myPeers();
 		int x = 0;
 		for(int i=0;i<p.length;i++) {
 			if(p[i].isFetchingARK()) x++;
@@ -5683,7 +5718,7 @@ public class Node implements TimeSkewDetectorCallback {
 		return darknetCrypto.portNumber;
 	}
 
-	public int getOutputBandwidthLimit() {
+	public synchronized int getOutputBandwidthLimit() {
 		return outputBandwidthLimit;
 	}
 
@@ -5691,6 +5726,13 @@ public class Node implements TimeSkewDetectorCallback {
 		if(inputLimitDefault)
 			return outputBandwidthLimit * 4;
 		return inputBandwidthLimit;
+	}
+
+	/**
+	 * @return total datastore size in bytes.
+	 */
+	public synchronized long getStoreSize() {
+		return maxTotalDatastoreSize;
 	}
 
 	@Override
@@ -6333,6 +6375,11 @@ public class Node implements TimeSkewDetectorCallback {
 	
 	public boolean enableNewLoadManagement(boolean realTimeFlag) {
 		return nodeStats.enableNewLoadManagement(realTimeFlag);
+	}
+	
+	/** FIXME move to Probe.java? */
+	public boolean enableRoutedPing() {
+		return enableRoutedPing;
 	}
 
 }

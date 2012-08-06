@@ -133,10 +133,9 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 	private boolean isReversed = false;
 	private LocalFileInsertToadlet browser;
 	private final boolean uploads;
-	private HighLevelSimpleClient client;
+
 	public QueueToadlet(NodeClientCore core, FCPServer fcp, HighLevelSimpleClient client, boolean uploads) {
 		super(client);
-		this.client = client;
 		this.core = core;
 		this.fcp = fcp;
 		this.uploads = uploads;
@@ -648,7 +647,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 						}
 				}
 				return;
-			} else if (request.isPartSet("select-file")) {
+			} else if (request.isPartSet(LocalFileBrowserToadlet.selectFile)) {
 				final String filename = request.getPartAsStringFailsafe("filename", MAX_FILENAME_LENGTH);
 				if(logMINOR) Logger.minor(this, "Inserting local file: "+filename);
 				final File file = new File(filename);
@@ -759,7 +758,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 						}
 				}
 				return;
-			} else if (request.isPartSet("select-dir")) {
+			} else if (request.isPartSet(LocalFileBrowserToadlet.selectDir)) {
 				final String filename = request.getPartAsStringFailsafe("filename", MAX_FILENAME_LENGTH);
 				if(logMINOR) Logger.minor(this, "Inserting local directory: "+filename);
 				final File file = new File(filename);
@@ -1391,8 +1390,6 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 				'/' + (completedDownloadToDisk.size() + completedDownloadToTemp.size()) +
 				") "+l10n("titleDownloads");
 
-		final int mode = pageMaker.parseMode(request, this.container);
-
 		PageNode page = pageMaker.getPageNode(pageName, ctx);
 		HTMLNode pageNode = page.outer;
 		HTMLNode contentNode = page.content;
@@ -1485,7 +1482,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 				l10n("priority6")
 		};
 
-		boolean advancedModeEnabled = (mode >= PageMaker.MODE_ADVANCED);
+		boolean advancedModeEnabled = pageMaker.advancedMode(request, this.container);
 
 		if(advancedModeEnabled) {
 			HTMLNode legendContent = pageMaker.getInfobox("legend", l10n("legend"), contentNode, "queue-legend", true);

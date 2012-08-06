@@ -134,7 +134,7 @@ public class OpennetManager {
 	/** Constant for scaling peers: we multiply bandwidth in kB/sec by this
 	 * and then take the square root. 12 gives 11 at 10K, 15 at 20K, 19 at
 	 * 30K, 26 at 60K, 34 at 100K, 40 at 140K. */
-	public static final double SCALING_CONSTANT = 6.0;
+	public static final double SCALING_CONSTANT = 12.0;
 	/** Minimum number of peers */
 	public static final int MIN_PEERS_FOR_SCALING = 10;
 	/** Maximum number of peers. */
@@ -468,8 +468,7 @@ public class OpennetManager {
 					else
 						peersLRU.push(nodeToAddNow);
 					oldPeers.remove(nodeToAddNow);
-					if(nodeToAddNow != null)
-						connectionAttemptsAddedPlentySpace.put(connectionType, connectionAttemptsAddedPlentySpace.get(connectionType)+1);
+					connectionAttemptsAddedPlentySpace.put(connectionType, connectionAttemptsAddedPlentySpace.get(connectionType)+1);
 				} else {
 					if(logMINOR) Logger.minor(this, "Want peer because not enough opennet nodes");
 				}
@@ -555,8 +554,7 @@ public class OpennetManager {
 						if(logMINOR) Logger.minor(this, "Dropped opennet peer: "+dropList.get(0));
 						timeLastDropped.put(connectionType, now);
 					}
-					if(nodeToAddNow != null)
-						connectionAttemptsAdded.put(connectionType, connectionAttemptsAdded.get(connectionType)+1);
+					connectionAttemptsAdded.put(connectionType, connectionAttemptsAdded.get(connectionType)+1);
 				} else {
 					// Do not update timeLastDropped, anything dropped was over the limit so doesn't count (because nodeToAddNow == null).
 					if(!justChecking) {
