@@ -207,13 +207,11 @@ public class WelcomeToadlet extends Toadlet {
 			HTMLNode pageNode = page.outer;
 			HTMLNode contentNode = page.content;
 			if (node.isUsingWrapper()) {
-				ctx.getPageMaker().getInfobox("#", l10n("threadDumpSubTitle"), contentNode, "thread-dump-generation", true).
-					addChild("#", l10n("threadDumpWithFilename", "filename", WrapperManager.getProperties().getProperty("wrapper.logfile")));
+				ctx.getPageMaker().getInfobox("#", l10n("threadDumpSubTitle"), contentNode, "thread-dump-generation", true).addChild("#", l10n("threadDumpWithFilename", "filename", WrapperManager.getProperties().getProperty("wrapper.logfile")));
 				System.out.println("Thread Dump:");
 				WrapperManager.requestThreadDump();
 			} else {
-				ctx.getPageMaker().getInfobox("infobox-error", l10n("threadDumpSubTitle"), contentNode, "thread-dump-generation", true).
-					addChild("#", l10n("threadDumpNotUsingWrapper"));
+				ctx.getPageMaker().getInfobox("infobox-error", l10n("threadDumpSubTitle"), contentNode, "thread-dump-generation", true).addChild("#", l10n("threadDumpNotUsingWrapper"));
 			}
 			this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 		} else if (request.isPartSet("disable")) {
@@ -269,9 +267,7 @@ public class WelcomeToadlet extends Toadlet {
 				key = this.insert(block, filenameHint, false);
 				content = ctx.getPageMaker().getInfobox("infobox-success", l10n("insertSucceededTitle"), contentNode, "successful-insert", false);
 				String u = key.toString();
-				NodeL10n.getBase().addL10nSubstitution(content, "WelcomeToadlet.keyInsertedSuccessfullyWithKeyAndName",
-					new String[]{"link", "name"},
-					new HTMLNode[] { HTMLNode.link("/"+u), HTMLNode.text(u) });
+				NodeL10n.getBase().addL10nSubstitution(content, "WelcomeToadlet.keyInsertedSuccessfullyWithKeyAndName", new String[]{"link", "name"}, new HTMLNode[] { HTMLNode.link("/"+u), HTMLNode.text(u) });
 			} catch (InsertException e) {
 				content = ctx.getPageMaker().getInfobox("infobox-error", l10n("insertFailedTitle"), contentNode, "failed-insert", false);
 				content.addChild("#", l10n("insertFailedWithMessage", "message", e.getMessage()));
@@ -374,8 +370,7 @@ public class WelcomeToadlet extends Toadlet {
 				PageNode page = ctx.getPageMaker().getPageNode("Node Shutdown", ctx, new RenderParameters().renderNavigationLinks(false));
 				HTMLNode pageNode = page.outer;
 				HTMLNode contentNode = page.content;
-				ctx.getPageMaker().getInfobox("infobox-information", l10n("shutdownDone"), contentNode, "shutdown-progressing", true).
-					addChild("#", l10n("thanks"));
+				ctx.getPageMaker().getInfobox("infobox-information", l10n("shutdownDone"), contentNode, "shutdown-progressing", true).addChild("#", l10n("thanks"));
 				WelcomeToadlet.maybeDisplayWrapperLogfile(ctx, contentNode);
 				this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 				return;
@@ -434,6 +429,7 @@ public class WelcomeToadlet extends Toadlet {
 				return;
 			}
 		}
+		//Start generating the welcome page
 		PageNode page = ctx.getPageMaker().getPageNode(l10n("homepageFullTitle"), ctx);
 		HTMLNode pageNode = page.outer;
 		HTMLNode contentNode = page.content;
@@ -517,5 +513,4 @@ public class WelcomeToadlet extends Toadlet {
 		}
 		this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 	}
-
 }
