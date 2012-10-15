@@ -13,34 +13,15 @@ public class HTMLNode implements XMLCharacterClasses {
 	
 	private static final Pattern namePattern = Pattern.compile("^[" + NAME + "]*$");
 	private static final Pattern simpleNamePattern = Pattern.compile("^[A-Za-z][A-Za-z0-9]*$");
-	public static HTMLNode STRONG = new HTMLNode("strong").setReadOnly();
-
-	protected final String name;
-	
 	private boolean readOnly;
-	
-	public HTMLNode setReadOnly() {
-		readOnly = true;
-		return this;
-	}
-
-	/** Text to be inserted between tags, or possibly raw HTML. Only non-null if name
-	 * is "#" (= text) or "%" (= raw HTML). Otherwise the constructor will allocate a
-	 * separate child node to contain it. */
+	/** Text to be inserted between tags, or possibly raw HTML. Only non-null if name is "#" (= text) or "%" (= raw
+	 * HTML). Otherwise the constructor will allocate a separate child node to contain it. */
 	private String content;
-
 	private final Map<String, String> attributes = new HashMap<String, String>();
-
-	protected final List<HTMLNode> children = new ArrayList<HTMLNode>();
-
-	public HTMLNode(String name) {
-		this(name, null);
-	}
-
+	//Lists of html elements which receive special handling
 	private static final ArrayList<String> EmptyTag = new ArrayList<String>(10);
 	private static final ArrayList<String> OpenTags = new ArrayList<String>(12);
 	private static final ArrayList<String> CloseTags = new ArrayList<String>(12);
-
 	static {
 		/* HTML elements which are allowed to be empty */
 		EmptyTag.add("area");
@@ -81,8 +62,13 @@ public class HTMLNode implements XMLCharacterClasses {
 		CloseTags.add("title");
 	}
 
-	/** Tests an HTML element name to determine if it is one of the elements permitted
-	 * to be empty in the XHTML spec ( http://www.w3.org/TR/xhtml1/ )
+	protected final String name;
+	protected final List<HTMLNode> children = new ArrayList<HTMLNode>();
+
+	public static HTMLNode STRONG = new HTMLNode("strong").setReadOnly();
+
+	/** Tests an HTML element name to determine if it is one of the elements permitted to be empty in the XHTML
+	 * spec ( http://www.w3.org/TR/xhtml1/ )
 	 * @param name The name of the html element
 	 * @return True if the element is allowed to be empty
 	 */
@@ -90,8 +76,7 @@ public class HTMLNode implements XMLCharacterClasses {
 		return EmptyTag.contains(name);
 	}
 
-	/** Tests an HTML element to determine if we should add a newline after the opening tag
-	 * for readability
+	/** Tests an HTML element to determine if we should add a newline after the opening tag for readability
 	 * @param name The name of the html element
 	 * @return True if we should add a newline after the opening tag
 	 */
@@ -99,18 +84,16 @@ public class HTMLNode implements XMLCharacterClasses {
 		return OpenTags.contains(name);
 	}
 
-	/** Tests an HTML element to determine if we should add a newline after the closing tag
-	* for readability. All tags with newlines after the opening tag also get newlines after
-	* the closing tag.
-	* @param name The name of the html element
-	* @return True if we should add a newline after the opening tag
-	*/
+	/** Tests an HTML element to determine if we should add a newline after the closing tag for readability. All
+	 * tags with newlines after the opening tag also get newlines afterthe closing tag.
+	 * @param name The name of the html element
+	 * @return True if we should add a newline after the opening tag
+	 */
 	private Boolean newlineClose(String name) {
 		return (newlineOpen(name) || CloseTags.contains(name));
 	}
 
-	/** Returns a properly formatted closing angle bracket to complete an open tag of a
-	 * named html element
+	/** Returns a properly formatted closing angle bracket to complete an open tag of a named html element
 	 * @param name the name of the element
 	 * @return the proper string of characters to complete the open tag
 	 */
@@ -122,7 +105,7 @@ public class HTMLNode implements XMLCharacterClasses {
 		}
 	}
 
-	/** Returns a closing tag for a named html elemen
+	/** Returns a closing tag for a named html element
 	 * @param name the name of the element
 	 * @return the complete closing tag for the element
 	 */
@@ -134,6 +117,10 @@ public class HTMLNode implements XMLCharacterClasses {
 		}
 	}
 
+	/** Returns a string containing a specified number of tab characters
+	 * @param indentDepth the number of tab characters
+	 * @return Returns a string suitable for indenting tags
+	 */
 	private String indentString(int indentDepth) {
 		StringBuffer indentLine = new StringBuffer();
 
@@ -141,6 +128,20 @@ public class HTMLNode implements XMLCharacterClasses {
 			indentLine.append('\t');
 		}
 		return indentLine.toString();
+	}
+
+	public HTMLNode setReadOnly() {
+		readOnly = true;
+		return this;
+	}
+
+	@Override
+	public HTMLNode clone() {
+		return new HTMLNode(this, true);
+	}
+
+	public HTMLNode(String name) {
+		this(name, null);
 	}
 
 	public HTMLNode(String name, String content) {
@@ -159,22 +160,41 @@ public class HTMLNode implements XMLCharacterClasses {
 		this(name, attributeNames, attributeValues, null);
 	}
 
+	public HTMLNode(String name, String[] attributeNames, String[] attributeValues, String content) {
+		if ((name == null) || (!"#".equals(name) && !"%".equals(name) && !checkNamePattern(name))) {
+			throw new IllegalArgumentException("element name is not legal");
+		}
+		if ((attributeNames != null) && (attributeValues != null)) {
+			if (attributeNames.length != attributeValues.length) {
+				throw new IllegalArgumentException("attribute names and values differ in length");
+			}
+			for (int attributeIndex = 0, attributeCount = attributeNames.length; attributeIndex < attributeCount; attributeIndex++) {
+				if ((attributeNames[attributeIndex] == null) || !checkNamePattern(attributeNames[attributeIndex])) {
+					throw new IllegalArgumentException("attributeName is not legal");
+				}
+				addAttribute(attributeNames[attributeIndex], attributeValues[attributeIndex]);
+			}
+		}
+		this.name = name.toLowerCase(Locale.ENGLISH);
+		if (content != null && !("#").equals(name)&& !("%").equals(name)) {
+			addChild(new HTMLNode("#", content));
+			this.content = null;
+		} else {
+			this.content = content;
+		}
+	}
+
 	protected HTMLNode(HTMLNode node, boolean clearReadOnly) {
 		attributes.putAll(node.attributes);
 		children.addAll(node.children);
 		content = node.content;
 		name = node.name;
-		if(clearReadOnly)
+		if(clearReadOnly) {
 			readOnly = false;
-		else
+		} else
 			readOnly = node.readOnly;
 	}
-	
-	@Override
-	public HTMLNode clone() {
-		return new HTMLNode(this, true);
-	}
-	
+
 	protected boolean checkNamePattern(String str) {
 		// Workaround buggy java regexes, also probably slightly faster.
 		if(str.length() < 1) return false;
@@ -196,28 +216,23 @@ public class HTMLNode implements XMLCharacterClasses {
 		return simpleNamePattern.matcher(str).matches() || 
 			namePattern.matcher(str).matches();
 	}
-	
-	public HTMLNode(String name, String[] attributeNames, String[] attributeValues, String content) {
-		if ((name == null) || (!"#".equals(name) && !"%".equals(name) && !checkNamePattern(name))) {
-			throw new IllegalArgumentException("element name is not legal");
-		}
-		if ((attributeNames != null) && (attributeValues != null)) {
-			if (attributeNames.length != attributeValues.length) {
-				throw new IllegalArgumentException("attribute names and values differ in length");
-			}
-			for (int attributeIndex = 0, attributeCount = attributeNames.length; attributeIndex < attributeCount; attributeIndex++) {
-				if ((attributeNames[attributeIndex] == null) || !checkNamePattern(attributeNames[attributeIndex])) {
-					throw new IllegalArgumentException("attributeName is not legal");
-				}
-				addAttribute(attributeNames[attributeIndex], attributeValues[attributeIndex]);
-			}
-		}
-		this.name = name.toLowerCase(Locale.ENGLISH);
-		if (content != null && !("#").equals(name)&& !("%").equals(name)) {
-			addChild(new HTMLNode("#", content));
-			this.content = null;
-		} else
-			this.content = content;
+
+	/**
+	 * @return a single named attribute
+	 */
+	public String getAttribute(String attributeName) {
+		return attributes.get(attributeName);
+	}
+
+	/**
+	 * @return all attributes
+	 */
+	public Map<String, String> getAttributes() {
+		return Collections.unmodifiableMap(attributes);
+	}
+
+	public List<HTMLNode> getChildren(){
+		return children;
 	}
 
 	/**
@@ -225,6 +240,27 @@ public class HTMLNode implements XMLCharacterClasses {
 	 */
 	public String getContent() {
 		return content;
+	}
+
+	/**
+	 * Returns the name of the first "real" tag found in the hierarchy below
+	 * this node.
+	 *
+	 * @return The name of the first "real" tag, or <code>null</code> if no
+	 *         "real" tag could be found
+	 */
+	public String getFirstTag() {
+		if (!"#".equals(name)) {
+			return name;
+		}
+		for (int childIndex = 0, childCount = children.size(); childIndex < childCount; childIndex++) {
+			HTMLNode childNode = children.get(childIndex);
+			String tag = childNode.getFirstTag();
+			if (tag != null) {
+				return tag;
+			}
+		}
+		return null;
 	}
 
 	public void addAttribute(String attributeName, String attributeValue) {
@@ -237,35 +273,19 @@ public class HTMLNode implements XMLCharacterClasses {
 		attributes.put(attributeName, attributeValue);
 	}
 
-	public Map<String, String> getAttributes() {
-		return Collections.unmodifiableMap(attributes);
-	}
-
-	public String getAttribute(String attributeName) {
-		return attributes.get(attributeName);
-	}
-
 	public HTMLNode addChild(HTMLNode childNode) {
 		if(readOnly)
 			throw new IllegalArgumentException("Read only");
 		if (childNode == null) throw new NullPointerException();
-		//since an efficient algorithm to check the loop presence 
+		//since an efficient algorithm to check the loop presence
 		//is not present, at least it checks if we are trying to
 		//addChild the node itself as a child
-		if (childNode == this)	
+		if (childNode == this)
 			throw new IllegalArgumentException("A HTMLNode cannot be child of himself");
 		if (children.contains(childNode))
 			throw new IllegalArgumentException("Cannot add twice the same HTMLNode as child");
 		children.add(childNode);
 		return childNode;
-	}
-	
-	public void addChildren(HTMLNode[] childNodes) {
-		if(readOnly)
-			throw new IllegalArgumentException("Read only");
-		for (int i = 0, c = childNodes.length; i < c; i++) {
-			addChild(childNodes[i]);
-		}
 	}
 
 	public HTMLNode addChild(String nodeName) {
@@ -292,25 +312,12 @@ public class HTMLNode implements XMLCharacterClasses {
 		return addChild(new HTMLNode(nodeName, attributeNames, attributeValues, content));
 	}
 
-	/**
-	 * Returns the name of the first "real" tag found in the hierarchy below
-	 * this node.
-	 * 
-	 * @return The name of the first "real" tag, or <code>null</code> if no
-	 *         "real" tag could be found
-	 */
-	public String getFirstTag() {
-		if (!"#".equals(name)) {
-			return name;
+	public void addChildren(HTMLNode[] childNodes) {
+		if(readOnly)
+			throw new IllegalArgumentException("Read only");
+		for (int i = 0, c = childNodes.length; i < c; i++) {
+			addChild(childNodes[i]);
 		}
-		for (int childIndex = 0, childCount = children.size(); childIndex < childCount; childIndex++) {
-			HTMLNode childNode = children.get(childIndex);
-			String tag = childNode.getFirstTag();
-			if (tag != null) {
-				return tag;
-			}
-		}
-		return null;
 	}
 
 	public String generate() {
@@ -343,7 +350,6 @@ public class HTMLNode implements XMLCharacterClasses {
 		}
 		/* start the open tag */
 		tagBuffer.append('<').append(name);
-
 		/* add attributes*/
 		Set<Map.Entry<String, String>> attributeSet = attributes.entrySet();
 		for (Map.Entry<String, String> attributeEntry : attributeSet) {
@@ -355,10 +361,8 @@ public class HTMLNode implements XMLCharacterClasses {
 			HTMLEncoder.encodeToBuffer(attributeValue, tagBuffer);
 			tagBuffer.append('"');
 		}
-
 		/* complete the open tag*/
 		tagBuffer.append(OpenSuffix(name));
-
 		/*insert the contents*/
 		if (children.size() == 0) {
 			if(content==null) {
@@ -387,7 +391,7 @@ public class HTMLNode implements XMLCharacterClasses {
 		}
 		return tagBuffer;
 	}
-	
+
 	public String generateChildren(){
 		if(content!=null){
 			return content;
@@ -399,22 +403,18 @@ public class HTMLNode implements XMLCharacterClasses {
 		}
 		return tagBuffer.toString();
 	}
-	
+
 	public void setContent(String newContent){
 		if(readOnly)
 			throw new IllegalArgumentException("Read only");
 		content=newContent;
-	}
-	
-	public List<HTMLNode> getChildren(){
-		return children;
 	}
 
 	/**
 	 * Special HTML node for the DOCTYPE declaration. This node differs from a
 	 * normal HTML node in that it's child (and it should only have exactly one
 	 * child, the "html" node) is rendered <em>after</em> this node.
-	 * 
+	 *
 	 * @author David 'Bombe' Roden &lt;bombe@freenetproject.org&gt;
 	 * @version $Id$
 	 */
@@ -423,7 +423,7 @@ public class HTMLNode implements XMLCharacterClasses {
 		private final String systemUri;
 
 		/**
-		 * 
+		 *
 		 */
 		public HTMLDoctype(String doctype, String systemUri) {
 			super(doctype);
@@ -436,9 +436,9 @@ public class HTMLNode implements XMLCharacterClasses {
 		@Override
 		public StringBuilder generate(StringBuilder tagBuffer) {
 			tagBuffer.append("<!DOCTYPE ").append(name).append(" PUBLIC \"").append(systemUri).append("\">\n");
-			//TODO A meaningful exception should be raised 
-			// when trying to call the method for a HTMLDoctype 
-			// with number of child != 1 
+			//TODO A meaningful exception should be raised
+			// when trying to call the method for a HTMLDoctype
+			// with number of child != 1
 			return children.get(0).generate(tagBuffer);
 		}
 
@@ -455,7 +455,7 @@ public class HTMLNode implements XMLCharacterClasses {
 	public static HTMLNode text(String text) {
 		return new HTMLNode("#", text);
 	}
-	
+
 	public static HTMLNode text(int count) {
 		return new HTMLNode("#", Integer.toString(count));
 	}

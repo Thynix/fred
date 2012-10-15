@@ -347,7 +347,7 @@ public final class PageMaker {
 			}
 		}
 		
-		boolean webPushingEnabled = 
+		boolean webPushingEnabled =
 			ctx != null && ctx.getContainer().isFProxyJavascriptEnabled() && ctx.getContainer().isFProxyWebPushingEnabled();
 		
 		// Add the generated javascript, if it and pushing is enabled
@@ -373,24 +373,18 @@ public final class PageMaker {
 		if (webPushingEnabled) {
 			bodyNode.addChild("script", new String[] { "type", "language" }, new String[] { "text/javascript", "javascript" }).addChild("%", PushingTagReplacerCallback.getClientSideLocalizationScript());
 		}
-		
 		HTMLNode pageDiv = bodyNode.addChild("div", "id", "page");
 		HTMLNode topBarDiv = pageDiv.addChild("div", "id", "topbar");
-
 		if (renderParameters.isRenderStatus() && fullAccess) {
 			final HTMLNode statusBarDiv = pageDiv.addChild("div", "id", "statusbar-container").addChild("div", "id", "statusbar");
-
-			 if (node != null && node.clientCore != null) {
-				 final HTMLNode alerts = node.clientCore.alerts.createSummary(true);
-				 if (alerts != null) {
-					 statusBarDiv.addChild(alerts).addAttribute("id", "statusbar-alerts");
-					 statusBarDiv.addChild("div", "class", "separator", "\u00a0");
-				 }
-			 }
-
-
+			if (node != null && node.clientCore != null) {
+				final HTMLNode alerts = node.clientCore.alerts.createSummary(true);
+				if (alerts != null) {
+					statusBarDiv.addChild(alerts).addAttribute("id", "statusbar-alerts");
+					statusBarDiv.addChild("div", "class", "separator", "\u00a0");
+				}
+			}
 			statusBarDiv.addChild("div", "id", "statusbar-language").addChild("a", "href", "/config/node#l10n", NodeL10n.getBase().getSelectedLanguage().fullName);
-
 			if (node.clientCore != null && ctx != null && renderParameters.isRenderModeSwitch()) {
 				parseMode(ctx);
 				boolean isAdvancedMode = ctx.activeToadlet().container.isAdvancedModeEnabled();
@@ -400,27 +394,21 @@ public final class PageMaker {
 				newModeSwitchValues.add(String.valueOf(isAdvancedMode ? MODE_SIMPLE : MODE_ADVANCED));
 				/* overwrite any previously existing parameter value. */
 				parameters.put(MODE_SWITCH_PARAMETER, newModeSwitchValues);
-
 				statusBarDiv.addChild("div", "class", "separator", "\u00a0");
 				final HTMLNode switchMode = statusBarDiv.addChild("div", "id", "statusbar-switchmode");
 				switchMode.addAttribute("class", isAdvancedMode ? "simple" : "advanced");
 				switchMode.addChild("a", "href", "?" + HTTPRequestImpl.createQueryString(parameters, false), isAdvancedMode ? NodeL10n.getBase().getString("StatusBar.switchToSimpleMode") : NodeL10n.getBase().getString("StatusBar.switchToAdvancedMode"));
 			}
-
 			if (node != null && node.clientCore != null) {
 				statusBarDiv.addChild("div", "class", "separator", "\u00a0");
 				final HTMLNode secLevels = statusBarDiv.addChild("div", "id", "statusbar-seclevels", NodeL10n.getBase().getString("SecurityLevels.statusBarPrefix"));
-
 				final HTMLNode network = secLevels.addChild("a", "href", "/seclevels/", SecurityLevels.localisedName(node.securityLevels.getNetworkThreatLevel()) + "\u00a0");
 				network.addAttribute("title", NodeL10n.getBase().getString("SecurityLevels.networkThreatLevelShort"));
 				network.addAttribute("class", node.securityLevels.getNetworkThreatLevel().toString().toLowerCase());
-
 				final HTMLNode physical = secLevels.addChild("a", "href", "/seclevels/", SecurityLevels.localisedName(node.securityLevels.getPhysicalThreatLevel()));
 				physical.addAttribute("title", NodeL10n.getBase().getString("SecurityLevels.physicalThreatLevelShort"));
 				physical.addAttribute("class", node.securityLevels.getPhysicalThreatLevel().toString().toLowerCase());
-
 				statusBarDiv.addChild("div", "class", "separator", "\u00a0");
-
 				final int connectedPeers = node.peers.countConnectedPeers();
 				int darknetTotal = 0;
 				for(DarknetPeerNode n : node.peers.getDarknetPeers()) {
@@ -432,7 +420,6 @@ public final class PageMaker {
 				final int totalPeers = (node.getOpennet() == null) ? (darknetTotal > 0 ? darknetTotal : Integer.MAX_VALUE) : node.getOpennet().getNumberOfConnectedPeersToAimIncludingDarknet();
 				final double connectedRatio = ((double)connectedPeers) / (double)totalPeers;
 				final String additionalClass;
-
 				// If we use Opennet, we color the bar by the ratio of connected nodes
 				if(connectedPeers > connectedDarknetPeers) {
 					if (connectedRatio < 0.3D || connectedPeers < 3) {
@@ -456,17 +443,14 @@ public final class PageMaker {
 						additionalClass = "full-peers";
 					}
 				}
-
 				HTMLNode progressBar = statusBarDiv.addChild("div", "class", "progressbar");
 				progressBar.addChild("div", new String[] { "class", "style" }, new String[] { "progressbar-done progressbar-peers " + additionalClass, "width: " +
 						Math.min(100,Math.floor(100*connectedRatio)) + "%;" });
-
 				progressBar.addChild("div", new String[] { "class", "title" }, new String[] { "progress_fraction_finalized", NodeL10n.getBase().getString("StatusBar.connectedPeers", new String[]{"X", "Y"},
 						new String[]{Integer.toString(node.peers.countConnectedDarknetPeers()), Integer.toString(node.peers.countConnectedOpennetPeers())}) },
 						Integer.toString(connectedPeers) + ((totalPeers != Integer.MAX_VALUE) ? " / " + Integer.toString(totalPeers) : ""));
 			}
 		}
-
 		topBarDiv.addChild("h1", title);
 		if (renderParameters.isRenderNavigationLinks()) {
 			SubMenu selected = null;
@@ -535,7 +519,6 @@ public final class PageMaker {
 						if(menu.plugin == null) {
 							//If not from a plugin, add the localization key as id.
 							listItem.addAttribute("id", filterCSSIdentifier(menuItemTitle));
-
 							menuItemTitle = NodeL10n.getBase().getString(menuItemTitle);
 							text = NodeL10n.getBase().getString(text);
 						} else {
@@ -547,7 +530,6 @@ public final class PageMaker {
 							 */
 							String id = menu.plugin.getClass().getName()+'-'+text;
 							listItem.addAttribute("id", filterCSSIdentifier(id));
-
 							String newTitle = menu.plugin.getString(menuItemTitle);
 							if(newTitle == null) {
 								Logger.error(this, "Plugin '"+menu.plugin+"' did return null in getString(key)!");
@@ -600,8 +582,9 @@ public final class PageMaker {
 					else
 						sublistItem.addChild("a", "href", navigationPath, navigationLink);
 				}
-				if(nonEmpty)
+				if(nonEmpty) {
 					pageDiv.addChild(div);
+				}
 			}
 		}
 		HTMLNode contentDiv = pageDiv.addChild("div", "id", "content");
