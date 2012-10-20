@@ -67,6 +67,8 @@ public class HTMLNode implements XMLCharacterClasses {
 
 	public static HTMLNode STRONG = new HTMLNode("strong").setReadOnly();
 
+	public static final String CLASS = "class";
+
 	/** Tests an HTML element name to determine if it is one of the elements permitted to be empty in the XHTML
 	 * spec ( http://www.w3.org/TR/xhtml1/ )
 	 * @param name The name of the html element
@@ -224,6 +226,10 @@ public class HTMLNode implements XMLCharacterClasses {
 		return attributes.get(attributeName);
 	}
 
+	public boolean hasAttribute(final String attributeName) {
+		return attributes.containsKey(attributeName);
+	}
+
 	/**
 	 * @return all attributes
 	 */
@@ -317,6 +323,27 @@ public class HTMLNode implements XMLCharacterClasses {
 			throw new IllegalArgumentException("Read only");
 		for (int i = 0, c = childNodes.length; i < c; i++) {
 			addChild(childNodes[i]);
+		}
+	}
+
+	/**
+	 * Add a class to the list of class attributes.<br/>
+	 * A duplicate class attribute will not be added.<br/>
+	 * As classes are space-separated, if the class name has spaces multiple classes will be added.
+	 *
+	 * @param className class to add.
+	 */
+	public void addClass(final String className) {
+		/*
+		 * Each class is bookended with a space to avoid mistaking parts of existing classes as the new class.
+		 */
+		final String bookended = ' ' + className + ' ';
+		if (this.hasAttribute(CLASS)) {
+			final String classes = attributes.get(CLASS);
+			if (classes.contains(bookended)) return;
+			attributes.put(CLASS, bookended.concat(classes));
+		} else {
+			attributes.put(CLASS, bookended);
 		}
 	}
 
