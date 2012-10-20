@@ -4,9 +4,8 @@
 package freenet.node.useralerts;
 
 import freenet.l10n.NodeL10n;
-import freenet.support.HTMLNode;
 import freenet.support.htmlPrimitives.HTMLCLASS;
-import freenet.support.htmlPrimitives.div;
+import freenet.support.htmlPrimitives.Div;
 
 public class SimpleUserAlert extends AbstractUserAlert {
 
@@ -15,7 +14,7 @@ public class SimpleUserAlert extends AbstractUserAlert {
 	}
 	
 	public SimpleUserAlert(boolean canDismiss, String title, String text, String shortText, short type, Object userIdentifier) {
-		super(canDismiss, title, text, shortText, new div(HTMLCLASS.NONE, text), type, true, NodeL10n.getBase().getString("UserAlert.hide"), true, userIdentifier);
+		super(canDismiss, title, text, shortText, new Div(HTMLCLASS.NONE, text), type, true, NodeL10n.getBase().getString("UserAlert.hide"), true, userIdentifier);
 	}
 
 	@Override

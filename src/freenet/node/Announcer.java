@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
 
-import freenet.clients.http.ConfigToadlet;
 import freenet.io.comm.PeerParseException;
 import freenet.io.comm.ReferenceSignatureVerificationException;
 import freenet.l10n.NodeL10n;
@@ -30,7 +29,7 @@ import freenet.support.Logger;
 import freenet.support.SimpleFieldSet;
 import freenet.support.TimeUtil;
 import freenet.support.Logger.LogLevel;
-import freenet.support.htmlPrimitives.div;
+import freenet.support.htmlPrimitives.Div;
 import freenet.support.io.Closer;
 import freenet.support.transport.ip.IPUtil;
 import java.util.Arrays;
@@ -288,7 +287,7 @@ public class Announcer {
 		
 		@Override
 		public HTMLNode getHTMLText() {
-			div div_ = new div();
+			Div div_ = new Div();
 			div_.addChild("#", l10n("announceDisabledTooOld"));
 			if(!node.nodeUpdater.isEnabled()) {
 				div_.addChild("#", " ");

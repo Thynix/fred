@@ -21,9 +21,9 @@ import freenet.support.MultiValueTable;
 import freenet.support.SizeUtil;
 import freenet.support.api.HTTPRequest;
 import freenet.support.api.HTTPUploadedFile;
+import freenet.support.htmlPrimitives.Div;
 import freenet.support.htmlPrimitives.HTMLCLASS;
 import freenet.support.htmlPrimitives.HTMLID;
-import freenet.support.htmlPrimitives.div;
 
 public class N2NTMToadlet extends Toadlet {
 	private Node node;
@@ -115,9 +115,9 @@ public class N2NTMToadlet extends Toadlet {
 	}
 
 	private static HTMLNode createPeerInfobox(HTMLCLASS infoboxType, String header, String message) {
-		HTMLNode infobox = new div(infoboxType);
-		infobox.addChild(new div(HTMLCLASS.INFOBOXHEADER, header));
-		HTMLNode infoboxContent = infobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
+		HTMLNode infobox = new Div(infoboxType);
+		infobox.addChild(new Div(HTMLCLASS.INFOBOXHEADER, header));
+		HTMLNode infoboxContent = infobox.addChild(new Div(HTMLCLASS.INFOBOXCONTENT));
 		infoboxContent.addChild("#", message);
 		HTMLNode list = infoboxContent.addChild("ul");
 		Toadlet.addHomepageLink(list);
@@ -165,7 +165,7 @@ public class N2NTMToadlet extends Toadlet {
 			PageNode page =  ctx.getPageMaker().getPageNode(l10n("processingSend"), ctx);
 			HTMLNode pageNode = page.outer;
 			HTMLNode contentNode = page.content;
-			HTMLNode peerTableInfobox = contentNode.addChild(new div(HTMLCLASS.INFOBOX));
+			HTMLNode peerTableInfobox = contentNode.addChild(new Div(HTMLCLASS.INFOBOX));
 			peerTableInfobox.addClass(HTMLCLASS.INFOBOXNORMAL);
 			DarknetPeerNode[] peerNodes = node.getDarknetConnections();
 			if(request.isPartSet(LocalFileBrowserToadlet.selectFile)) {
@@ -262,7 +262,7 @@ public class N2NTMToadlet extends Toadlet {
 									sendStatusShort);
 				}
 			}
-			HTMLNode infoboxContent = peerTableInfobox.addChild(new div(HTMLCLASS.N2NTMMESSAGETEXT));
+			HTMLNode infoboxContent = peerTableInfobox.addChild(new Div(HTMLCLASS.N2NTMMESSAGETEXT));
 			infoboxContent.addChild("#", message);
 			HTMLNode list = peerTableInfobox.addChild("ul");
 			Toadlet.addHomepageLink(list);
@@ -280,17 +280,17 @@ public class N2NTMToadlet extends Toadlet {
 	public static void createN2NTMSendForm(HTMLNode pageNode, boolean advancedMode,
 			HTMLNode contentNode, ToadletContext ctx, HashMap<String, String> peers)
 			throws ToadletContextClosedException, IOException {
-		HTMLNode infobox = contentNode.addChild(new div(HTMLCLASS.INFOBOX));
+		HTMLNode infobox = contentNode.addChild(new Div(HTMLCLASS.INFOBOX));
 		infobox.setID(HTMLID.N2NBOX);
-		infobox.addChild(new div(HTMLCLASS.INFOBOXHEADER, l10n("sendMessage")));
-		HTMLNode messageTargets = infobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT, "infobox-content"));
+		infobox.addChild(new Div(HTMLCLASS.INFOBOXHEADER, l10n("sendMessage")));
+		HTMLNode messageTargets = infobox.addChild(new Div(HTMLCLASS.INFOBOXCONTENT, "infobox-content"));
 		messageTargets.addChild("p", l10n("composingMessageLabel"));
 		HTMLNode messageTargetList = messageTargets.addChild("ul");
 		// Iterate peers
 		for (String peer_name: peers.values()) {
 			messageTargetList.addChild("li", peer_name);
 		}
-		HTMLNode infoboxContent = infobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
+		HTMLNode infoboxContent = infobox.addChild(new Div(HTMLCLASS.INFOBOXCONTENT));
 		HTMLNode messageForm = ctx.addFormChild(infoboxContent, "/send_n2ntm/", "sendN2NTMForm");
 		// Iterate peers
 		for (String peerNodeHash : peers.keySet()) {

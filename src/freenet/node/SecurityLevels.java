@@ -15,7 +15,7 @@ import freenet.node.DarknetPeerNode.FRIEND_TRUST;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.api.StringCallback;
-import freenet.support.htmlPrimitives.div;
+import freenet.support.htmlPrimitives.Div;
 
 /**
  * We have 3 basic security settings. The user chooses these in the first-time 
@@ -246,7 +246,7 @@ public class SecurityLevels {
 	public HTMLNode getConfirmWarning(NETWORK_THREAT_LEVEL newThreatLevel, String checkboxName) {
 		if(newThreatLevel == networkThreatLevel)
 			return null; // Not going to be changed.
-		div parent = new div();
+		Div parent = new Div();
 		if((newThreatLevel == NETWORK_THREAT_LEVEL.HIGH && networkThreatLevel != NETWORK_THREAT_LEVEL.MAXIMUM) || 
 				newThreatLevel == NETWORK_THREAT_LEVEL.MAXIMUM) {
 			if(node.peers.getDarknetPeers().length == 0) {

@@ -8,7 +8,7 @@ import freenet.config.SubConfig;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
 import freenet.support.HTMLNode;
-import freenet.support.htmlPrimitives.div;
+import freenet.support.htmlPrimitives.Div;
 
 public class MeaningfulNodeNameUserAlert extends AbstractUserAlert {
 	private final Node node;
@@ -42,8 +42,8 @@ public class MeaningfulNodeNameUserAlert extends AbstractUserAlert {
 		SubConfig sc = node.config.get("node");
 		Option<?> o = sc.getOption("name");
 
-		div alertNode = new div();
-		HTMLNode textNode = alertNode.addChild(new div());
+		Div alertNode = new Div();
+		HTMLNode textNode = alertNode.addChild(new Div());
 		textNode.addChild("#", l10n("noNodeNick"));
 		HTMLNode formNode = alertNode.addChild("form", new String[] { "action", "method" }, new String[] { "/config/"+sc.getPrefix(), "post" });
 		formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", node.clientCore.formPassword });

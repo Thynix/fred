@@ -14,7 +14,7 @@ import freenet.pluginmanager.PluginInfoWrapper;
 import freenet.pluginmanager.PluginManager;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
-import freenet.support.htmlPrimitives.div;
+import freenet.support.htmlPrimitives.Div;
 
 public class PluginJarUpdater extends NodeUpdater {
 
@@ -150,7 +150,7 @@ public class PluginJarUpdater extends NodeUpdater {
 				
 				@Override
 				public HTMLNode getHTMLText() {
-					div div_ = new div();
+					Div div_ = new Div();
 					// Text saying the plugin has been updated...
 					synchronized(this) {
 					

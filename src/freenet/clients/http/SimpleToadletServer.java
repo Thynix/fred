@@ -13,7 +13,7 @@ import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import freenet.support.htmlPrimitives.div;
+import freenet.support.htmlPrimitives.Div;
 import org.tanukisoftware.wrapper.WrapperManager;
 
 import freenet.client.filter.HTMLFilter;
@@ -1103,9 +1103,9 @@ public final class SimpleToadletServer implements ToadletContainer, Runnable, Li
 	@Override
 	public HTMLNode addFormChild(HTMLNode parentNode, String target, String id) {
 		HTMLNode formNode =
-			parentNode.addChild(new div())
-			.addChild("form", new String[] { "action", "method", "enctype", "id",  "accept-charset" }, 
-					new String[] { target, "post", "multipart/form-data", id, "utf-8"} );
+			parentNode.addChild(new Div())
+			.addChild("form", new String[]{"action", "method", "enctype", "id", "accept-charset"},
+				new String[]{target, "post", "multipart/form-data", id, "utf-8"});
 		formNode.addChild("input", new String[] { "type", "name", "value" }, 
 				new String[] { "hidden", "formPassword", getFormPassword() });
 		

@@ -5,8 +5,8 @@ package freenet.node.useralerts;
 
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
+import freenet.support.htmlPrimitives.Div;
 import freenet.support.htmlPrimitives.HTMLCLASS;
-import freenet.support.htmlPrimitives.div;
 
 /**
  * A simple user alert warning the user about the weird effect a time skew
@@ -46,7 +46,7 @@ public class TimeSkewDetectedUserAlert extends AbstractUserAlert {
 
 	@Override
 	public HTMLNode getHTMLText() {
-		return new div(HTMLCLASS.NONE, getText());
+		return new Div(HTMLCLASS.NONE, getText());
 	}
 
 }

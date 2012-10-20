@@ -20,8 +20,8 @@ import freenet.node.fcp.FCPConnectionHandler;
 import freenet.support.Base64;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
+import freenet.support.htmlPrimitives.Div;
 import freenet.support.htmlPrimitives.HTMLCLASS;
-import freenet.support.htmlPrimitives.div;
 
 /**
  * Collection of UserAlert's.
@@ -181,7 +181,7 @@ public class UserAlertManager implements Comparator<UserAlert> {
 	 * Write the alerts as HTML.
 	 */
 	public HTMLNode createAlerts(boolean showOnlyErrors) {
-		div alertsNode = new div();
+		Div alertsNode = new Div();
 		UserAlert[] alerts = getAlerts();
 		int totalNumber = 0;
 		for (int i = 0; i < alerts.length; i++) {
@@ -210,13 +210,13 @@ public class UserAlertManager implements Comparator<UserAlert> {
 	public HTMLNode renderAlert(UserAlert userAlert) {
 		HTMLNode userAlertNode = null;
 		short level = userAlert.getPriorityClass();
-		userAlertNode = new div(HTMLCLASS.INFOBOX);
+		userAlertNode = new Div(HTMLCLASS.INFOBOX);
 		userAlertNode.addClass(getAlertLevelName(level));
-		userAlertNode.addChild(new div(HTMLCLASS.INFOBOXHEADER, userAlert.getTitle()));
-		HTMLNode alertContentNode = userAlertNode.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
+		userAlertNode.addChild(new Div(HTMLCLASS.INFOBOXHEADER, userAlert.getTitle()));
+		HTMLNode alertContentNode = userAlertNode.addChild(new Div(HTMLCLASS.INFOBOXCONTENT));
 		alertContentNode.addChild(userAlert.getHTMLText());
 		if (userAlert.userCanDismiss()) {
-			HTMLNode dismissFormNode = alertContentNode.addChild("form", new String[] { "action", "method" }, new String[] { "/alerts/", "post" }).addChild(new div());
+			HTMLNode dismissFormNode = alertContentNode.addChild("form", new String[] { "action", "method" }, new String[] { "/alerts/", "post" }).addChild(new Div());
 			dismissFormNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "disable", String.valueOf(userAlert.hashCode()) });
 			dismissFormNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", core.formPassword });
 			dismissFormNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "dismiss-user-alert", userAlert.dismissButtonText() });
@@ -328,7 +328,7 @@ public class UserAlertManager implements Comparator<UserAlert> {
 		HTMLNode summaryBox = null;
 
 		HTMLCLASS classes = oneLine ? HTMLCLASS.ALERTSLINE : HTMLCLASS.INFOBOX;
-		summaryBox = new div(classes);
+		summaryBox = new Div(classes);
 		if (highestLevel <= UserAlert.CRITICAL_ERROR && !oneLine)
 			summaryBox.addClass(HTMLCLASS.INFOBOXERROR);
 		else if (highestLevel <= UserAlert.ERROR && !oneLine)
@@ -337,8 +337,8 @@ public class UserAlertManager implements Comparator<UserAlert> {
 			summaryBox.addClass( oneLine ? HTMLCLASS.CONTAINSWARNING: HTMLCLASS.INFOBOXWARNING);
 		else if (highestLevel <= UserAlert.MINOR)
 			summaryBox.addClass( oneLine ? HTMLCLASS.CONTAINSINFORMATION: HTMLCLASS.INFOBOXINFORMATION);
-		summaryBox.addChild(new div(HTMLCLASS.INFOBOXHEADER, l10n("alertsTitle")));
-		HTMLNode summaryContent = summaryBox.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
+		summaryBox.addChild(new Div(HTMLCLASS.INFOBOXHEADER, l10n("alertsTitle")));
+		HTMLNode summaryContent = summaryBox.addChild(new Div(HTMLCLASS.INFOBOXCONTENT));
 		if(!oneLine) {
 			summaryContent.addChild("#", alertSummaryString.toString() + separator + " ");
 			NodeL10n.getBase().addL10nSubstitution(summaryContent, "UserAlertManager.alertsOnAlertsPage",

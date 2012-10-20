@@ -59,7 +59,7 @@ import freenet.support.SizeUtil;
 import freenet.support.TimeUtil;
 import freenet.support.Logger.LogLevel;
 import freenet.support.api.Bucket;
-import freenet.support.htmlPrimitives.div;
+import freenet.support.htmlPrimitives.Div;
 import freenet.support.io.ArrayBucket;
 import freenet.support.io.FileBucket;
 import freenet.support.io.RandomAccessFileWrapper;
@@ -608,7 +608,7 @@ public class UpdateOverMandatoryManager implements RequestClient {
 
 		@Override
 		public HTMLNode getHTMLText() {
-			div div_ = new div();
+			Div div_ = new Div();
 
 			div_.addChild("p").addChild("#", l10n("intro"));
 

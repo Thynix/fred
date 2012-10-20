@@ -47,9 +47,9 @@ import freenet.support.SimpleFieldSet;
 import freenet.support.SizeUtil;
 import freenet.support.TimeUtil;
 import freenet.support.api.HTTPRequest;
+import freenet.support.htmlPrimitives.Div;
 import freenet.support.io.Closer;
 import freenet.support.htmlPrimitives.HTMLCLASS;
-import freenet.support.htmlPrimitives.div;
 
 /** Base class for DarknetConnectionsToadlet and OpennetConnectionsToadlet */
 public abstract class ConnectionsToadlet extends Toadlet {
@@ -280,9 +280,9 @@ public abstract class ConnectionsToadlet extends Toadlet {
 				HTMLNode overviewTableRow = overviewTable.addChild("tr");
 				HTMLNode nextTableCell = overviewTableRow.addChild("td", "class", "first");
 				
-				HTMLNode overviewInfobox = nextTableCell.addChild(new div(HTMLCLASS.INFOBOX));
-				overviewInfobox.addChild(new div(HTMLCLASS.INFOBOXHEADER, "Node status overview"));
-				HTMLNode overviewInfoboxContent = overviewInfobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
+				HTMLNode overviewInfobox = nextTableCell.addChild(new Div(HTMLCLASS.INFOBOX));
+				overviewInfobox.addChild(new Div(HTMLCLASS.INFOBOXHEADER, "Node status overview"));
+				HTMLNode overviewInfoboxContent = overviewInfobox.addChild(new Div(HTMLCLASS.INFOBOXCONTENT));
 				HTMLNode overviewList = overviewInfoboxContent.addChild("ul");
 				overviewList.addChild("li", "bwlimitDelayTime:\u00a0" + bwlimitDelayTime + "ms");
 				overviewList.addChild("li", "nodeAveragePingTime:\u00a0" + nodeAveragePingTime + "ms");
@@ -303,9 +303,9 @@ public abstract class ConnectionsToadlet extends Toadlet {
 				// Activity box
 				int numARKFetchers = node.getNumARKFetchers();
 				
-				HTMLNode activityInfobox = nextTableCell.addChild(new div(HTMLCLASS.INFOBOX));
-				activityInfobox.addChild(new div(HTMLCLASS.INFOBOXHEADER, l10n("activityTitle")));
-				HTMLNode activityInfoboxContent = activityInfobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
+				HTMLNode activityInfobox = nextTableCell.addChild(new Div(HTMLCLASS.INFOBOX));
+				activityInfobox.addChild(new Div(HTMLCLASS.INFOBOXHEADER, l10n("activityTitle")));
+				HTMLNode activityInfoboxContent = activityInfobox.addChild(new Div(HTMLCLASS.INFOBOXCONTENT));
 				HTMLNode activityList = StatisticsToadlet.drawActivity(activityInfoboxContent, node);
 				if (advancedMode && (activityList != null)) {
 					if (numARKFetchers > 0) {
@@ -317,14 +317,14 @@ public abstract class ConnectionsToadlet extends Toadlet {
 				nextTableCell = overviewTableRow.addChild("td", "class", "last");
 				
 				// Peer statistics box
-				HTMLNode peerStatsInfobox = nextTableCell.addChild(new div(HTMLCLASS.INFOBOX));
+				HTMLNode peerStatsInfobox = nextTableCell.addChild(new Div(HTMLCLASS.INFOBOX));
 				StatisticsToadlet.drawPeerStatsBox(peerStatsInfobox, advancedMode, numberOfConnected, numberOfRoutingBackedOff, numberOfTooNew, numberOfTooOld, numberOfDisconnected, numberOfNeverConnected, numberOfDisabled, numberOfBursting, numberOfListening, numberOfListenOnly, 0, 0, numberOfRoutingDisabled, numberOfClockProblem, numberOfConnError, numberOfDisconnecting, numberOfNoLoadStats, node);
 				
 				// Peer routing backoff reason box
 				if(advancedMode) {
-					HTMLNode backoffReasonInfobox = nextTableCell.addChild(new div(HTMLCLASS.INFOBOX));
-					HTMLNode title = backoffReasonInfobox.addChild(new div(HTMLCLASS.INFOBOXHEADER, "Peer backoff reasons (realtime)"));
-					HTMLNode backoffReasonContent = backoffReasonInfobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
+					HTMLNode backoffReasonInfobox = nextTableCell.addChild(new Div(HTMLCLASS.INFOBOX));
+					HTMLNode title = backoffReasonInfobox.addChild(new Div(HTMLCLASS.INFOBOXHEADER, "Peer backoff reasons (realtime)"));
+					HTMLNode backoffReasonContent = backoffReasonInfobox.addChild(new Div(HTMLCLASS.INFOBOXCONTENT));
 					String [] routingBackoffReasons = peers.getPeerNodeRoutingBackoffReasons(true);
 					int total = 0;
 					if(routingBackoffReasons.length == 0) {
@@ -341,9 +341,9 @@ public abstract class ConnectionsToadlet extends Toadlet {
 					}
 					if(total > 0)
 						title.addChild("#", ": "+total);
-					backoffReasonInfobox = nextTableCell.addChild(new div(HTMLCLASS.INFOBOX));
-					title = backoffReasonInfobox.addChild(new div(HTMLCLASS.INFOBOXHEADER, "Peer backoff reasons (bulk)"));
-					backoffReasonContent = backoffReasonInfobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
+					backoffReasonInfobox = nextTableCell.addChild(new Div(HTMLCLASS.INFOBOX));
+					title = backoffReasonInfobox.addChild(new Div(HTMLCLASS.INFOBOXHEADER, "Peer backoff reasons (bulk)"));
+					backoffReasonContent = backoffReasonInfobox.addChild(new Div(HTMLCLASS.INFOBOXCONTENT));
 					routingBackoffReasons = peers.getPeerNodeRoutingBackoffReasons(false);
 					total = 0;
 					if(routingBackoffReasons.length == 0) {
@@ -398,9 +398,9 @@ public abstract class ConnectionsToadlet extends Toadlet {
 				jsBuf.append( "  }\n" );
 				contentNode.addChild("script", "type", "text/javascript").addChild("%", jsBuf.toString());
 			}
-			HTMLNode peerTableInfobox = contentNode.addChild(new div(HTMLCLASS.INFOBOX));
+			HTMLNode peerTableInfobox = contentNode.addChild(new Div(HTMLCLASS.INFOBOX));
 			peerTableInfobox.addClass(HTMLCLASS.INFOBOXNORMAL);
-			HTMLNode peerTableInfoboxHeader = peerTableInfobox.addChild(new div(HTMLCLASS.INFOBOXHEADER));
+			HTMLNode peerTableInfoboxHeader = peerTableInfobox.addChild(new Div(HTMLCLASS.INFOBOXHEADER));
 			peerTableInfoboxHeader.addChild("#", getPeerListTitle());
 			if (advancedMode) {
 				if (!path.endsWith("displaymessagetypes.html")) {
@@ -408,7 +408,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 					peerTableInfoboxHeader.addChild("a", "href", "displaymessagetypes.html", l10n("bracketedMoreDetailed"));
 				}
 			}
-			HTMLNode peerTableInfoboxContent = peerTableInfobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
+			HTMLNode peerTableInfoboxContent = peerTableInfobox.addChild(new Div(HTMLCLASS.INFOBOXCONTENT));
 
 			if (!isOpennet()) {
 				HTMLNode myName = peerTableInfoboxContent.addChild("p");
@@ -775,14 +775,14 @@ public abstract class ConnectionsToadlet extends Toadlet {
 	 *                    show a link to download it.
 	 */
 	static void drawNoderefBox(HTMLNode contentNode, SimpleFieldSet fs, boolean showNoderef) {
-		HTMLNode referenceInfobox = contentNode.addChild(new div(HTMLCLASS.INFOBOX));
+		HTMLNode referenceInfobox = contentNode.addChild(new Div(HTMLCLASS.INFOBOX));
 		referenceInfobox.addClass(HTMLCLASS.INFOBOXNORMAL);
-		HTMLNode headerReferenceInfobox = referenceInfobox.addChild(new div(HTMLCLASS.INFOBOXHEADER));
+		HTMLNode headerReferenceInfobox = referenceInfobox.addChild(new Div(HTMLCLASS.INFOBOXHEADER));
 		// FIXME better way to deal with this sort of thing???
 		NodeL10n.getBase().addL10nSubstitution(headerReferenceInfobox, "DarknetConnectionsToadlet.myReferenceHeader",
 				new String[] { "linkref", "linktext" },
 				new HTMLNode[] { REF_LINK, REFTEXT_LINK });
-		HTMLNode referenceInfoboxContent = referenceInfobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
+		HTMLNode referenceInfoboxContent = referenceInfobox.addChild(new Div(HTMLCLASS.INFOBOXCONTENT));
 		
 		HTMLNode myName = referenceInfoboxContent.addChild("p");
 		myName.addChild("span",
@@ -811,10 +811,10 @@ public abstract class ConnectionsToadlet extends Toadlet {
 	
 	protected static void drawAddPeerBox(HTMLNode contentNode, ToadletContext ctx, boolean isOpennet, String formTarget) {
 		// BEGIN PEER ADDITION BOX
-		HTMLNode peerAdditionInfobox = contentNode.addChild(new div(HTMLCLASS.INFOBOX));
+		HTMLNode peerAdditionInfobox = contentNode.addChild(new Div(HTMLCLASS.INFOBOX));
 		peerAdditionInfobox.addClass(HTMLCLASS.INFOBOXNORMAL);
-		peerAdditionInfobox.addChild(new div(HTMLCLASS.INFOBOXHEADER, l10n(isOpennet ? "addOpennetPeerTitle" : "addPeerTitle")));
-		HTMLNode peerAdditionContent = peerAdditionInfobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
+		peerAdditionInfobox.addChild(new Div(HTMLCLASS.INFOBOXHEADER, l10n(isOpennet ? "addOpennetPeerTitle" : "addPeerTitle")));
+		HTMLNode peerAdditionContent = peerAdditionInfobox.addChild(new Div(HTMLCLASS.INFOBOXCONTENT));
 		HTMLNode peerAdditionForm = ctx.addFormChild(peerAdditionContent, formTarget, "addPeerForm");
 		peerAdditionForm.addChild("#", l10n("pasteReference"));
 		peerAdditionForm.addChild("br");
