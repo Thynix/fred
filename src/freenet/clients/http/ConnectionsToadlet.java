@@ -47,7 +47,8 @@ import freenet.support.SimpleFieldSet;
 import freenet.support.SizeUtil;
 import freenet.support.TimeUtil;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlPrimitives.HTMLCLASS;
+import freenet.support.io.Closer;
+import freenet.support.htmlPrimitives.HTMLCLASS
 import freenet.support.htmlPrimitives.div;
 
 /** Base class for DarknetConnectionsToadlet and OpennetConnectionsToadlet */
@@ -595,9 +596,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 					this.sendErrorPage(ctx, 200, l10n("failedToAddNodeTitle"), NodeL10n.getBase().getString("DarknetConnectionsToadlet.cantFetchNoderefURL", new String[] { "url" }, new String[] { urltext }), !isOpennet());
 					return;
 				} finally {
-					if( in != null ){
-						in.close();
-					}
+					Closer.close(in);
 				}
 			} else if (reftext.length() > 0) {
 				// read from post data or file upload
@@ -898,17 +897,18 @@ public abstract class ConnectionsToadlet extends Toadlet {
 				pingTime = " (" + (int) peerNodeStatus.getAveragePingTime() + "ms / " +
 				(int) peerNodeStatus.getAveragePingTimeCorrected()+"ms)";
 			}
-			HTMLNode locationChild = peerRow.addChild("td", "class", "peer-address");
+			HTMLNode addressRow = peerRow.addChild("td", "class", "peer-address");
 			// Ip to country + Flags
 			IPConverter ipc = IPConverter.getInstance(node.runDir().file(NodeUpdateManager.IPV4_TO_COUNTRY_FILENAME));
 			// Only IPv4 at the time
 			String addr = peerNodeStatus.getPeerAddressNumerical();
 			if(addr != null && !addr.contains(":")) {
 				Country country = ipc.locateIP(addr);
-				if(country != null)
-					locationChild.addChild("img", new String[] { "src", "title" }, new String[] { "/static/icon/flags/"+country.toString().toLowerCase()+".png", country.getName()});
+				if(country != null) {
+					country.renderFlagIcon(addressRow);
+				}
 			}
-			locationChild.addChild("#", ((peerNodeStatus.getPeerAddress() != null) ? (peerNodeStatus.getPeerAddress() + ':' + peerNodeStatus.getPeerPort()) : (l10n("unknownAddress"))) + pingTime);
+			addressRow.addChild("#", ((peerNodeStatus.getPeerAddress() != null) ? (peerNodeStatus.getPeerAddress() + ':' + peerNodeStatus.getPeerPort()) : (l10n("unknownAddress"))) + pingTime);
 		}
 
 		// version column

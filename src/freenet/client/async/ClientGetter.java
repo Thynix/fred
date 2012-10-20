@@ -358,9 +358,6 @@ public class ClientGetter extends BaseClientGetter implements WantsCooldownCallb
 				clientMetadata = worker.getClientMetadata();
 				result = new FetchResult(clientMetadata, finalResult);
 			}
-			dataOutput.close();
-			dataInput.close();
-			output.close();
 		} catch (OutOfMemoryError e) {
 			OOMHandler.handleOOM(e);
 			System.err.println("Failing above attempted fetch...");
@@ -764,16 +761,21 @@ public class ClientGetter extends BaseClientGetter implements WantsCooldownCallb
 	/** Called when we know the MIME type of the final data 
 	 * @throws FetchException */
 	@Override
-	public void onExpectedMIME(String mime, ObjectContainer container, ClientContext context) throws FetchException {
+	public void onExpectedMIME(ClientMetadata clientMetadata, ObjectContainer container, ClientContext context) throws FetchException {
 		if(finalizedMetadata) return;
 		if(persistent()) {
 			container.activate(ctx, 1);
 		}
-		expectedMIME = ctx.overrideMIME == null ? mime : ctx.overrideMIME;
-		if(ctx.filterData && !(expectedMIME == null || expectedMIME.equals("") || expectedMIME.equals(DefaultMIMETypes.DEFAULT_MIME_TYPE))) {
-			UnsafeContentTypeException e = ContentFilter.checkMIMEType(expectedMIME);
+		String mime = null;
+		if(!clientMetadata.isTrivial())
+			mime = clientMetadata.getMIMEType();
+		if(ctx.overrideMIME != null)
+			mime = ctx.overrideMIME;
+		if(mime == null || mime.equals("")) return;
+		if(ctx.filterData) {
+			UnsafeContentTypeException e = ContentFilter.checkMIMEType(mime);
 			if(e != null) {
-				throw new FetchException(e.getFetchErrorCode(), expectedSize, e, expectedMIME);
+				throw new FetchException(e.getFetchErrorCode(), expectedSize, e, mime);
 			}
 			if(forceCompatibleExtension != null)
 				checkCompatibleExtension(mime);
@@ -783,7 +785,6 @@ public class ClientGetter extends BaseClientGetter implements WantsCooldownCallb
 			container.activate(ctx.eventProducer, 1);
 		}
 		ctx.eventProducer.produceEvent(new ExpectedMIMEEvent(mime), container, context);
-
 	}
 
 	private void checkCompatibleExtension(String mimeType) throws FetchException {

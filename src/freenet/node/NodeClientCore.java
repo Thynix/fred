@@ -546,14 +546,14 @@ public class NodeClientCore implements Persistable, DBJobRunner, OOMHook, Execut
 		if(!killedDatabase) {
 			try {
 				InsertCompressor.load(container, clientContext);
+				// FIXME get rid of this.
+				if(container != null) {
+					container.commit();
+					ClientRequester.checkAll(container, clientContext);
+				}
 			} catch (Db4oException e) {
 				killedDatabase = true;
 			}
-		}
-		// FIXME get rid of this.
-		if(container != null) {
-			container.commit();
-			ClientRequester.checkAll(container, clientContext);
 		}
 	}
 
@@ -1084,7 +1084,7 @@ public class NodeClientCore implements Persistable, DBJobRunner, OOMHook, Execut
 		try {
 			Object o = node.makeRequestSender(key, htl, uid, tag, null, localOnly, ignoreStore, offersOnly, canReadClientCache, canWriteClientCache, realTimeFlag);
 			if(o instanceof KeyBlock) {
-				tag.servedFromDatastore = true;
+				tag.setServedFromDatastore();
 				listener.onDataFoundLocally();
 				return; // Already have it.
 			}
