@@ -17,7 +17,7 @@ import freenet.support.Logger;
 import freenet.support.Logger.LogLevel;
 import freenet.support.OOMHandler;
 import freenet.support.TimeUtil;
-import freenet.support.htmlPrimitives.div;
+import freenet.support.htmlPrimitives.Div;
 import freenet.support.io.NativeThread;
 import freenet.support.math.MersenneTwister;
 
@@ -539,7 +539,7 @@ public class PacketSender implements Runnable {
 
         @Override
 		public HTMLNode getHTMLText() {
-			div div_ = new div();
+			Div div_ = new Div();
 			Peer[] peers;
 			synchronized(peersDumpedBlockedTooLong) {
 				peers = peersDumpedBlockedTooLong.toArray(new Peer[peersDumpedBlockedTooLong.size()]);

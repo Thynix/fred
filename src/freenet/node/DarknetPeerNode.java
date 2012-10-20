@@ -49,7 +49,7 @@ import freenet.support.Logger.LogLevel;
 import freenet.support.SimpleFieldSet;
 import freenet.support.SizeUtil;
 import freenet.support.api.HTTPUploadedFile;
-import freenet.support.htmlPrimitives.div;
+import freenet.support.htmlPrimitives.Div;
 import freenet.support.io.BucketTools;
 import freenet.support.io.ByteArrayRandomAccessThing;
 import freenet.support.io.FileUtil;
@@ -1037,7 +1037,7 @@ public class DarknetPeerNode extends PeerNode {
 				}
 				@Override
 				public HTMLNode getHTMLText() {
-					div div_ = new div();
+					Div div_ = new Div();
 
 					div_.addChild("p", l10n("failedReceiveHeader", new String[]{"filename", "node"},
 						new String[]{filename, getName()}));
@@ -1130,7 +1130,7 @@ public class DarknetPeerNode extends PeerNode {
 				}
 				@Override
 				public HTMLNode getHTMLText() {
-					div div_ = new div();
+					Div div_ = new Div();
 
 					// FIXME localise!!!
 
@@ -1203,7 +1203,7 @@ public class DarknetPeerNode extends PeerNode {
 				}
 				@Override
 				public HTMLNode getHTMLText() {
-					div div_ = new div();
+					Div div_ = new Div();
 
 					div_.addChild("p", l10n("offeredFileHeader", "name", getName()));
 

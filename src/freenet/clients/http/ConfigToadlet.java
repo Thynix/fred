@@ -29,7 +29,7 @@ import freenet.support.Logger.LogLevel;
 import freenet.support.URLEncoder;
 import freenet.support.api.BooleanCallback;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlPrimitives.div;
+import freenet.support.htmlPrimitives.Div;
 import freenet.support.htmlPrimitives.HTMLCLASS;
 
 /**
@@ -70,7 +70,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 
 		@Override
 		public HTMLNode getHTMLText() {
-			HTMLNode alertNode = new div();
+			HTMLNode alertNode = new Div();
 			alertNode.addChild("#", l10n("needRestart"));
 
 			if (node.isUsingWrapper()) {
@@ -80,11 +80,11 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 						new String[] { "action", "method", "enctype", "id",
 								"accept-charset" },
 						new String[] { "/", "post", "multipart/form-data",
-								"restartForm", "utf-8" }).addChild(new div());
+								"restartForm", "utf-8" }).addChild(new Div());
 				restartForm.addChild("input", new String[] { "type", "name",
 						"value" }, new String[] { "hidden", "formPassword",
 						node.clientCore.formPassword });
-				restartForm.addChild(new div());
+				restartForm.addChild(new Div());
 				restartForm.addChild("input",//
 						new String[] { "type", "name" },//
 						new String[] { "hidden", "restart" });
@@ -404,7 +404,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 					.getPageMaker()
 					.getInfobox("infobox-error", l10n("appliedFailureTitle"),
 							contentNode, "configuration-error", true)
-					.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
+					.addChild(new Div(HTMLCLASS.INFOBOXCONTENT));
 			content.addChild("#", l10n("appliedFailureExceptions"));
 			content.addChild("br");
 			content.addChild("#", errbuf.toString());
@@ -446,10 +446,10 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 
 		contentNode.addChild(core.alerts.createSummary());
 
-		HTMLNode infobox = contentNode.addChild(new div(HTMLCLASS.INFOBOX));
+		HTMLNode infobox = contentNode.addChild(new Div(HTMLCLASS.INFOBOX));
 		infobox.addClass(HTMLCLASS.INFOBOXNORMAL);
-		infobox.addChild(new div(HTMLCLASS.INFOBOXHEADER, l10n("title")));
-		HTMLNode configNode = infobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
+		infobox.addChild(new Div(HTMLCLASS.INFOBOXHEADER, l10n("title")));
+		HTMLNode configNode = infobox.addChild(new Div(HTMLCLASS.INFOBOXCONTENT));
 		HTMLNode formNode = ctx.addFormChild(configNode, path(), "configForm");
 
 		// Invisible apply button at the top so that an enter keypress will
@@ -474,7 +474,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 						MAX_PARAM_VALUE_SIZE);
 			}
 			if (curValue != null) {
-				formNode.addChild(new div(HTMLCLASS.CONFIGPREFIX, l10n("wrapper")));
+				formNode.addChild(new Div(HTMLCLASS.CONFIGPREFIX, l10n("wrapper")));
 				HTMLNode list = formNode.addChild("ul", "class", "config");
 				HTMLNode item = list.addChild("li", "class",
 						OptionType.TEXT.cssClass);
@@ -641,7 +641,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 		}
 
 		if (displayedConfigElements > 0) {
-			formNode.addChild(new div(HTMLCLASS.CONFIGPREFIX, (plugin == null) ? l10n(subConfig.getPrefix())
+			formNode.addChild(new Div(HTMLCLASS.CONFIGPREFIX, (plugin == null) ? l10n(subConfig.getPrefix())
 				: plugin.getString(subConfig.getPrefix())));
 			formNode.addChild("a", "id", subConfig.getPrefix());
 			formNode.addChild(configGroupUlNode);

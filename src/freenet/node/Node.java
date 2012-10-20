@@ -35,7 +35,7 @@ import java.util.MissingResourceException;
 import java.util.Random;
 import java.util.Set;
 
-import freenet.support.htmlPrimitives.div;
+import freenet.support.htmlPrimitives.Div;
 import org.tanukisoftware.wrapper.WrapperManager;
 
 import com.db4o.Db4o;
@@ -71,7 +71,6 @@ import freenet.crypt.DiffieHellman;
 import freenet.crypt.EncryptingIoAdapter;
 import freenet.crypt.RandomSource;
 import freenet.crypt.Yarrow;
-import freenet.crypt.ciphers.Rijndael;
 import freenet.io.comm.DMT;
 import freenet.io.comm.DisconnectedException;
 import freenet.io.comm.FreenetInetAddress;
@@ -3182,7 +3181,7 @@ public class Node implements TimeSkewDetectorCallback {
 
 		@Override
 		public HTMLNode getHTMLText() {
-			div content = new div();
+			Div content = new Div();
 			SecurityLevelsToadlet.generatePasswordFormPage(false, clientCore.getToadletContainer(), content, false, false, false, null, null);
 			return content;
 		}
@@ -3305,7 +3304,7 @@ public class Node implements TimeSkewDetectorCallback {
 
 				@Override
 				public HTMLNode getHTMLText() {
-					div div_ = new div();
+					Div div_ = new Div();
 					div_.addChild("#", NodeL10n.getBase().getString("Node.storeSaltHashMigrated"));
 					HTMLNode ul = div_.addChild("ul");
 
@@ -5139,7 +5138,7 @@ public class Node implements TimeSkewDetectorCallback {
 	}
 
 	public void drawClientCacheBox(HTMLNode storeSizeInfobox) {
-		HTMLNode div_ = storeSizeInfobox.addChild(new div());
+		HTMLNode div_ = storeSizeInfobox.addChild(new Div());
 		div_.addChild("p", "Client cache max size: " + this.maxClientCacheKeys + " keys");
 		div_.addChild("p", "Client cache size: CHK " + this.chkClientcache.keyCount() + " pubkey " + this.pubKeyClientcache.keyCount() + " SSK " + this.sskClientcache.keyCount());
 		div_.addChild("p", "Client cache misses: CHK " + this.chkClientcache.misses() + " pubkey " + this.pubKeyClientcache.misses() + " SSK " + this.sskClientcache.misses());
@@ -5147,7 +5146,7 @@ public class Node implements TimeSkewDetectorCallback {
 	}
 
 	public void drawSlashdotCacheBox(HTMLNode storeSizeInfobox) {
-		HTMLNode div_ = storeSizeInfobox.addChild(new div());
+		HTMLNode div_ = storeSizeInfobox.addChild(new Div());
 		div_.addChild("p", "Slashdot/ULPR cache max size: " + maxSlashdotCacheKeys + " keys");
 		div_.addChild("p", "Slashdot/ULPR cache size: CHK " + this.chkSlashdotcache.keyCount() + " pubkey " + this.pubKeySlashdotcache.keyCount() + " SSK " + this.sskSlashdotcache.keyCount());
 		div_.addChild("p", "Slashdot/ULPR cache misses: CHK " + this.chkSlashdotcache.misses() + " pubkey " + this.pubKeySlashdotcache.misses() + " SSK " + this.sskSlashdotcache.misses());

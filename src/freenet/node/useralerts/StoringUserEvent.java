@@ -6,7 +6,7 @@ import java.util.Map;
 import freenet.node.fcp.FCPMessage;
 import freenet.node.fcp.FeedMessage;
 import freenet.support.HTMLNode;
-import freenet.support.htmlPrimitives.div;
+import freenet.support.htmlPrimitives.Div;
 
 public abstract class StoringUserEvent<T extends StoringUserEvent<T>> extends AbstractUserEvent {
 
@@ -31,7 +31,7 @@ public abstract class StoringUserEvent<T extends StoringUserEvent<T>> extends Ab
 
 	@Override
 	public HTMLNode getHTMLText() {
-		div text = new div();
+		Div text = new Div();
 		synchronized(events) {
 			for(StoringUserEvent<T> event : events.values()) {
 				text.addChild(event.getEventHTMLText());

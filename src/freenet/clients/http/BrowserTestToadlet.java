@@ -7,7 +7,7 @@ import freenet.client.HighLevelSimpleClient;
 import freenet.node.NodeClientCore;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlPrimitives.div;
+import freenet.support.htmlPrimitives.Div;
 
 /**
  * Browser Test Toadlet. Accessible from <code>http://.../test/</code>.
@@ -208,7 +208,7 @@ public class BrowserTestToadlet extends Toadlet {
 
 		// #### Test whether JS is available. : should do the test with pictures instead!
 		HTMLNode jsTestContent= ctx.getPageMaker().getInfobox("infobox-warning", "Javascript", contentNode, "javascript-test", true);
-		HTMLNode jsTest = jsTestContent.addChild(new div());
+		HTMLNode jsTest = jsTestContent.addChild(new Div());
 		jsTest.addChild("img", new String[]{"id", "src", "alt"}, new String[]{"JSTEST", "/static/themes/clean/success.gif", "fail!"});
 		jsTest.addChild("script", "type", "text/javascript").addChild("%", "document.getElementById('JSTEST').src = '/static/themes/clean/warning.gif';");
 		

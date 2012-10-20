@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import freenet.support.htmlPrimitives.div;
+import freenet.support.htmlPrimitives.Div;
 import net.i2p.util.NativeBigInteger;
 import freenet.clients.http.ExternalLinkToadlet;
 import freenet.crypt.BlockCipher;
@@ -2050,7 +2050,7 @@ public class FNPPacketMangler implements OutgoingPacketMangler {
 
 		@Override
 		public HTMLNode getHTMLText() {
-			div div_ = new div();
+			Div div_ = new Div();
 			Peer[] peers;
 			synchronized(peersWithProblems) {
 				peers = peersWithProblems.toArray(new Peer[peersWithProblems.size()]);

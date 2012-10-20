@@ -1,18 +1,10 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
-import freenet.clients.http.WelcomeToadlet;
-import freenet.config.Config;
-import freenet.config.ConfigException;
-import freenet.config.InvalidConfigValueException;
 import freenet.l10n.NodeL10n;
-import freenet.node.NodeClientCore;
-import freenet.pluginmanager.FredPluginBandwidthIndicator;
 import freenet.support.HTMLNode;
-import freenet.support.Logger;
-import freenet.support.SizeUtil;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlPrimitives.div;
+import freenet.support.htmlPrimitives.Div;
 
 /**
  * Asks the user whether their connection has a monthly cap to inform how to prompt for bandwidth limits.
@@ -34,7 +26,7 @@ public class BANDWIDTH implements Step {
 		bandwidthForm.addChild("input",
 		        new String[] { "type", "name", "value" },
 		        new String[] { "submit", "no", NodeL10n.getBase().getString("Toadlet.no")});
-		bandwidthForm.addChild(new div()).addChild("input",
+		bandwidthForm.addChild(new Div()).addChild("input",
 			new String[]{"type", "name", "value"},
 			new String[]{"submit", "back", NodeL10n.getBase().getString("Toadlet.back")});
 	}

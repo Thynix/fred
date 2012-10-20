@@ -30,7 +30,7 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipException;
 
-import freenet.support.htmlPrimitives.div;
+import freenet.support.htmlPrimitives.Div;
 import org.tanukisoftware.wrapper.WrapperManager;
 
 import com.db4o.ObjectContainer;
@@ -564,7 +564,7 @@ public class PluginManager {
 
 		@Override
 		public HTMLNode getHTMLText() {
-			div div_ = new div();
+			Div div_ = new Div();
 			HTMLNode p = div_.addChild("p");
 			p.addChild("#", l10n("pluginLoadingFailedWithMessage", new String[] { "name", "message" }, new String[] { filename, message }));
 			if(stillTryingOverFreenet) {

@@ -6,8 +6,8 @@ package freenet.node.useralerts;
 
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
+import freenet.support.htmlPrimitives.Div;
 import freenet.support.htmlPrimitives.HTMLCLASS;
-import freenet.support.htmlPrimitives.div;
 import freenet.support.io.NativeThread;
 
 /**
@@ -43,7 +43,7 @@ public class NotEnoughNiceLevelsUserAlert extends AbstractUserAlert {
 
 	@Override
 	public HTMLNode getHTMLText() {
-		return new div(HTMLCLASS.NONE, getText());
+		return new Div(HTMLCLASS.NONE, getText());
 	}
 
 }

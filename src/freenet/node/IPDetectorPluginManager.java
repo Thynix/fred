@@ -30,7 +30,7 @@ import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.OOMHandler;
 import freenet.support.Logger.LogLevel;
-import freenet.support.htmlPrimitives.div;
+import freenet.support.htmlPrimitives.Div;
 import freenet.support.transport.ip.IPUtil;
 
 /**
@@ -60,7 +60,7 @@ public class IPDetectorPluginManager implements ForwardPortCallback {
 
 		@Override
 		public HTMLNode getHTMLText() {
-			div div_ = new div();
+			Div div_ = new Div();
 			String url = ExternalLinkToadlet.escape(HTMLEncoder.encode(l10n("portForwardHelpURL")));
 			boolean maybeForwarded = true;
 			for(int i=0;i<portsNotForwarded.length;i++) {
@@ -210,7 +210,7 @@ public class IPDetectorPluginManager implements ForwardPortCallback {
 
 		@Override
 		public HTMLNode getHTMLText() {
-			div div_ = new div();
+			Div div_ = new Div();
 			div_.addChild("#", super.getText());
 			if(suggestPortForward) {
 				if(portsNotForwarded.length == 1) {
