@@ -16,8 +16,8 @@ import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.api.HTTPRequest;
 import freenet.support.htmlPrimitives.Div;
+import freenet.support.htmlPrimitives.HTMLClass;
 import freenet.support.htmlPrimitives.HTMLID;
-import freenet.support.htmlPrimitives.HTMLCLASS;
 
 /** Simple class to output standard heads and tail for web interface pages. 
 */
@@ -393,7 +393,7 @@ public final class PageMaker {
 				final HTMLNode alerts = node.clientCore.alerts.createSummary(true);
 				if (alerts != null) {
 					statusBarDiv.addChild(alerts).addAttribute("id", "statusbar-alerts");
-					statusBarDiv.addChild(new Div(HTMLCLASS.SEPERATOR, "\u00a0"));
+					statusBarDiv.addChild(new Div(HTMLClass.SEPERATOR, "\u00a0"));
 				}
 			}
 			Div language = new Div();
@@ -408,7 +408,7 @@ public final class PageMaker {
 				newModeSwitchValues.add(String.valueOf(isAdvancedMode ? MODE_SIMPLE : MODE_ADVANCED));
 				/* overwrite any previously existing parameter value. */
 				parameters.put(MODE_SWITCH_PARAMETER, newModeSwitchValues);
-				statusBarDiv.addChild(new Div(HTMLCLASS.SEPERATOR, "\u00a0"));
+				statusBarDiv.addChild(new Div(HTMLClass.SEPERATOR, "\u00a0"));
 				Div switchmode = new Div();
 				switchmode.setID(HTMLID.STATUSBARSWITCHMODE);
 				final HTMLNode switchMode = statusBarDiv.addChild(switchmode);
@@ -416,8 +416,8 @@ public final class PageMaker {
 				switchMode.addChild("a", "href", "?" + HTTPRequestImpl.createQueryString(parameters, false), isAdvancedMode ? NodeL10n.getBase().getString("StatusBar.switchToSimpleMode") : NodeL10n.getBase().getString("StatusBar.switchToAdvancedMode"));
 			}
 			if (node != null && node.clientCore != null) {
-				statusBarDiv.addChild(new Div(HTMLCLASS.SEPERATOR, "\u00a0"));
-				Div seclevels = new Div(HTMLCLASS.NONE, NodeL10n.getBase().getString("SecurityLevels.statusBarPrefix"));
+				statusBarDiv.addChild(new Div(HTMLClass.SEPERATOR, "\u00a0"));
+				Div seclevels = new Div(HTMLClass.NONE, NodeL10n.getBase().getString("SecurityLevels.statusBarPrefix"));
 				seclevels.setID(HTMLID.STATUSBARSECLEVELS);
 				final HTMLNode secLevels = statusBarDiv.addChild(seclevels);
 				final HTMLNode network = secLevels.addChild("a", "href", "/seclevels/", SecurityLevels.localisedName(node.securityLevels.getNetworkThreatLevel()) + "\u00a0");
@@ -426,7 +426,7 @@ public final class PageMaker {
 				final HTMLNode physical = secLevels.addChild("a", "href", "/seclevels/", SecurityLevels.localisedName(node.securityLevels.getPhysicalThreatLevel()));
 				physical.addAttribute("title", NodeL10n.getBase().getString("SecurityLevels.physicalThreatLevelShort"));
 				physical.addAttribute("class", node.securityLevels.getPhysicalThreatLevel().toString().toLowerCase());
-				statusBarDiv.addChild(new Div(HTMLCLASS.SEPERATOR, "\u00a0"));
+				statusBarDiv.addChild(new Div(HTMLClass.SEPERATOR, "\u00a0"));
 				final int connectedPeers = node.peers.countConnectedPeers();
 				int darknetTotal = 0;
 				for(DarknetPeerNode n : node.peers.getDarknetPeers()) {
@@ -437,37 +437,37 @@ public final class PageMaker {
 				final int connectedDarknetPeers = node.peers.countConnectedDarknetPeers();
 				final int totalPeers = (node.getOpennet() == null) ? (darknetTotal > 0 ? darknetTotal : Integer.MAX_VALUE) : node.getOpennet().getNumberOfConnectedPeersToAimIncludingDarknet();
 				final double connectedRatio = ((double)connectedPeers) / (double)totalPeers;
-				final HTMLCLASS additionalClass;
+				final HTMLClass additionalClass;
 				// If we use Opennet, we color the bar by the ratio of connected nodes
 				if(connectedPeers > connectedDarknetPeers) {
 					if (connectedRatio < 0.3D || connectedPeers < 3) {
-						additionalClass = HTMLCLASS.PEERSVERYFEW;
+						additionalClass = HTMLClass.PEERSVERYFEW;
 					} else if (connectedRatio < 0.5D) {
-						additionalClass = HTMLCLASS.PEERSFEW;
+						additionalClass = HTMLClass.PEERSFEW;
 					} else if (connectedRatio < 0.75D) {
-						additionalClass = HTMLCLASS.PEERSAVERAGE;
+						additionalClass = HTMLClass.PEERSAVERAGE;
 					} else {
-						additionalClass = HTMLCLASS.PEERSFULL;
+						additionalClass = HTMLClass.PEERSFULL;
 					}
 				} else {
 					// If we are darknet only, we color by absolute connected peers
 					if (connectedDarknetPeers < 3) {
-						additionalClass = HTMLCLASS.PEERSVERYFEW;
+						additionalClass = HTMLClass.PEERSVERYFEW;
 					} else if (connectedDarknetPeers < 5) {
-						additionalClass = HTMLCLASS.PEERSFEW;
+						additionalClass = HTMLClass.PEERSFEW;
 					} else if (connectedDarknetPeers < 10) {
-						additionalClass = HTMLCLASS.PEERSAVERAGE;
+						additionalClass = HTMLClass.PEERSAVERAGE;
 					} else {
-						additionalClass = HTMLCLASS.PEERSFULL;
+						additionalClass = HTMLClass.PEERSFULL;
 					}
 				}
-				HTMLNode progressBar = statusBarDiv.addChild(new Div(HTMLCLASS.PROGRESSBAR));
-				Div peers = new Div(HTMLCLASS.PROGRESSBARDONE);
-				peers.addClass(HTMLCLASS.PROGRESSBARPEERS);
+				HTMLNode progressBar = statusBarDiv.addChild(new Div(HTMLClass.PROGRESSBAR));
+				Div peers = new Div(HTMLClass.PROGRESSBARDONE);
+				peers.addClass(HTMLClass.PROGRESSBARPEERS);
 				peers.addClass(additionalClass);
 				peers.addAttribute("style", "width: " + Math.min(100, Math.floor(100 * connectedRatio)) + "%;");
 				progressBar.addChild(peers);
-				Div connectedpeers = new Div(HTMLCLASS.PROGRESSBARFINAL, Integer.toString(connectedPeers) + ((totalPeers != Integer.MAX_VALUE) ? " / " + Integer.toString(totalPeers) : ""));
+				Div connectedpeers = new Div(HTMLClass.PROGRESSBARFINAL, Integer.toString(connectedPeers) + ((totalPeers != Integer.MAX_VALUE) ? " / " + Integer.toString(totalPeers) : ""));
 				connectedpeers.addAttribute("title", NodeL10n.getBase().getString("StatusBar.connectedPeers", new String[]{"X", "Y"}, new String[]{Integer.toString(node.peers.countConnectedDarknetPeers()), Integer.toString(node.peers.countConnectedOpennetPeers())}));
 				progressBar.addChild(connectedpeers);
 			}
@@ -709,8 +709,8 @@ public final class PageMaker {
 			infobox.addAttribute("id", title);
 		}
 
-		infobox.addChild(new Div(HTMLCLASS.INFOBOXHEADER)).addChild(header);
-		return new InfoboxNode(infobox, infobox.addChild(new Div(HTMLCLASS.INFOBOXCONTENT)));
+		infobox.addChild(new Div(HTMLClass.INFOBOXHEADER)).addChild(header);
+		return new InfoboxNode(infobox, infobox.addChild(new Div(HTMLClass.INFOBOXCONTENT)));
 	}
 	
 	private HTMLNode getOverrideContent() {

@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import freenet.support.htmlPrimitives.Div;
-import freenet.support.htmlPrimitives.HTMLCLASS;
+import freenet.support.htmlPrimitives.HTMLClass;
 import org.tanukisoftware.wrapper.WrapperManager;
 
 import freenet.client.ClientMetadata;
@@ -450,17 +450,17 @@ public class WelcomeToadlet extends Toadlet {
 			this.putFetchKeyBox(ctx, contentNode);
 		}
 		// Bookmarks
-		HTMLNode bookmarkBox = contentNode.addChild(new Div(HTMLCLASS.INFOBOX));
-		bookmarkBox.addClass(HTMLCLASS.INFOBOXNORMAL);
-		bookmarkBox.addClass(HTMLCLASS.BOOKMARKSBOX);
-		HTMLNode bookmarkBoxHeader = bookmarkBox.addChild(new Div(HTMLCLASS.INFOBOXHEADER));
+		HTMLNode bookmarkBox = contentNode.addChild(new Div(HTMLClass.INFOBOX));
+		bookmarkBox.addClass(HTMLClass.INFOBOXNORMAL);
+		bookmarkBox.addClass(HTMLClass.BOOKMARKSBOX);
+		HTMLNode bookmarkBoxHeader = bookmarkBox.addChild(new Div(HTMLClass.INFOBOXHEADER));
 		bookmarkBoxHeader.addChild("a", new String[]{"class", "title"}, new String[]{"bookmarks-header-text", NodeL10n.getBase().getString("BookmarkEditorToadlet.myBookmarksExplanation")}, NodeL10n.getBase().getString("BookmarkEditorToadlet.myBookmarksTitle"));
 		if (ctx.isAllowedFullAccess()) {
 			bookmarkBoxHeader.addChild("span", "class", "edit-bracket", "[");
 			bookmarkBoxHeader.addChild("span", "id", "bookmarkedit").addChild("a", new String[]{"href", "class"}, new String[]{"/bookmarkEditor/", "interfacelink"}, NodeL10n.getBase().getString("BookmarkEditorToadlet.edit"));
 			bookmarkBoxHeader.addChild("span", "class", "edit-bracket", "]");
 		}
-		HTMLNode bookmarkBoxContent = bookmarkBox.addChild(new Div(HTMLCLASS.INFOBOXCONTENT));
+		HTMLNode bookmarkBoxContent = bookmarkBox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
 		HTMLNode bookmarksList = bookmarkBoxContent.addChild("ul", "id", "bookmarks");
 		if (ctx.isAllowedFullAccess()) {
 			addCategoryToList(BookmarkManager.MAIN_CATEGORY, bookmarksList, (!container.enableActivelinks()) || (useragent != null && useragent.contains("khtml") && !useragent.contains("chrome")), ctx);
@@ -470,11 +470,11 @@ public class WelcomeToadlet extends Toadlet {
 		}
 		// Search Box
 		// FIXME search box is BELOW bookmarks for now, until we get search fixed properly.
-		HTMLNode searchBox = contentNode.addChild(new Div(HTMLCLASS.INFOBOX));
-		searchBox.addClass(HTMLCLASS.INFOBOXNORMAL);
+		HTMLNode searchBox = contentNode.addChild(new Div(HTMLClass.INFOBOX));
+		searchBox.addClass(HTMLClass.INFOBOXNORMAL);
 		searchBox.addAttribute("id", "search-freenet");
-		searchBox.addChild(new Div(HTMLCLASS.INFOBOXHEADER)).addChild("span", "class", "search-title-label", NodeL10n.getBase().getString("WelcomeToadlet.searchBoxLabel"));
-		HTMLNode searchBoxContent = searchBox.addChild(new Div(HTMLCLASS.INFOBOXCONTENT));
+		searchBox.addChild(new Div(HTMLClass.INFOBOXHEADER)).addChild("span", "class", "search-title-label", NodeL10n.getBase().getString("WelcomeToadlet.searchBoxLabel"));
+		HTMLNode searchBoxContent = searchBox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
 		// Search form
 		if(core.node.pluginManager != null && core.node.pluginManager.isPluginLoaded("plugins.Library.Main")) {
 			// FIXME: Remove this once we have a non-broken index.

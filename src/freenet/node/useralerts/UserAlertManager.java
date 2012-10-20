@@ -21,7 +21,7 @@ import freenet.support.Base64;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.htmlPrimitives.Div;
-import freenet.support.htmlPrimitives.HTMLCLASS;
+import freenet.support.htmlPrimitives.HTMLClass;
 
 /**
  * Collection of UserAlert's.
@@ -210,10 +210,10 @@ public class UserAlertManager implements Comparator<UserAlert> {
 	public HTMLNode renderAlert(UserAlert userAlert) {
 		HTMLNode userAlertNode = null;
 		short level = userAlert.getPriorityClass();
-		userAlertNode = new Div(HTMLCLASS.INFOBOX);
+		userAlertNode = new Div(HTMLClass.INFOBOX);
 		userAlertNode.addClass(getAlertLevelName(level));
-		userAlertNode.addChild(new Div(HTMLCLASS.INFOBOXHEADER, userAlert.getTitle()));
-		HTMLNode alertContentNode = userAlertNode.addChild(new Div(HTMLCLASS.INFOBOXCONTENT));
+		userAlertNode.addChild(new Div(HTMLClass.INFOBOXHEADER, userAlert.getTitle()));
+		HTMLNode alertContentNode = userAlertNode.addChild(new Div(HTMLClass.INFOBOXCONTENT));
 		alertContentNode.addChild(userAlert.getHTMLText());
 		if (userAlert.userCanDismiss()) {
 			HTMLNode dismissFormNode = alertContentNode.addChild("form", new String[] { "action", "method" }, new String[] { "/alerts/", "post" }).addChild(new Div());
@@ -224,18 +224,18 @@ public class UserAlertManager implements Comparator<UserAlert> {
 		return userAlertNode;
 	}
 
-	private HTMLCLASS getAlertLevelName(short level) {
+	private HTMLClass getAlertLevelName(short level) {
 		if (level <= UserAlert.CRITICAL_ERROR)
-			return HTMLCLASS.INFOBOXERROR;
+			return HTMLClass.INFOBOXERROR;
 		else if (level <= UserAlert.ERROR)
-			return HTMLCLASS.INFOBOXALERT;
+			return HTMLClass.INFOBOXALERT;
 		else if (level <= UserAlert.WARNING)
-			return HTMLCLASS.INFOBOXWARNING;
+			return HTMLClass.INFOBOXWARNING;
 		else if (level <= UserAlert.MINOR)
-			return HTMLCLASS.INFOBOXMINOR;
+			return HTMLClass.INFOBOXMINOR;
 		else {
 			Logger.error(this, "Unknown alert level: "+level, new Exception("debug"));
-			return HTMLCLASS.INFOBOXERROR;
+			return HTMLClass.INFOBOXERROR;
 		}
 	}
 
@@ -327,18 +327,18 @@ public class UserAlertManager implements Comparator<UserAlert> {
 		}
 		HTMLNode summaryBox = null;
 
-		HTMLCLASS classes = oneLine ? HTMLCLASS.ALERTSLINE : HTMLCLASS.INFOBOX;
+		HTMLClass classes = oneLine ? HTMLClass.ALERTSLINE : HTMLClass.INFOBOX;
 		summaryBox = new Div(classes);
 		if (highestLevel <= UserAlert.CRITICAL_ERROR && !oneLine)
-			summaryBox.addClass(HTMLCLASS.INFOBOXERROR);
+			summaryBox.addClass(HTMLClass.INFOBOXERROR);
 		else if (highestLevel <= UserAlert.ERROR && !oneLine)
-			summaryBox.addClass( oneLine ? HTMLCLASS.CONTAINSALERT: HTMLCLASS.INFOBOXALERT);
+			summaryBox.addClass( oneLine ? HTMLClass.CONTAINSALERT: HTMLClass.INFOBOXALERT);
 		else if (highestLevel <= UserAlert.WARNING)
-			summaryBox.addClass( oneLine ? HTMLCLASS.CONTAINSWARNING: HTMLCLASS.INFOBOXWARNING);
+			summaryBox.addClass( oneLine ? HTMLClass.CONTAINSWARNING: HTMLClass.INFOBOXWARNING);
 		else if (highestLevel <= UserAlert.MINOR)
-			summaryBox.addClass( oneLine ? HTMLCLASS.CONTAINSINFORMATION: HTMLCLASS.INFOBOXINFORMATION);
-		summaryBox.addChild(new Div(HTMLCLASS.INFOBOXHEADER, l10n("alertsTitle")));
-		HTMLNode summaryContent = summaryBox.addChild(new Div(HTMLCLASS.INFOBOXCONTENT));
+			summaryBox.addClass( oneLine ? HTMLClass.CONTAINSINFORMATION: HTMLClass.INFOBOXINFORMATION);
+		summaryBox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("alertsTitle")));
+		HTMLNode summaryContent = summaryBox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
 		if(!oneLine) {
 			summaryContent.addChild("#", alertSummaryString.toString() + separator + " ");
 			NodeL10n.getBase().addL10nSubstitution(summaryContent, "UserAlertManager.alertsOnAlertsPage",
