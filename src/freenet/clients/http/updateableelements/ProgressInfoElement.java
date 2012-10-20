@@ -13,8 +13,8 @@ import freenet.keys.FreenetURI;
 import freenet.support.Base64;
 import freenet.support.HTMLNode;
 import freenet.support.SizeUtil;
-import freenet.support.htmlPrimitives.Div;
-import freenet.support.htmlPrimitives.HTMLClass;
+import freenet.support.htmlprimitives.Div;
+import freenet.support.htmlprimitives.HTMLClass;
 
 /** This pushed element renders the information box when a page is downloading on the progress page. */
 public class ProgressInfoElement extends BaseUpdateableElement {

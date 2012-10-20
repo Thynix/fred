@@ -13,7 +13,7 @@ import freenet.node.PeerNode;
 import freenet.node.fcp.FCPMessage;
 import freenet.node.fcp.TextFeedMessage;
 import freenet.support.HTMLNode;
-import freenet.support.htmlPrimitives.Div;
+import freenet.support.htmlprimitives.Div;
 
 // Node To Node Text Message User Alert
 public class N2NTMUserAlert extends AbstractUserAlert {

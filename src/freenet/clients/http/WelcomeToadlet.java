@@ -9,8 +9,8 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.List;
 
-import freenet.support.htmlPrimitives.Div;
-import freenet.support.htmlPrimitives.HTMLClass;
+import freenet.support.htmlprimitives.Div;
+import freenet.support.htmlprimitives.HTMLClass;
 import org.tanukisoftware.wrapper.WrapperManager;
 
 import freenet.client.ClientMetadata;

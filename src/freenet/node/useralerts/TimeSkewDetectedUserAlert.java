@@ -5,8 +5,8 @@ package freenet.node.useralerts;
 
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
-import freenet.support.htmlPrimitives.Div;
-import freenet.support.htmlPrimitives.HTMLClass;
+import freenet.support.htmlprimitives.Div;
+import freenet.support.htmlprimitives.HTMLClass;
 
 /**
  * A simple user alert warning the user about the weird effect a time skew

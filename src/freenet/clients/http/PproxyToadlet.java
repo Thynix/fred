@@ -35,8 +35,8 @@ import freenet.support.MultiValueTable;
 import freenet.support.TimeUtil;
 import freenet.support.Logger.LogLevel;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlPrimitives.Div;
-import freenet.support.htmlPrimitives.HTMLClass;
+import freenet.support.htmlprimitives.Div;
+import freenet.support.htmlprimitives.HTMLClass;
 
 public class PproxyToadlet extends Toadlet {
 	private static final int MAX_PLUGIN_NAME_LENGTH = 1024;

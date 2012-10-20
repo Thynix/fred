@@ -8,7 +8,7 @@ import freenet.config.SubConfig;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
 import freenet.support.HTMLNode;
-import freenet.support.htmlPrimitives.Div;
+import freenet.support.htmlprimitives.Div;
 
 public class MeaningfulNodeNameUserAlert extends AbstractUserAlert {
 	private final Node node;

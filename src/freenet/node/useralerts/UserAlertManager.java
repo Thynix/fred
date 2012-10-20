@@ -20,8 +20,8 @@ import freenet.node.fcp.FCPConnectionHandler;
 import freenet.support.Base64;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
-import freenet.support.htmlPrimitives.Div;
-import freenet.support.htmlPrimitives.HTMLClass;
+import freenet.support.htmlprimitives.Div;
+import freenet.support.htmlprimitives.HTMLClass;
 
 /**
  * Collection of UserAlert's.

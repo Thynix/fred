@@ -7,7 +7,7 @@ import freenet.client.HighLevelSimpleClient;
 import freenet.node.NodeClientCore;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlPrimitives.Div;
+import freenet.support.htmlprimitives.Div;
 
 /**
  * Browser Test Toadlet. Accessible from <code>http://.../test/</code>.

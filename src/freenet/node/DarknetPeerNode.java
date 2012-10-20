@@ -49,7 +49,7 @@ import freenet.support.Logger.LogLevel;
 import freenet.support.SimpleFieldSet;
 import freenet.support.SizeUtil;
 import freenet.support.api.HTTPUploadedFile;
-import freenet.support.htmlPrimitives.Div;
+import freenet.support.htmlprimitives.Div;
 import freenet.support.io.BucketTools;
 import freenet.support.io.ByteArrayRandomAccessThing;
 import freenet.support.io.FileUtil;

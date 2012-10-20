@@ -21,9 +21,9 @@ import freenet.support.MultiValueTable;
 import freenet.support.SizeUtil;
 import freenet.support.api.HTTPRequest;
 import freenet.support.api.HTTPUploadedFile;
-import freenet.support.htmlPrimitives.Div;
-import freenet.support.htmlPrimitives.HTMLClass;
-import freenet.support.htmlPrimitives.HTMLID;
+import freenet.support.htmlprimitives.Div;
+import freenet.support.htmlprimitives.HTMLClass;
+import freenet.support.htmlprimitives.HTMLID;
 
 public class N2NTMToadlet extends Toadlet {
 	private Node node;
