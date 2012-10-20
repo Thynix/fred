@@ -14,7 +14,7 @@ import freenet.support.Base64;
 import freenet.support.HTMLNode;
 import freenet.support.SizeUtil;
 import freenet.support.htmlPrimitives.Div;
-import freenet.support.htmlPrimitives.HTMLCLASS;
+import freenet.support.htmlPrimitives.HTMLClass;
 
 /** This pushed element renders the information box when a page is downloading on the progress page. */
 public class ProgressInfoElement extends BaseUpdateableElement {
@@ -47,7 +47,7 @@ public class ProgressInfoElement extends BaseUpdateableElement {
 		FProxyFetchWaiter waiter = tracker.makeWaiterForFetchInProgress(key, maxSize, fctx);
 		FProxyFetchResult fr = waiter.getResult();
 		if (fr == null) {
-			addChild( new Div(HTMLCLASS.NONE, "No fetcher found"));
+			addChild( new Div(HTMLClass.NONE, "No fetcher found"));
 		}
 		
 		addChild("#", FProxyToadlet.l10n("filenameLabel")+ " ");

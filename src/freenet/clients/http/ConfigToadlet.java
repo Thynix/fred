@@ -30,7 +30,7 @@ import freenet.support.URLEncoder;
 import freenet.support.api.BooleanCallback;
 import freenet.support.api.HTTPRequest;
 import freenet.support.htmlPrimitives.Div;
-import freenet.support.htmlPrimitives.HTMLCLASS;
+import freenet.support.htmlPrimitives.HTMLClass;
 
 /**
  * Node Configuration Toadlet. Accessible from <code>http://.../config/</code>.
@@ -404,7 +404,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 					.getPageMaker()
 					.getInfobox("infobox-error", l10n("appliedFailureTitle"),
 							contentNode, "configuration-error", true)
-					.addChild(new Div(HTMLCLASS.INFOBOXCONTENT));
+					.addChild(new Div(HTMLClass.INFOBOXCONTENT));
 			content.addChild("#", l10n("appliedFailureExceptions"));
 			content.addChild("br");
 			content.addChild("#", errbuf.toString());
@@ -446,10 +446,10 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 
 		contentNode.addChild(core.alerts.createSummary());
 
-		HTMLNode infobox = contentNode.addChild(new Div(HTMLCLASS.INFOBOX));
-		infobox.addClass(HTMLCLASS.INFOBOXNORMAL);
-		infobox.addChild(new Div(HTMLCLASS.INFOBOXHEADER, l10n("title")));
-		HTMLNode configNode = infobox.addChild(new Div(HTMLCLASS.INFOBOXCONTENT));
+		HTMLNode infobox = contentNode.addChild(new Div(HTMLClass.INFOBOX));
+		infobox.addClass(HTMLClass.INFOBOXNORMAL);
+		infobox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("title")));
+		HTMLNode configNode = infobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
 		HTMLNode formNode = ctx.addFormChild(configNode, path(), "configForm");
 
 		// Invisible apply button at the top so that an enter keypress will
@@ -474,7 +474,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 						MAX_PARAM_VALUE_SIZE);
 			}
 			if (curValue != null) {
-				formNode.addChild(new Div(HTMLCLASS.CONFIGPREFIX, l10n("wrapper")));
+				formNode.addChild(new Div(HTMLClass.CONFIGPREFIX, l10n("wrapper")));
 				HTMLNode list = formNode.addChild("ul", "class", "config");
 				HTMLNode item = list.addChild("li", "class",
 						OptionType.TEXT.cssClass);
@@ -641,7 +641,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 		}
 
 		if (displayedConfigElements > 0) {
-			formNode.addChild(new Div(HTMLCLASS.CONFIGPREFIX, (plugin == null) ? l10n(subConfig.getPrefix())
+			formNode.addChild(new Div(HTMLClass.CONFIGPREFIX, (plugin == null) ? l10n(subConfig.getPrefix())
 				: plugin.getString(subConfig.getPrefix())));
 			formNode.addChild("a", "id", subConfig.getPrefix());
 			formNode.addChild(configGroupUlNode);

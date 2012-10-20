@@ -4,12 +4,12 @@ import freenet.support.HTMLNode;
 
 public class Div extends HTMLNode {
 
-	public Div(HTMLCLASS CLASS, String content) {
+	public Div(HTMLClass CLASS, String content) {
 		this(CLASS);
 		this.setContent(content);
 	}
 
-	public Div(HTMLCLASS CLASS) {
+	public Div(HTMLClass CLASS) {
 		this();
 		addClass(CLASS);
 	}

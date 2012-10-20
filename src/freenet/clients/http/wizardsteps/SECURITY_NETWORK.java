@@ -7,7 +7,7 @@ import freenet.node.SecurityLevels;
 import freenet.support.Fields;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlPrimitives.HTMLCLASS;
+import freenet.support.htmlPrimitives.HTMLClass;
 import freenet.support.htmlPrimitives.Div;
 
 /**
@@ -88,7 +88,7 @@ public class SECURITY_NETWORK implements Step {
 			infoboxContent.addChild("p", WizardL10n.l10n("networkThreatLevelIntroOpennet"));
 
 			form = helper.addFormChild(infoboxContent, ".", "networkSecurityForm");
-			HTMLNode div = form.addChild(new Div(HTMLCLASS.OPENNETDIV));
+			HTMLNode div = form.addChild(new Div(HTMLClass.OPENNETDIV));
 			for(SecurityLevels.NETWORK_THREAT_LEVEL level : SecurityLevels.NETWORK_THREAT_LEVEL.OPENNET_VALUES) {
 				securityLevelChoice(div, level);
 			}
@@ -98,7 +98,7 @@ public class SECURITY_NETWORK implements Step {
 			infoboxContent.addChild("p", WizardL10n.l10n("networkThreatLevelIntroDarknet"));
 
 			form = helper.addFormChild(infoboxContent, ".", "networkSecurityForm");
-			HTMLNode div = form.addChild(new Div(HTMLCLASS.DARKNETDIV));
+			HTMLNode div = form.addChild(new Div(HTMLClass.DARKNETDIV));
 			for(SecurityLevels.NETWORK_THREAT_LEVEL level : SecurityLevels.NETWORK_THREAT_LEVEL.DARKNET_VALUES) {
 				securityLevelChoice(div, level);
 			}

@@ -84,7 +84,7 @@ import freenet.support.api.Bucket;
 import freenet.support.api.HTTPRequest;
 import freenet.support.api.HTTPUploadedFile;
 import freenet.support.htmlPrimitives.Div;
-import freenet.support.htmlPrimitives.HTMLCLASS;
+import freenet.support.htmlPrimitives.HTMLClass;
 import freenet.support.io.BucketTools;
 import freenet.support.io.Closer;
 import freenet.support.io.FileBucket;
@@ -958,7 +958,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 
 		HTMLNode content = ctx.getPageMaker().getInfobox("infobox-error",
 		        l10n("confirmPanicButtonPageTitle"), contentNode, "confirm-panic", true).
-		        addChild(new Div(HTMLCLASS.INFOBOXCONTENT));
+		        addChild(new Div(HTMLClass.INFOBOXCONTENT));
 
 		content.addChild("p", l10n("confirmPanicButton"));
 
@@ -1714,23 +1714,23 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 			int failedPercent = (int) (failed / (double) total * 100);
 			int fatallyFailedPercent = (int) (fatallyFailed / (double) total * 100);
 			int minPercent = (int) (min / (double) total * 100);
-			HTMLNode progressBar = progressCell.addChild(new Div(HTMLCLASS.PROGRESSBAR));
-			Div completed = new Div(HTMLCLASS.PROGRESSBARDONE);
+			HTMLNode progressBar = progressCell.addChild(new Div(HTMLClass.PROGRESSBAR));
+			Div completed = new Div(HTMLClass.PROGRESSBARDONE);
 			completed.addAttribute("style", "width: " + fetchedPercent + "%;" );
 			progressBar.addChild(completed);
 
 			if (failed > 0) {
-				Div subbar = new Div(HTMLCLASS.PROGRESSBARFAILED);
+				Div subbar = new Div(HTMLClass.PROGRESSBARFAILED);
 				subbar.addAttribute("style", "width: " + failedPercent + "%;");
 				progressBar.addChild(subbar);
 			}
 			if (fatallyFailed > 0) {
-				Div subbar = new Div(HTMLCLASS.PROGRESSBARFAILED2);
+				Div subbar = new Div(HTMLClass.PROGRESSBARFAILED2);
 				subbar.addAttribute("style", "width: " + fatallyFailedPercent + "%;");
 				progressBar.addChild(subbar);
 			}
 			if ((fetched + failed + fatallyFailed) < min) {
-				Div subbar = new Div(HTMLCLASS.PROGRESSBARMIN);
+				Div subbar = new Div(HTMLClass.PROGRESSBARMIN);
 				subbar.addAttribute("style", "width: " + (minPercent - fetchedPercent) + "%;");
 				progressBar.addChild(subbar);
 			}
@@ -1739,7 +1739,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 			nf.setMaximumFractionDigits(1);
 			String prefix = '('+Integer.toString(fetched) + "/ " + Integer.toString(min)+"): ";
 			if (finalized) {
-				Div fractionFinalized = new Div(HTMLCLASS.PROGRESSBARFINAL, nf.format((int) ((fetched / (double) min) * 1000) / 10.0) + '%');
+				Div fractionFinalized = new Div(HTMLClass.PROGRESSBARFINAL, nf.format((int) ((fetched / (double) min) * 1000) / 10.0) + '%');
 				fractionFinalized.addAttribute("title", prefix + l10n("progressbarAccurate"));
 				progressBar.addChild(fractionFinalized);
 			} else {
@@ -1747,7 +1747,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 				if(!finalized) {
 					text = "" + fetched + " ("+text+"??)";
 				}
-				Div fractionNotFinalized = new Div(HTMLCLASS.PROGRESSBARNOTFINAL, text);
+				Div fractionNotFinalized = new Div(HTMLClass.PROGRESSBARNOTFINAL, text);
 				fractionNotFinalized.addAttribute("title", prefix + NodeL10n.getBase().getString(upload ? "QueueToadlet.uploadProgressbarNotAccurate" : "QueueToadlet.progressbarNotAccurate") );
 				progressBar.addChild(fractionNotFinalized);
 
@@ -1784,8 +1784,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 	}
 
 	private HTMLNode createPriorityControl(PageMaker pageMaker, ToadletContext ctx, short priorityClass, String[] priorityClasses, boolean advancedModeEnabled, boolean isUpload) {
-		Div priorityDiv = new Div(HTMLCLASS.REQUESTPRIORITY);
-		priorityDiv.addClass(HTMLCLASS.NOWRAP);
+		Div priorityDiv = new Div(HTMLClass.REQUESTPRIORITY);
+		priorityDiv.addClass(HTMLClass.NOWRAP);
 		priorityDiv.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "change_priority", NodeL10n.getBase().getString(isUpload ? "QueueToadlet.changeUploadPriorities" : "QueueToadlet.changeDownloadPriorities") });
 		HTMLNode prioritySelect = priorityDiv.addChild("select", "name", "priority");
 		for (int p = 0; p < RequestStarter.NUMBER_OF_PRIORITY_CLASSES; p++) {
@@ -1800,20 +1800,20 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 	}
 	
 	private HTMLNode createRecommendControl(PageMaker pageMaker, ToadletContext ctx) {
-		Div recommendDiv = new Div(HTMLCLASS.REQUESTRECOMMEND);
+		Div recommendDiv = new Div(HTMLClass.REQUESTRECOMMEND);
 		recommendDiv.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "recommend_request", l10n("recommendFilesToFriends") });
 		return recommendDiv;
 	}
 
 	private HTMLNode createRemoveFinishedDownloadsControl( PageMaker pageMaker, ToadletContext ctx ) {
-		Div deleteDiv = new Div(HTMLCLASS.REQUESTDELETEFINISHEDDOWNLOADS);
+		Div deleteDiv = new Div(HTMLClass.REQUESTDELETEFINISHEDDOWNLOADS);
 		deleteDiv.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "remove_finished_downloads_request", l10n("removeFinishedDownloads") });
 		return deleteDiv;
 	}
 	
 	/** Create a delete or restart control at the top of a table. It applies to whichever requests are checked in the table below. */
 	private HTMLNode createDeleteControl(PageMaker pageMaker, ToadletContext ctx, boolean isDownloadToTemp, boolean canRestart, boolean disableFilterChecked, boolean isUpload, String mimeType) {
-		Div deleteDiv = new Div(HTMLCLASS.REQUESTDELETE);
+		Div deleteDiv = new Div(HTMLClass.REQUESTDELETE);
 		if(isDownloadToTemp) {
 			deleteDiv.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "delete_request", l10n("deleteFilesFromTemp") });
 		} else {
@@ -1935,7 +1935,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 			        new String[] { "radio", "direct", "target", "checked" },
 			        ' '+l10n("bulkDownloadSelectOptionDirect")+' ');
 		}
-		HTMLNode filterControl = downloadForm.addChild(new Div(HTMLCLASS.NONE, l10n("filterData")));
+		HTMLNode filterControl = downloadForm.addChild(new Div(HTMLClass.NONE, l10n("filterData")));
 		filterControl.addChild("input",
 		        new String[] { "type", "name", "value", "checked" },
 		        new String[] { "checkbox", "filterData", "filterData", "checked"});
@@ -1993,7 +1993,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		boolean isFinishedDiskDownloads = isCompleted && !isUpload && !isDownloadToTemp && !isFailed;
 		long now = System.currentTimeMillis();
 		
-		Div formDiv = new Div(HTMLCLASS.REQUESTTABLEFORM);
+		Div formDiv = new Div(HTMLClass.REQUESTTABLEFORM);
 		HTMLNode form = ctx.addFormChild(formDiv, path(), "request-table-form-"+id+(advancedModeEnabled?"-advanced":"-simple"));
 		
 		if( isFinishedDiskDownloads ) {

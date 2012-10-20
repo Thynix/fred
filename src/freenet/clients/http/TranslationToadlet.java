@@ -22,7 +22,7 @@ import freenet.support.Logger.LogLevel;
 import freenet.support.SimpleFieldSet.KeyIterator;
 import freenet.support.api.HTTPRequest;
 import freenet.support.htmlPrimitives.Div;
-import freenet.support.htmlPrimitives.HTMLCLASS;
+import freenet.support.htmlPrimitives.HTMLClass;
 import freenet.support.io.BucketTools;
 
 /**
@@ -71,7 +71,7 @@ public class TranslationToadlet extends Toadlet {
 			HTMLNode pageNode = page.outer;
 			HTMLNode contentNode = page.content;
 
-			HTMLNode translationNode = contentNode.addChild(new Div(HTMLCLASS.TRANSLATION));
+			HTMLNode translationNode = contentNode.addChild(new Div(HTMLClass.TRANSLATION));
 			HTMLNode legendTable = translationNode.addChild("table", "class", "translation");
 			
 			HTMLNode legendRow = legendTable.addChild("tr").addChild("b");
@@ -90,7 +90,7 @@ public class TranslationToadlet extends Toadlet {
 					this.base.getString(key)
 			);
 			
-			HTMLNode footer = translationNode.addChild(new Div(HTMLCLASS.WARNING));
+			HTMLNode footer = translationNode.addChild(new Div(HTMLClass.WARNING));
 			footer.addChild("a", "href", TOADLET_URL+"?getOverrideTranlationFile").addChild("#", l10n("downloadTranslationsFile"));
 			footer.addChild("%", "&nbsp;&nbsp;");
 			footer.addChild("a", "href", TOADLET_URL+"?translate="+key+ (showEverything ? "" : "&toTranslateOnly")).addChild("#", l10n("reEdit"));
@@ -106,7 +106,7 @@ public class TranslationToadlet extends Toadlet {
 			HTMLNode pageNode = page.outer;
 			HTMLNode contentNode = page.content;
 
-			HTMLNode translationNode = contentNode.addChild(new Div(HTMLCLASS.TRANSLATION));
+			HTMLNode translationNode = contentNode.addChild(new Div(HTMLClass.TRANSLATION));
 			HTMLNode updateForm =  ctx.addFormChild(translationNode, TOADLET_URL, "trans_update");
 			HTMLNode legendTable = updateForm.addChild("table", "class", "translation");
 			
@@ -191,7 +191,7 @@ public class TranslationToadlet extends Toadlet {
 		}
 		translatingForForm.addChild("input", "type", "submit");
 
-		HTMLNode translationNode = contentNode.addChild(new Div(HTMLCLASS.TRANSLATION));
+		HTMLNode translationNode = contentNode.addChild(new Div(HTMLClass.TRANSLATION));
 		HTMLNode translationHeaderNode = translationNode.addChild("p");
 		translationHeaderNode.addChild("#", l10n("contributingToLabelWithLang", "lang", this.base.getSelectedLanguage().fullName));
 		translationHeaderNode.addChild("a", "href", TOADLET_URL+"?getOverrideTranlationFile").addChild("#", l10n("downloadTranslationsFile"));

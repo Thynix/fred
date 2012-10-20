@@ -1,6 +1,6 @@
 package freenet.support;
 
-import freenet.support.htmlPrimitives.HTMLCLASS;
+import freenet.support.htmlPrimitives.HTMLClass;
 import freenet.support.htmlPrimitives.HTMLID;
 
 import java.util.ArrayList;
@@ -336,7 +336,7 @@ public class HTMLNode implements XMLCharacterClasses {
 	 *
 	 * @param className class to add.
 	 */
-	public void addClass(final HTMLCLASS className) {
+	public void addClass(final HTMLClass className) {
 		/*
 		 * Each class is bookended with a space to avoid mistaking parts of existing classes as the new class.
 		 */

@@ -9,7 +9,7 @@ import freenet.node.NodeClientCore;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
 import freenet.support.htmlPrimitives.Div;
-import freenet.support.htmlPrimitives.HTMLCLASS;
+import freenet.support.htmlPrimitives.HTMLClass;
 import freenet.support.htmlPrimitives.HTMLID;
 
 import java.io.File;
@@ -309,10 +309,10 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 			HTMLNode contentNode = page.content;
 			if (ctx.isAllowedFullAccess()) contentNode.addChild(core.alerts.createSummary());
 			
-			HTMLNode infoboxDiv = contentNode.addChild(new Div(HTMLCLASS.INFOBOX));
-			infoboxDiv.addChild(new Div(HTMLCLASS.INFOBOXHEADER, l10n("listing", "path", currentPath.
+			HTMLNode infoboxDiv = contentNode.addChild(new Div(HTMLClass.INFOBOX));
+			infoboxDiv.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("listing", "path", currentPath.
 				getAbsolutePath())));
-			HTMLNode listingDiv = infoboxDiv.addChild(new Div(HTMLCLASS.INFOBOXCONTENT));
+			HTMLNode listingDiv = infoboxDiv.addChild(new Div(HTMLClass.INFOBOXCONTENT));
 			
 			File[] files = currentPath.listFiles();
 			
@@ -419,9 +419,9 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 			HTMLNode contentNode = page.content;
 			if (ctx.isAllowedFullAccess()) contentNode.addChild(core.alerts.createSummary());
 			
-			HTMLNode infoboxDiv = contentNode.addChild(new Div(HTMLCLASS.INFOBOX));
-			infoboxDiv.addChild(new Div(HTMLCLASS.INFOBOXHEADER, l10n("listing", "path", attemptedPath)));
-			HTMLNode listingDiv = infoboxDiv.addChild(new Div(HTMLCLASS.INFOBOXCONTENT));
+			HTMLNode infoboxDiv = contentNode.addChild(new Div(HTMLClass.INFOBOX));
+			infoboxDiv.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("listing", "path", attemptedPath)));
+			HTMLNode listingDiv = infoboxDiv.addChild(new Div(HTMLClass.INFOBOXCONTENT));
 
 			listingDiv.addChild("#", l10n("dirCannotBeRead", "path", attemptedPath));
 			HTMLNode ulNode = listingDiv.addChild("ul");

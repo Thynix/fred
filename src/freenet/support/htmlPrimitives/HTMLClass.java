@@ -1,6 +1,6 @@
 package freenet.support.htmlPrimitives;
 
-public enum HTMLCLASS {
+public enum HTMLClass {
 
 	ALERTSLINE("alerts-line"),
 	BOOKMARKSBOX("bookmarks-box"),
@@ -56,7 +56,7 @@ public enum HTMLCLASS {
 
 	public final String name;
 
-	private HTMLCLASS (String CLASSNAME) {
+	private HTMLClass(String CLASSNAME) {
 		this.name = CLASSNAME;
 	}
 }
