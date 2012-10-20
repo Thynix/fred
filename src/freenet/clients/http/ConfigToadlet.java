@@ -29,8 +29,8 @@ import freenet.support.Logger.LogLevel;
 import freenet.support.URLEncoder;
 import freenet.support.api.BooleanCallback;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlPrimitives.Div;
-import freenet.support.htmlPrimitives.HTMLClass;
+import freenet.support.htmlprimitives.Div;
+import freenet.support.htmlprimitives.HTMLClass;
 
 /**
  * Node Configuration Toadlet. Accessible from <code>http://.../config/</code>.

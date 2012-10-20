@@ -30,7 +30,7 @@ import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.OOMHandler;
 import freenet.support.Logger.LogLevel;
-import freenet.support.htmlPrimitives.Div;
+import freenet.support.htmlprimitives.Div;
 import freenet.support.transport.ip.IPUtil;
 
 /**

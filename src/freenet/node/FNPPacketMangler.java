@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import freenet.support.htmlPrimitives.Div;
+import freenet.support.htmlprimitives.Div;
 import net.i2p.util.NativeBigInteger;
 import freenet.clients.http.ExternalLinkToadlet;
 import freenet.crypt.BlockCipher;

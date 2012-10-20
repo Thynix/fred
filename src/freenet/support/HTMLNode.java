@@ -1,7 +1,7 @@
 package freenet.support;
 
-import freenet.support.htmlPrimitives.HTMLClass;
-import freenet.support.htmlPrimitives.HTMLID;
+import freenet.support.htmlprimitives.HTMLClass;
+import freenet.support.htmlprimitives.HTMLID;
 
 import java.util.ArrayList;
 import java.util.Collections;
