@@ -30,6 +30,7 @@ import freenet.support.Logger;
 import freenet.support.SimpleFieldSet;
 import freenet.support.TimeUtil;
 import freenet.support.Logger.LogLevel;
+import freenet.support.htmlPrimitives.div;
 import freenet.support.io.Closer;
 import freenet.support.transport.ip.IPUtil;
 import java.util.Arrays;
@@ -287,14 +288,14 @@ public class Announcer {
 		
 		@Override
 		public HTMLNode getHTMLText() {
-			HTMLNode div = new HTMLNode("div");
-			div.addChild("#", l10n("announceDisabledTooOld"));
+			div div_ = new div();
+			div_.addChild("#", l10n("announceDisabledTooOld"));
 			if(!node.nodeUpdater.isEnabled()) {
-				div.addChild("#", " ");
-				NodeL10n.getBase().addL10nSubstitution(div, "Announcer.announceDisabledTooOldUpdateDisabled", new String[] { "config" }, new HTMLNode[] { HTMLNode.link("/config/node.updater") });
+				div_.addChild("#", " ");
+				NodeL10n.getBase().addL10nSubstitution(div_, "Announcer.announceDisabledTooOldUpdateDisabled", new String[] { "config" }, new HTMLNode[] { HTMLNode.link("/config/node.updater") });
 			}
 			// No point with !armed() or blown() because they have their own messages.
-			return div;
+			return div_;
 		}
 		
 		@Override

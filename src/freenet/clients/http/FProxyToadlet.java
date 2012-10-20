@@ -61,6 +61,8 @@ import freenet.support.Logger.LogLevel;
 import freenet.support.api.Bucket;
 import freenet.support.api.BucketFactory;
 import freenet.support.api.HTTPRequest;
+import freenet.support.htmlPrimitives.HTMLCLASS;
+import freenet.support.htmlPrimitives.div;
 import freenet.support.io.BucketTools;
 import freenet.support.io.Closer;
 import freenet.support.io.FileUtil;
@@ -180,9 +182,10 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 				HTMLNode pageNode = page.outer;
 				HTMLNode contentNode = page.content;
 
-				HTMLNode infobox = contentNode.addChild("div", "class", "infobox infobox-alert");
-				infobox.addChild("div", "class", "infobox-header", l10n("dangerousRSSSubtitle"));
-				HTMLNode infoboxContent = infobox.addChild("div", "class", "infobox-content");
+				HTMLNode infobox = contentNode.addChild(new div(HTMLCLASS.INFOBOX));
+				infobox.addClass(HTMLCLASS.INFOBOXALERT);
+				infobox.addChild(new div(HTMLCLASS.INFOBOXHEADER, l10n("dangerousRSSSubtitle")));
+				HTMLNode infoboxContent = infobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
 				infoboxContent.addChild("#", NodeL10n.getBase().getString("FProxyToadlet.dangerousRSS", new String[] { "type" }, new String[] { mimeType }));
 				infoboxContent.addChild("p", l10n("options"));
 				HTMLNode optionList = infoboxContent.addChild("ul");
@@ -346,12 +349,12 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 			        new String[] { "submit", "select-location",
 				        NodeL10n.getBase().getString("QueueToadlet.browseToChange")+"..."} );
 			if(!dontShowFilter) {
-				HTMLNode filterControl = optionForm.addChild("div", l10n("filterData"));
+				HTMLNode filterControl = optionForm.addChild(new div(HTMLCLASS.NONE, l10n("filterData")));
 				HTMLNode f = filterControl.addChild("input",
 				        new String[] { "type", "name", "value" },
 				        new String[] { "checkbox", "filterData", "filterData"});
 				if(filterChecked) f.addAttribute("checked", "checked");
-				filterControl.addChild("div", l10n("filterDataMessage"));
+				filterControl.addChild(new div(HTMLCLASS.NONE, l10n("filterDataMessage")));
 			}
 			if (threatLevel == PHYSICAL_THREAT_LEVEL.HIGH) {
 				optionForm.addChild("br");
@@ -386,12 +389,12 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 			        "FProxyToadlet.downloadInBackgroundToTempSpace",
 			        new String[] { "page", "bold" }, new HTMLNode[] { DOWNLOADS_LINK, HTMLNode.STRONG });
 			if(!dontShowFilter) {
-				HTMLNode filterControl = optionForm.addChild("div", l10n("filterData"));
+				HTMLNode filterControl = optionForm.addChild(new div(HTMLCLASS.NONE, l10n("filterData")));
 				HTMLNode f = filterControl.addChild("input",
 						new String[] { "type", "name", "value" },
 						new String[] { "checkbox", "filterData", "filterData"});
 				if(filterChecked) f.addAttribute("checked", "checked");
-				filterControl.addChild("div", l10n("filterDataMessage"));
+				filterControl.addChild(new div(HTMLCLASS.NONE, l10n("filterDataMessage")));
 			}
 		}
 	}
@@ -600,9 +603,10 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 			HTMLNode pageNode = page.outer;
 			HTMLNode contentNode = page.content;
 
-			HTMLNode errorInfobox = contentNode.addChild("div", "class", "infobox infobox-error");
-			errorInfobox.addChild("div", "class", "infobox-header", NodeL10n.getBase().getString("FProxyToadlet.invalidKeyWithReason", new String[] { "reason" }, new String[] { e.toString() }));
-			HTMLNode errorContent = errorInfobox.addChild("div", "class", "infobox-content");
+			HTMLNode errorInfobox = contentNode.addChild(new div(HTMLCLASS.INFOBOX));
+			errorInfobox.addClass(HTMLCLASS.INFOBOXERROR);
+			errorInfobox.addChild(new div(HTMLCLASS.INFOBOXHEADER, NodeL10n.getBase().getString("FProxyToadlet.invalidKeyWithReason", new String[] { "reason" }, new String[] { e.toString() })));
+			HTMLNode errorContent = errorInfobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
 			errorContent.addChild("#", l10n("expectedKeyButGot"));
 			errorContent.addChild("code", ks);
 			errorContent.addChild("br");
@@ -719,9 +723,10 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 					headNode.addChild("meta", "http-equiv", "Refresh").addAttribute("content", "2;URL=" + location);
 				}
 				HTMLNode contentNode = page.content;
-				HTMLNode infobox = contentNode.addChild("div", "class", "infobox infobox-information");
-				infobox.addChild("div", "class", "infobox-header", l10n("fetchingPageBox"));
-				HTMLNode infoboxContent = infobox.addChild("div", "class", "infobox-content");
+				HTMLNode infobox = contentNode.addChild(new div(HTMLCLASS.INFOBOX));
+				infobox.addClass(HTMLCLASS.INFOBOXINFORMATION);
+				infobox.addChild(new div(HTMLCLASS.INFOBOXHEADER, l10n("fetchingPageBox")));
+				HTMLNode infoboxContent = infobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
 				infoboxContent.addAttribute("id", "infoContent");
 				infoboxContent.addChild(new ProgressInfoElement(fetchTracker, key, fctx, maxSize, core.isAdvancedModeEnabled(), ctx, isWebPushingEnabled));
 
@@ -734,9 +739,11 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 					progressCell.addChild(new ProgressBarElement(fetchTracker,key,fctx,maxSize,ctx, isWebPushingEnabled));
 				}
 
-				infobox = contentNode.addChild("div", "class", "infobox infobox-information");
-				infobox.addChild("div", "class", "infobox-header", l10n("fetchingPageOptions"));
-				infoboxContent = infobox.addChild("div", "class", "infobox-content");
+				div information = new div(HTMLCLASS.INFOBOX);
+				information.addClass(HTMLCLASS.INFOBOXINFORMATION);
+				infobox = contentNode.addChild(information);
+				infobox.addChild(new div(HTMLCLASS.INFOBOXHEADER, l10n("fetchingPageOptions")));
+				infoboxContent = infobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
 
 				HTMLNode optionList = infoboxContent.addChild("ul");
 				optionList.addChild("li").addChild("p", l10n("progressOptionZero"));
@@ -836,9 +843,11 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 				HTMLNode pageNode = page.outer;
 				HTMLNode contentNode = page.content;
 
-				HTMLNode infobox = contentNode.addChild("div", "class", "infobox infobox-information");
-				infobox.addChild("div", "class", "infobox-header", l10n("largeFile"));
-				HTMLNode infoboxContent = infobox.addChild("div", "class", "infobox-content");
+				div information = new div(HTMLCLASS.INFOBOX);
+				information.addClass(HTMLCLASS.INFOBOXINFORMATION);
+				HTMLNode infobox = contentNode.addChild(information);
+				infobox.addChild(new div(HTMLCLASS.INFOBOXHEADER, l10n("largeFile")));
+				HTMLNode infoboxContent = infobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
 				HTMLNode fileInformationList = infoboxContent.addChild("ul");
 				HTMLNode option = fileInformationList.addChild("li");
 				option.addChild("#", (l10n("filenameLabel") + ' '));
@@ -846,9 +855,11 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 
 				String mime = writeSizeAndMIME(fileInformationList, e);
 
-				infobox = contentNode.addChild("div", "class", "infobox infobox-information");
-				infobox.addChild("div", "class", "infobox-header", l10n("explanationTitle"));
-				infoboxContent = infobox.addChild("div", "class", "infobox-content");
+				div informationbox = new div(HTMLCLASS.INFOBOX);
+				informationbox.addClass(HTMLCLASS.INFOBOXINFORMATION);
+				infobox = contentNode.addChild(informationbox);
+				infobox.addChild(new div(HTMLCLASS.INFOBOXHEADER, l10n("explanationTitle")));
+				infoboxContent = infobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
 				infoboxContent.addChild("#", l10n("largeFileExplanationAndOptions"));
 				HTMLNode optionList = infoboxContent.addChild("ul");
 				//HTMLNode optionTable = infoboxContent.addChild("table", "border", "0");
@@ -878,18 +889,20 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 				HTMLNode pageNode = page.outer;
 				HTMLNode contentNode = page.content;
 
-				HTMLNode infobox = contentNode.addChild("div", "class", "infobox infobox-error");
-				infobox.addChild("div", "class", "infobox-header", l10n("errorWithReason", "error", e.getShortMessage()));
-				HTMLNode infoboxContent = infobox.addChild("div", "class", "infobox-content");
+				HTMLNode infobox = contentNode.addChild(new div(HTMLCLASS.INFOBOX));
+				infobox.addClass(HTMLCLASS.INFOBOXERROR);
+				infobox.addChild(new div(HTMLCLASS.INFOBOXHEADER, l10n("errorWithReason", "error", e.getShortMessage())));
+				HTMLNode infoboxContent = infobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
 				HTMLNode fileInformationList = infoboxContent.addChild("ul");
 				HTMLNode option = fileInformationList.addChild("li");
 				option.addChild("#", (l10n("filenameLabel") + ' '));
 				option.addChild("a", "href", '/' + key.toString(), getFilename(key, e.getExpectedMimeType()));
 
 				String mime = writeSizeAndMIME(fileInformationList, e);
-				infobox = contentNode.addChild("div", "class", "infobox infobox-error");
-				infobox.addChild("div", "class", "infobox-header", l10n("explanationTitle"));
-				infoboxContent = infobox.addChild("div", "class", "infobox-content");
+				infobox = contentNode.addChild(new div(HTMLCLASS.INFOBOX));
+				infobox.addClass(HTMLCLASS.INFOBOXERROR);
+				infobox.addChild(new div(HTMLCLASS.INFOBOXHEADER, l10n("explanationTitle")));
+				infoboxContent = infobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
 				infoboxContent.addChild("p", l10n("unableToRetrieve"));
 				UnsafeContentTypeException filterException = null;
 				if(e.getCause() != null && e.getCause() instanceof UnsafeContentTypeException) {
@@ -910,9 +923,10 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 					infoboxContent.addChild("p").addChild("pre").addChild("#", e.errorCodes.toVerboseString());
 				}
 
-				infobox = contentNode.addChild("div", "class", "infobox infobox-error");
-				infobox.addChild("div", "class", "infobox-header", l10n("options"));
-				infoboxContent = infobox.addChild("div", "class", "infobox-content");
+				infobox = contentNode.addChild(new div(HTMLCLASS.INFOBOX));
+				infobox.addClass(HTMLCLASS.INFOBOXERROR);
+				infobox.addChild(new div(HTMLCLASS.INFOBOXHEADER, l10n("options")));
+				infoboxContent = infobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
 
 				HTMLNode optionList = infoboxContent.addChild("ul");
 

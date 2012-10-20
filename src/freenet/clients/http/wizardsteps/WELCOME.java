@@ -7,6 +7,7 @@ import freenet.config.Option;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.api.HTTPRequest;
+import freenet.support.htmlPrimitives.div;
 
 /**
  * This step is the first, and provides a small welcome screen and an option to change the language.
@@ -85,7 +86,8 @@ public class WELCOME implements Step {
 		header.addChild("th", "width", "33%", WizardL10n.l10n("presetTitle"+preset));
 		HTMLNode tableCell = row.addChild("td");
 		tableCell.addChild("p", WizardL10n.l10n("preset" + preset));
-		HTMLNode centerForm = tableCell.addChild("div", "style", "text-align:center;");
+		HTMLNode centerForm = tableCell.addChild(new div());
+		centerForm.addAttribute("style", "text-align:center;");
 		HTMLNode secForm = helper.addFormChild(centerForm, ".", "SecForm"+preset);
 		secForm.addChild("input",
 		        new String[]{"type", "name", "value", },

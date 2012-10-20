@@ -13,6 +13,8 @@ import freenet.keys.FreenetURI;
 import freenet.l10n.NodeL10n;
 import freenet.support.Base64;
 import freenet.support.HTMLNode;
+import freenet.support.htmlPrimitives.HTMLCLASS;
+import freenet.support.htmlPrimitives.div;
 
 /** A pushed element that renders the progress bar when loading a page. */
 public class ProgressBarElement extends BaseUpdateableElement {
@@ -52,7 +54,7 @@ public class ProgressBarElement extends BaseUpdateableElement {
 		FProxyFetchWaiter waiter = progress == null ? null : progress.getWaiter();
 		FProxyFetchResult fr = waiter == null ? null : waiter.getResult();
 		if (fr == null) {
-			addChild("div", "No fetcher found");
+			addChild(new div(HTMLCLASS.NONE, "No fetcher found"));
 		} else {
 			if (fr.isFinished() || fr.hasData() || fr.failed != null) {
 				// If finished then we just send a FINISHED text. It will reload the page
@@ -62,23 +64,35 @@ public class ProgressBarElement extends BaseUpdateableElement {
 				int fetchedPercent = (int) (fr.fetchedBlocks / (double) total * 100);
 				int failedPercent = (int) (fr.failedBlocks / (double) total * 100);
 				int fatallyFailedPercent = (int) (fr.fatallyFailedBlocks / (double) total * 100);
-				HTMLNode progressBar = addChild("div", "class", "progressbar");
-				progressBar.addChild("div", new String[] { "class", "style" }, new String[] { "progressbar-done", "width: " + fetchedPercent + "%;" });
-				
-				if (fr.failedBlocks > 0)
-					progressBar.addChild("div", new String[] { "class", "style" }, new String[] { "progressbar-failed", "width: " + failedPercent + "%;" });
-				if (fr.fatallyFailedBlocks > 0)
-					progressBar.addChild("div", new String[] { "class", "style" }, new String[] { "progressbar-failed2", "width: " + fatallyFailedPercent + "%;" });
+				HTMLNode progressBar = addChild(new div(HTMLCLASS.PROGRESSBAR));
+				div done = new div(HTMLCLASS.PROGRESSBARDONE);
+				done.addAttribute("style", "width: " + fetchedPercent + "%;");
+				progressBar.addChild(done);
+
+				if (fr.failedBlocks > 0) {
+					div failed = new div(HTMLCLASS.PROGRESSBARFAILED);
+					failed.addAttribute("style", "width: " + failedPercent + "%;");
+					progressBar.addChild(failed);
+				}
+				if (fr.fatallyFailedBlocks > 0) {
+					div failed2 = new div(HTMLCLASS.PROGRESSBARFAILED2);
+					failed2.addAttribute("style", "width: " + fatallyFailedPercent + "%;");
+					progressBar.addChild(failed2);
+				}
 				
 				NumberFormat nf = NumberFormat.getInstance();
 				nf.setMaximumFractionDigits(1);
 				String prefix = '('+Integer.toString(fr.fetchedBlocks) + "/ " + Integer.toString(total)+"): ";
 				if (fr.finalizedBlocks) {
-					progressBar.addChild("div", new String[] { "class", "title" }, new String[] { "progress_fraction_finalized", prefix + NodeL10n.getBase().getString("QueueToadlet.progressbarAccurate") }, nf.format((int) ((fr.fetchedBlocks / (double) total) * 1000) / 10.0) + '%');
+					div finalized = new div(HTMLCLASS.PROGRESSBARFINAL, nf.format((int) ((fr.fetchedBlocks / (double) total) * 1000) / 10.0) + '%');
+					finalized.addAttribute("title", prefix + NodeL10n.getBase().getString("QueueToadlet.progressbarAccurate"));
+					progressBar.addChild(finalized);
 				} else {
 					String text = nf.format((int) ((fr.fetchedBlocks / (double) total) * 1000) / 10.0)+ '%';
 					text = "" + fr.fetchedBlocks + " ("+text+"??)";
-					progressBar.addChild("div", new String[] { "class", "title" }, new String[] { "progress_fraction_not_finalized", prefix + NodeL10n.getBase().getString("QueueToadlet.progressbarNotAccurate") }, text);
+					div notfinalized = new div(HTMLCLASS.PROGRESSBARNOTFINAL, text);
+					notfinalized.addAttribute("title", prefix + NodeL10n.getBase().getString("QueueToadlet.progressbarNotAccurate"));
+					progressBar.addChild(notfinalized);
 				}
 			}
 		}

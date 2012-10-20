@@ -13,6 +13,7 @@ import freenet.node.PeerNode;
 import freenet.node.fcp.FCPMessage;
 import freenet.node.fcp.TextFeedMessage;
 import freenet.support.HTMLNode;
+import freenet.support.htmlPrimitives.div;
 
 // Node To Node Text Message User Alert
 public class N2NTMUserAlert extends AbstractUserAlert {
@@ -64,7 +65,7 @@ public class N2NTMUserAlert extends AbstractUserAlert {
 
 	@Override
 	public HTMLNode getHTMLText() {
-		HTMLNode alertNode = new HTMLNode("div");
+		div alertNode = new div();
 		alertNode.addChild("p", l10n("header", new String[] { "from",
 				"composed", "sent", "received" }, new String[] {
 				sourceNodeName,

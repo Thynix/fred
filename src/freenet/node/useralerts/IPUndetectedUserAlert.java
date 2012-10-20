@@ -8,6 +8,7 @@ import freenet.config.SubConfig;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
 import freenet.support.HTMLNode;
+import freenet.support.htmlPrimitives.div;
 
 public class IPUndetectedUserAlert extends AbstractUserAlert {
 	
@@ -56,7 +57,7 @@ public class IPUndetectedUserAlert extends AbstractUserAlert {
 
 	@Override
 	public HTMLNode getHTMLText() {
-		HTMLNode textNode = new HTMLNode("div");
+		div textNode = new div();
 		SubConfig sc = node.config.get("node");
 		Option<?> o = sc.getOption("tempIPAddressHint");
 		

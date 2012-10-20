@@ -8,6 +8,9 @@ import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
+import freenet.support.htmlPrimitives.HTMLCLASS;
+import freenet.support.htmlPrimitives.HTMLID;
+import freenet.support.htmlPrimitives.div;
 
 import java.io.File;
 import java.io.IOException;
@@ -200,11 +203,12 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 	 * @return result HTMLNode containing hidden persistence fields
 	 */
 	private HTMLNode renderPersistenceFields (Hashtable<String, String> fieldPairs) {
-		HTMLNode result = new HTMLNode("div", "id", "persistenceFields");
+		div result = new div();
+		result.setID(HTMLID.PERSISTENCEFIELDS);
 		for (String key : fieldPairs.keySet()) {
 			result.addChild("input", 
-			        new String[] { "type", "name", "value" },
-			        new String[] { "hidden", key, fieldPairs.get(key)});
+				new String[] { "type", "name", "value" },
+				new String[] { "hidden", key, fieldPairs.get(key)});
 		}
 		return result;
 	}
@@ -305,10 +309,10 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 			HTMLNode contentNode = page.content;
 			if (ctx.isAllowedFullAccess()) contentNode.addChild(core.alerts.createSummary());
 			
-			HTMLNode infoboxDiv = contentNode.addChild("div", "class", "infobox");
-			infoboxDiv.addChild("div", "class", "infobox-header", l10n("listing", "path",
-			        currentPath.getAbsolutePath()));
-			HTMLNode listingDiv = infoboxDiv.addChild("div", "class", "infobox-content");
+			HTMLNode infoboxDiv = contentNode.addChild(new div(HTMLCLASS.INFOBOX));
+			infoboxDiv.addChild(new div(HTMLCLASS.INFOBOXHEADER, l10n("listing", "path",currentPath.
+				getAbsolutePath())));
+			HTMLNode listingDiv = infoboxDiv.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
 			
 			File[] files = currentPath.listFiles();
 			
@@ -415,9 +419,9 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 			HTMLNode contentNode = page.content;
 			if (ctx.isAllowedFullAccess()) contentNode.addChild(core.alerts.createSummary());
 			
-			HTMLNode infoboxDiv = contentNode.addChild("div", "class", "infobox");
-			infoboxDiv.addChild("div", "class", "infobox-header", l10n("listing", "path", attemptedPath));
-			HTMLNode listingDiv = infoboxDiv.addChild("div", "class", "infobox-content");
+			HTMLNode infoboxDiv = contentNode.addChild(new div(HTMLCLASS.INFOBOX));
+			infoboxDiv.addChild(new div (HTMLCLASS.INFOBOXHEADER, l10n("listing", "path", attemptedPath)));
+			HTMLNode listingDiv = infoboxDiv.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
 
 			listingDiv.addChild("#", l10n("dirCannotBeRead", "path", attemptedPath));
 			HTMLNode ulNode = listingDiv.addChild("ul");

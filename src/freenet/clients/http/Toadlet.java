@@ -26,6 +26,8 @@ import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.MultiValueTable;
 import freenet.support.api.Bucket;
+import freenet.support.htmlPrimitives.HTMLCLASS;
+import freenet.support.htmlPrimitives.div;
 
 /**
  * Replacement for servlets. Just an easy to use HTTP interface, which is
@@ -75,9 +77,10 @@ public abstract class Toadlet {
 		HTMLNode pageNode = page.outer;
 		HTMLNode contentNode = page.content;
 
-		HTMLNode infobox = contentNode.addChild("div", "class", "infobox infobox-error");
-		infobox.addChild("div", "class", "infobox-header", l10n("notSupportedTitle"));
-		infobox.addChild("div", "class", "infobox-content", l10n("notSupportedWithClass", "class", getClass().getName()));
+		HTMLNode infobox = contentNode.addChild(new div(HTMLCLASS.INFOBOX));
+		infobox.addClass(HTMLCLASS.INFOBOXERROR);
+		infobox.addChild(new div(HTMLCLASS.INFOBOXHEADER, l10n("notSupportedTitle")));
+		infobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT, l10n("notSupportedWithClass", "class", getClass().getName())));
 
 		MultiValueTable<String, String> hdrtbl = new MultiValueTable<String, String>();
 		hdrtbl.put("Allow", findSupportedMethods());
