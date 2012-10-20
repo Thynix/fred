@@ -2,6 +2,8 @@ package freenet.node.useralerts;
 
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
+import freenet.support.htmlPrimitives.HTMLCLASS;
+import freenet.support.htmlPrimitives.div;
 
 public class ExtOldAgeUserAlert extends AbstractUserAlert {
 	
@@ -28,7 +30,7 @@ public class ExtOldAgeUserAlert extends AbstractUserAlert {
 
 	@Override
 	public HTMLNode getHTMLText() {
-		return new HTMLNode("div", getText());
+		return new div(HTMLCLASS.NONE, getText());
 	}
 
 	@Override

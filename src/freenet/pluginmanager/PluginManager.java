@@ -30,6 +30,7 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipException;
 
+import freenet.support.htmlPrimitives.div;
 import org.tanukisoftware.wrapper.WrapperManager;
 
 import com.db4o.ObjectContainer;
@@ -563,28 +564,28 @@ public class PluginManager {
 
 		@Override
 		public HTMLNode getHTMLText() {
-			HTMLNode div = new HTMLNode("div");
-			HTMLNode p = div.addChild("p");
+			div div_ = new div();
+			HTMLNode p = div_.addChild("p");
 			p.addChild("#", l10n("pluginLoadingFailedWithMessage", new String[] { "name", "message" }, new String[] { filename, message }));
 			if(stillTryingOverFreenet) {
-				div.addChild("p", l10n("pluginLoadingFailedStillTryingOverFreenet"));
+				div_.addChild("p", l10n("pluginLoadingFailedStillTryingOverFreenet"));
 			}
 
 			if(official) {
-				p = div.addChild("p");
+				p = div_.addChild("p");
 				if(officialFromFreenet)
 					p.addChild("#", l10n("officialPluginLoadFailedSuggestTryAgainFreenet"));
 				else
 					p.addChild("#", l10n("officialPluginLoadFailedSuggestTryAgainHTTPS"));
 
-				HTMLNode reloadForm = div.addChild("form", new String[] { "action", "method" }, new String[] { "/plugins/", "post" });
+				HTMLNode reloadForm = div_.addChild("form", new String[] { "action", "method" }, new String[] { "/plugins/", "post" });
 				reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", node.clientCore.formPassword });
 				reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "plugin-name", filename });
 				reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "pluginSource", "https" });
 				reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "submit-official", l10n("officialPluginLoadFailedTryAgain") });
 
 				if(!stillTryingOverFreenet) {
-					reloadForm = div.addChild("form", new String[] { "action", "method" }, new String[] { "/plugins/", "post" });
+					reloadForm = div_.addChild("form", new String[] { "action", "method" }, new String[] { "/plugins/", "post" });
 					reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", node.clientCore.formPassword });
 					reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "plugin-name", filename });
 					reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "pluginSource", "freenet" });
@@ -592,7 +593,7 @@ public class PluginManager {
 				}
 			}
 
-			return div;
+			return div_;
 		}
 
 		@Override

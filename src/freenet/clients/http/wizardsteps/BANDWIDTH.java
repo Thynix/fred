@@ -12,6 +12,7 @@ import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.SizeUtil;
 import freenet.support.api.HTTPRequest;
+import freenet.support.htmlPrimitives.div;
 
 /**
  * Asks the user whether their connection has a monthly cap to inform how to prompt for bandwidth limits.
@@ -33,9 +34,9 @@ public class BANDWIDTH implements Step {
 		bandwidthForm.addChild("input",
 		        new String[] { "type", "name", "value" },
 		        new String[] { "submit", "no", NodeL10n.getBase().getString("Toadlet.no")});
-		bandwidthForm.addChild("div").addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "back", NodeL10n.getBase().getString("Toadlet.back")});
+		bandwidthForm.addChild(new div()).addChild("input",
+			new String[]{"type", "name", "value"},
+			new String[]{"submit", "back", NodeL10n.getBase().getString("Toadlet.back")});
 	}
 
 	@Override

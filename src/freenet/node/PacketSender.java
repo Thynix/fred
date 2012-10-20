@@ -17,6 +17,7 @@ import freenet.support.Logger;
 import freenet.support.Logger.LogLevel;
 import freenet.support.OOMHandler;
 import freenet.support.TimeUtil;
+import freenet.support.htmlPrimitives.div;
 import freenet.support.io.NativeThread;
 import freenet.support.math.MersenneTwister;
 
@@ -538,21 +539,21 @@ public class PacketSender implements Runnable {
 
         @Override
 		public HTMLNode getHTMLText() {
-			HTMLNode div = new HTMLNode("div");
+			div div_ = new div();
 			Peer[] peers;
 			synchronized(peersDumpedBlockedTooLong) {
 				peers = peersDumpedBlockedTooLong.toArray(new Peer[peersDumpedBlockedTooLong.size()]);
 			}
-			NodeL10n.getBase().addL10nSubstitution(div,
+			NodeL10n.getBase().addL10nSubstitution(div_,
 			        "PacketSender.somePeersDisconnectedBlockedTooLongDetail",
 			        new String[] { "count", "link" },
 			        new HTMLNode[] { HTMLNode.text(peers.length),
 			                HTMLNode.link(ExternalLinkToadlet.escape("https://bugs.freenetproject.org/"))});
-			HTMLNode list = div.addChild("ul");
+			HTMLNode list = div_.addChild("ul");
 			for(Peer peer : peers) {
 				list.addChild("li", peer.toString());
 			}
-			return div;
+			return div_;
 		}
 
         @Override

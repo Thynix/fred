@@ -9,6 +9,7 @@ import freenet.node.PeerNode;
 import freenet.node.fcp.FCPMessage;
 import freenet.node.fcp.URIFeedMessage;
 import freenet.support.HTMLNode;
+import freenet.support.htmlPrimitives.div;
 
 public class DownloadFeedUserAlert extends AbstractUserAlert {
 	private final WeakReference<PeerNode> peerRef;
@@ -54,7 +55,7 @@ public class DownloadFeedUserAlert extends AbstractUserAlert {
 
 	@Override
 	public HTMLNode getHTMLText() {
-		HTMLNode alertNode = new HTMLNode("div");
+		div alertNode = new div();
 		alertNode.addChild("a", "href", "/" + uri).addChild("#", uri.toShortString());
 		if (description != null && description.length() != 0) {
 			String[] lines = description.split("\n");

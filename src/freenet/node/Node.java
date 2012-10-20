@@ -35,6 +35,7 @@ import java.util.MissingResourceException;
 import java.util.Random;
 import java.util.Set;
 
+import freenet.support.htmlPrimitives.div;
 import org.tanukisoftware.wrapper.WrapperManager;
 
 import com.db4o.Db4o;
@@ -3162,7 +3163,7 @@ public class Node implements TimeSkewDetectorCallback {
 
 		@Override
 		public HTMLNode getHTMLText() {
-			HTMLNode content = new HTMLNode("div");
+			div content = new div();
 			SecurityLevelsToadlet.generatePasswordFormPage(false, clientCore.getToadletContainer(), content, false, false, false, null, null);
 			return content;
 		}
@@ -3285,9 +3286,9 @@ public class Node implements TimeSkewDetectorCallback {
 
 				@Override
 				public HTMLNode getHTMLText() {
-					HTMLNode div = new HTMLNode("div");
-					div.addChild("#", NodeL10n.getBase().getString("Node.storeSaltHashMigrated"));
-					HTMLNode ul = div.addChild("ul");
+					div div_ = new div();
+					div_.addChild("#", NodeL10n.getBase().getString("Node.storeSaltHashMigrated"));
+					HTMLNode ul = div_.addChild("ul");
 
 					for (String type : new String[] { "chk", "pubkey", "ssk" })
 						for (String storecache : new String[] { "store", "store.keys", "store.lru", "cache",
@@ -3301,7 +3302,7 @@ public class Node implements TimeSkewDetectorCallback {
 					if (dbDir.exists())
 						ul.addChild("li", dbDir.getAbsolutePath());
 
-					return div;
+					return div_;
 				}
 
 				@Override
@@ -5182,20 +5183,20 @@ public class Node implements TimeSkewDetectorCallback {
 	}
 
 	public void drawClientCacheBox(HTMLNode storeSizeInfobox) {
-		HTMLNode div = storeSizeInfobox.addChild("div");
-		div.addChild("p", "Client cache max size: "+this.maxClientCacheKeys+" keys");
-		div.addChild("p", "Client cache size: CHK "+this.chkClientcache.keyCount()+" pubkey "+this.pubKeyClientcache.keyCount()+" SSK "+this.sskClientcache.keyCount());
-		div.addChild("p", "Client cache misses: CHK "+this.chkClientcache.misses()+" pubkey "+this.pubKeyClientcache.misses()+" SSK "+this.sskClientcache.misses());
-		div.addChild("p", "Client cache hits: CHK "+this.chkClientcache.hits()+" pubkey "+this.pubKeyClientcache.hits()+" SSK "+this.sskClientcache.hits());
+		HTMLNode div_ = storeSizeInfobox.addChild(new div());
+		div_.addChild("p", "Client cache max size: " + this.maxClientCacheKeys + " keys");
+		div_.addChild("p", "Client cache size: CHK " + this.chkClientcache.keyCount() + " pubkey " + this.pubKeyClientcache.keyCount() + " SSK " + this.sskClientcache.keyCount());
+		div_.addChild("p", "Client cache misses: CHK " + this.chkClientcache.misses() + " pubkey " + this.pubKeyClientcache.misses() + " SSK " + this.sskClientcache.misses());
+		div_.addChild("p", "Client cache hits: CHK " + this.chkClientcache.hits() + " pubkey " + this.pubKeyClientcache.hits() + " SSK " + this.sskClientcache.hits());
 	}
 
 	public void drawSlashdotCacheBox(HTMLNode storeSizeInfobox) {
-		HTMLNode div = storeSizeInfobox.addChild("div");
-		div.addChild("p", "Slashdot/ULPR cache max size: "+maxSlashdotCacheKeys+" keys");
-		div.addChild("p", "Slashdot/ULPR cache size: CHK "+this.chkSlashdotcache.keyCount()+" pubkey "+this.pubKeySlashdotcache.keyCount()+" SSK "+this.sskSlashdotcache.keyCount());
-		div.addChild("p", "Slashdot/ULPR cache misses: CHK "+this.chkSlashdotcache.misses()+" pubkey "+this.pubKeySlashdotcache.misses()+" SSK "+this.sskSlashdotcache.misses());
-		div.addChild("p", "Slashdot/ULPR cache hits: CHK "+this.chkSlashdotcache.hits()+" pubkey "+this.pubKeySlashdotcache.hits()+" SSK "+this.sskSlashdotcache.hits());
-		div.addChild("p", "Slashdot/ULPR cache writes: CHK "+this.chkSlashdotcache.writes()+" pubkey "+this.pubKeySlashdotcache.writes()+" SSK "+this.sskSlashdotcache.writes());
+		HTMLNode div_ = storeSizeInfobox.addChild(new div());
+		div_.addChild("p", "Slashdot/ULPR cache max size: " + maxSlashdotCacheKeys + " keys");
+		div_.addChild("p", "Slashdot/ULPR cache size: CHK " + this.chkSlashdotcache.keyCount() + " pubkey " + this.pubKeySlashdotcache.keyCount() + " SSK " + this.sskSlashdotcache.keyCount());
+		div_.addChild("p", "Slashdot/ULPR cache misses: CHK " + this.chkSlashdotcache.misses() + " pubkey " + this.pubKeySlashdotcache.misses() + " SSK " + this.sskSlashdotcache.misses());
+		div_.addChild("p", "Slashdot/ULPR cache hits: CHK " + this.chkSlashdotcache.hits() + " pubkey " + this.pubKeySlashdotcache.hits() + " SSK " + this.sskSlashdotcache.hits());
+		div_.addChild("p", "Slashdot/ULPR cache writes: CHK " + this.chkSlashdotcache.writes() + " pubkey " + this.pubKeySlashdotcache.writes() + " SSK " + this.sskSlashdotcache.writes());
 	}
 
 	private boolean enteredPassword;

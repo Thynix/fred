@@ -21,6 +21,9 @@ import freenet.support.MultiValueTable;
 import freenet.support.SizeUtil;
 import freenet.support.api.HTTPRequest;
 import freenet.support.api.HTTPUploadedFile;
+import freenet.support.htmlPrimitives.HTMLCLASS;
+import freenet.support.htmlPrimitives.HTMLID;
+import freenet.support.htmlPrimitives.div;
 
 public class N2NTMToadlet extends Toadlet {
 	private Node node;
@@ -72,9 +75,9 @@ public class N2NTMToadlet extends Toadlet {
 				}
 			}
 			if (peernode_name == null) {
-				contentNode.addChild(createPeerInfobox("infobox-error",
-						l10n("peerNotFoundTitle"), l10n("peerNotFoundWithHash",
-								"hash", input_hashcode_string)));
+				contentNode.addChild(createPeerInfobox(HTMLCLASS.INFOBOXERROR,
+					l10n("peerNotFoundTitle"), l10n("peerNotFoundWithHash",
+					"hash", input_hashcode_string)));
 				this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 				return;
 			}
@@ -111,11 +114,10 @@ public class N2NTMToadlet extends Toadlet {
 		return limit;
 	}
 
-	private static HTMLNode createPeerInfobox(String infoboxType,
-			String header, String message) {
-		HTMLNode infobox = new HTMLNode("div", "class", "infobox "+infoboxType);
-		infobox.addChild("div", "class", "infobox-header", header);
-		HTMLNode infoboxContent = infobox.addChild("div", "class", "infobox-content");
+	private static HTMLNode createPeerInfobox(HTMLCLASS infoboxType, String header, String message) {
+		HTMLNode infobox = new div(infoboxType);
+		infobox.addChild(new div(HTMLCLASS.INFOBOXHEADER, header));
+		HTMLNode infoboxContent = infobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
 		infoboxContent.addChild("#", message);
 		HTMLNode list = infoboxContent.addChild("ul");
 		Toadlet.addHomepageLink(list);
@@ -163,7 +165,8 @@ public class N2NTMToadlet extends Toadlet {
 			PageNode page =  ctx.getPageMaker().getPageNode(l10n("processingSend"), ctx);
 			HTMLNode pageNode = page.outer;
 			HTMLNode contentNode = page.content;
-			HTMLNode peerTableInfobox = contentNode.addChild("div", "class", "infobox infobox-normal");
+			HTMLNode peerTableInfobox = contentNode.addChild(new div(HTMLCLASS.INFOBOX));
+			peerTableInfobox.addClass(HTMLCLASS.INFOBOXNORMAL);
 			DarknetPeerNode[] peerNodes = node.getDarknetConnections();
 			if(request.isPartSet(LocalFileBrowserToadlet.selectFile)) {
 				String fnam = request.getPartAsStringFailsafe("filename", 1024);
@@ -259,8 +262,7 @@ public class N2NTMToadlet extends Toadlet {
 									sendStatusShort);
 				}
 			}
-			HTMLNode infoboxContent = peerTableInfobox.addChild("div", "class",
-					"n2ntm-message-text");
+			HTMLNode infoboxContent = peerTableInfobox.addChild(new div(HTMLCLASS.N2NTMMESSAGETEXT));
 			infoboxContent.addChild("#", message);
 			HTMLNode list = peerTableInfobox.addChild("ul");
 			Toadlet.addHomepageLink(list);
@@ -278,18 +280,17 @@ public class N2NTMToadlet extends Toadlet {
 	public static void createN2NTMSendForm(HTMLNode pageNode, boolean advancedMode,
 			HTMLNode contentNode, ToadletContext ctx, HashMap<String, String> peers)
 			throws ToadletContextClosedException, IOException {
-		HTMLNode infobox = contentNode.addChild("div", new String[] { "class",
-				"id" }, new String[] { "infobox", "n2nbox" });
-		infobox.addChild("div", "class", "infobox-header", l10n("sendMessage"));
-		HTMLNode messageTargets = infobox.addChild("div", "class",
-				"infobox-content");
+		HTMLNode infobox = contentNode.addChild(new div(HTMLCLASS.INFOBOX));
+		infobox.setID(HTMLID.N2NBOX);
+		infobox.addChild(new div(HTMLCLASS.INFOBOXHEADER, l10n("sendMessage")));
+		HTMLNode messageTargets = infobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT, "infobox-content"));
 		messageTargets.addChild("p", l10n("composingMessageLabel"));
 		HTMLNode messageTargetList = messageTargets.addChild("ul");
 		// Iterate peers
 		for (String peer_name: peers.values()) {
 			messageTargetList.addChild("li", peer_name);
 		}
-		HTMLNode infoboxContent = infobox.addChild("div", "class", "infobox-content");
+		HTMLNode infoboxContent = infobox.addChild(new div(HTMLCLASS.INFOBOXCONTENT));
 		HTMLNode messageForm = ctx.addFormChild(infoboxContent, "/send_n2ntm/", "sendN2NTMForm");
 		// Iterate peers
 		for (String peerNodeHash : peers.keySet()) {
