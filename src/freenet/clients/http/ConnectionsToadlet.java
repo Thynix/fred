@@ -48,7 +48,7 @@ import freenet.support.SizeUtil;
 import freenet.support.TimeUtil;
 import freenet.support.api.HTTPRequest;
 import freenet.support.io.Closer;
-import freenet.support.htmlPrimitives.HTMLCLASS
+import freenet.support.htmlPrimitives.HTMLCLASS;
 import freenet.support.htmlPrimitives.div;
 
 /** Base class for DarknetConnectionsToadlet and OpennetConnectionsToadlet */
