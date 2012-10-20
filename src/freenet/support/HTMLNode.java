@@ -327,7 +327,7 @@ public class HTMLNode implements XMLCharacterClasses {
 	}
 
 	/**
-	 * Add a class to the list of class attributes.<br/>
+	 * Add a html class to the list of class attributes.<br/>
 	 * A duplicate class attribute will not be added.<br/>
 	 * As classes are space-separated, if the class name has spaces multiple classes will be added.
 	 *
@@ -345,6 +345,14 @@ public class HTMLNode implements XMLCharacterClasses {
 		} else {
 			attributes.put(CLASS, bookended);
 		}
+	}
+
+	/**
+	 * Set the html "id" attribute
+	 * @param tagID ID attribute to be set
+	 */
+	public void setID(final String tagID) {
+		attributes.put("id", tagID);
 	}
 
 	public String generate() {
