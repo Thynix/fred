@@ -31,6 +31,7 @@ import freenet.support.api.BooleanCallback;
 import freenet.support.api.HTTPRequest;
 import freenet.support.htmlprimitives.Div;
 import freenet.support.htmlprimitives.HTMLClass;
+import freenet.support.uielements.InfoboxWidget;
 
 /**
  * Node Configuration Toadlet. Accessible from <code>http://.../config/</code>.
@@ -446,11 +447,8 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 
 		contentNode.addChild(core.alerts.createSummary());
 
-		HTMLNode infobox = contentNode.addChild(new Div(HTMLClass.INFOBOX));
-		infobox.addClass(HTMLClass.INFOBOXNORMAL);
-		infobox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("title")));
-		HTMLNode configNode = infobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-		HTMLNode formNode = ctx.addFormChild(configNode, path(), "configForm");
+		InfoboxWidget configformcontainer = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10n("title"));
+		HTMLNode formNode = ctx.addFormChild(configformcontainer.header, path(), "configForm");
 
 		// Invisible apply button at the top so that an enter keypress will
 		// apply settings instead of
