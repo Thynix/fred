@@ -4,6 +4,7 @@ public enum HTMLID {
 	CONTENT("content"),
 	PAGE("page"),
 	PERSISTENCEFIELDS("persistenceFields"),
+	MESSAGESUMMARYBOX("messages-summary-box"),
 	NAVBAR("navbar"),
 	N2NBOX("n2nbox"),
 	SELECTEDSUBNAVBAR("selected-subnavbar"),

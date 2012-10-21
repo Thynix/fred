@@ -67,6 +67,7 @@ import freenet.support.io.BucketTools;
 import freenet.support.io.Closer;
 import freenet.support.io.FileUtil;
 import freenet.support.io.NoFreeBucket;
+import freenet.support.uielements.InfoboxWidget;
 
 public final class FProxyToadlet extends Toadlet implements RequestClient {
 
@@ -182,13 +183,11 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 				HTMLNode pageNode = page.outer;
 				HTMLNode contentNode = page.content;
 
-				HTMLNode infobox = contentNode.addChild(new Div(HTMLClass.INFOBOX));
-				infobox.addClass(HTMLClass.INFOBOXALERT);
-				infobox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("dangerousRSSSubtitle")));
-				HTMLNode infoboxContent = infobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-				infoboxContent.addChild("#", NodeL10n.getBase().getString("FProxyToadlet.dangerousRSS", new String[] { "type" }, new String[] { mimeType }));
-				infoboxContent.addChild("p", l10n("options"));
-				HTMLNode optionList = infoboxContent.addChild("ul");
+				InfoboxWidget dangerousRSSwarning = new InfoboxWidget(InfoboxWidget.Type.ALERT, l10n("dangerousRSSSubtitle"));
+				contentNode.addChild(dangerousRSSwarning);
+				dangerousRSSwarning.body.addChild("#", NodeL10n.getBase().getString("FProxyToadlet.dangerousRSS", new String[]{"type"}, new String[]{mimeType}));
+				dangerousRSSwarning.body.addChild("p", l10n("options"));
+				HTMLNode optionList = dangerousRSSwarning.body.addChild("ul");
 				HTMLNode option = optionList.addChild("li");
 
 				NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.openPossRSSAsPlainText", new String[] { "link", "bold" },
@@ -599,16 +598,16 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 			HTMLNode pageNode = page.outer;
 			HTMLNode contentNode = page.content;
 
-			HTMLNode errorInfobox = contentNode.addChild(new Div(HTMLClass.INFOBOX));
-			errorInfobox.addClass(HTMLClass.INFOBOXERROR);
-			errorInfobox.addChild(new Div(HTMLClass.INFOBOXHEADER, NodeL10n.getBase().getString("FProxyToadlet.invalidKeyWithReason", new String[] { "reason" }, new String[] { e.toString() })));
-			HTMLNode errorContent = errorInfobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-			errorContent.addChild("#", l10n("expectedKeyButGot"));
-			errorContent.addChild("code", ks);
-			errorContent.addChild("br");
-			errorContent.addChild(ctx.getPageMaker().createBackLink(ctx, l10n("goBack")));
-			errorContent.addChild("br");
-			addHomepageLink(errorContent);
+			InfoboxWidget errorInfobox = new InfoboxWidget(InfoboxWidget.Type.ERROR, NodeL10n.getBase().
+				getString("FProxyToadlet.invalidKeyWithReason", new String[]{"reason"},
+					new String[]{e.toString()}));
+			contentNode.addChild(errorInfobox);
+			errorInfobox.body.addChild("#", l10n("expectedKeyButGot"));
+			errorInfobox.body.addChild("code", ks);
+			errorInfobox.body.addChild("br");
+			errorInfobox.body.addChild(ctx.getPageMaker().createBackLink(ctx, l10n("goBack")));
+			errorInfobox.body.addChild("br");
+			addHomepageLink(errorInfobox.body);
 
 			this.writeHTMLReply(ctx, 400, l10n("invalidKeyTitle"), pageNode.generate());
 			return;
@@ -719,15 +718,12 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 					headNode.addChild("meta", "http-equiv", "Refresh").addAttribute("content", "2;URL=" + location);
 				}
 				HTMLNode contentNode = page.content;
-				HTMLNode infobox = contentNode.addChild(new Div(HTMLClass.INFOBOX));
-				infobox.addClass(HTMLClass.INFOBOXINFORMATION);
-				infobox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("fetchingPageBox")));
-				HTMLNode infoboxContent = infobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-				infoboxContent.addAttribute("id", "infoContent");
-				infoboxContent.addChild(new ProgressInfoElement(fetchTracker, key, fctx, maxSize, core.isAdvancedModeEnabled(), ctx, isWebPushingEnabled));
+				InfoboxWidget fetchingPage = new InfoboxWidget(InfoboxWidget.Type.INFORMATION, l10n("fetchingPageBox"));
+				contentNode.addChild(fetchingPage);
+				fetchingPage.body.addAttribute("id", "infoContent");
+				fetchingPage.body.addChild(new ProgressInfoElement(fetchTracker, key, fctx, maxSize, core.isAdvancedModeEnabled(), ctx, isWebPushingEnabled));
 
-
-				HTMLNode table = infoboxContent.addChild("table", "border", "0");
+				HTMLNode table = fetchingPage.body.addChild("table", "border", "0");
 				HTMLNode progressCell = table.addChild("tr").addChild("td", "class", "request-progress");
 				if(fr.totalBlocks <= 0)
 					progressCell.addChild("#", NodeL10n.getBase().getString("QueueToadlet.unknown"));
@@ -735,13 +731,9 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 					progressCell.addChild(new ProgressBarElement(fetchTracker,key,fctx,maxSize,ctx, isWebPushingEnabled));
 				}
 
-				Div information = new Div(HTMLClass.INFOBOX);
-				information.addClass(HTMLClass.INFOBOXINFORMATION);
-				infobox = contentNode.addChild(information);
-				infobox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("fetchingPageOptions")));
-				infoboxContent = infobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-
-				HTMLNode optionList = infoboxContent.addChild("ul");
+				InfoboxWidget fetchingPageOptions = new InfoboxWidget(InfoboxWidget.Type.INFORMATION, l10n("fetchingPageOptions"));
+				contentNode.addChild(fetchingPageOptions);
+				HTMLNode optionList = fetchingPageOptions.body.addChild("ul");
 				optionList.addChild("li").addChild("p", l10n("progressOptionZero"));
 
 				addDownloadOptions(ctx, optionList, key, mimeType, false, false, core);
@@ -839,25 +831,19 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 				HTMLNode pageNode = page.outer;
 				HTMLNode contentNode = page.content;
 
-				Div information = new Div(HTMLClass.INFOBOX);
-				information.addClass(HTMLClass.INFOBOXINFORMATION);
-				HTMLNode infobox = contentNode.addChild(information);
-				infobox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("largeFile")));
-				HTMLNode infoboxContent = infobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-				HTMLNode fileInformationList = infoboxContent.addChild("ul");
+				InfoboxWidget largeFile = new InfoboxWidget(InfoboxWidget.Type.INFORMATION, l10n("largeFile"));
+				contentNode.addChild(largeFile);
+				HTMLNode fileInformationList = largeFile.body.addChild("ul");
 				HTMLNode option = fileInformationList.addChild("li");
 				option.addChild("#", (l10n("filenameLabel") + ' '));
 				option.addChild("a", "href", '/' + key.toString(), getFilename(key, e.getExpectedMimeType()));
 
 				String mime = writeSizeAndMIME(fileInformationList, e);
 
-				Div informationbox = new Div(HTMLClass.INFOBOX);
-				informationbox.addClass(HTMLClass.INFOBOXINFORMATION);
-				infobox = contentNode.addChild(informationbox);
-				infobox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("explanationTitle")));
-				infoboxContent = infobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-				infoboxContent.addChild("#", l10n("largeFileExplanationAndOptions"));
-				HTMLNode optionList = infoboxContent.addChild("ul");
+				InfoboxWidget explanationTitle = new InfoboxWidget(InfoboxWidget.Type.INFORMATION, l10n("explanationTitle"));
+				contentNode.addChild(explanationTitle);
+				explanationTitle.body.addChild("#", l10n("largeFileExplanationAndOptions"));
+				HTMLNode optionList = explanationTitle.body.addChild("ul");
 				//HTMLNode optionTable = infoboxContent.addChild("table", "border", "0");
 				if(!restricted) {
 					option = optionList.addChild("li");
@@ -885,47 +871,39 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 				HTMLNode pageNode = page.outer;
 				HTMLNode contentNode = page.content;
 
-				HTMLNode infobox = contentNode.addChild(new Div(HTMLClass.INFOBOX));
-				infobox.addClass(HTMLClass.INFOBOXERROR);
-				infobox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("errorWithReason", "error", e.getShortMessage())));
-				HTMLNode infoboxContent = infobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-				HTMLNode fileInformationList = infoboxContent.addChild("ul");
+				InfoboxWidget errorWithReason = new InfoboxWidget(InfoboxWidget.Type.ERROR, l10n("errorWithReason", "error", e.getShortMessage()));
+				contentNode.addChild(errorWithReason);
+				HTMLNode fileInformationList = errorWithReason.body.addChild("ul");
 				HTMLNode option = fileInformationList.addChild("li");
 				option.addChild("#", (l10n("filenameLabel") + ' '));
 				option.addChild("a", "href", '/' + key.toString(), getFilename(key, e.getExpectedMimeType()));
+                                String mime = writeSizeAndMIME(fileInformationList, e);
 
-				String mime = writeSizeAndMIME(fileInformationList, e);
-				infobox = contentNode.addChild(new Div(HTMLClass.INFOBOX));
-				infobox.addClass(HTMLClass.INFOBOXERROR);
-				infobox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("explanationTitle")));
-				infoboxContent = infobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-				infoboxContent.addChild("p", l10n("unableToRetrieve"));
+				InfoboxWidget explanationTitle = new InfoboxWidget(InfoboxWidget.Type.ERROR, l10n("explanationTitle"));
+				contentNode.addChild(explanationTitle);
+				explanationTitle.body.addChild("p", l10n("unableToRetrieve"));
 				UnsafeContentTypeException filterException = null;
 				if(e.getCause() != null && e.getCause() instanceof UnsafeContentTypeException) {
 					filterException = (UnsafeContentTypeException)e.getCause();
 				}
 				if(e.isFatal() && filterException == null)
-					infoboxContent.addChild("p", l10n("errorIsFatal"));
-				infoboxContent.addChild("p", msg);
+					explanationTitle.body.addChild("p", l10n("errorIsFatal"));
+				explanationTitle.body.addChild("p", msg);
 				if(filterException != null) {
 					if(filterException.details() != null) {
-						HTMLNode detailList = infoboxContent.addChild("ul");
+						HTMLNode detailList = explanationTitle.body.addChild("ul");
 						for(String detail : filterException.details()) {
 							detailList.addChild("li", detail);
 						}
 					}
 				}
 				if(e.errorCodes != null) {
-					infoboxContent.addChild("p").addChild("pre").addChild("#", e.errorCodes.toVerboseString());
+					explanationTitle.body.addChild("p").addChild("pre").addChild("#", e.errorCodes.toVerboseString());
 				}
 
-				infobox = contentNode.addChild(new Div(HTMLClass.INFOBOX));
-				infobox.addClass(HTMLClass.INFOBOXERROR);
-				infobox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("options")));
-				infoboxContent = infobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-
-				HTMLNode optionList = infoboxContent.addChild("ul");
-
+				InfoboxWidget options = new InfoboxWidget(InfoboxWidget.Type.ERROR, l10n("options"));
+				contentNode.addChild(options);
+				HTMLNode optionList = options.body.addChild("ul");
 				PluginInfoWrapper keyUtil;
 				if((e.mode == FetchException.NOT_IN_ARCHIVE || e.mode == FetchException.NOT_ENOUGH_PATH_COMPONENTS)) {
 					// first look for the newest version

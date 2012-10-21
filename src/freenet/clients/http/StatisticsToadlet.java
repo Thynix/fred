@@ -44,6 +44,8 @@ import freenet.support.api.HTTPRequest;
 import freenet.support.htmlprimitives.Div;
 import freenet.support.htmlprimitives.HTMLClass;
 import freenet.support.io.NativeThread;
+import freenet.support.uielements.InfoboxWidget;
+import org.omg.CORBA.NO_RESOURCES;
 
 public class StatisticsToadlet extends Toadlet {
 
@@ -192,13 +194,13 @@ public class StatisticsToadlet extends Toadlet {
 		HTMLNode nextTableCell = overviewTableRow.addChild("td", "class", "first");
 
 		// node version information box
-		HTMLNode versionInfobox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
-		
+		InfoboxWidget versionInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, null);
+		nextTableCell.addChild(versionInfobox);
 		drawNodeVersionBox(versionInfobox);
 		
 		// jvm stats box
-		HTMLNode jvmStatsInfobox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
-		
+		InfoboxWidget jvmStatsInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, null);
+		nextTableCell.addChild(jvmStatsInfobox);
 		drawJVMStatsBox(jvmStatsInfobox, advancedMode);
 		
 		// Statistic gathering box
@@ -218,43 +220,39 @@ public class StatisticsToadlet extends Toadlet {
 		if(advancedMode) {
 			// store size box
 			//HTMLNode storeSizeInfobox = nextTableCell.addChild(new div(HTMLClass.INFOBOX));
-             HTMLNode storeSizeInfobox = contentNode.addChild(new Div(HTMLClass.INFOBOX));
-			
+			InfoboxWidget storeSizeInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, null);
+			contentNode.addChild(storeSizeInfobox);
 			drawStoreSizeBox(storeSizeInfobox, myLocation, nodeUptimeSeconds);
            
 			if(numberOfConnected + numberOfRoutingBackedOff > 0) {
 				
-				HTMLNode loadStatsInfobox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
-				
+				InfoboxWidget loadStatsInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, null);
+				nextTableCell.addChild(loadStatsInfobox);
 				drawLoadBalancingBox(loadStatsInfobox, false);
 				
-				loadStatsInfobox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
-				
+				loadStatsInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, null);
 				drawLoadBalancingBox(loadStatsInfobox, true);
 				
-				HTMLNode newLoadManagementBox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
+				InfoboxWidget newLoadManagementBox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, null);
+				nextTableCell.addChild(newLoadManagementBox);
 				drawNewLoadManagementBox(newLoadManagementBox);
-								
+
 				// Psuccess box
-				HTMLNode successRateBox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
-				successRateBox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("successRate")));
-				HTMLNode successRateContent = successRateBox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-				stats.fillSuccessRateBox(successRateContent);
+				InfoboxWidget successRateBox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10n("successRate"));
+				nextTableCell.addChild(successRateBox);
+				stats.fillSuccessRateBox(successRateBox.body);
 				
-				HTMLNode timeDetailBox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
-				timeDetailBox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("chkDetailTiming")));
-				HTMLNode timingsContent = timeDetailBox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-				stats.fillDetailedTimingsBox(timingsContent);
+				InfoboxWidget timeDetailBox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10n("chkDetailTiming"));
+				nextTableCell.addChild(timeDetailBox);
+				stats.fillDetailedTimingsBox(timeDetailBox.body);
 				
-				HTMLNode byHTLBox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
-				byHTLBox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("successByHTLBulk")));
-				HTMLNode byHTLContent = byHTLBox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-				stats.fillRemoteRequestHTLsBox(byHTLContent, false);
+				InfoboxWidget byHTLBox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10n("successByHTLBulk"));
+				nextTableCell.addChild(byHTLBox);
+				stats.fillRemoteRequestHTLsBox(byHTLBox.body, false);
 				
-				byHTLBox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
-				byHTLBox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("successByHTLRT")));
-				byHTLContent = byHTLBox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-				stats.fillRemoteRequestHTLsBox(byHTLContent, true);
+				byHTLBox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10n("successByHTLRT"));
+				nextTableCell.addChild(byHTLBox);
+				stats.fillRemoteRequestHTLsBox(byHTLBox.body, true);
 			}
 		}
 
@@ -262,18 +260,20 @@ public class StatisticsToadlet extends Toadlet {
 
 			// Activity box
 			nextTableCell = overviewTableRow.addChild("td", "class", "last");
-			HTMLNode activityInfobox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
-			
+			InfoboxWidget activityInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, null);
+			nextTableCell.addChild(activityInfobox);
 			drawActivityBox(activityInfobox, advancedMode);
 
 			/* node status overview box */
 			if(advancedMode) {
-				HTMLNode overviewInfobox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
+				InfoboxWidget overviewInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, null);
+				nextTableCell.addChild(overviewInfobox);
 				drawOverviewBox(overviewInfobox, nodeUptimeSeconds, node.clientCore.bandwidthStatsPutter.getLatestUptimeData().totalUptime, now, swaps, noSwaps);
 			}
 
 			// Peer statistics box
-			HTMLNode peerStatsInfobox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
+			InfoboxWidget peerStatsInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, null);
+			nextTableCell.addChild(peerStatsInfobox);
 			
 			drawPeerStatsBox(peerStatsInfobox, advancedMode, numberOfConnected, numberOfRoutingBackedOff,
 					numberOfTooNew, numberOfTooOld, numberOfDisconnected, numberOfNeverConnected, numberOfDisabled, 
@@ -281,27 +281,24 @@ public class StatisticsToadlet extends Toadlet {
 					numberOfRoutingDisabled, numberOfClockProblem, numberOfConnError, numberOfDisconnecting, numberOfNoLoadStats, node);
 
 			// Bandwidth box
-			HTMLNode bandwidthInfobox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
-			
+			InfoboxWidget bandwidthInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, null);
+			nextTableCell.addChild(bandwidthInfobox);
 			drawBandwidthBox(bandwidthInfobox, nodeUptimeSeconds, advancedMode);
 		}
 
 		if(advancedMode) {
-
 			// Peer routing backoff reason box
-			HTMLNode backoffReasonInfobox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
-			backoffReasonInfobox.addChild(new Div(HTMLClass.INFOBOXHEADER, "Peer Backoff"));
-			HTMLNode backoffReasonContent = backoffReasonInfobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
+			InfoboxWidget backoffReasonInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, "Peer Backoff");
+			nextTableCell.addChild(backoffReasonInfobox);
 
-			HTMLNode curBackoffReasonInfobox = backoffReasonContent.addChild(new Div(HTMLClass.INFOBOX));
-			curBackoffReasonInfobox.addChild(new Div(HTMLClass.INFOBOXHEADER, "Current backoff reasons (bulk)"));
-			HTMLNode curBackoffReasonContent = curBackoffReasonInfobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
+			InfoboxWidget curBackoffReasonInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, "Current backoff reasons (bulk)");
+			backoffReasonInfobox.body.addChild(curBackoffReasonInfobox);
 
 			String [] routingBackoffReasons = peers.getPeerNodeRoutingBackoffReasons(false);
 			if(routingBackoffReasons.length == 0) {
-				curBackoffReasonContent.addChild("#", l10n("notBackedOff"));
+				curBackoffReasonInfobox.body.addChild("#", l10n("notBackedOff"));
 			} else {
-				HTMLNode reasonList = curBackoffReasonContent.addChild("ul");
+				HTMLNode reasonList = curBackoffReasonInfobox.body.addChild("ul");
 				for(int i=0;i<routingBackoffReasons.length;i++) {
 					int reasonCount = peers.getPeerNodeRoutingBackoffReasonSize(routingBackoffReasons[i], false);
 					if(reasonCount > 0) {
@@ -309,16 +306,13 @@ public class StatisticsToadlet extends Toadlet {
 					}
 				}
 			}
-
-			curBackoffReasonInfobox = backoffReasonContent.addChild(new Div(HTMLClass.INFOBOX));
-			curBackoffReasonInfobox.addChild(new Div(HTMLClass.INFOBOXHEADER, "Current backoff reasons (realtime)"));
-			curBackoffReasonContent = curBackoffReasonInfobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-
+			curBackoffReasonInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, "Current backoff reasons (realtime)");
+			backoffReasonInfobox.body.addChild(curBackoffReasonInfobox);
 			routingBackoffReasons = peers.getPeerNodeRoutingBackoffReasons(true);
 			if(routingBackoffReasons.length == 0) {
-				curBackoffReasonContent.addChild("#", l10n("notBackedOff"));
+				curBackoffReasonInfobox.body.addChild("#", l10n("notBackedOff"));
 			} else {
-				HTMLNode reasonList = curBackoffReasonContent.addChild("ul");
+				HTMLNode reasonList = curBackoffReasonInfobox.body.addChild("ul");
 				for(int i=0;i<routingBackoffReasons.length;i++) {
 					int reasonCount = peers.getPeerNodeRoutingBackoffReasonSize(routingBackoffReasons[i], true);
 					if(reasonCount > 0) {
@@ -425,24 +419,25 @@ public class StatisticsToadlet extends Toadlet {
 			}
 
 			//Swap statistics box
-			HTMLNode locationSwapInfobox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
+			InfoboxWidget locationSwapInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, null);
+			nextTableCell.addChild(locationSwapInfobox);
 			drawSwapStatsBox(locationSwapInfobox, myLocation, nodeUptimeSeconds, swaps, noSwaps);
 
 			// unclaimedFIFOMessageCounts box
-			HTMLNode unclaimedFIFOMessageCountsInfobox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
+			InfoboxWidget unclaimedFIFOMessageCountsInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, null);
+			nextTableCell.addChild(unclaimedFIFOMessageCountsInfobox);
 			drawUnclaimedFIFOMessageCountsBox(unclaimedFIFOMessageCountsInfobox);
 
-						
-			HTMLNode threadsPriorityInfobox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
+			InfoboxWidget threadsPriorityInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, null);
+			nextTableCell.addChild(threadsPriorityInfobox);
 			drawThreadPriorityStatsBox(threadsPriorityInfobox);
 			
 			nextTableCell = overviewTableRow.addChild("td");
 
 			// thread usage box
-			HTMLNode threadUsageInfobox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
-			threadUsageInfobox.addChild(new Div(HTMLClass.INFOBOXHEADER, "Thread usage"));
-			HTMLNode threadUsageContent = threadUsageInfobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-			HTMLNode threadUsageList = threadUsageContent.addChild("ul");
+			InfoboxWidget threadUsageInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, "Thread usage");
+			nextTableCell.addChild(threadUsageInfobox);
+			HTMLNode threadUsageList = threadUsageInfobox.body.addChild("ul");
 			getThreadNames(threadUsageList);
 			
 			// rejection reasons box
@@ -451,34 +446,38 @@ public class StatisticsToadlet extends Toadlet {
 			
 			// database thread jobs box
 			
-			HTMLNode databaseJobsInfobox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
+			InfoboxWidget databaseJobsInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, null);
+			nextTableCell.addChild(databaseJobsInfobox);
 			drawDatabaseJobsBox(databaseJobsInfobox);
 
 			OpennetManager om = node.getOpennet();
 			if(om != null) {
 				// opennet stats box
-				drawOpennetStatsBox(nextTableCell.addChild(new Div(HTMLClass.INFOBOX)), om);
+				InfoboxWidget OpennetStatsBox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, null);
+				nextTableCell.addChild(OpennetStatsBox);
+				drawOpennetStatsBox(OpennetStatsBox, om);
 				
-				if(node.isSeednode())
-					drawSeedStatsBox(nextTableCell.addChild(new Div(HTMLClass.INFOBOX)), om);
+				if(node.isSeednode()) {
+					InfoboxWidget SeedStatsBox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, null);
+					nextTableCell.addChild(SeedStatsBox);
+					drawSeedStatsBox(SeedStatsBox, om);
+				}
 			}
 
 			// peer distribution box
 			overviewTableRow = overviewTable.addChild("tr");
 			nextTableCell = overviewTableRow.addChild("td", "class", "first");
-			HTMLNode peerCircleInfobox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
-			peerCircleInfobox.addChild(new Div(HTMLClass.INFOBOXHEADER, "Peer\u00a0Location\u00a0Distribution (w/pReject)"));
-			HTMLNode peerCircleTable = peerCircleInfobox.addChild(new Div(HTMLClass.INFOBOXCONTENT)).addChild("table");
+			InfoboxWidget peerCircleInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, "Peer\u00a0Location\u00a0Distribution (w/pReject)");
+			nextTableCell.addChild(peerCircleInfobox);
+			HTMLNode peerCircleTable = peerCircleInfobox.body.addChild("table");
 			addPeerCircle(peerCircleTable, peerNodeStatuses, myLocation);
 			nextTableCell = overviewTableRow.addChild("td");
 
 			// node distribution box
-			HTMLNode nodeCircleInfobox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
-			nodeCircleInfobox.addChild(new Div(HTMLClass.INFOBOXHEADER, "Node\u00a0Location\u00a0Distribution (w/Swap\u00a0Age)"));
-			HTMLNode nodeCircleTable = nodeCircleInfobox.addChild(new Div(HTMLClass.INFOBOXCONTENT)).addChild("table");
+			InfoboxWidget nodeCircleInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, "Node\u00a0Location\u00a0Distribution (w/Swap\u00a0Age)");
+			nextTableCell.addChild(nodeCircleInfobox);
+			HTMLNode nodeCircleTable = nodeCircleInfobox.body.addChild("table");
 			addNodeCircle(nodeCircleTable, myLocation);
-			
-			
 			overviewTableRow = overviewTable.addChild("tr");
 			nextTableCell = overviewTableRow.addChild("td", "class", "first");
 			// specialisation box
@@ -487,9 +486,9 @@ public class StatisticsToadlet extends Toadlet {
 			int incomingRequestsCount = incomingRequestCountArray[0];
 			
 			if(incomingRequestsCount > 0) {
-				HTMLNode nodeSpecialisationInfobox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
-				nodeSpecialisationInfobox.addChild(new Div(HTMLClass.INFOBOXHEADER, "Incoming\u00a0Request\u00a0Distribution"));
-				HTMLNode nodeSpecialisationTable = nodeSpecialisationInfobox.addChild(new Div(HTMLClass.INFOBOXCONTENT)).addChild("table");
+				InfoboxWidget nodeSpecialisationInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, "Incoming\u00a0Request\u00a0Distribution");
+				nextTableCell.addChild(nodeSpecialisationInfobox);
+				HTMLNode nodeSpecialisationTable = nodeSpecialisationInfobox.body.addChild("table");
 				addSpecialisation(nodeSpecialisationTable, myLocation, incomingRequestsCount, incomingRequestLocation);
 			}
 			
@@ -502,9 +501,9 @@ public class StatisticsToadlet extends Toadlet {
 			int outgoingRequestsCount = outgoingRequestCountArray[0];
 			
 			if(outgoingLocalRequestsCount > 0 && outgoingRequestsCount > 0) {
-				HTMLNode nodeSpecialisationInfobox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
-				nodeSpecialisationInfobox.addChild(new Div(HTMLClass.INFOBOXHEADER, "Outgoing\u00a0Request\u00a0Distribution"));
-				HTMLNode nodeSpecialisationTable = nodeSpecialisationInfobox.addChild(new Div(HTMLClass.INFOBOXCONTENT)).addChild("table");
+				InfoboxWidget nodeSpecialisationInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, "Outgoing\u00a0Request\u00a0Distribution");
+				nextTableCell.addChild(nodeSpecialisationInfobox);
+				HTMLNode nodeSpecialisationTable = nodeSpecialisationInfobox.body.addChild("table");
 				addCombinedSpecialisation(nodeSpecialisationTable, myLocation, outgoingLocalRequestsCount, outgoingLocalRequestLocation, outgoingRequestsCount, outgoingRequestLocation);
 			}
 
@@ -515,9 +514,9 @@ public class StatisticsToadlet extends Toadlet {
 			int[] locationSuccessRatesArray = stats.chkSuccessRatesByLocation.getPercentageArray(1000);
 
 			{
-				HTMLNode nodeSpecialisationInfobox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
-				nodeSpecialisationInfobox.addChild(new Div(HTMLClass.INFOBOXHEADER, "Local\u00a0CHK\u00a0Success\u00a0Rates\u00a0By\u00a0Location"));
-				HTMLNode nodeSpecialisationTable = nodeSpecialisationInfobox.addChild(new Div(HTMLClass.INFOBOXCONTENT)).addChild("table");
+				InfoboxWidget nodeSpecialisationInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, "Local\u00a0CHK\u00a0Success\u00a0Rates\u00a0By\u00a0Location");
+				nextTableCell.addChild(nodeSpecialisationInfobox);
+				HTMLNode nodeSpecialisationTable = nodeSpecialisationInfobox.body.addChild("table");
 				addSpecialisation(nodeSpecialisationTable, myLocation, 1000, locationSuccessRatesArray);
 			}
 		}
@@ -536,16 +535,15 @@ public class StatisticsToadlet extends Toadlet {
 		writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 	}
 
-	private void drawLoadBalancingBox(HTMLNode loadStatsInfobox, boolean realTime) {
+	private void drawLoadBalancingBox(InfoboxWidget loadStatsInfobox, boolean realTime) {
 		// Load balancing box
 		// Include overall window, and RTTs for each
 		
-		loadStatsInfobox.addChild(new Div(HTMLClass.INFOBOXHEADER, "Load limiting "+(realTime ? "RealTime" : "Bulk")));
-		HTMLNode loadStatsContent = loadStatsInfobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
+		loadStatsInfobox.setTitle("Load limiting "+(realTime ? "RealTime" : "Bulk"));
 		RequestStarterGroup starters = core.requestStarters;
 		double window = starters.getWindow(realTime);
 		double realWindow = starters.getRealWindow(realTime);
-		HTMLNode loadStatsList = loadStatsContent.addChild("ul");
+		HTMLNode loadStatsList = loadStatsInfobox.body.addChild("ul");
 		loadStatsList.addChild("li", l10n("globalWindow")+": "+window);
 		loadStatsList.addChild("li", l10n("realGlobalWindow")+": "+realWindow);
 		loadStatsList.addChild("li", starters.statsPageLine(false, false, realTime));
@@ -556,10 +554,9 @@ public class StatisticsToadlet extends Toadlet {
 		loadStatsList.addChild("li", starters.diagnosticThrottlesLine(true));
 	}
 	
-	private void drawNewLoadManagementBox(HTMLNode infobox) {
-		infobox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("newLoadManagementTitle")));
-		HTMLNode content = infobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-		node.nodeStats.drawNewLoadManagementDelayTimes(content);
+	private void drawNewLoadManagementBox(InfoboxWidget infobox) {
+		infobox.setTitle("newLoadManagementTitle");
+		node.nodeStats.drawNewLoadManagementDelayTimes(infobox.body);
 	}
 
 	private void drawRejectReasonsBox(HTMLNode nextTableCell, boolean local) {
@@ -569,16 +566,16 @@ public class StatisticsToadlet extends Toadlet {
 			stats.getRejectReasonsTable(rejectReasonsTable);
 		if(!success)
 			return;
-		HTMLNode rejectReasonsInfobox = nextTableCell.addChild(new Div(HTMLClass.INFOBOX));
-		rejectReasonsInfobox.addChild(new Div(HTMLClass.INFOBOXHEADER, (local ? "Local " : "")+"Preemptive Rejection Reasons"));
-		rejectReasonsInfobox.addChild(new Div(HTMLClass.INFOBOXCONTENT)).addChild(rejectReasonsTable);
+		InfoboxWidget rejectReasonsInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, (local ?
+			"Local " : "")+"Preemptive Rejection Reasons");
+		nextTableCell.addChild(rejectReasonsInfobox);
+		rejectReasonsInfobox.body.addChild(rejectReasonsTable);
 	}
 
-	private void drawNodeVersionBox(HTMLNode versionInfobox) {
+	private void drawNodeVersionBox(InfoboxWidget versionInfobox) {
 		
-		versionInfobox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("versionTitle")));
-		HTMLNode versionInfoboxContent = versionInfobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-		HTMLNode versionInfoboxList = versionInfoboxContent.addChild("ul");
+		versionInfobox.setTitle("versionTitle");
+		HTMLNode versionInfoboxList = versionInfobox.body.addChild("ul");
 		versionInfoboxList.addChild("li", NodeL10n.getBase().getString("WelcomeToadlet.version", new String[] { "fullVersion", "build", "rev" },
 				new String[] { Version.publicVersion(), Integer.toString(Version.buildNumber()), Version.cvsRevision() }));
 		if(NodeStarter.extBuildNumber < NodeStarter.RECOMMENDED_EXT_BUILD_NUMBER)
@@ -591,11 +588,10 @@ public class StatisticsToadlet extends Toadlet {
 		
 	}
 
-	private void drawJVMStatsBox(HTMLNode jvmStatsInfobox, boolean advancedModeEnabled) {
+	private void drawJVMStatsBox(InfoboxWidget jvmStatsInfobox, boolean advancedModeEnabled) {
 		
-		jvmStatsInfobox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("jvmInfoTitle")));
-		HTMLNode jvmStatsInfoboxContent = jvmStatsInfobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-		HTMLNode jvmStatsList = jvmStatsInfoboxContent.addChild("ul");
+		jvmStatsInfobox.setTitle(l10n("jvmInfoTitle"));
+		HTMLNode jvmStatsList = jvmStatsInfobox.body.addChild("ul");
 
 		Runtime rt = Runtime.getRuntime();
 		long freeMemory = rt.freeMemory();
@@ -630,14 +626,13 @@ public class StatisticsToadlet extends Toadlet {
 		}
 	}
 	
-	private void drawThreadPriorityStatsBox(HTMLNode node) {
+	private void drawThreadPriorityStatsBox(InfoboxWidget node) {
 		
-		node.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("threadsByPriority")));
-		HTMLNode threadsInfoboxContent = node.addChild(new Div(HTMLClass.INFOBOXCONTENT));
+		node.setTitle(l10n("threadsByPriority"));
 		int[] activeThreadsByPriority = stats.getActiveThreadsByPriority();
 		int[] waitingThreadsByPriority = stats.getWaitingThreadsByPriority();
 		
-		HTMLNode threadsByPriorityTable = threadsInfoboxContent.addChild("table", "border", "0");
+		HTMLNode threadsByPriorityTable = node.body.addChild("table", "border", "0");
 		HTMLNode row = threadsByPriorityTable.addChild("tr");
 
 		row.addChild("th", l10n("priority"));
@@ -652,13 +647,12 @@ public class StatisticsToadlet extends Toadlet {
 		}
 	}
 
-	private void drawDatabaseJobsBox(HTMLNode node) {
+	private void drawDatabaseJobsBox(InfoboxWidget node) {
 		// Job count by priority
-		node.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("databaseJobsByPriority")));
-		HTMLNode threadsInfoboxContent = node.addChild(new Div(HTMLClass.INFOBOXCONTENT));
+		node.setTitle(l10n("databaseJobsByPriority"));
 		int[] jobsByPriority = core.clientDatabaseExecutor.getQueuedJobsCountByPriority();
 		
-		HTMLNode threadsByPriorityTable = threadsInfoboxContent.addChild("table", "border", "0");
+		HTMLNode threadsByPriorityTable = node.body.addChild("table", "border", "0");
 		HTMLNode row = threadsByPriorityTable.addChild("tr");
 
 		row.addChild("th", l10n("priority"));
@@ -672,7 +666,7 @@ public class StatisticsToadlet extends Toadlet {
 
 		// Per job-type execution count and avg execution time
 		
-		HTMLNode executionTimeStatisticsTable = threadsInfoboxContent.addChild("table", "border", "0");
+		HTMLNode executionTimeStatisticsTable = node.body.addChild("table", "border", "0");
 		row = executionTimeStatisticsTable .addChild("tr");
 		row.addChild("th", l10n("jobType"));
 		row.addChild("th", l10n("count"));
@@ -688,23 +682,21 @@ public class StatisticsToadlet extends Toadlet {
 			row.addChild("td", TimeUtil.formatTime(entry.totalTime, 2, true));
 		}
 		
-		HTMLNode jobQueueStatistics = threadsInfoboxContent.addChild("table", "border", "0");
+		HTMLNode jobQueueStatistics = node.body.addChild("table", "border", "0");
 		row = jobQueueStatistics .addChild("tr");
 		row.addChild("th", l10n("queuedCount"));
 		row.addChild("th", l10n("jobType"));
 		stats.getDatabaseJobQueueStatistics().toTableRows(jobQueueStatistics);
 	}
 
-	private void drawOpennetStatsBox(HTMLNode box, OpennetManager om) {
-		box.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("opennetStats")));
-		HTMLNode opennetStatsContent = box.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-		om.drawOpennetStatsBox(opennetStatsContent);
+	private void drawOpennetStatsBox(InfoboxWidget box, OpennetManager om) {
+		box.setTitle(l10n("opennetStats"));
+		om.drawOpennetStatsBox(box.body);
 	}
 	
-	private void drawSeedStatsBox(HTMLNode box, OpennetManager om) {
-		box.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("seedStats")));
-		HTMLNode opennetStatsContent = box.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-		om.drawSeedStatsBox(opennetStatsContent);
+	private void drawSeedStatsBox(InfoboxWidget box, OpennetManager om) {
+		box.setTitle(l10n("seedStats"));
+		om.drawSeedStatsBox(box.body);
 	}
 
 	private void drawClientRequestersBox(HTMLNode box) {
@@ -757,13 +749,11 @@ public class StatisticsToadlet extends Toadlet {
 		}
 	}
 
-	private void drawStoreSizeBox(HTMLNode storeSizeInfobox, double loc, long nodeUptimeSeconds) {
-		storeSizeInfobox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("datastore")));
-		HTMLNode storeSizeInfoboxContent = storeSizeInfobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-
+	private void drawStoreSizeBox(InfoboxWidget storeSizeInfobox, double loc, long nodeUptimeSeconds) {
+		storeSizeInfobox.setTitle("datastore");
 		Div storesizecontent = new Div();
 		storesizecontent.addAttribute("style", "overflow:scr");
-		HTMLNode scrollDiv = storeSizeInfoboxContent.addChild(storesizecontent);
+		HTMLNode scrollDiv = storeSizeInfobox.body.addChild(storesizecontent);
 
 		HTMLNode storeSizeTable = scrollDiv.addChild("table", "border", "0");
 		HTMLNode row = storeSizeTable.addChild("tr");
@@ -876,11 +866,10 @@ public class StatisticsToadlet extends Toadlet {
 
 	}
 
-	private void drawUnclaimedFIFOMessageCountsBox(HTMLNode unclaimedFIFOMessageCountsInfobox) {
+	private void drawUnclaimedFIFOMessageCountsBox(InfoboxWidget unclaimedFIFOMessageCountsInfobox) {
 		
-		unclaimedFIFOMessageCountsInfobox.addChild(new Div(HTMLClass.INFOBOXHEADER, "unclaimedFIFO Message Counts"));
-		HTMLNode unclaimedFIFOMessageCountsInfoboxContent = unclaimedFIFOMessageCountsInfobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-		HTMLNode unclaimedFIFOMessageCountsList = unclaimedFIFOMessageCountsInfoboxContent.addChild("ul");
+		unclaimedFIFOMessageCountsInfobox.setTitle("unclaimedFIFO Message Counts");
+		HTMLNode unclaimedFIFOMessageCountsList = unclaimedFIFOMessageCountsInfobox.body.addChild("ul");
 		Map<String, Integer> unclaimedFIFOMessageCountsMap = node.getUSM().getUnclaimedFIFOMessageCounts();
 		STMessageCount[] unclaimedFIFOMessageCountsArray = new STMessageCount[unclaimedFIFOMessageCountsMap.size()];
 		int i = 0;
@@ -907,9 +896,9 @@ public class StatisticsToadlet extends Toadlet {
 		
 	}
 
-	private void drawSwapStatsBox(HTMLNode locationSwapInfobox, double location, long nodeUptimeSeconds, double swaps, double noSwaps) {
+	private void drawSwapStatsBox(InfoboxWidget locationSwapInfobox, double location, long nodeUptimeSeconds, double swaps, double noSwaps) {
 		
-		locationSwapInfobox.addChild(new Div(HTMLClass.INFOBOXHEADER, "Location swaps"));
+		locationSwapInfobox.setTitle("Location swaps");
 		int startedSwaps = node.getStartedSwaps();
 		int swapsRejectedAlreadyLocked = node.getSwapsRejectedAlreadyLocked();
 		int swapsRejectedNowhereToGo = node.getSwapsRejectedNowhereToGo();
@@ -919,8 +908,7 @@ public class StatisticsToadlet extends Toadlet {
 		int averageSwapTime = node.getAverageOutgoingSwapTime();
 		int sendSwapInterval = node.getSendSwapInterval();
 
-		HTMLNode locationSwapInfoboxContent = locationSwapInfobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-		HTMLNode locationSwapList = locationSwapInfoboxContent.addChild("ul");
+		HTMLNode locationSwapList = locationSwapInfobox.body.addChild("ul");
 		locationSwapList.addChild("li", "location:\u00a0" + location);
 		if (swaps > 0.0) {
 			locationSwapList.addChild("li", "locChangeSession:\u00a0" + fix1p6sci.format(locChangeSession));
@@ -963,15 +951,14 @@ public class StatisticsToadlet extends Toadlet {
 		locationSwapList.addChild("li", "sendSwapInterval:\u00a0" + TimeUtil.formatTime(sendSwapInterval, 2, true));
 	}
 
-	protected static void drawPeerStatsBox(HTMLNode peerStatsInfobox, boolean advancedModeEnabled, int numberOfConnected, 
+	protected static void drawPeerStatsBox(InfoboxWidget peerStatsInfobox, boolean advancedModeEnabled, int numberOfConnected,
 			int numberOfRoutingBackedOff, int numberOfTooNew, int numberOfTooOld, int numberOfDisconnected, 
 			int numberOfNeverConnected, int numberOfDisabled, int numberOfBursting, int numberOfListening, 
 			int numberOfListenOnly, int numberOfSeedServers, int numberOfSeedClients, int numberOfRoutingDisabled, 
 			int numberOfClockProblem, int numberOfConnError, int numberOfDisconnecting, int numberOfNoLoadStats, Node node) {
 		
-		peerStatsInfobox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("peerStatsTitle")));
-		HTMLNode peerStatsContent = peerStatsInfobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-		HTMLNode peerStatsList = peerStatsContent.addChild("ul");
+		peerStatsInfobox.setTitle(l10n("peerStatsTitle"));
+		HTMLNode peerStatsList = peerStatsInfobox.body.addChild("ul");
 		if (numberOfConnected > 0) {
 			HTMLNode peerStatsConnectedListItem = peerStatsList.addChild("li").addChild("span");
 			peerStatsConnectedListItem.addChild("span", new String[] { "class", "title", "style" }, 
@@ -1093,12 +1080,10 @@ public class StatisticsToadlet extends Toadlet {
 		return NodeL10n.getBase().getString("StatisticsToadlet."+key, patterns, values);
 	}
 	
-	private void drawActivityBox(HTMLNode activityInfobox, boolean advancedModeEnabled) {
+	private void drawActivityBox(InfoboxWidget activityInfobox, boolean advancedModeEnabled) {
 		
-		activityInfobox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10nDark("activityTitle")));
-		HTMLNode activityInfoboxContent = activityInfobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-		
-		HTMLNode activityList = drawActivity(activityInfoboxContent, node);
+		activityInfobox.setTitle("activityTitle");
+		HTMLNode activityList = drawActivity(activityInfobox.body, node);
 		
 		int numARKFetchers = node.getNumARKFetchers();
 
@@ -1252,11 +1237,10 @@ public class StatisticsToadlet extends Toadlet {
 		}
 	}
 
-	private void drawOverviewBox(HTMLNode overviewInfobox, long nodeUptimeSeconds, long nodeUptimeTotal, long now, double swaps, double noSwaps) {
+	private void drawOverviewBox(InfoboxWidget overviewInfobox, long nodeUptimeSeconds, long nodeUptimeTotal, long now, double swaps, double noSwaps) {
 		
-		overviewInfobox.addChild(new Div(HTMLClass.INFOBOXHEADER, "Node status overview"));
-		HTMLNode overviewInfoboxContent = overviewInfobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-		HTMLNode overviewList = overviewInfoboxContent.addChild("ul");
+		overviewInfobox.setTitle("Node status overview");
+		HTMLNode overviewList = overviewInfobox.body.addChild("ul");
 		/* node status values */
 		int bwlimitDelayTime = (int) stats.getBwlimitDelayTime();
 		int bwlimitDelayTimeBulk = (int) stats.getBwlimitDelayTimeBulk();
@@ -1332,13 +1316,10 @@ public class StatisticsToadlet extends Toadlet {
 		
 	}
 
-	private void drawBandwidthBox(HTMLNode bandwidthInfobox, long nodeUptimeSeconds, boolean isAdvancedModeEnabled) {
-		
-		bandwidthInfobox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("bandwidthTitle")));
-		HTMLNode bandwidthInfoboxContent = bandwidthInfobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-		HTMLNode bandwidthList = bandwidthInfoboxContent.addChild("ul");
+	private void drawBandwidthBox(InfoboxWidget bandwidthInfobox, long nodeUptimeSeconds, boolean isAdvancedModeEnabled) {
+		bandwidthInfobox.setTitle("bandwidthTitle");
+		HTMLNode bandwidthList = bandwidthInfobox.body.addChild("ul");
 		drawBandwidth(bandwidthList, node, nodeUptimeSeconds, isAdvancedModeEnabled);
-		
 	}
 
 	// FIXME this should probably be moved to nodestats so it can be used by FCP??? would have to make ThreadBunch public :<
