@@ -26,6 +26,7 @@ public enum HTMLClass {
 	INFOBOXWARNING("infobox-warning"),
 	N2NTMMESSAGETEXT("n2ntm-message-text"),
 	NONE("none"),
+	NULL(""),
 	NOWRAP("NOWRAP"),
 	OPENNETDIV("opennetDiv"),
 	PEERCIRCLE("peercircle"),

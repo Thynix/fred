@@ -15,6 +15,7 @@ public class InfoboxWidget extends Div {
 		INFORMATION(HTMLClass.INFOBOXINFORMATION),
 		MINOR(HTMLClass.INFOBOXMINOR),
 		NORMAL(HTMLClass.INFOBOXNORMAL),
+		NONE(HTMLClass.NONE),
 		QUERY(HTMLClass.INFOBOXQUERY),
 		SUCCESS(HTMLClass.INFOBOXSUCCESS),
 		WARNING(HTMLClass.INFOBOXWARNING);
@@ -33,7 +34,9 @@ public class InfoboxWidget extends Div {
 	protected InfoboxWidget(HTMLClass type, String title) {
 		super(HTMLClass.INFOBOX);
 		header.setContent(title);
-		this.addClass(type);
+		if (type != HTMLClass.NONE) {
+			this.addClass(type);
+		}
 		this.addChild(header);
 		this.addChild(body);
 	}

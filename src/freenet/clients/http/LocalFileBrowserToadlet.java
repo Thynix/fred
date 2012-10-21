@@ -310,7 +310,7 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 			HTMLNode contentNode = page.content;
 			if (ctx.isAllowedFullAccess()) contentNode.addChild(core.alerts.createSummary());
 			
-			InfoboxWidget filelist = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10n("listing", "path",
+			InfoboxWidget filelist = new InfoboxWidget(InfoboxWidget.Type.NONE, l10n("listing", "path",
 				currentPath.getAbsolutePath()));
 			contentNode.addChild(filelist);
 
@@ -419,7 +419,7 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 			HTMLNode contentNode = page.content;
 			if (ctx.isAllowedFullAccess()) contentNode.addChild(core.alerts.createSummary());
 			
-			InfoboxWidget filelist = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10n("listing", "path", attemptedPath));
+			InfoboxWidget filelist = new InfoboxWidget(InfoboxWidget.Type.NONE, l10n("listing", "path", attemptedPath));
 			contentNode.addChild(filelist);
 			filelist.body.addChild("#", l10n("dirCannotBeRead", "path", attemptedPath));
 			HTMLNode ulNode = filelist.body.addChild("ul");

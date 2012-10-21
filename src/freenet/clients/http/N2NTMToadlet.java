@@ -281,7 +281,7 @@ public class N2NTMToadlet extends Toadlet {
 	public static void createN2NTMSendForm(HTMLNode pageNode, boolean advancedMode,
 			HTMLNode contentNode, ToadletContext ctx, HashMap<String, String> peers)
 			throws ToadletContextClosedException, IOException {
-		InfoboxWidget messageeditor = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10n("sendMessage"));
+		InfoboxWidget messageeditor = new InfoboxWidget(InfoboxWidget.Type.NONE, l10n("sendMessage"));
 		contentNode.addChild(messageeditor);
 		messageeditor.setID(HTMLID.N2NBOX);
 		messageeditor.body.addChild("p", l10n("composingMessageLabel"));

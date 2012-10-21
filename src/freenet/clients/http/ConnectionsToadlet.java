@@ -280,7 +280,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 				HTMLNode overviewTableRow = overviewTable.addChild("tr");
 				HTMLNode nextTableCell = overviewTableRow.addChild("td", "class", "first");
 				
-				InfoboxWidget overviewInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, "Node status overview");
+				InfoboxWidget overviewInfobox = new InfoboxWidget(InfoboxWidget.Type.NONE, "Node status overview");
 				nextTableCell.addChild(overviewInfobox);
 				HTMLNode overviewList = overviewInfobox.body.addChild("ul");
 				overviewList.addChild("li", "bwlimitDelayTime:\u00a0" + bwlimitDelayTime + "ms");
@@ -302,7 +302,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 				// Activity box
 				int numARKFetchers = node.getNumARKFetchers();
 				
-				InfoboxWidget activityInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10n("activityTitle"));
+				InfoboxWidget activityInfobox = new InfoboxWidget(InfoboxWidget.Type.NONE, l10n("activityTitle"));
 				nextTableCell.addChild(activityInfobox);
 				HTMLNode activityList = StatisticsToadlet.drawActivity(activityInfobox.body, node);
 				if (advancedMode && (activityList != null)) {
@@ -315,13 +315,13 @@ public abstract class ConnectionsToadlet extends Toadlet {
 				nextTableCell = overviewTableRow.addChild("td", "class", "last");
 				
 				// Peer statistics box
-				InfoboxWidget peerStatsInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, null);
+				InfoboxWidget peerStatsInfobox = new InfoboxWidget(InfoboxWidget.Type.NONE, null);
 				nextTableCell.addChild(peerStatsInfobox);
 				StatisticsToadlet.drawPeerStatsBox(peerStatsInfobox, advancedMode, numberOfConnected, numberOfRoutingBackedOff, numberOfTooNew, numberOfTooOld, numberOfDisconnected, numberOfNeverConnected, numberOfDisabled, numberOfBursting, numberOfListening, numberOfListenOnly, 0, 0, numberOfRoutingDisabled, numberOfClockProblem, numberOfConnError, numberOfDisconnecting, numberOfNoLoadStats, node);
 				
 				// Peer routing backoff reason box
 				if(advancedMode) {
-					InfoboxWidget backoffReasonInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, "Peer backoff reasons (realtime)");
+					InfoboxWidget backoffReasonInfobox = new InfoboxWidget(InfoboxWidget.Type.NONE, "Peer backoff reasons (realtime)");
 					nextTableCell.addChild(backoffReasonInfobox);
 					String [] routingBackoffReasons = peers.getPeerNodeRoutingBackoffReasons(true);
 					int total = 0;
@@ -340,7 +340,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 					if(total > 0) {
 						backoffReasonInfobox.header.addChild("#", ": " + total);
 					}
-					backoffReasonInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, "Peer backoff reasons (bulk)");
+					backoffReasonInfobox = new InfoboxWidget(InfoboxWidget.Type.NONE, "Peer backoff reasons (bulk)");
 					nextTableCell.addChild(backoffReasonInfobox);
 					routingBackoffReasons = peers.getPeerNodeRoutingBackoffReasons(false);
 					total = 0;
