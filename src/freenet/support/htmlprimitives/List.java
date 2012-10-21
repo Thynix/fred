@@ -29,8 +29,8 @@ public class List extends OutputNode {
 	}
 
 	//Methods for adding list items
-	public ListItem addListItem(HTMLClass CLASS, String content) {
-		ListItem newListItem = new ListItem(CLASS, content);
+	public ListItem addListItem(String content) {
+		ListItem newListItem = new ListItem(content);
 		addChild(newListItem);
 		return newListItem;
 	}

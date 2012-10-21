@@ -51,8 +51,8 @@ public class OutputNode extends HTMLNode {
 		addChild(newList);
 		return newList;
 	}
-	public Div addList(HTMLClass CLASS, String content) {
-		Div newList = new Div();
+	public List addList(List.Type type, HTMLClass CLASS) {
+		List newList = new List(type, CLASS);
 		addChild(newList);
 		return newList;
 	}

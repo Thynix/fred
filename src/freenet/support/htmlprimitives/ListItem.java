@@ -5,8 +5,8 @@ package freenet.support.htmlprimitives;
  */
 public class ListItem extends OutputNode {
 
-	public ListItem(HTMLClass CLASS, String content) {
-		this(CLASS);
+	public ListItem(String content) {
+		this();
 		this.setContent(content);
 	}
 
