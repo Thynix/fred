@@ -49,7 +49,6 @@ import freenet.support.TimeUtil;
 import freenet.support.api.HTTPRequest;
 import freenet.support.htmlprimitives.Div;
 import freenet.support.htmlprimitives.HTMLClass;
-import freenet.support.io.Closer;
 import freenet.support.uielements.InfoboxWidget;
 
 /** Base class for DarknetConnectionsToadlet and OpennetConnectionsToadlet */
