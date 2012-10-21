@@ -231,6 +231,7 @@ public class StatisticsToadlet extends Toadlet {
 				drawLoadBalancingBox(loadStatsInfobox, false);
 				
 				loadStatsInfobox = new InfoboxWidget(InfoboxWidget.Type.NONE, null);
+				nextTableCell.addChild(loadStatsInfobox);
 				drawLoadBalancingBox(loadStatsInfobox, true);
 				
 				InfoboxWidget newLoadManagementBox = new InfoboxWidget(InfoboxWidget.Type.NONE, null);
@@ -555,7 +556,7 @@ public class StatisticsToadlet extends Toadlet {
 	}
 	
 	private void drawNewLoadManagementBox(InfoboxWidget infobox) {
-		infobox.setTitle("newLoadManagementTitle");
+		infobox.setTitle(l10n("newLoadManagementTitle"));
 		node.nodeStats.drawNewLoadManagementDelayTimes(infobox.body);
 	}
 
@@ -574,7 +575,7 @@ public class StatisticsToadlet extends Toadlet {
 
 	private void drawNodeVersionBox(InfoboxWidget versionInfobox) {
 		
-		versionInfobox.setTitle("versionTitle");
+		versionInfobox.setTitle(l10n("versionTitle"));
 		HTMLNode versionInfoboxList = versionInfobox.body.addChild("ul");
 		versionInfoboxList.addChild("li", NodeL10n.getBase().getString("WelcomeToadlet.version", new String[] { "fullVersion", "build", "rev" },
 				new String[] { Version.publicVersion(), Integer.toString(Version.buildNumber()), Version.cvsRevision() }));
@@ -750,7 +751,7 @@ public class StatisticsToadlet extends Toadlet {
 	}
 
 	private void drawStoreSizeBox(InfoboxWidget storeSizeInfobox, double loc, long nodeUptimeSeconds) {
-		storeSizeInfobox.setTitle("datastore");
+		storeSizeInfobox.setTitle(l10n("datastore"));
 		Div storesizecontent = new Div();
 		storesizecontent.addAttribute("style", "overflow:scr");
 		HTMLNode scrollDiv = storeSizeInfobox.body.addChild(storesizecontent);
@@ -1082,7 +1083,7 @@ public class StatisticsToadlet extends Toadlet {
 	
 	private void drawActivityBox(InfoboxWidget activityInfobox, boolean advancedModeEnabled) {
 		
-		activityInfobox.setTitle("activityTitle");
+		activityInfobox.setTitle(l10nDark("activityTitle"));
 		HTMLNode activityList = drawActivity(activityInfobox.body, node);
 		
 		int numARKFetchers = node.getNumARKFetchers();
@@ -1317,7 +1318,7 @@ public class StatisticsToadlet extends Toadlet {
 	}
 
 	private void drawBandwidthBox(InfoboxWidget bandwidthInfobox, long nodeUptimeSeconds, boolean isAdvancedModeEnabled) {
-		bandwidthInfobox.setTitle("bandwidthTitle");
+		bandwidthInfobox.setTitle(l10n("bandwidthTitle"));
 		HTMLNode bandwidthList = bandwidthInfobox.body.addChild("ul");
 		drawBandwidth(bandwidthList, node, nodeUptimeSeconds, isAdvancedModeEnabled);
 	}
