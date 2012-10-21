@@ -1,8 +1,6 @@
 package freenet.support.htmlprimitives;
 
-import freenet.support.HTMLNode;
-
-public class Div extends HTMLNode {
+public class Div extends OutputNode {
 
 	public Div(HTMLClass CLASS, String content) {
 		this(CLASS);

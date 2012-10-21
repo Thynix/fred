@@ -16,7 +16,6 @@ public class HTMLNode implements XMLCharacterClasses {
 	
 	private static final Pattern namePattern = Pattern.compile("^[" + NAME + "]*$");
 	private static final Pattern simpleNamePattern = Pattern.compile("^[A-Za-z][A-Za-z0-9]*$");
-	private boolean readOnly;
 	/** Text to be inserted between tags, or possibly raw HTML. Only non-null if name is "#" (= text) or "%" (= raw
 	 * HTML). Otherwise the constructor will allocate a separate child node to contain it. */
 	private String content;
@@ -65,6 +64,7 @@ public class HTMLNode implements XMLCharacterClasses {
 		CloseTags.add("title");
 	}
 
+	protected boolean readOnly;
 	protected final String name;
 	protected final List<HTMLNode> children = new ArrayList<HTMLNode>();
 
