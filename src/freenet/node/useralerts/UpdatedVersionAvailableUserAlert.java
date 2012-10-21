@@ -11,6 +11,7 @@ import freenet.node.updater.NodeUpdateManager;
 import freenet.node.updater.RevocationChecker;
 import freenet.support.HTMLNode;
 import freenet.support.TimeUtil;
+import freenet.support.htmlprimitives.Div;
 
 public class UpdatedVersionAvailableUserAlert extends AbstractUserAlert {
 	private final NodeUpdateManager updater;
@@ -82,7 +83,7 @@ public class UpdatedVersionAvailableUserAlert extends AbstractUserAlert {
 		
 		UpdateThingy ut = createUpdateThingy();
 		
-		HTMLNode alertNode = new HTMLNode("div");
+		Div alertNode = new Div();
 		
 		alertNode.addChild("#", ut.firstBit);
 		

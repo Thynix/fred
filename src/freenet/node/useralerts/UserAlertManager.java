@@ -20,6 +20,11 @@ import freenet.node.fcp.FCPConnectionHandler;
 import freenet.support.Base64;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
+import freenet.support.htmlprimitives.Div;
+import freenet.support.htmlprimitives.HTMLClass;
+import freenet.support.htmlprimitives.HTMLID;
+import freenet.support.uielements.AlertLine;
+import freenet.support.uielements.InfoboxWidget;
 
 /**
  * Collection of UserAlert's.
@@ -179,7 +184,7 @@ public class UserAlertManager implements Comparator<UserAlert> {
 	 * Write the alerts as HTML.
 	 */
 	public HTMLNode createAlerts(boolean showOnlyErrors) {
-		HTMLNode alertsNode = new HTMLNode("div");
+		Div alertsNode = new Div();
 		UserAlert[] alerts = getAlerts();
 		int totalNumber = 0;
 		for (int i = 0; i < alerts.length; i++) {
@@ -206,15 +211,11 @@ public class UserAlertManager implements Comparator<UserAlert> {
 	 * @return The rendered HTML node
 	 */
 	public HTMLNode renderAlert(UserAlert userAlert) {
-		HTMLNode userAlertNode = null;
 		short level = userAlert.getPriorityClass();
-		userAlertNode = new HTMLNode("div", "class", "infobox infobox-"+getAlertLevelName(level));
-
-		userAlertNode.addChild("div", "class", "infobox-header", userAlert.getTitle());
-		HTMLNode alertContentNode = userAlertNode.addChild("div", "class", "infobox-content");
-		alertContentNode.addChild(userAlert.getHTMLText());
+		InfoboxWidget userAlertNode = new InfoboxWidget(getAlertLevelName(level), userAlert.getTitle());
+		userAlertNode.body.addChild(userAlert.getHTMLText());
 		if (userAlert.userCanDismiss()) {
-			HTMLNode dismissFormNode = alertContentNode.addChild("form", new String[] { "action", "method" }, new String[] { "/alerts/", "post" }).addChild("div");
+			HTMLNode dismissFormNode = userAlertNode.body.addChild("form", new String[] { "action", "method" }, new String[] { "/alerts/", "post" }).addChild(new Div());
 			dismissFormNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "disable", String.valueOf(userAlert.hashCode()) });
 			dismissFormNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", core.formPassword });
 			dismissFormNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "dismiss-user-alert", userAlert.dismissButtonText() });
@@ -222,18 +223,18 @@ public class UserAlertManager implements Comparator<UserAlert> {
 		return userAlertNode;
 	}
 
-	private String getAlertLevelName(short level) {
+	private InfoboxWidget.Type getAlertLevelName(short level) {
 		if (level <= UserAlert.CRITICAL_ERROR)
-			return "error";
+			return InfoboxWidget.Type.ERROR;
 		else if (level <= UserAlert.ERROR)
-			return "alert";
+			return InfoboxWidget.Type.ALERT;
 		else if (level <= UserAlert.WARNING)
-			return "warning";
+			return InfoboxWidget.Type.WARNING;
 		else if (level <= UserAlert.MINOR)
-			return "minor";
+			return InfoboxWidget.Type.MINOR;
 		else {
 			Logger.error(this, "Unknown alert level: "+level, new Exception("debug"));
-			return "error";
+			return InfoboxWidget.Type.ERROR;
 		}
 	}
 
@@ -323,28 +324,25 @@ public class UserAlertManager implements Comparator<UserAlert> {
 				alertSummaryString.append(separator);
 			alertSummaryString.append(l10n("totalLabel")).append(' ').append(totalNumber);
 		}
-		HTMLNode summaryBox = null;
-
-		String classes = oneLine?"alerts-line contains-":"infobox infobox-";
-
-		if (highestLevel <= UserAlert.CRITICAL_ERROR && !oneLine)
-			summaryBox = new HTMLNode("div", "class", classes + "error");
-		else if (highestLevel <= UserAlert.ERROR && !oneLine)
-			summaryBox = new HTMLNode("div", "class", classes + "alert");
-		else if (highestLevel <= UserAlert.WARNING)
-			summaryBox = new HTMLNode("div", "class", classes + "warning");
-		else if (highestLevel <= UserAlert.MINOR)
-			summaryBox = new HTMLNode("div", "class", classes + "information");
-		summaryBox.addChild("div", "class", "infobox-header", l10n("alertsTitle"));
-		HTMLNode summaryContent = summaryBox.addChild("div", "class", "infobox-content");
+		InfoboxWidget summaryBox = null;
+		if (highestLevel <= UserAlert.CRITICAL_ERROR && !oneLine) {
+			summaryBox = new InfoboxWidget(InfoboxWidget.Type.ERROR, null);
+		} else if (highestLevel <= UserAlert.ERROR && !oneLine) {
+			summaryBox = new InfoboxWidget(InfoboxWidget.Type.ALERT, null);
+		} else if (highestLevel <= UserAlert.WARNING) {
+			summaryBox = oneLine ? new AlertLine(AlertLine.Type.WARNING, null) : new InfoboxWidget(InfoboxWidget.Type.WARNING, null);
+		} else if (highestLevel <= UserAlert.MINOR) {
+			summaryBox = oneLine ? new AlertLine(AlertLine.Type.INFORMATION, null) : new InfoboxWidget(InfoboxWidget.Type.INFORMATION, null);
+		}
+		summaryBox.setTitle(l10n("alertsTitle"));
 		if(!oneLine) {
-			summaryContent.addChild("#", alertSummaryString.toString() + separator + " ");
-			NodeL10n.getBase().addL10nSubstitution(summaryContent, "UserAlertManager.alertsOnAlertsPage",
+			summaryBox.body.addChild("#", alertSummaryString.toString() + separator + " ");
+			NodeL10n.getBase().addL10nSubstitution(summaryBox.body, "UserAlertManager.alertsOnAlertsPage",
 				new String[] { "link" }, new HTMLNode[] { ALERTS_LINK });
 		} else {
-			summaryContent.addChild("a", "href", "/alerts/", NodeL10n.getBase().getString("StatusBar.alerts") + " " + alertSummaryString.toString());
+			summaryBox.body.addChild("a", "href", "/alerts/", NodeL10n.getBase().getString("StatusBar.alerts") + " " + alertSummaryString.toString());
 		}
-		summaryBox.addAttribute("id", "messages-summary-box");
+		summaryBox.setID(HTMLID.MESSAGESUMMARYBOX);
 		return summaryBox;
 	}
 

@@ -35,6 +35,7 @@ import java.util.MissingResourceException;
 import java.util.Random;
 import java.util.Set;
 
+import freenet.support.htmlprimitives.Div;
 import org.tanukisoftware.wrapper.WrapperManager;
 
 import com.db4o.Db4o;
@@ -70,7 +71,6 @@ import freenet.crypt.DiffieHellman;
 import freenet.crypt.EncryptingIoAdapter;
 import freenet.crypt.RandomSource;
 import freenet.crypt.Yarrow;
-import freenet.crypt.ciphers.Rijndael;
 import freenet.io.comm.DMT;
 import freenet.io.comm.DisconnectedException;
 import freenet.io.comm.FreenetInetAddress;
@@ -627,11 +627,6 @@ public class Node implements TimeSkewDetectorCallback {
 
 	final GetPubkey getPubKey;
 
-	/** RequestSender's currently transferring, by key */
-	private final HashMap<NodeCHK, RequestSender> transferringRequestSendersRT;
-	private final HashMap<NodeCHK, RequestSender> transferringRequestSendersBulk;
-	/** UIDs of RequestHandler's currently transferring */
-	private final HashSet<Long> transferringRequestHandlers;
 	/** FetchContext for ARKs */
 	public final FetchContext arkFetcherContext;
 
@@ -794,6 +789,25 @@ public class Node implements TimeSkewDetectorCallback {
 	private boolean storePreallocate;
 	
 	private boolean enableRoutedPing;
+
+	/**
+	 * Minimum bandwidth limit in bytes considered usable: 5 KiB. If there is an attempt to set a limit below this -
+	 * excluding the reserved -1 for input bandwidth - the callback will throw. See the callbacks for
+	 * outputBandwidthLimit and inputBandwidthLimit.
+	 */
+	private static final int minimumBandwidth = 5 * 1024;
+
+	/**
+	 * Returns an exception with an explanation that the given bandwidth limit is too low.
+	 *
+	 * See the Node.bandwidthMinimum localization string.
+	 * @param limit Bandwidth limit in bytes.
+	 */
+	private InvalidConfigValueException lowBandwidthLimit(int limit) {
+		return new InvalidConfigValueException(l10n("bandwidthMinimum",
+		    new String[] { "limit", "minimum" },
+		    new String[] { Integer.toString(limit), Integer.toString(minimumBandwidth) }));
+	}
 
 	/**
 	 * Dispatches a probe request with the specified settings
@@ -1117,9 +1131,6 @@ public class Node implements TimeSkewDetectorCallback {
 			throw new Error(e3);
 		}
 		fLocalhostAddress = new FreenetInetAddress(localhostAddress);
-		transferringRequestSendersRT = new HashMap<NodeCHK, RequestSender>();
-		transferringRequestSendersBulk = new HashMap<NodeCHK, RequestSender>();
-		transferringRequestHandlers = new HashSet<Long>();
 
 		this.securityLevels = new SecurityLevels(this, config);
 
@@ -1570,17 +1581,21 @@ public class Node implements TimeSkewDetectorCallback {
 					@Override
 					public void set(Integer obwLimit) throws InvalidConfigValueException {
 						if(obwLimit <= 0) throw new InvalidConfigValueException(l10n("bwlimitMustBePositive"));
+						if (obwLimit < minimumBandwidth) throw lowBandwidthLimit(obwLimit);
 						synchronized(Node.this) {
 							outputBandwidthLimit = obwLimit;
 						}
 						outputThrottle.changeNanosAndBucketSize((1000L * 1000L * 1000L) / obwLimit, obwLimit/2);
 						nodeStats.setOutputLimit(obwLimit);
 					}
-		}, true);
+		});
 
 		int obwLimit = nodeConfig.getInt("outputBandwidthLimit");
 		if(obwLimit <= 0)
 			throw new NodeInitException(NodeInitException.EXIT_BAD_BWLIMIT, "Invalid outputBandwidthLimit");
+		if (obwLimit < minimumBandwidth) {
+			throw new NodeInitException(NodeInitException.EXIT_BAD_BWLIMIT, lowBandwidthLimit(obwLimit).getMessage());
+		}
 		outputBandwidthLimit = obwLimit;
 		// Bucket size of 0.5 seconds' worth of bytes.
 		// Add them at a rate determined by the obwLimit.
@@ -1606,13 +1621,14 @@ public class Node implements TimeSkewDetectorCallback {
 								ibwLimit = outputBandwidthLimit * 4;
 							} else {
 								if(ibwLimit <= 1) throw new InvalidConfigValueException(l10n("bandwidthLimitMustBePositiveOrMinusOne"));
+								if (ibwLimit < minimumBandwidth) throw lowBandwidthLimit(ibwLimit);
 								inputLimitDefault = false;
 							}
 							inputBandwidthLimit = ibwLimit;
 						}
 						nodeStats.setInputLimit(ibwLimit);
 					}
-		}, true);
+		});
 
 		int ibwLimit = nodeConfig.getInt("inputBandwidthLimit");
 		if(ibwLimit == -1) {
@@ -1620,6 +1636,9 @@ public class Node implements TimeSkewDetectorCallback {
 			ibwLimit = obwLimit * 4;
 		} else if(ibwLimit <= 0)
 			throw new NodeInitException(NodeInitException.EXIT_BAD_BWLIMIT, "Invalid inputBandwidthLimit");
+		if (ibwLimit < minimumBandwidth) {
+			throw new NodeInitException(NodeInitException.EXIT_BAD_BWLIMIT, lowBandwidthLimit(ibwLimit).getMessage());
+		}
 		inputBandwidthLimit = ibwLimit;
 
 		nodeConfig.register("throttleLocalTraffic", false, sortOrder++, true, false, "Node.throttleLocalTraffic", "Node.throttleLocalTrafficLong", new BooleanCallback() {
@@ -3162,7 +3181,7 @@ public class Node implements TimeSkewDetectorCallback {
 
 		@Override
 		public HTMLNode getHTMLText() {
-			HTMLNode content = new HTMLNode("div");
+			Div content = new Div();
 			SecurityLevelsToadlet.generatePasswordFormPage(false, clientCore.getToadletContainer(), content, false, false, false, null, null);
 			return content;
 		}
@@ -3285,9 +3304,9 @@ public class Node implements TimeSkewDetectorCallback {
 
 				@Override
 				public HTMLNode getHTMLText() {
-					HTMLNode div = new HTMLNode("div");
-					div.addChild("#", NodeL10n.getBase().getString("Node.storeSaltHashMigrated"));
-					HTMLNode ul = div.addChild("ul");
+					Div div_ = new Div();
+					div_.addChild("#", NodeL10n.getBase().getString("Node.storeSaltHashMigrated"));
+					HTMLNode ul = div_.addChild("ul");
 
 					for (String type : new String[] { "chk", "pubkey", "ssk" })
 						for (String storecache : new String[] { "store", "store.keys", "store.lru", "cache",
@@ -3301,7 +3320,7 @@ public class Node implements TimeSkewDetectorCallback {
 					if (dbDir.exists())
 						ul.addChild("li", dbDir.getAbsolutePath());
 
-					return div;
+					return div_;
 				}
 
 				@Override
@@ -3899,12 +3918,8 @@ public class Node implements TimeSkewDetectorCallback {
 		if(logMINOR) Logger.minor(this, "Not in store locally");
 
 		// Transfer coalescing - match key only as HTL irrelevant
-		RequestSender sender = null;
-		HashMap<NodeCHK, RequestSender> transferringRequestSenders =
-			realTimeFlag ? transferringRequestSendersRT : transferringRequestSendersBulk;
-		synchronized(transferringRequestSenders) {
-			sender = transferringRequestSenders.get(key);
-		}
+		RequestSender sender = key instanceof NodeCHK ? 
+			tracker.getTransferringRequestSenderByKey((NodeCHK)key, realTimeFlag) : null;
 		if(sender != null) {
 			if(logMINOR) Logger.minor(this, "Data already being transferred: "+sender);
 			sender.setTransferCoalesced();
@@ -3945,29 +3960,6 @@ public class Node implements TimeSkewDetectorCallback {
 	 * inserts that don't get cached. */
 	boolean canWriteDatastoreInsert(short htl) {
 		return htl <= (maxHTL - 3);
-	}
-
-	/**
-	 * Add a transferring RequestSender to our HashMap.
-	 */
-	public void addTransferringSender(NodeCHK key, RequestSender sender) {
-		HashMap<NodeCHK, RequestSender> transferringRequestSenders =
-			sender.realTimeFlag ? transferringRequestSendersRT : transferringRequestSendersBulk;
-		synchronized(transferringRequestSenders) {
-			transferringRequestSenders.put(key, sender);
-		}
-	}
-
-	void addTransferringRequestHandler(long id) {
-		synchronized(transferringRequestHandlers) {
-			transferringRequestHandlers.add(id);
-		}
-	}
-
-	void removeTransferringRequestHandler(long id) {
-		synchronized(transferringRequestHandlers) {
-			transferringRequestHandlers.remove(id);
-		}
 	}
 
 	/**
@@ -4293,25 +4285,6 @@ public class Node implements TimeSkewDetectorCallback {
 		}
 	}
 
-	/**
-	 * Remove a sender from the set of currently transferring senders.
-	 */
-	public void removeTransferringSender(NodeCHK key, RequestSender sender) {
-		HashMap<NodeCHK, RequestSender> transferringRequestSenders =
-			sender.realTimeFlag ? transferringRequestSendersRT : transferringRequestSendersBulk;
-		synchronized(transferringRequestSenders) {
-//			RequestSender rs = (RequestSender) transferringRequestSenders.remove(key);
-//			if(rs != sender) {
-//				Logger.error(this, "Removed "+rs+" should be "+sender+" for "+key+" in removeTransferringSender");
-//			}
-
-			// Since there is no request coalescing, we only remove it if it matches,
-			// and don't complain if it doesn't.
-			if(transferringRequestSenders.get(key) == sender)
-				transferringRequestSenders.remove(key);
-		}
-	}
-
 	final boolean decrementAtMax;
 	final boolean decrementAtMin;
 
@@ -4400,7 +4373,7 @@ public class Node implements TimeSkewDetectorCallback {
 			sb.append(peers.getStatus());
 		else
 			sb.append("No peers yet");
-		sb.append(getNumTransferringRequestSenders());
+		sb.append(tracker.getNumTransferringRequestSenders());
 		sb.append('\n');
 		return sb.toString();
 	}
@@ -4417,23 +4390,6 @@ public class Node implements TimeSkewDetectorCallback {
 		return sb.toString();
 	}
 
-	public int getNumTransferringRequestSenders() {
-		int total = 0;
-		synchronized(transferringRequestSendersRT) {
-			total += transferringRequestSendersRT.size();
-		}
-		synchronized(transferringRequestSendersBulk) {
-			total += transferringRequestSendersBulk.size();
-		}
-		return total;
-	}
-
-	public int getNumTransferringRequestHandlers() {
-		synchronized(transferringRequestHandlers) {
-			return transferringRequestHandlers.size();
-		}
-	}
-
 	/**
 	 * @return Data String for freeviz.
 	 */
@@ -4441,7 +4397,7 @@ public class Node implements TimeSkewDetectorCallback {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("\ntransferring_requests=");
-		sb.append(getNumTransferringRequestSenders());
+		sb.append(tracker.getNumTransferringRequestSenders());
 
 		sb.append('\n');
 
@@ -5182,20 +5138,20 @@ public class Node implements TimeSkewDetectorCallback {
 	}
 
 	public void drawClientCacheBox(HTMLNode storeSizeInfobox) {
-		HTMLNode div = storeSizeInfobox.addChild("div");
-		div.addChild("p", "Client cache max size: "+this.maxClientCacheKeys+" keys");
-		div.addChild("p", "Client cache size: CHK "+this.chkClientcache.keyCount()+" pubkey "+this.pubKeyClientcache.keyCount()+" SSK "+this.sskClientcache.keyCount());
-		div.addChild("p", "Client cache misses: CHK "+this.chkClientcache.misses()+" pubkey "+this.pubKeyClientcache.misses()+" SSK "+this.sskClientcache.misses());
-		div.addChild("p", "Client cache hits: CHK "+this.chkClientcache.hits()+" pubkey "+this.pubKeyClientcache.hits()+" SSK "+this.sskClientcache.hits());
+		HTMLNode div_ = storeSizeInfobox.addChild(new Div());
+		div_.addChild("p", "Client cache max size: " + this.maxClientCacheKeys + " keys");
+		div_.addChild("p", "Client cache size: CHK " + this.chkClientcache.keyCount() + " pubkey " + this.pubKeyClientcache.keyCount() + " SSK " + this.sskClientcache.keyCount());
+		div_.addChild("p", "Client cache misses: CHK " + this.chkClientcache.misses() + " pubkey " + this.pubKeyClientcache.misses() + " SSK " + this.sskClientcache.misses());
+		div_.addChild("p", "Client cache hits: CHK " + this.chkClientcache.hits() + " pubkey " + this.pubKeyClientcache.hits() + " SSK " + this.sskClientcache.hits());
 	}
 
 	public void drawSlashdotCacheBox(HTMLNode storeSizeInfobox) {
-		HTMLNode div = storeSizeInfobox.addChild("div");
-		div.addChild("p", "Slashdot/ULPR cache max size: "+maxSlashdotCacheKeys+" keys");
-		div.addChild("p", "Slashdot/ULPR cache size: CHK "+this.chkSlashdotcache.keyCount()+" pubkey "+this.pubKeySlashdotcache.keyCount()+" SSK "+this.sskSlashdotcache.keyCount());
-		div.addChild("p", "Slashdot/ULPR cache misses: CHK "+this.chkSlashdotcache.misses()+" pubkey "+this.pubKeySlashdotcache.misses()+" SSK "+this.sskSlashdotcache.misses());
-		div.addChild("p", "Slashdot/ULPR cache hits: CHK "+this.chkSlashdotcache.hits()+" pubkey "+this.pubKeySlashdotcache.hits()+" SSK "+this.sskSlashdotcache.hits());
-		div.addChild("p", "Slashdot/ULPR cache writes: CHK "+this.chkSlashdotcache.writes()+" pubkey "+this.pubKeySlashdotcache.writes()+" SSK "+this.sskSlashdotcache.writes());
+		HTMLNode div_ = storeSizeInfobox.addChild(new Div());
+		div_.addChild("p", "Slashdot/ULPR cache max size: " + maxSlashdotCacheKeys + " keys");
+		div_.addChild("p", "Slashdot/ULPR cache size: CHK " + this.chkSlashdotcache.keyCount() + " pubkey " + this.pubKeySlashdotcache.keyCount() + " SSK " + this.sskSlashdotcache.keyCount());
+		div_.addChild("p", "Slashdot/ULPR cache misses: CHK " + this.chkSlashdotcache.misses() + " pubkey " + this.pubKeySlashdotcache.misses() + " SSK " + this.sskSlashdotcache.misses());
+		div_.addChild("p", "Slashdot/ULPR cache hits: CHK " + this.chkSlashdotcache.hits() + " pubkey " + this.pubKeySlashdotcache.hits() + " SSK " + this.sskSlashdotcache.hits());
+		div_.addChild("p", "Slashdot/ULPR cache writes: CHK " + this.chkSlashdotcache.writes() + " pubkey " + this.pubKeySlashdotcache.writes() + " SSK " + this.sskSlashdotcache.writes());
 	}
 
 	private boolean enteredPassword;

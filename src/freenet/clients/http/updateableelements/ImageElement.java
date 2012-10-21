@@ -21,6 +21,8 @@ import freenet.keys.FreenetURI;
 import freenet.support.Base64;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
+import freenet.support.htmlprimitives.HTMLClass;
+import freenet.support.htmlprimitives.Div;
 
 /** A pushed image, the progress is shown with the ImageCreatorToadlet */
 public class ImageElement extends BaseUpdateableElement {
@@ -177,10 +179,10 @@ public class ImageElement extends BaseUpdateableElement {
 					waiter = tracker.makeFetcher(key, maxSize, null, REFILTER_POLICY.RE_FILTER);
 					fr = waiter.getResultFast();
 				} catch (FetchException fe) {
-					whenJsEnabled.addChild("div", "error");
+					whenJsEnabled.addChild(new Div(HTMLClass.NONE, "error"));
 				}
 				if (fr == null) {
-					whenJsEnabled.addChild("div", "No fetcher found");
+					whenJsEnabled.addChild(new Div(HTMLClass.NONE, "No fetcher found"));
 				} else {
 
 					if (fr.isFinished() && fr.hasData()) {

@@ -18,6 +18,7 @@ import freenet.support.Fields;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.SimpleFieldSet;
+import freenet.support.htmlprimitives.Div;
 
 public class BookmarkItem extends Bookmark {
     public static final String NAME = "Bookmark";
@@ -93,7 +94,7 @@ public class BookmarkItem extends Bookmark {
 
         @Override
 		public HTMLNode getHTMLText() {
-            HTMLNode n = new HTMLNode("div");
+            Div n = new Div();
             NodeL10n.getBase().addL10nSubstitution(n, "BookmarkItem.bookmarkUpdatedWithLink", new String[]{"link", "name", "edition"},
             		new HTMLNode[] { HTMLNode.link("/"+key), HTMLNode.text(name), HTMLNode.text(key.getSuggestedEdition()) });
             return n;

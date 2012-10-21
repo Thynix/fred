@@ -9,6 +9,9 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.List;
 
+import freenet.support.htmlprimitives.Div;
+import freenet.support.htmlprimitives.HTMLClass;
+import freenet.support.uielements.InfoboxWidget;
 import org.tanukisoftware.wrapper.WrapperManager;
 
 import freenet.client.ClientMetadata;
@@ -121,7 +124,7 @@ public class WelcomeToadlet extends Toadlet {
 		// Fetch-a-key box
 		HTMLNode fetchKeyContent = ctx.getPageMaker().getInfobox("infobox-normal", l10n("fetchKeyLabel"), contentNode, "fetch-key", true);
 		fetchKeyContent.addAttribute("id", "keyfetchbox");
-		HTMLNode fetchKeyForm = fetchKeyContent.addChild("form", new String[]{"action", "method"}, new String[]{"/", "get"}).addChild("div");
+		HTMLNode fetchKeyForm = fetchKeyContent.addChild("form", new String[]{"action", "method"}, new String[]{"/", "get"}).addChild(new Div());
 		fetchKeyForm.addChild("span", "class", "fetch-key-label", l10n("keyRequestLabel") + ' ');
 		fetchKeyForm.addChild("input", new String[]{"type", "size", "name"}, new String[]{"text", "80", "key"});
 		fetchKeyForm.addChild("input", new String[]{"type", "value"}, new String[]{"submit", l10n("fetch")});
@@ -448,15 +451,16 @@ public class WelcomeToadlet extends Toadlet {
 			this.putFetchKeyBox(ctx, contentNode);
 		}
 		// Bookmarks
-		HTMLNode bookmarkBox = contentNode.addChild("div", "class", "infobox infobox-normal bookmarks-box");
-		HTMLNode bookmarkBoxHeader = bookmarkBox.addChild("div", "class", "infobox-header");
-		bookmarkBoxHeader.addChild("a", new String[]{"class", "title"}, new String[]{"bookmarks-header-text", NodeL10n.getBase().getString("BookmarkEditorToadlet.myBookmarksExplanation")}, NodeL10n.getBase().getString("BookmarkEditorToadlet.myBookmarksTitle"));
+		InfoboxWidget bookmarkBox = new InfoboxWidget(InfoboxWidget.Type.NORMAL,null);
+		contentNode.addChild(bookmarkBox);
+		bookmarkBox.addClass(HTMLClass.BOOKMARKSBOX);
+		bookmarkBox.header.addChild("a", new String[]{"class", "title"}, new String[]{"bookmarks-header-text", NodeL10n.getBase().getString("BookmarkEditorToadlet.myBookmarksExplanation")}, NodeL10n.getBase().getString("BookmarkEditorToadlet.myBookmarksTitle"));
 		if (ctx.isAllowedFullAccess()) {
-			bookmarkBoxHeader.addChild("span", "class", "edit-bracket", "[");
-			bookmarkBoxHeader.addChild("span", "id", "bookmarkedit").addChild("a", new String[]{"href", "class"}, new String[]{"/bookmarkEditor/", "interfacelink"}, NodeL10n.getBase().getString("BookmarkEditorToadlet.edit"));
-			bookmarkBoxHeader.addChild("span", "class", "edit-bracket", "]");
+			bookmarkBox.header.addChild("span", "class", "edit-bracket", "[");
+			bookmarkBox.header.addChild("span", "id", "bookmarkedit").addChild("a", new String[]{"href", "class"}, new String[]{"/bookmarkEditor/", "interfacelink"}, NodeL10n.getBase().getString("BookmarkEditorToadlet.edit"));
+			bookmarkBox.header.addChild("span", "class", "edit-bracket", "]");
 		}
-		HTMLNode bookmarkBoxContent = bookmarkBox.addChild("div", "class", "infobox-content");
+		HTMLNode bookmarkBoxContent = bookmarkBox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
 		HTMLNode bookmarksList = bookmarkBoxContent.addChild("ul", "id", "bookmarks");
 		if (ctx.isAllowedFullAccess()) {
 			addCategoryToList(BookmarkManager.MAIN_CATEGORY, bookmarksList, (!container.enableActivelinks()) || (useragent != null && useragent.contains("khtml") && !useragent.contains("chrome")), ctx);
@@ -466,26 +470,26 @@ public class WelcomeToadlet extends Toadlet {
 		}
 		// Search Box
 		// FIXME search box is BELOW bookmarks for now, until we get search fixed properly.
-		HTMLNode searchBox = contentNode.addChild("div", "class", "infobox infobox-normal");
+		InfoboxWidget searchBox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, null);
+		contentNode.addChild(searchBox);
 		searchBox.addAttribute("id", "search-freenet");
-		searchBox.addChild("div", "class", "infobox-header").addChild("span", "class", "search-title-label", NodeL10n.getBase().getString("WelcomeToadlet.searchBoxLabel"));
-		HTMLNode searchBoxContent = searchBox.addChild("div", "class", "infobox-content");
+		searchBox.header.addChild("span", "class", "search-title-label", NodeL10n.getBase().getString("WelcomeToadlet.searchBoxLabel"));
 		// Search form
 		if(core.node.pluginManager != null && core.node.pluginManager.isPluginLoaded("plugins.Library.Main")) {
 			// FIXME: Remove this once we have a non-broken index.
-			searchBoxContent.addChild("span", "class", "search-warning-text", l10n("searchBoxWarningSlow"));
-			HTMLNode searchForm = container.addFormChild(searchBoxContent, "/library/", "searchform");
+			searchBox.body.addChild("span", "class", "search-warning-text", l10n("searchBoxWarningSlow"));
+			HTMLNode searchForm = container.addFormChild(searchBox.body, "/library/", "searchform");
 			searchForm.addChild("input", new String[] { "type", "size", "name" }, new String[] { "text", "80", "search" });
 			searchForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "find", l10n("searchFreenet") });
 			// Search must be in a new window so that the user is able to browse the bookmarks.
 			searchForm.addAttribute("target", "_blank");
 		} else if(core.node.pluginManager == null || core.node.pluginManager.isPluginLoadedOrLoadingOrWantLoad("Library")) {
 			// Warn that search plugin is not loaded.
-			HTMLNode textSpan = searchBoxContent.addChild("span", "class", "search-not-availible-warning");
+			HTMLNode textSpan = searchBox.body.addChild("span", "class", "search-not-availible-warning");
 			NodeL10n.getBase().addL10nSubstitution(textSpan, "WelcomeToadlet.searchPluginLoading", new String[] { "link" }, new HTMLNode[] { HTMLNode.link("/plugins/") });
 		} else {
 			// Warn that search plugin is not loaded.
-			HTMLNode textSpan = searchBoxContent.addChild("span", "class", "search-not-availible-warning");
+			HTMLNode textSpan = searchBox.body.addChild("span", "class", "search-not-availible-warning");
 			NodeL10n.getBase().addL10nSubstitution(textSpan, "WelcomeToadlet.searchPluginNotLoaded", new String[] { "link" }, new HTMLNode[] { HTMLNode.link("/plugins/") });
 		}
 		if (!ctx.getPageMaker().getTheme().fetchKeyBoxAboveBookmarks) {

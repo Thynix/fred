@@ -11,12 +11,12 @@ import freenet.node.NodeClientCore;
 import freenet.node.SecurityLevels;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
-import freenet.support.CPUInformation.CPUID;
 import freenet.support.api.HTTPRequest;
+import freenet.support.htmlprimitives.Div;
+import freenet.support.htmlprimitives.HTMLClass;
 import freenet.support.io.FileUtil;
 import freenet.support.io.FileUtil.OperatingSystem;
 
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -57,7 +57,7 @@ public class SECURITY_PHYSICAL implements Step {
 		infoboxContent.addChild("p", WizardL10n.l10nSec("physicalThreatLevel"));
 
 		HTMLNode form = helper.addFormChild(infoboxContent, ".", "physicalSecurityForm");
-		HTMLNode div = form.addChild("div", "class", "opennetDiv");
+		HTMLNode div = form.addChild(new Div(HTMLClass.OPENNETDIV));
 		String controlName = "security-levels.physicalThreatLevel";
 		HTMLNode swapWarning = div.addChild("p").addChild("i");
 		NodeL10n.getBase().addL10nSubstitution(swapWarning, "SecurityLevels.physicalThreatLevelTruecrypt",

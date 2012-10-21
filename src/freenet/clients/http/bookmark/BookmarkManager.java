@@ -38,7 +38,7 @@ public class BookmarkManager implements RequestClient {
 	private final NodeClientCore node;
 	private final USKUpdatedCallback uskCB = new USKUpdatedCallback();
 	public static final BookmarkCategory MAIN_CATEGORY = new BookmarkCategory("/");
-	public static final BookmarkCategory DEFAULT_CATEGORY = new BookmarkCategory("/");
+	public static final BookmarkCategory DEFAULT_CATEGORY = new BookmarkCategory("\\");
 	private final HashMap<String, Bookmark> bookmarks = new HashMap<String, Bookmark>();
 	private final File bookmarksFile;
 	private final File backupBookmarksFile;
@@ -72,7 +72,7 @@ public class BookmarkManager implements RequestClient {
 		});
 	}
 
-	public BookmarkManager(NodeClientCore n) {
+	public BookmarkManager(NodeClientCore n, boolean publicGateway) {
 		putPaths("/", MAIN_CATEGORY);
 		this.node = n;
 		this.bookmarksFile = n.node.userDir().file("bookmarks.dat");
@@ -103,9 +103,11 @@ public class BookmarkManager implements RequestClient {
 				Logger.error(this, "Error reading the backup bookmark file !" + e.getMessage(), e);
 			}
 		}
-		//populate defaults for hosts without full access permissions.
-		putPaths("/", DEFAULT_CATEGORY);
-		readBookmarks(DEFAULT_CATEGORY, DEFAULT_BOOKMARKS);
+		//populate defaults for hosts without full access permissions if we're in gateway mode.
+		if (publicGateway) {
+			putPaths("\\", DEFAULT_CATEGORY);
+			readBookmarks(DEFAULT_CATEGORY, DEFAULT_BOOKMARKS);
+		}
 	}
 
 	public void reAddDefaultBookmarks() {

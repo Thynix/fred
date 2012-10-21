@@ -8,6 +8,7 @@ import freenet.node.NodeStats;
 import freenet.node.PeerManager;
 import freenet.node.updater.NodeUpdateManager;
 import freenet.support.HTMLNode;
+import freenet.support.htmlprimitives.Div;
 
 public class PeerManagerUserAlert extends AbstractUserAlert {
 
@@ -190,7 +191,7 @@ public class PeerManagerUserAlert extends AbstractUserAlert {
 	
 	@Override
 	public HTMLNode getHTMLText() {
-		HTMLNode alertNode = new HTMLNode("div");
+		Div alertNode = new Div();
 		
 		synchronized(this) {
 			if(isOutdated)

@@ -12,6 +12,7 @@ import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.SizeUtil;
 import freenet.support.api.HTTPRequest;
+import freenet.support.htmlprimitives.Div;
 import freenet.support.io.FileUtil;
 
 /**
@@ -78,7 +79,7 @@ public class DATASTORE_SIZE implements Step {
 
 
 		//Put buttons below dropdown.
-		HTMLNode below = bandwidthForm.addChild("div");
+		HTMLNode below = bandwidthForm.addChild(new Div());
 		below.addChild("input",
 		        new String[] { "type", "name", "value" },
 		        new String[] { "submit", "back", NodeL10n.getBase().getString("Toadlet.back")});

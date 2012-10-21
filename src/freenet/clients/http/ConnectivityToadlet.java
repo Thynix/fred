@@ -33,6 +33,9 @@ import freenet.support.HTMLNode;
 import freenet.support.SimpleFieldSet;
 import freenet.support.TimeUtil;
 import freenet.support.api.HTTPRequest;
+import freenet.support.htmlprimitives.Div;
+import freenet.support.htmlprimitives.HTMLClass;
+import freenet.support.uielements.InfoboxWidget;
 
 /**
  * Toadlet displaying information on the node's connectivity status.
@@ -64,10 +67,9 @@ public class ConnectivityToadlet extends Toadlet {
 			contentNode.addChild(core.alerts.createSummary());
 
 		// our ports
-		HTMLNode portInfobox = contentNode.addChild("div", "class", "infobox infobox-normal");
-		portInfobox.addChild("div", "class", "infobox-header", l10nConn("nodePortsTitle"));
-		HTMLNode portInfoboxContent = portInfobox.addChild("div", "class", "infobox-content");
-		HTMLNode portInfoList = portInfoboxContent.addChild("ul");
+		InfoboxWidget portInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10nConn("nodePortsTitle"));
+		contentNode.addChild(portInfobox);
+		HTMLNode portInfoList = portInfobox.body.addChild("ul");
 		SimpleFieldSet fproxyConfig = node.config.get("fproxy").exportFieldSet(true);
 		SimpleFieldSet fcpConfig = node.config.get("fcp").exportFieldSet(true);
 		SimpleFieldSet tmciConfig = node.config.get("console").exportFieldSet(true);

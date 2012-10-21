@@ -14,6 +14,9 @@ import freenet.node.useralerts.UserAlertManager;
 import freenet.support.HTMLNode;
 import freenet.support.MultiValueTable;
 import freenet.support.api.HTTPRequest;
+import freenet.support.htmlprimitives.Div;
+import freenet.support.htmlprimitives.HTMLClass;
+import freenet.support.uielements.InfoboxWidget;
 
 /**
  * A page consisting entirely of useralerts.
@@ -41,8 +44,7 @@ public class UserAlertsToadlet extends Toadlet {
 		HTMLNode contentNode = page.content;
 		HTMLNode alertsNode = alerts.createAlerts(false);
 		if (alertsNode.getFirstTag() == null) {
-			alertsNode = new HTMLNode("div", "class", "infobox");
-			alertsNode.addChild("div", "class", "infobox-content").addChild("div", NodeL10n.getBase().getString("UserAlertsToadlet.noMessages"));
+			alertsNode = new InfoboxWidget(InfoboxWidget.Type.NORMAL, NodeL10n.getBase().getString("UserAlertsToadlet.noMessages"));
 		}
 		contentNode.addChild(alertsNode);
 

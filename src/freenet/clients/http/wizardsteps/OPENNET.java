@@ -4,6 +4,8 @@ import freenet.clients.http.FirstTimeWizardToadlet;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
+import freenet.support.htmlprimitives.Div;
+import freenet.support.htmlprimitives.HTMLClass;
 
 /**
  * This step allows the user to choose between darknet and opennet, explaining each briefly.
@@ -51,9 +53,9 @@ public class OPENNET implements Step {
 		        new String[] { "type", "name", "value" },
 		        new String[] { "submit", "next", NodeL10n.getBase().getString("Toadlet.next")});
 
-		HTMLNode foot = infoboxContent.addChild("div", "class", "toggleable");
+		HTMLNode foot = infoboxContent.addChild(new Div(HTMLClass.TOGGLEABLE));
 		foot.addChild("i", "¹: " + WizardL10n.l10n("opennetChoiceHowSafeIsFreenetToggle"));
-		HTMLNode footHidden = foot.addChild("div", "class", "hidden");
+		HTMLNode footHidden = foot.addChild(new Div(HTMLClass.HIDDEN));
 		HTMLNode footList = footHidden.addChild("ol");
 		footList.addChild("li", WizardL10n.l10n("opennetChoiceHowSafeIsFreenetStupid"));
 		footList.addChild("li", WizardL10n.l10n("opennetChoiceHowSafeIsFreenetFriends") + "²");

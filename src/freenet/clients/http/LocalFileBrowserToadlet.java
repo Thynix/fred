@@ -8,6 +8,10 @@ import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
+import freenet.support.htmlprimitives.Div;
+import freenet.support.htmlprimitives.HTMLClass;
+import freenet.support.htmlprimitives.HTMLID;
+import freenet.support.uielements.InfoboxWidget;
 
 import java.io.File;
 import java.io.IOException;
@@ -200,11 +204,12 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 	 * @return result HTMLNode containing hidden persistence fields
 	 */
 	private HTMLNode renderPersistenceFields (Hashtable<String, String> fieldPairs) {
-		HTMLNode result = new HTMLNode("div", "id", "persistenceFields");
+		Div result = new Div();
+		result.setID(HTMLID.PERSISTENCEFIELDS);
 		for (String key : fieldPairs.keySet()) {
 			result.addChild("input", 
-			        new String[] { "type", "name", "value" },
-			        new String[] { "hidden", key, fieldPairs.get(key)});
+				new String[] { "type", "name", "value" },
+				new String[] { "hidden", key, fieldPairs.get(key)});
 		}
 		return result;
 	}
@@ -305,11 +310,10 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 			HTMLNode contentNode = page.content;
 			if (ctx.isAllowedFullAccess()) contentNode.addChild(core.alerts.createSummary());
 			
-			HTMLNode infoboxDiv = contentNode.addChild("div", "class", "infobox");
-			infoboxDiv.addChild("div", "class", "infobox-header", l10n("listing", "path",
-			        currentPath.getAbsolutePath()));
-			HTMLNode listingDiv = infoboxDiv.addChild("div", "class", "infobox-content");
-			
+			InfoboxWidget filelist = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10n("listing", "path",
+				currentPath.getAbsolutePath()));
+			contentNode.addChild(filelist);
+
 			File[] files = currentPath.listFiles();
 			
 			if (files == null) {
@@ -332,7 +336,7 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 					return firstFile.getName().compareToIgnoreCase(secondFile.getName());
 				}
 			});
-			HTMLNode listingTable = listingDiv.addChild("table");
+			HTMLNode listingTable = filelist.body.addChild("table");
 			HTMLNode headerRow = listingTable.addChild("tr");
 			headerRow.addChild("th");
 			headerRow.addChild("th", l10n("fileHeader"));
@@ -415,12 +419,10 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 			HTMLNode contentNode = page.content;
 			if (ctx.isAllowedFullAccess()) contentNode.addChild(core.alerts.createSummary());
 			
-			HTMLNode infoboxDiv = contentNode.addChild("div", "class", "infobox");
-			infoboxDiv.addChild("div", "class", "infobox-header", l10n("listing", "path", attemptedPath));
-			HTMLNode listingDiv = infoboxDiv.addChild("div", "class", "infobox-content");
-
-			listingDiv.addChild("#", l10n("dirCannotBeRead", "path", attemptedPath));
-			HTMLNode ulNode = listingDiv.addChild("ul");
+			InfoboxWidget filelist = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10n("listing", "path", attemptedPath));
+			contentNode.addChild(filelist);
+			filelist.body.addChild("#", l10n("dirCannotBeRead", "path", attemptedPath));
+			HTMLNode ulNode = filelist.body.addChild("ul");
 			ulNode.addChild("li", l10n("checkPathExist"));
 			ulNode.addChild("li", l10n("checkPathIsDir"));
 			ulNode.addChild("li", l10n("checkPathReadable"));

@@ -1,5 +1,8 @@
 package freenet.support;
 
+import freenet.support.htmlprimitives.HTMLClass;
+import freenet.support.htmlprimitives.HTMLID;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -327,17 +330,17 @@ public class HTMLNode implements XMLCharacterClasses {
 	}
 
 	/**
-	 * Add a class to the list of class attributes.<br/>
+	 * Add a html class to the list of class attributes.<br/>
 	 * A duplicate class attribute will not be added.<br/>
 	 * As classes are space-separated, if the class name has spaces multiple classes will be added.
 	 *
 	 * @param className class to add.
 	 */
-	public void addClass(final String className) {
+	public void addClass(final HTMLClass className) {
 		/*
 		 * Each class is bookended with a space to avoid mistaking parts of existing classes as the new class.
 		 */
-		final String bookended = ' ' + className + ' ';
+		final String bookended = ' ' + className.name + ' ';
 		if (this.hasAttribute(CLASS)) {
 			final String classes = attributes.get(CLASS);
 			if (classes.contains(bookended)) return;
@@ -345,6 +348,14 @@ public class HTMLNode implements XMLCharacterClasses {
 		} else {
 			attributes.put(CLASS, bookended);
 		}
+	}
+
+	/**
+	 * Set the html "id" attribute
+	 * @param tagID ID attribute to be set
+	 */
+	public void setID(final HTMLID tagID) {
+		attributes.put("id", tagID.name);
 	}
 
 	public String generate() {

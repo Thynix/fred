@@ -8,6 +8,7 @@ import freenet.node.DarknetPeerNode;
 import freenet.node.PeerNode;
 import freenet.node.fcp.BookmarkFeed;
 import freenet.support.HTMLNode;
+import freenet.support.htmlprimitives.Div;
 
 public class BookmarkFeedUserAlert extends AbstractUserAlert {
 	private final WeakReference<PeerNode> peerRef;
@@ -59,7 +60,7 @@ public class BookmarkFeedUserAlert extends AbstractUserAlert {
 
 	@Override
 	public HTMLNode getHTMLText() {
-		HTMLNode alertNode = new HTMLNode("div");
+		Div alertNode = new Div();
 		alertNode.addChild("a", "href",
 				"/?newbookmark=" + uri + "&desc=" + name + "&hasAnActivelink=" + hasAnActivelink)
 				.addChild(

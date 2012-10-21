@@ -49,6 +49,7 @@ import freenet.support.Logger.LogLevel;
 import freenet.support.SimpleFieldSet;
 import freenet.support.SizeUtil;
 import freenet.support.api.HTTPUploadedFile;
+import freenet.support.htmlprimitives.Div;
 import freenet.support.io.BucketTools;
 import freenet.support.io.ByteArrayRandomAccessThing;
 import freenet.support.io.FileUtil;
@@ -1036,15 +1037,15 @@ public class DarknetPeerNode extends PeerNode {
 				}
 				@Override
 				public HTMLNode getHTMLText() {
-					HTMLNode div = new HTMLNode("div");
+					Div div_ = new Div();
 
-					div.addChild("p", l10n("failedReceiveHeader", new String[] { "filename", "node" },
-							new String[] { filename, getName() }));
+					div_.addChild("p", l10n("failedReceiveHeader", new String[]{"filename", "node"},
+						new String[]{filename, getName()}));
 
 					// Descriptive table
-					describeFile(div);
+					describeFile(div_);
 
-					return div;
+					return div_;
 				}
 
 				@Override
@@ -1129,17 +1130,17 @@ public class DarknetPeerNode extends PeerNode {
 				}
 				@Override
 				public HTMLNode getHTMLText() {
-					HTMLNode div = new HTMLNode("div");
+					Div div_ = new Div();
 
 					// FIXME localise!!!
 
-					div.addChild("p", l10n("succeededReceiveHeader", new String[] { "filename", "node" },
-							new String[] { filename, getName() }));
+					div_.addChild("p", l10n("succeededReceiveHeader", new String[]{"filename", "node"},
+						new String[]{filename, getName()}));
 
 					// Descriptive table
-					describeFile(div);
+					describeFile(div_);
 
-					return div;
+					return div_;
 				}
 
 				@Override
@@ -1202,17 +1203,17 @@ public class DarknetPeerNode extends PeerNode {
 				}
 				@Override
 				public HTMLNode getHTMLText() {
-					HTMLNode div = new HTMLNode("div");
+					Div div_ = new Div();
 
-					div.addChild("p", l10n("offeredFileHeader", "name", getName()));
+					div_.addChild("p", l10n("offeredFileHeader", "name", getName()));
 
 					// Descriptive table
-					describeFile(div);
+					describeFile(div_);
 
 					// Accept/reject form
 
 					// Hopefully we will have a container when this function is called!
-					HTMLNode form = node.clientCore.getToadletContainer().addFormChild(div, "/friends/", "f2fFileOfferAcceptForm");
+					HTMLNode form = node.clientCore.getToadletContainer().addFormChild(div_, "/friends/", "f2fFileOfferAcceptForm");
 
 					// FIXME node_ is inefficient
 					form.addChild("input", new String[] { "type", "name" },
@@ -1227,7 +1228,7 @@ public class DarknetPeerNode extends PeerNode {
 					form.addChild("input", new String[] { "type", "name", "value" },
 							new String[] { "submit", "rejectTransfer", l10n("rejectTransferButton") });
 
-					return div;
+					return div_;
 				}
 				@Override
 				public short getPriorityClass() {

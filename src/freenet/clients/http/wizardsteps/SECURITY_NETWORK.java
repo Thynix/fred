@@ -6,10 +6,9 @@ import freenet.node.NodeClientCore;
 import freenet.node.SecurityLevels;
 import freenet.support.Fields;
 import freenet.support.HTMLNode;
-import freenet.support.Logger;
 import freenet.support.api.HTTPRequest;
-
-import java.net.URI;
+import freenet.support.htmlprimitives.HTMLClass;
+import freenet.support.htmlprimitives.Div;
 
 /**
  * This step allows the user to choose between security levels. If opennet is disabled, only high and maximum are shown.
@@ -89,7 +88,7 @@ public class SECURITY_NETWORK implements Step {
 			infoboxContent.addChild("p", WizardL10n.l10n("networkThreatLevelIntroOpennet"));
 
 			form = helper.addFormChild(infoboxContent, ".", "networkSecurityForm");
-			HTMLNode div = form.addChild("div", "class", "opennetDiv");
+			HTMLNode div = form.addChild(new Div(HTMLClass.OPENNETDIV));
 			for(SecurityLevels.NETWORK_THREAT_LEVEL level : SecurityLevels.NETWORK_THREAT_LEVEL.OPENNET_VALUES) {
 				securityLevelChoice(div, level);
 			}
@@ -99,7 +98,7 @@ public class SECURITY_NETWORK implements Step {
 			infoboxContent.addChild("p", WizardL10n.l10n("networkThreatLevelIntroDarknet"));
 
 			form = helper.addFormChild(infoboxContent, ".", "networkSecurityForm");
-			HTMLNode div = form.addChild("div", "class", "darknetDiv");
+			HTMLNode div = form.addChild(new Div(HTMLClass.DARKNETDIV));
 			for(SecurityLevels.NETWORK_THREAT_LEVEL level : SecurityLevels.NETWORK_THREAT_LEVEL.DARKNET_VALUES) {
 				securityLevelChoice(div, level);
 			}

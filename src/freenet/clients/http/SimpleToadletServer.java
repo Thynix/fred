@@ -13,6 +13,7 @@ import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import freenet.support.htmlprimitives.Div;
 import org.tanukisoftware.wrapper.WrapperManager;
 
 import freenet.client.filter.HTMLFilter;
@@ -418,7 +419,7 @@ public final class SimpleToadletServer implements ToadletContainer, Runnable, Li
 		
 		pushDataManager=new PushDataManager(getTicker());
 		intervalPushManager=new IntervalPusherManager(getTicker(), pushDataManager);
-		bookmarkManager = new BookmarkManager(core);
+		bookmarkManager = new BookmarkManager(core, publicGatewayMode());
 		try {
 			FProxyToadlet.maybeCreateFProxyEtc(core, core.node, core.node.config, this, bookmarkManager);
 		} catch (IOException e) {
@@ -1099,9 +1100,9 @@ public final class SimpleToadletServer implements ToadletContainer, Runnable, Li
 	@Override
 	public HTMLNode addFormChild(HTMLNode parentNode, String target, String id) {
 		HTMLNode formNode =
-			parentNode.addChild("div")
-			.addChild("form", new String[] { "action", "method", "enctype", "id",  "accept-charset" }, 
-					new String[] { target, "post", "multipart/form-data", id, "utf-8"} );
+			parentNode.addChild(new Div())
+			.addChild("form", new String[]{"action", "method", "enctype", "id", "accept-charset"},
+				new String[]{target, "post", "multipart/form-data", id, "utf-8"});
 		formNode.addChild("input", new String[] { "type", "name", "value" }, 
 				new String[] { "hidden", "formPassword", getFormPassword() });
 		
@@ -1211,6 +1212,11 @@ public final class SimpleToadletServer implements ToadletContainer, Runnable, Li
 		sb.append(this.port);
 		sb.append("/");
 		return sb.toString();
+	}
+
+	@Override
+	public boolean isSSL() {
+		return ssl;
 	}
 
 	//
