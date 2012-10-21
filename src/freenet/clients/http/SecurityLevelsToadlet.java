@@ -31,6 +31,7 @@ import freenet.support.htmlprimitives.Div;
 import freenet.support.htmlprimitives.HTMLClass;
 import freenet.support.io.FileUtil;
 import freenet.support.io.FileUtil.OperatingSystem;
+import freenet.support.uielements.InfoboxWidget;
 
 /**
  * The security levels page.
@@ -97,14 +98,11 @@ public class SecurityLevelsToadlet extends Toadlet {
 							formNode = ctx.addFormChild(content, ".", "configFormSecLevels");
 							ul = formNode.addChild("ul", "class", "config");
 							HTMLNode seclevelGroup = ul.addChild("li");
-
 							seclevelGroup.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", configName, networkThreatLevel });
-							HTMLNode infobox = seclevelGroup.addChild(new Div(HTMLClass.INFOBOX));
-							infobox.addClass(HTMLClass.INFOBOXINFORMATION);
-							infobox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10nSec("networkThreatLevelConfirmTitle", "mode", SecurityLevels.localisedName(newThreatLevel))));
-							HTMLNode infoboxContent = infobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-							infoboxContent.addChild(warning);
-							infoboxContent.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", tryConfirm, "on" });
+							InfoboxWidget networkthreatlevelconfirm = new InfoboxWidget(InfoboxWidget.Type.INFORMATION, l10nSec("networkThreatLevelConfirmTitle", "mode", SecurityLevels.localisedName(newThreatLevel)));
+							seclevelGroup.addChild(networkthreatlevelconfirm);
+							networkthreatlevelconfirm.body.addChild(warning);
+							networkthreatlevelconfirm.body.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", tryConfirm, "on" });
 						} else {
 							// Apply immediately, no confirm needed.
 							node.securityLevels.setThreatLevel(newThreatLevel);
@@ -485,11 +483,9 @@ public class SecurityLevelsToadlet extends Toadlet {
 	}
 
 	private void drawSecurityLevelsPage(HTMLNode contentNode, ToadletContext ctx) {
-		HTMLNode infobox = contentNode.addChild(new Div(HTMLClass.INFOBOX));
-		infobox.addClass(HTMLClass.INFOBOXNORMAL);
-		infobox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10nSec("title")));
-		HTMLNode configNode = infobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-		HTMLNode formNode = ctx.addFormChild(configNode, ".", "configFormSecLevels");
+		InfoboxWidget configformcontainer = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10nSec("title"));
+		contentNode.addChild(configformcontainer);
+		HTMLNode formNode = ctx.addFormChild(configformcontainer.body, ".", "configFormSecLevels");
 		// Network security level
 		formNode.addChild(new Div(HTMLClass.CONFIGPREFIX, l10nSec("networkThreatLevelShort")));
 		HTMLNode ul = formNode.addChild("ul", "class", "config");

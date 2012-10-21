@@ -28,6 +28,7 @@ import freenet.support.MultiValueTable;
 import freenet.support.api.Bucket;
 import freenet.support.htmlprimitives.Div;
 import freenet.support.htmlprimitives.HTMLClass;
+import freenet.support.uielements.InfoboxWidget;
 
 /**
  * Replacement for servlets. Just an easy to use HTTP interface, which is
@@ -77,10 +78,9 @@ public abstract class Toadlet {
 		HTMLNode pageNode = page.outer;
 		HTMLNode contentNode = page.content;
 
-		HTMLNode infobox = contentNode.addChild(new Div(HTMLClass.INFOBOX));
-		infobox.addClass(HTMLClass.INFOBOXERROR);
-		infobox.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("notSupportedTitle")));
-		infobox.addChild(new Div(HTMLClass.INFOBOXCONTENT, l10n("notSupportedWithClass", "class", getClass().getName())));
+		InfoboxWidget warningbox = new InfoboxWidget(InfoboxWidget.Type.ERROR, l10n("notSupportedTitle"));
+		contentNode.addChild(warningbox);
+		warningbox.body.setContent(l10n("notSupportedWithClass", "class", getClass().getName()));
 
 		MultiValueTable<String, String> hdrtbl = new MultiValueTable<String, String>();
 		hdrtbl.put("Allow", findSupportedMethods());
