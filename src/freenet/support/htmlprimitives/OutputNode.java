@@ -30,14 +30,31 @@ public class OutputNode extends HTMLNode {
 		return newDiv;
 	}
 	public Div addDiv(HTMLClass CLASS) {
-		Div newDiv = new Div();
+		Div newDiv = new Div(CLASS);
 		addChild(newDiv);
-		return new Div(CLASS);
+		return newDiv;
 	}
 	public Div addDiv(HTMLClass CLASS, String content) {
-		Div newDiv = new Div();
+		Div newDiv = new Div(CLASS, content);
 		addChild(newDiv);
-		return new Div(CLASS, content);
+		return newDiv;
+	}
+
+	//methods for creating List children
+	public List addList() {
+		List newList = new List();
+		addChild(newList);
+		return newList;
+	}
+	public List addList(HTMLClass CLASS) {
+		List newList = new List(CLASS);
+		addChild(newList);
+		return newList;
+	}
+	public Div addList(HTMLClass CLASS, String content) {
+		Div newList = new Div();
+		addChild(newList);
+		return newList;
 	}
 
 	//methods for creating Infobox children

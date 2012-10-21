@@ -6,6 +6,7 @@ import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
 import freenet.support.htmlprimitives.Div;
 import freenet.support.htmlprimitives.HTMLClass;
+import freenet.support.htmlprimitives.List;
 
 /**
  * This step allows the user to choose between darknet and opennet, explaining each briefly.
