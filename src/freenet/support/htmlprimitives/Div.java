@@ -1,5 +1,8 @@
 package freenet.support.htmlprimitives;
 
+/**
+ * Creates a block element
+ */
 public class Div extends OutputNode {
 
 	public Div(HTMLClass CLASS, String content) {
