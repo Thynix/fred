@@ -5,6 +5,16 @@ package freenet.support.htmlprimitives;
  */
 public class Div extends OutputNode {
 
+	public Div(HTMLID ID, String content) {
+		this(ID);
+		this.setContent(content);
+	}
+
+	public Div(HTMLID ID) {
+		this();
+		setID(ID);
+	}
+
 	public Div(HTMLClass CLASS, String content) {
 		this(CLASS);
 		this.setContent(content);

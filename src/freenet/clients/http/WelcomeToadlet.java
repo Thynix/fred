@@ -11,6 +11,8 @@ import java.util.List;
 
 import freenet.support.htmlprimitives.Div;
 import freenet.support.htmlprimitives.HTMLClass;
+import freenet.support.htmlprimitives.HTMLID;
+import freenet.support.uielements.OutputList;
 import freenet.support.uielements.InfoboxWidget;
 import org.tanukisoftware.wrapper.WrapperManager;
 
@@ -83,14 +85,14 @@ public class WelcomeToadlet extends Toadlet {
 		return;
 	}
 
-	private void addCategoryToList(BookmarkCategory cat, HTMLNode list, boolean noActiveLinks, ToadletContext ctx) {
+	private void addCategoryToList(BookmarkCategory cat, OutputList list, boolean noActiveLinks, ToadletContext ctx) {
 		if(ctx.getPageMaker().getTheme().forceActivelinks) {
 			noActiveLinks = false;
 		}
 		List<BookmarkItem> items = cat.getItems();
 		if (items.size() > 0) {
 		// FIXME CSS noborder ...
-			HTMLNode table = list.addChild("li").addChild("table", new String[]{"border", "style"}, new String[]{"0", "border: none"});
+			HTMLNode table = list.addList().addChild("table", new String[]{"border", "style"}, new String[]{"0", "border: none"});
 			for (int i = 0; i < items.size(); i++) {
 				BookmarkItem item = items.get(i);
 				HTMLNode row = table.addChild("tr");
@@ -115,8 +117,8 @@ public class WelcomeToadlet extends Toadlet {
 		}
 		List<BookmarkCategory> cats = cat.getSubCategories();
 		for (int i = 0; i < cats.size(); i++) {
-			list.addChild("li", "class", "cat", cats.get(i).getVisibleName());
-			addCategoryToList(cats.get(i), list.addChild("li").addChild("ul"), noActiveLinks, ctx);
+			list.addItem(HTMLClass.CAT, cats.get(i).getVisibleName());
+			addCategoryToList(cats.get(i), list.addItem().addList(), noActiveLinks, ctx);
 		}
 	}
 
@@ -460,8 +462,7 @@ public class WelcomeToadlet extends Toadlet {
 			bookmarkBox.header.addChild("span", "id", "bookmarkedit").addChild("a", new String[]{"href", "class"}, new String[]{"/bookmarkEditor/", "interfacelink"}, NodeL10n.getBase().getString("BookmarkEditorToadlet.edit"));
 			bookmarkBox.header.addChild("span", "class", "edit-bracket", "]");
 		}
-		HTMLNode bookmarkBoxContent = bookmarkBox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-		HTMLNode bookmarksList = bookmarkBoxContent.addChild("ul", "id", "bookmarks");
+		OutputList bookmarksList = bookmarkBox.body.addList(HTMLID.BOOKMARKS);
 		if (ctx.isAllowedFullAccess() || !ctx.getContainer().publicGatewayMode()) {
 			addCategoryToList(BookmarkManager.MAIN_CATEGORY, bookmarksList, (!container.enableActivelinks()) || (useragent != null && useragent.contains("khtml") && !useragent.contains("chrome")), ctx);
 		}

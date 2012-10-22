@@ -24,6 +24,7 @@ import freenet.support.api.HTTPUploadedFile;
 import freenet.support.htmlprimitives.Div;
 import freenet.support.htmlprimitives.HTMLClass;
 import freenet.support.htmlprimitives.HTMLID;
+import freenet.support.uielements.OutputList;
 import freenet.support.uielements.InfoboxWidget;
 
 public class N2NTMToadlet extends Toadlet {
@@ -76,7 +77,7 @@ public class N2NTMToadlet extends Toadlet {
 				}
 			}
 			if (peernode_name == null) {
-				contentNode.addChild(createPeerInfobox(HTMLClass.INFOBOXERROR,
+				contentNode.addChild(createPeerInfobox(InfoboxWidget.Type.ERROR,
 					l10n("peerNotFoundTitle"), l10n("peerNotFoundWithHash",
 					"hash", input_hashcode_string)));
 				this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
@@ -115,17 +116,15 @@ public class N2NTMToadlet extends Toadlet {
 		return limit;
 	}
 
-	private static HTMLNode createPeerInfobox(HTMLClass infoboxType, String header, String message) {
-		HTMLNode infobox = new Div(infoboxType);
-		infobox.addChild(new Div(HTMLClass.INFOBOXHEADER, header));
-		HTMLNode infoboxContent = infobox.addChild(new Div(HTMLClass.INFOBOXCONTENT));
-		infoboxContent.addChild("#", message);
-		HTMLNode list = infoboxContent.addChild("ul");
-		Toadlet.addHomepageLink(list);
-		list.addChild("li").addChild("a", new String[] { "href", "title" },
-		        new String[] { "/friends/", l10n("returnToFriends") },
-		        l10n("friends"));
-		return infobox;
+	private static InfoboxWidget createPeerInfobox(InfoboxWidget.Type infoboxType, String header, String message) {
+		InfoboxWidget peerInfobox = new InfoboxWidget(infoboxType, header);
+		peerInfobox.body.addChild("#", message);
+		OutputList peerList = peerInfobox.body.addList();
+		Toadlet.addHomepageLink(peerList);
+		peerList.addItem().addChild("a", new String[]{"href", "title"},
+			new String[]{"/friends/", l10n("returnToFriends")},
+			l10n("friends"));
+		return peerInfobox;
 	}
 
 	public void handleMethodPOST(URI uri, HTTPRequest request, ToadletContext ctx)
@@ -211,11 +210,11 @@ public class N2NTMToadlet extends Toadlet {
 									if(size > limit){
 										peerTableInfobox.body.addChild("#", l10n("tooLarge", new String[]{"attempt", "limit"},
 											new String[]{SizeUtil.formatSize(size, true), SizeUtil.formatSize(limit, true)}));
-										HTMLNode list = peerTableInfobox.body.addChild("ul");
-										Toadlet.addHomepageLink(list);
-										list.addChild("li").addChild("a", new String[] { "href", "title" },
-												new String[] { "/friends/", l10n("returnToFriends") },
-												l10n("friends"));
+										OutputList friendList = peerTableInfobox.body.addList();
+										Toadlet.addHomepageLink(friendList);
+										friendList.addItem().addChild("a", new String[]{"href", "title"},
+											new String[]{"/friends/", l10n("returnToFriends")},
+											l10n("friends"));
 										this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 										return;
 									}
@@ -265,11 +264,11 @@ public class N2NTMToadlet extends Toadlet {
 			}
 			HTMLNode infoboxContent = peerTableInfobox.body.addChild(new Div(HTMLClass.N2NTMMESSAGETEXT));
 			infoboxContent.addChild("#", message);
-			HTMLNode list = peerTableInfobox.body.addChild("ul");
+			OutputList list = peerTableInfobox.body.addList();
 			Toadlet.addHomepageLink(list);
-			list.addChild("li").addChild("a", new String[] { "href", "title" },
-					new String[] { "/friends/", l10n("returnToFriends") },
-					l10n("friends"));
+			list.addItem().addChild("a", new String[]{"href", "title"},
+				new String[]{"/friends/", l10n("returnToFriends")},
+				l10n("friends"));
 			this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 			return;
 		}
@@ -285,10 +284,10 @@ public class N2NTMToadlet extends Toadlet {
 		contentNode.addChild(messageeditor);
 		messageeditor.setID(HTMLID.N2NBOX);
 		messageeditor.body.addChild("p", l10n("composingMessageLabel"));
-		HTMLNode messageTargetList = messageeditor.body.addChild("ul");
+		OutputList messageTargetList = messageeditor.body.addList();
 		// Iterate peers
 		for (String peer_name: peers.values()) {
-			messageTargetList.addChild("li", peer_name);
+			messageTargetList.addItem(peer_name);
 		}
 		HTMLNode infoboxContent = messageeditor.addContentNode();
 		HTMLNode messageForm = ctx.addFormChild(infoboxContent, "/send_n2ntm/", "sendN2NTMForm");

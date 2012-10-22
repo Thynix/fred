@@ -49,6 +49,7 @@ import freenet.support.TimeUtil;
 import freenet.support.api.HTTPRequest;
 import freenet.support.htmlprimitives.Div;
 import freenet.support.htmlprimitives.HTMLClass;
+import freenet.support.uielements.OutputList;
 import freenet.support.uielements.InfoboxWidget;
 
 /** Base class for DarknetConnectionsToadlet and OpennetConnectionsToadlet */
@@ -282,21 +283,21 @@ public abstract class ConnectionsToadlet extends Toadlet {
 				
 				InfoboxWidget overviewInfobox = new InfoboxWidget(InfoboxWidget.Type.NONE, "Node status overview");
 				nextTableCell.addChild(overviewInfobox);
-				HTMLNode overviewList = overviewInfobox.body.addChild("ul");
-				overviewList.addChild("li", "bwlimitDelayTime:\u00a0" + bwlimitDelayTime + "ms");
-				overviewList.addChild("li", "nodeAveragePingTime:\u00a0" + nodeAveragePingTime + "ms");
-				overviewList.addChild("li", "darknetSizeEstimateSession:\u00a0" + networkSizeEstimateSession + "\u00a0nodes");
+				OutputList overviewList = overviewInfobox.body.addList();
+				overviewList.addItem("bwlimitDelayTime:\u00a0" + bwlimitDelayTime + "ms");
+				overviewList.addItem("nodeAveragePingTime:\u00a0" + nodeAveragePingTime + "ms");
+				overviewList.addItem("darknetSizeEstimateSession:\u00a0" + networkSizeEstimateSession + "\u00a0nodes");
 				if(nodeUptimeSeconds > (48*60*60)) {  // 48 hours
-					overviewList.addChild("li", "darknetSizeEstimateRecent:\u00a0" + networkSizeEstimateRecent + "\u00a0nodes");
+					overviewList.addItem("darknetSizeEstimateRecent:\u00a0" + networkSizeEstimateRecent + "\u00a0nodes");
 				}
-				overviewList.addChild("li", "nodeUptime:\u00a0" + nodeUptimeString);
-				overviewList.addChild("li", "routingMissDistanceLocal:\u00a0" + fix4.format(routingMissDistanceLocal));
-				overviewList.addChild("li", "routingMissDistanceRemote:\u00a0" + fix4.format(routingMissDistanceRemote));
-				overviewList.addChild("li", "routingMissDistanceOverall:\u00a0" + fix4.format(routingMissDistanceOverall));
-				overviewList.addChild("li", "routingMissDistanceBulk:\u00a0" + fix4.format(routingMissDistanceBulk));
-				overviewList.addChild("li", "routingMissDistanceRT:\u00a0" + fix4.format(routingMissDistanceRT));
-				overviewList.addChild("li", "backedOffPercent:\u00a0" + fix1.format(backedOffPercent));
-				overviewList.addChild("li", "pInstantReject:\u00a0" + fix1.format(stats.pRejectIncomingInstantly()));
+				overviewList.addItem("nodeUptime:\u00a0" + nodeUptimeString);
+				overviewList.addItem("routingMissDistanceLocal:\u00a0" + fix4.format(routingMissDistanceLocal));
+				overviewList.addItem("routingMissDistanceRemote:\u00a0" + fix4.format(routingMissDistanceRemote));
+				overviewList.addItem("routingMissDistanceOverall:\u00a0" + fix4.format(routingMissDistanceOverall));
+				overviewList.addItem("routingMissDistanceBulk:\u00a0" + fix4.format(routingMissDistanceBulk));
+				overviewList.addItem("routingMissDistanceRT:\u00a0" + fix4.format(routingMissDistanceRT));
+				overviewList.addItem("backedOffPercent:\u00a0" + fix1.format(backedOffPercent));
+				overviewList.addItem("pInstantReject:\u00a0" + fix1.format(stats.pRejectIncomingInstantly()));
 				nextTableCell = overviewTableRow.addChild("td");
 				
 				// Activity box
@@ -304,10 +305,10 @@ public abstract class ConnectionsToadlet extends Toadlet {
 				
 				InfoboxWidget activityInfobox = new InfoboxWidget(InfoboxWidget.Type.NONE, l10n("activityTitle"));
 				nextTableCell.addChild(activityInfobox);
-				HTMLNode activityList = StatisticsToadlet.drawActivity(activityInfobox.body, node);
+				OutputList activityList = StatisticsToadlet.drawActivity(activityInfobox.body, node);
 				if (advancedMode && (activityList != null)) {
 					if (numARKFetchers > 0) {
-						activityList.addChild("li", "ARK\u00a0Fetch\u00a0Requests:\u00a0" + numARKFetchers);
+						activityList.addItem("ARK\u00a0Fetch\u00a0Requests:\u00a0" + numARKFetchers);
 					}
 					StatisticsToadlet.drawBandwidth(activityList, node, nodeUptimeSeconds, advancedMode);
 				}
@@ -328,12 +329,12 @@ public abstract class ConnectionsToadlet extends Toadlet {
 					if(routingBackoffReasons.length == 0) {
 						backoffReasonInfobox.body.addChild("#", NodeL10n.getBase().getString("StatisticsToadlet.notBackedOff"));
 					} else {
-						HTMLNode reasonList = backoffReasonInfobox.body.addChild("ul");
+						OutputList reasonList = backoffReasonInfobox.body.addList();
 						for(int i=0;i<routingBackoffReasons.length;i++) {
 							int reasonCount = peers.getPeerNodeRoutingBackoffReasonSize(routingBackoffReasons[i], true);
 							if(reasonCount > 0) {
 								total += reasonCount;
-								reasonList.addChild("li", routingBackoffReasons[i] + '\u00a0' + reasonCount);
+								reasonList.addItem(routingBackoffReasons[i] + '\u00a0' + reasonCount);
 							}
 						}
 					}
@@ -347,12 +348,12 @@ public abstract class ConnectionsToadlet extends Toadlet {
 					if(routingBackoffReasons.length == 0) {
 						backoffReasonInfobox.body.addChild("#", NodeL10n.getBase().getString("StatisticsToadlet.notBackedOff"));
 					} else {
-						HTMLNode reasonList = backoffReasonInfobox.body.addChild("ul");
+						OutputList reasonList = backoffReasonInfobox.body.addList();
 						for(int i=0;i<routingBackoffReasons.length;i++) {
 							int reasonCount = peers.getPeerNodeRoutingBackoffReasonSize(routingBackoffReasons[i], false);
 							if(reasonCount > 0) {
 								total += reasonCount;
-								reasonList.addChild("li", routingBackoffReasons[i] + '\u00a0' + reasonCount);
+								reasonList.addItem(routingBackoffReasons[i] + '\u00a0' + reasonCount);
 							}
 						}
 					}

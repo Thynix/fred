@@ -24,6 +24,10 @@ import freenet.support.URLEncodedFormatException;
 import freenet.support.URLEncoder;
 import freenet.support.Logger.LogLevel;
 import freenet.support.api.HTTPRequest;
+import freenet.support.htmlprimitives.HTMLClass;
+import freenet.support.htmlprimitives.HTMLID;
+import freenet.support.htmlprimitives.Li;
+import freenet.support.uielements.OutputList;
 
 /**
  * BookmarkEditor Toadlet 
@@ -62,7 +66,7 @@ public class BookmarkEditorToadlet extends Toadlet {
 	/**
 	 * Get all bookmark as a tree of &lt;li&gt;...&lt;/li&gt;s
 	 */
-	private void addCategoryToList(BookmarkCategory cat, String path, HTMLNode list) {
+	private void addCategoryToList(BookmarkCategory cat, String path, OutputList bookmarkList) {
 		List<BookmarkItem> items = cat.getItems();
 
 		final String edit = NodeL10n.getBase().getString("BookmarkEditorToadlet.edit");
@@ -78,15 +82,15 @@ public class BookmarkEditorToadlet extends Toadlet {
 
 		for(int i = 0; i < items.size(); i++) {
 			BookmarkItem item =  items.get(i);
-				
+
 			String itemPath = URLEncoder.encode(path + item.getName(), false);
-			HTMLNode li = new HTMLNode("li", "class", "item", item.getVisibleName());
-            String explain = item.getShortDescription();
-            if(explain != null && explain.length() > 0) {
-            	li.addChild("#", " (");
-            	li.addChild("#", explain);
-            	li.addChild("#", ")");
-            }
+			Li bookmarkItem = bookmarkList.addItem(HTMLClass.ITEM, item.getVisibleName());
+			String explain = item.getShortDescription();
+			if(explain != null && explain.length() > 0) {
+				bookmarkItem.addChild("#", " (");
+				bookmarkItem.addChild("#", explain);
+				bookmarkItem.addChild("#", ")");
+			}
 
 			HTMLNode actions = new HTMLNode("span", "class", "actions");
 			actions.addChild("a", "href", "?action=edit&bookmark=" + itemPath).addChild("img", new String[]{"src", "alt", "title"}, new String[]{"/static/icon/edit.png", edit, edit});
@@ -105,8 +109,7 @@ public class BookmarkEditorToadlet extends Toadlet {
 			if(hasFriends)
 				actions.addChild("a", "href", "?action=share&bookmark=" + itemPath, NodeL10n.getBase().getString("BookmarkEditorToadlet.share"));
 
-			li.addChild(actions);
-			list.addChild(li);
+			bookmarkItem.addChild(actions);
 		}
 
 		List<BookmarkCategory> cats = cat.getSubCategories();
@@ -114,7 +117,7 @@ public class BookmarkEditorToadlet extends Toadlet {
 			String catPath = path + cats.get(i).getName() + '/';
 			String catPathEncoded = URLEncoder.encode(catPath, false);
 
-			HTMLNode subCat = list.addChild("li", "class", "cat", cats.get(i).getVisibleName());
+			Li subCat = bookmarkList.addItem(HTMLClass.CAT, cats.get(i).getVisibleName());
 
 			HTMLNode actions = new HTMLNode("span", "class", "actions");
 
@@ -139,8 +142,9 @@ public class BookmarkEditorToadlet extends Toadlet {
 				actions.addChild("a", "href", "?action=paste&bookmark=" + catPathEncoded).addChild("img", new String[]{"src", "alt", "title"}, new String[]{"/static/icon/paste.png", paste, paste});
 
 			subCat.addChild(actions);
-			if(cats.get(i).size() != 0)
-				addCategoryToList(cats.get(i), catPath, list.addChild("li").addChild("ul"));
+			if (cats.get(i).size() != 0) {
+				addCategoryToList(cats.get(i), catPath, bookmarkList.addItem().addList());
+			}
 		}
 	}
 
@@ -151,10 +155,11 @@ public class BookmarkEditorToadlet extends Toadlet {
 	}
 
 	public HTMLNode getBookmarksList() {
-		HTMLNode bookmarks = new HTMLNode("ul", "id", "bookmarks");
+		OutputList bookmarks = new OutputList(HTMLID.BOOKMARKS);
 
-		HTMLNode root = bookmarks.addChild("li", "class", "cat root", "/");
-		HTMLNode actions = new HTMLNode("span", "class", "actions");
+		Li root = bookmarks.addItem(HTMLClass.CAT, "/");
+		root.addClass(HTMLClass.ROOT);
+		HTMLNode actions = root.addChild("span", "class", "actions");
 		String addBookmark = NodeL10n.getBase().getString("BookmarkEditorToadlet.addBookmark");
 		String addCategory = NodeL10n.getBase().getString("BookmarkEditorToadlet.addCategory");
 		String paste = NodeL10n.getBase().getString("BookmarkEditorToadlet.paste");
@@ -163,9 +168,7 @@ public class BookmarkEditorToadlet extends Toadlet {
 
 		if(cutedPath != null && !"/".equals(bookmarkManager.parentPath(cutedPath)))
 			actions.addChild("a", "href", "?action=paste&bookmark=/").addChild("img", new String[]{"src", "alt", "title"}, new String[]{"/static/icon/paste.png", paste, paste});
-
-		root.addChild(actions);
-		addCategoryToList(BookmarkManager.MAIN_CATEGORY, "/", root.addChild("ul"));
+		addCategoryToList(BookmarkManager.MAIN_CATEGORY, "/", root.addList());
 
 		return bookmarks;
 	}

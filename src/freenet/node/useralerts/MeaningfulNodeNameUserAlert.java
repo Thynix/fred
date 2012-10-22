@@ -9,6 +9,9 @@ import freenet.l10n.NodeL10n;
 import freenet.node.Node;
 import freenet.support.HTMLNode;
 import freenet.support.htmlprimitives.Div;
+import freenet.support.htmlprimitives.HTMLClass;
+import freenet.support.htmlprimitives.Li;
+import freenet.support.uielements.OutputList;
 
 public class MeaningfulNodeNameUserAlert extends AbstractUserAlert {
 	private final Node node;
@@ -48,11 +51,12 @@ public class MeaningfulNodeNameUserAlert extends AbstractUserAlert {
 		HTMLNode formNode = alertNode.addChild("form", new String[] { "action", "method" }, new String[] { "/config/"+sc.getPrefix(), "post" });
 		formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", node.clientCore.formPassword });
 		formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "subconfig", sc.getPrefix() });
-		HTMLNode listNode = formNode.addChild("ul", "class", "config");
-		HTMLNode itemNode = listNode.addChild("li");
+		OutputList listNode = new OutputList(HTMLClass.CONFIG);
+		formNode.addChild(listNode);
+		Li itemNode = listNode.addItem();
 		itemNode.addChild("span", new String[]{ "class", "title", "style" },
-				new String[]{ "configshortdesc", NodeL10n.getBase().getString("ConfigToadlet.defaultIs", new String[] { "default" }, new String[] { o.getDefault() }), 
-				"cursor: help;" }).addChild(NodeL10n.getBase().getHTMLNode(o.getShortDesc()));
+			new String[]{ "configshortdesc", NodeL10n.getBase().getString("ConfigToadlet.defaultIs", new String[] { "default" }, new String[] { o.getDefault() }),
+			"cursor: help;" }).addChild(NodeL10n.getBase().getHTMLNode(o.getShortDesc()));
 		itemNode.addChild("input", new String[] { "type", "class", "alt", "name", "value" }, new String[] { "text", "config", o.getShortDesc(), "node.name", o.getValueString() });
 		itemNode.addChild("span", "class", "configlongdesc").addChild(NodeL10n.getBase().getHTMLNode(o.getLongDesc()));
 		formNode.addChild("input", new String[] { "type", "value" }, new String[] { "submit", NodeL10n.getBase().getString("UserAlert.apply") });

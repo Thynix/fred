@@ -9,8 +9,8 @@ import freenet.node.NodeClientCore;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
 import freenet.support.htmlprimitives.Div;
-import freenet.support.htmlprimitives.HTMLClass;
 import freenet.support.htmlprimitives.HTMLID;
+import freenet.support.uielements.OutputList;
 import freenet.support.uielements.InfoboxWidget;
 
 import java.io.File;
@@ -422,10 +422,10 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 			InfoboxWidget filelist = new InfoboxWidget(InfoboxWidget.Type.NONE, l10n("listing", "path", attemptedPath));
 			contentNode.addChild(filelist);
 			filelist.body.addChild("#", l10n("dirCannotBeRead", "path", attemptedPath));
-			HTMLNode ulNode = filelist.body.addChild("ul");
-			ulNode.addChild("li", l10n("checkPathExist"));
-			ulNode.addChild("li", l10n("checkPathIsDir"));
-			ulNode.addChild("li", l10n("checkPathReadable"));
+			OutputList ulNode = filelist.body.addList();
+			ulNode.addItem(l10n("checkPathExist"));
+			ulNode.addItem(l10n("checkPathIsDir"));
+			ulNode.addItem(l10n("checkPathReadable"));
 		}
 		writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 	}

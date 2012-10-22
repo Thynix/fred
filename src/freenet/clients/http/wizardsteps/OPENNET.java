@@ -6,7 +6,7 @@ import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
 import freenet.support.htmlprimitives.Div;
 import freenet.support.htmlprimitives.HTMLClass;
-import freenet.support.htmlprimitives.List;
+import freenet.support.uielements.OutputList;
 
 /**
  * This step allows the user to choose between darknet and opennet, explaining each briefly.
@@ -58,17 +58,17 @@ public class OPENNET implements Step {
 		infoboxContent.addChild(foot);
 		foot.addChild("i", "¹: " + WizardL10n.l10n("opennetChoiceHowSafeIsFreenetToggle"));
 		Div footHidden = foot.addDiv(HTMLClass.HIDDEN);
-		List footList = footHidden.addList(List.Type.ORDERED, HTMLClass.NULL);
-		footList.addListItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetStupid"));
-		footList.addListItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetFriends") + "²");
-		footList.addListItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetTrustworthy"));
-		footList.addListItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetNoSuspect"));
-		footList.addListItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetChangeID"));
-		footList.addListItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetSSK"));
-		footList.addListItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetOS"));
-		footList.addListItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetBigPriv"));
-		footList.addListItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetDistant"));
-		footList.addListItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetBugs"));
+		OutputList footList = footHidden.addList(OutputList.Type.ORDERED, HTMLClass.NULL);
+		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetStupid"));
+		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetFriends") + "²");
+		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetTrustworthy"));
+		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetNoSuspect"));
+		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetChangeID"));
+		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetSSK"));
+		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetOS"));
+		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetBigPriv"));
+		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetDistant"));
+		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetBugs"));
 		HTMLNode foot2 = footHidden.addChild("p");
 		foot2.addChild("#", "²: " + WizardL10n.l10n("opennetChoiceHowSafeIsFreenetFoot2"));
 	}

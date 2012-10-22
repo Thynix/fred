@@ -18,6 +18,7 @@ import freenet.support.Logger.LogLevel;
 import freenet.support.OOMHandler;
 import freenet.support.TimeUtil;
 import freenet.support.htmlprimitives.Div;
+import freenet.support.uielements.OutputList;
 import freenet.support.io.NativeThread;
 import freenet.support.math.MersenneTwister;
 
@@ -549,9 +550,9 @@ public class PacketSender implements Runnable {
 			        new String[] { "count", "link" },
 			        new HTMLNode[] { HTMLNode.text(peers.length),
 			                HTMLNode.link(ExternalLinkToadlet.escape("https://bugs.freenetproject.org/"))});
-			HTMLNode list = div_.addChild("ul");
+			OutputList list = div_.addList();
 			for(Peer peer : peers) {
-				list.addChild("li", peer.toString());
+				list.addItem(peer.toString());
 			}
 			return div_;
 		}

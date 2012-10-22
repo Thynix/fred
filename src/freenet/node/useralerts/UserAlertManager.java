@@ -23,6 +23,7 @@ import freenet.support.Logger;
 import freenet.support.htmlprimitives.Div;
 import freenet.support.htmlprimitives.HTMLClass;
 import freenet.support.htmlprimitives.HTMLID;
+import freenet.support.htmlprimitives.OutputNode;
 import freenet.support.uielements.AlertLine;
 import freenet.support.uielements.InfoboxWidget;
 
@@ -249,7 +250,7 @@ public class UserAlertManager implements Comparator<UserAlert> {
 	/**
 	 * Write the alert summary as HTML to a StringBuilder
 	 */
-	public HTMLNode createSummary(boolean oneLine) {
+	public OutputNode createSummary(boolean oneLine) {
 		short highestLevel = 99;
 		int numberOfCriticalError = 0;
 		int numberOfError = 0;
@@ -279,7 +280,7 @@ public class UserAlertManager implements Comparator<UserAlert> {
 			return null;
 
 		if (totalNumber == 0)
-			return new HTMLNode("#", "");
+			return new OutputNode("#", "");
 
 		boolean separatorNeeded = false;
 		String separator = oneLine?", ":" | ";

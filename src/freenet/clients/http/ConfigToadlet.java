@@ -31,6 +31,7 @@ import freenet.support.api.BooleanCallback;
 import freenet.support.api.HTTPRequest;
 import freenet.support.htmlprimitives.Div;
 import freenet.support.htmlprimitives.HTMLClass;
+import freenet.support.uielements.OutputList;
 import freenet.support.uielements.InfoboxWidget;
 
 /**
@@ -473,12 +474,14 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 			}
 			if (curValue != null) {
 				formNode.addChild(new Div(HTMLClass.CONFIGPREFIX, l10n("wrapper")));
-				HTMLNode list = formNode.addChild("ul", "class", "config");
-				HTMLNode item = list.addChild("li", "class",
-						OptionType.TEXT.cssClass);
+				OutputList configOptionList = new OutputList(HTMLClass.CONFIG);
+				formNode.addChild(configOptionList);
+				HTMLNode configOption = configOptionList.addItem();
+				//FIME can't use enum here
+				configOption.addAttribute("class", OptionType.TEXT.cssClass);
 				// FIXME how to get the real default???
 				String defaultValue = "256";
-				item.addChild(
+				configOption.addChild(
 						"span",
 						new String[] { "class", "title", "style" },
 						new String[] {
@@ -490,20 +493,20 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 								"cursor: help;" }).addChild(
 						NodeL10n.getBase().getHTMLNode(
 								"WrapperConfig." + configName + ".short"));
-				item.addChild("span", "class", "config")
+				configOption.addChild("span", "class", "config")
 						.addChild(
 								"input",
 								new String[] { "type", "class", "name", "value" },
 								new String[] { "text", "config", configName,
 										curValue });
-				item.addChild("span", "class", "configlongdesc").addChild(
+				configOption.addChild("span", "class", "configlongdesc").addChild(
 						NodeL10n.getBase().getHTMLNode(
 								"WrapperConfig." + configName + ".long"));
 			}
 		}
 
 		short displayedConfigElements = 0;
-		HTMLNode configGroupUlNode = new HTMLNode("ul", "class", "config");
+		OutputList configGroupUlNode = new OutputList(HTMLClass.CONFIG);
 
 		String overriddenOption = null;
 		String overriddenValue = null;
@@ -561,7 +564,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 						.getHTMLNode(o.getLongDesc()) : new HTMLNode("#",
 						plugin.getString(o.getLongDesc()));
 
-				HTMLNode configItemNode = configGroupUlNode.addChild("li");
+				HTMLNode configItemNode = configGroupUlNode.addItem();
 				String defaultValue;
 				if (callback instanceof BooleanCallback) {
 					// Only case where values are localised.

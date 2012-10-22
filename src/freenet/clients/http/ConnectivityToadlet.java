@@ -33,8 +33,7 @@ import freenet.support.HTMLNode;
 import freenet.support.SimpleFieldSet;
 import freenet.support.TimeUtil;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlprimitives.Div;
-import freenet.support.htmlprimitives.HTMLClass;
+import freenet.support.uielements.OutputList;
 import freenet.support.uielements.InfoboxWidget;
 
 /**
@@ -69,29 +68,29 @@ public class ConnectivityToadlet extends Toadlet {
 		// our ports
 		InfoboxWidget portInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10nConn("nodePortsTitle"));
 		contentNode.addChild(portInfobox);
-		HTMLNode portInfoList = portInfobox.body.addChild("ul");
+		OutputList portInfoList = portInfobox.body.addList();
 		SimpleFieldSet fproxyConfig = node.config.get("fproxy").exportFieldSet(true);
 		SimpleFieldSet fcpConfig = node.config.get("fcp").exportFieldSet(true);
 		SimpleFieldSet tmciConfig = node.config.get("console").exportFieldSet(true);
-		portInfoList.addChild("li", NodeL10n.getBase().getString("DarknetConnectionsToadlet.darknetFnpPort", new String[] { "port" }, new String[] { Integer.toString(node.getFNPPort()) }));
+		portInfoList.addItem(NodeL10n.getBase().getString("DarknetConnectionsToadlet.darknetFnpPort", new String[]{"port"}, new String[]{Integer.toString(node.getFNPPort())}));
 		int opennetPort = node.getOpennetFNPPort();
 		if(opennetPort > 0)
-			portInfoList.addChild("li", NodeL10n.getBase().getString("DarknetConnectionsToadlet.opennetFnpPort", new String[] { "port" }, new String[] { Integer.toString(opennetPort) }));
+			portInfoList.addItem(NodeL10n.getBase().getString("DarknetConnectionsToadlet.opennetFnpPort", new String[]{"port"}, new String[]{Integer.toString(opennetPort)}));
 		try {
 			if(fproxyConfig.getBoolean("enabled", false)) {
-				portInfoList.addChild("li", NodeL10n.getBase().getString("DarknetConnectionsToadlet.fproxyPort", new String[] { "port" }, new String[] { Integer.toString(fproxyConfig.getInt("port")) }));
+				portInfoList.addItem(NodeL10n.getBase().getString("DarknetConnectionsToadlet.fproxyPort", new String[]{"port"}, new String[]{Integer.toString(fproxyConfig.getInt("port"))}));
 			} else {
-				portInfoList.addChild("li", l10nConn("fproxyDisabled"));
+				portInfoList.addItem(l10nConn("fproxyDisabled"));
 			}
 			if(fcpConfig.getBoolean("enabled", false)) {
-				portInfoList.addChild("li", NodeL10n.getBase().getString("DarknetConnectionsToadlet.fcpPort", new String[] { "port" }, new String[] { Integer.toString(fcpConfig.getInt("port")) }));
+				portInfoList.addItem(NodeL10n.getBase().getString("DarknetConnectionsToadlet.fcpPort", new String[]{"port"}, new String[]{Integer.toString(fcpConfig.getInt("port"))}));
 			} else {
-				portInfoList.addChild("li", l10nConn("fcpDisabled"));
+				portInfoList.addItem(l10nConn("fcpDisabled"));
 			}
 			if(tmciConfig.getBoolean("enabled", false)) {
-				portInfoList.addChild("li", NodeL10n.getBase().getString("DarknetConnectionsToadlet.tmciPort", new String[] { "port" }, new String[] { Integer.toString(tmciConfig.getInt("port")) }));
+				portInfoList.addItem(NodeL10n.getBase().getString("DarknetConnectionsToadlet.tmciPort", new String[]{"port"}, new String[]{Integer.toString(tmciConfig.getInt("port"))}));
 			} else {
-				portInfoList.addChild("li", l10nConn("tmciDisabled"));
+				portInfoList.addItem(l10nConn("tmciDisabled"));
 			}
 		} catch (FSParseException e) {
 			// ignore

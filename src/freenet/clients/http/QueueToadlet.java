@@ -85,6 +85,8 @@ import freenet.support.api.HTTPRequest;
 import freenet.support.api.HTTPUploadedFile;
 import freenet.support.htmlprimitives.Div;
 import freenet.support.htmlprimitives.HTMLClass;
+import freenet.support.htmlprimitives.Li;
+import freenet.support.uielements.OutputList;
 import freenet.support.io.BucketTools;
 import freenet.support.io.Closer;
 import freenet.support.io.FileBucket;
@@ -218,7 +220,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 				
 				HTMLNode deleteNode = new HTMLNode("p");
 				HTMLNode deleteForm = ctx.addFormChild(deleteNode, path(), "queueDeleteForm");
-				HTMLNode infoList = deleteForm.addChild("ul");
+				OutputList infoList = new OutputList();
+				deleteForm.addChild(infoList);
 				
 				for(String part : request.getParts()) {
 					if(!part.startsWith("identifier-")) continue;
@@ -232,7 +235,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 					String type = request.getPartAsStringFailsafe("type-"+part, MAX_TYPE_LENGTH);
 					String size = request.getPartAsStringFailsafe("size-"+part, 50);
 					if(filename != null) {
-						HTMLNode line = infoList.addChild("li");
+						Li line = infoList.addItem();
 						line.addChild("#", NodeL10n.getBase().getString("FProxyToadlet.filenameLabel")+" ");
 						if(keyString != null) {
 							line.addChild("a", "href", "/"+keyString, filename);
@@ -240,14 +243,12 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 							line.addChild("#", filename);
 						}
 					}
-					if(type != null && !type.equals("")) {
-						HTMLNode line = infoList.addChild("li");
+					if (type != null && !type.equals("")) {
 						boolean finalized = request.isPartSet("finalizedType");
-						line.addChild("#", NodeL10n.getBase().getString("FProxyToadlet."+(finalized ? "mimeType" : "expectedMimeType"), new String[] { "mime" }, new String[] { type }));
+						infoList.addItem().addChild("#", NodeL10n.getBase().getString("FProxyToadlet." + (finalized ? "mimeType" : "expectedMimeType"), new String[]{"mime"}, new String[]{type}));
 					}
 					if(size != null) {
-						HTMLNode line = infoList.addChild("li");
-						line.addChild("#", NodeL10n.getBase().getString("FProxyToadlet.sizeLabel") + " " + size);
+						infoList.addItem().addChild("#", NodeL10n.getBase().getString("FProxyToadlet.sizeLabel") + " " + size);
 					}
 					infoList.addChild("#", l10n("deleteFileFromTemp"));
 					infoList.addChild("input", new String[] { "type", "name", "value", "checked" },
@@ -473,29 +474,25 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 				        (displayFailureBox ? "infobox-warning" : "infobox-info"),
 				        l10n("downloadFiles"), contentNode, "grouped-downloads", true);
 				Iterator<String> it;
-				if(displaySuccessBox) {
-					HTMLNode successDiv = alertContent.addChild("ul");
-					successDiv.addChild("#", l10n("enqueuedSuccessfully", "number",
-					        String.valueOf(success.size())));
+				if (displaySuccessBox) {
+					OutputList successfulKeys =  new OutputList();
+					alertContent.addChild(successfulKeys);
+					alertContent.addChild("#", l10n("enqueuedSuccessfully", "number",
+						String.valueOf(success.size())));
 					it = success.iterator();
 					while(it.hasNext()) {
-						HTMLNode line = successDiv.addChild("li");
-						line.addChild("#", it.next());
+						successfulKeys.addItem().addChild("#", it.next());
 					}
-					successDiv.addChild("br");
 				}
-				if(displayFailureBox) {
-					HTMLNode failureDiv = alertContent.addChild("ul");
-					if(displayFailureBox) {
-						failureDiv.addChild("#", l10n("enqueuedFailure", "number",
+				if (displayFailureBox) {
+					OutputList failedKeys = new OutputList();
+					alertContent.addChild(failedKeys);
+					alertContent.addChild("#", l10n("enqueuedFailure", "number",
 						        String.valueOf(failure.size())));
-						it = failure.iterator();
-						while(it.hasNext()) {
-							HTMLNode line = failureDiv.addChild("li");
-							line.addChild("#", it.next());
-						}
+					it = failure.iterator();
+					while(it.hasNext()) {
+						failedKeys.addItem().addChild("#", it.next());
 					}
-					failureDiv.addChild("br");
 				}
 				alertContent.addChild("a", "href", path(),
 				        NodeL10n.getBase().getString("Toadlet.returnToQueuepage"));
@@ -931,7 +928,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		Logger.warning(this, e.toString());
 		HTMLNode alert = ctx.getPageMaker().getInfobox("infobox-alert",
 			l10n("downloadFiles"), contentNode, "grouped-downloads", true);
-		alert.addChild("ul", l10n("downloadDisallowed", "directory", downloadPath));
+		//Please tell me this isn't what it looks like. Putting bare text inside a <ul>?
+		alert.addChild(new OutputList()).setContent(l10n("downloadDisallowed", "directory", downloadPath));
 		alert.addChild("a", "href", path(),
 			NodeL10n.getBase().getString("Toadlet.returnToQueuepage"));
 		writeHTMLReply(ctx, 200, "OK", pageNode.generate());
@@ -1402,34 +1400,35 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		/* navigation bar */
 		InfoboxNode infobox = pageMaker.getInfobox("navbar", l10n("requestNavigation"), null, false);
 		HTMLNode navigationBar = infobox.outer;
-		HTMLNode navigationContent = infobox.content.addChild("ul");
+		OutputList navigationContent = new OutputList();
+		infobox.content.addChild(navigationContent);
 		boolean includeNavigationBar = false;
 		if (!completedDownloadToTemp.isEmpty()) {
-			navigationContent.addChild("li").addChild("a", "href", "#completedDownloadToTemp", l10n("completedDtoTemp", new String[]{ "size" }, new String[]{ String.valueOf(completedDownloadToTemp.size()) }));
+			navigationContent.addItem().addChild("a", "href", "#completedDownloadToTemp", l10n("completedDtoTemp", new String[]{"size"}, new String[]{String.valueOf(completedDownloadToTemp.size())}));
 			includeNavigationBar = true;
 		}
 		if (!completedDownloadToDisk.isEmpty()) {
-			navigationContent.addChild("li").addChild("a", "href", "#completedDownloadToDisk", l10n("completedDtoDisk", new String[]{ "size" }, new String[]{ String.valueOf(completedDownloadToDisk.size()) }));
+			navigationContent.addItem().addChild("a", "href", "#completedDownloadToDisk", l10n("completedDtoDisk", new String[]{ "size" }, new String[]{ String.valueOf(completedDownloadToDisk.size()) }));
 			includeNavigationBar = true;
 		}
 		if (!completedUpload.isEmpty()) {
-			navigationContent.addChild("li").addChild("a", "href", "#completedUpload", l10n("completedU", new String[]{ "size" }, new String[]{ String.valueOf(completedUpload.size()) }));
+			navigationContent.addItem().addChild("a", "href", "#completedUpload", l10n("completedU", new String[]{ "size" }, new String[]{ String.valueOf(completedUpload.size()) }));
 			includeNavigationBar = true;
 		}
 		if (!completedDirUpload.isEmpty()) {
-			navigationContent.addChild("li").addChild("a", "href", "#completedDirUpload", l10n("completedDU", new String[]{ "size" }, new String[]{ String.valueOf(completedDirUpload.size()) }));
+			navigationContent.addItem().addChild("a", "href", "#completedDirUpload", l10n("completedDU", new String[]{"size"}, new String[]{String.valueOf(completedDirUpload.size())}));
 			includeNavigationBar = true;
 		}
 		if (!failedDownload.isEmpty()) {
-			navigationContent.addChild("li").addChild("a", "href", "#failedDownload", l10n("failedD", new String[]{ "size" }, new String[]{ String.valueOf(failedDownload.size()) }));
+			navigationContent.addItem().addChild("a", "href", "#failedDownload", l10n("failedD", new String[]{ "size" }, new String[]{ String.valueOf(failedDownload.size()) }));
 			includeNavigationBar = true;
 		}
 		if (!failedUpload.isEmpty()) {
-			navigationContent.addChild("li").addChild("a", "href", "#failedUpload", l10n("failedU", new String[]{ "size" }, new String[]{ String.valueOf(failedUpload.size()) }));
+			navigationContent.addItem().addChild("a", "href", "#failedUpload", l10n("failedU", new String[]{ "size" }, new String[]{ String.valueOf(failedUpload.size()) }));
 			includeNavigationBar = true;
 		}
 		if (!failedDirUpload.isEmpty()) {
-			navigationContent.addChild("li").addChild("a", "href", "#failedDirUpload", l10n("failedDU", new String[]{ "size" }, new String[]{ String.valueOf(failedDirUpload.size()) }));
+			navigationContent.addItem().addChild("a", "href", "#failedDirUpload", l10n("failedDU", new String[]{ "size" }, new String[]{ String.valueOf(failedDirUpload.size()) }));
 			includeNavigationBar = true;
 		}
 		if (failedUnknownMIMEType.size() > 0) {
@@ -1437,7 +1436,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 			Arrays.sort(types);
 			for(String type : types) {
 				String atype = type.replace("-", "--").replace('/', '-');
-				navigationContent.addChild("li").addChild("a", "href", "#failedDownload-unknowntype-"+atype, l10n("failedDUnknownMIME", new String[]{ "size", "type" }, new String[]{ String.valueOf(failedUnknownMIMEType.get(type).size()), type }));
+				navigationContent.addItem().addChild("a", "href", "#failedDownload-unknowntype-"+atype, l10n("failedDUnknownMIME", new String[]{ "size", "type" }, new String[]{ String.valueOf(failedUnknownMIMEType.get(type).size()), type }));
 			}
 		}
 		if (failedBadMIMEType.size() > 0) {
@@ -1445,27 +1444,27 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 			Arrays.sort(types);
 			for(String type : types) {
 				String atype = type.replace("-", "--").replace('/', '-');
-				navigationContent.addChild("li").addChild("a", "href", "#failedDownload-badtype-"+atype, l10n("failedDBadMIME", new String[]{ "size", "type" }, new String[]{ String.valueOf(failedBadMIMEType.get(type).size()), type }));
+				navigationContent.addItem().addChild("a", "href", "#failedDownload-badtype-"+atype, l10n("failedDBadMIME", new String[]{ "size", "type" }, new String[]{ String.valueOf(failedBadMIMEType.get(type).size()), type }));
 			}
 		}
 		if (!uncompletedDownload.isEmpty()) {
-			navigationContent.addChild("li").addChild("a", "href", "#uncompletedDownload", l10n("DinProgress", new String[]{ "size" }, new String[]{ String.valueOf(uncompletedDownload.size()) }));
+			navigationContent.addItem().addChild("a", "href", "#uncompletedDownload", l10n("DinProgress", new String[]{ "size" }, new String[]{ String.valueOf(uncompletedDownload.size()) }));
 			includeNavigationBar = true;
 		}
 		if (!uncompletedUpload.isEmpty()) {
-			navigationContent.addChild("li").addChild("a", "href", "#uncompletedUpload", l10n("UinProgress", new String[]{ "size" }, new String[]{ String.valueOf(uncompletedUpload.size()) }));
+			navigationContent.addItem().addChild("a", "href", "#uncompletedUpload", l10n("UinProgress", new String[]{ "size" }, new String[]{ String.valueOf(uncompletedUpload.size()) }));
 			includeNavigationBar = true;
 		}
 		if (!uncompletedDirUpload.isEmpty()) {
-			navigationContent.addChild("li").addChild("a", "href", "#uncompletedDirUpload", l10n("DUinProgress", new String[]{ "size" }, new String[]{ String.valueOf(uncompletedDirUpload.size()) }));
+			navigationContent.addItem().addChild("a", "href", "#uncompletedDirUpload", l10n("DUinProgress", new String[]{ "size" }, new String[]{ String.valueOf(uncompletedDirUpload.size()) }));
 			includeNavigationBar = true;
 		}
 		if (totalQueuedDownloadSize > 0) {
-			navigationContent.addChild("li", l10n("totalQueuedDownloads", "size", SizeUtil.formatSize(totalQueuedDownloadSize)));
+			navigationContent.addItem(l10n("totalQueuedDownloads", "size", SizeUtil.formatSize(totalQueuedDownloadSize)));
 			includeNavigationBar = true;
 		}
 		if (totalQueuedUploadSize > 0) {
-			navigationContent.addChild("li", l10n("totalQueuedUploads", "size", SizeUtil.formatSize(totalQueuedUploadSize)));
+			navigationContent.addItem(l10n("totalQueuedUploads", "size", SizeUtil.formatSize(totalQueuedUploadSize)));
 			includeNavigationBar = true;
 		}
 
@@ -1600,9 +1599,10 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 				failedContent.addChild("p", l10n("badMIMETypeIntro", "type", type));
 				List<String> detail = e.details();
 				if(detail != null && !detail.isEmpty()) {
-					HTMLNode list = failedContent.addChild("ul");
+					OutputList list = new OutputList();
+					failedContent.addChild(list);
 					for(String s : detail)
-						list.addChild("li", s);
+						list.addItem(s);
 				}
 				failedContent.addChild("p", l10n("mimeProblemFetchAnyway"));
 				Collections.sort(getters, jobComparator);

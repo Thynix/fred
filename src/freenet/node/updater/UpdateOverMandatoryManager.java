@@ -60,6 +60,7 @@ import freenet.support.TimeUtil;
 import freenet.support.Logger.LogLevel;
 import freenet.support.api.Bucket;
 import freenet.support.htmlprimitives.Div;
+import freenet.support.uielements.OutputList;
 import freenet.support.io.ArrayBucket;
 import freenet.support.io.FileBucket;
 import freenet.support.io.RandomAccessFileWrapper;
@@ -624,25 +625,25 @@ public class UpdateOverMandatoryManager implements RequestClient {
 
 			if(nodesSayBlownConnected.length > 0) {
 				div_.addChild("p").addChild("#", l10n("connectedSayBlownLabel"));
-				HTMLNode list = div_.addChild("ul");
+				OutputList list = div_.addList();
 				for(int i = 0; i < nodesSayBlownConnected.length; i++) {
-					list.addChild("li", nodesSayBlownConnected[i].userToString() + " (" + nodesSayBlownConnected[i].getPeer() + ")");
+					list.addItem(nodesSayBlownConnected[i].userToString() + " (" + nodesSayBlownConnected[i].getPeer() + ")");
 				}
 			}
 
 			if(nodesSayBlownDisconnected.length > 0) {
 				div_.addChild("p").addChild("#", l10n("disconnectedSayBlownLabel"));
-				HTMLNode list = div_.addChild("ul");
+				OutputList list = div_.addList();
 				for(int i = 0; i < nodesSayBlownDisconnected.length; i++) {
-					list.addChild("li", nodesSayBlownDisconnected[i].userToString() + " (" + nodesSayBlownDisconnected[i].getPeer() + ")");
+					list.addItem(nodesSayBlownDisconnected[i].userToString() + " (" + nodesSayBlownDisconnected[i].getPeer() + ")");
 				}
 			}
 
 			if(nodesSayBlownFailedTransfer.length > 0) {
 				div_.addChild("p").addChild("#", l10n("failedTransferSayBlownLabel"));
-				HTMLNode list = div_.addChild("ul");
+				OutputList list = div_.addList();
 				for(int i = 0; i < nodesSayBlownFailedTransfer.length; i++) {
-					list.addChild("li", nodesSayBlownFailedTransfer[i].userToString() + " (" + nodesSayBlownFailedTransfer[i].getPeer() + ")");
+					list.addItem(nodesSayBlownFailedTransfer[i].userToString() + " (" + nodesSayBlownFailedTransfer[i].getPeer() + ")");
 				}
 			}
 

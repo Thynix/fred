@@ -8,6 +8,7 @@ import freenet.l10n.NodeL10n;
 import freenet.node.useralerts.UserAlertManager;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
+import freenet.support.uielements.OutputList;
 
 /** This is just documentation, it will be replaced with a plugin wizard eventually. */
 public class InsertFreesiteToadlet extends Toadlet {
@@ -39,13 +40,14 @@ public class InsertFreesiteToadlet extends Toadlet {
 		                HTMLNode.text("0.6.2"), HTMLNode.link("/SSK@ugb~uuscsidMI-Ze8laZe~o3BUIb3S50i25RIwDH99M,9T20t3xoG-dQfMO94LGOl9AxRTkaz~TykFY-voqaTQI,AQACAAE/FAFS-49/files/jsite.htm"),
 		        });
 		contentBox.addChild("p", l10n("content3"));
-		HTMLNode ul = contentBox.addChild("ul");
-		HTMLNode li = ul.addChild("li");
-		li.addChild("a", "href", "/SSK@940RYvj1-aowEHGsb5HeMTigq8gnV14pbKNsIvUO~-0,FdTbR3gIz21QNfDtnK~MiWgAf2kfwHe-cpyJXuLHdOE,AQACAAE/publish-3/", "Publish!");
-		li.addChild("#", " - "+l10n("publishExplanation"));
-		li = ul.addChild("li");
-		li.addChild("a", "href", "/SSK@8r-uSRcJPkAr-3v3YJR16OCx~lyV2XOKsiG4MOQQBMM,P42IgNemestUdaI7T6z3Og6P-Hi7g9U~e37R3kWGVj8,AQACAAE/freesite-HOWTO-4/", "Freesite HOWTO");
-		li.addChild("#", " - "+l10n("freesiteHowtoExplanation"));
+		OutputList uploadTutorialList = new OutputList();
+		contentBox.addChild(uploadTutorialList);
+		HTMLNode uploadTutorial = uploadTutorialList.addItem();
+		uploadTutorial.addChild("a", "href", "/SSK@940RYvj1-aowEHGsb5HeMTigq8gnV14pbKNsIvUO~-0,FdTbR3gIz21QNfDtnK~MiWgAf2kfwHe-cpyJXuLHdOE,AQACAAE/publish-3/", "Publish!");
+		uploadTutorial.addChild("#", " - " + l10n("publishExplanation"));
+		uploadTutorial = uploadTutorialList.addItem();
+		uploadTutorial.addChild("a", "href", "/SSK@8r-uSRcJPkAr-3v3YJR16OCx~lyV2XOKsiG4MOQQBMM,P42IgNemestUdaI7T6z3Og6P-Hi7g9U~e37R3kWGVj8,AQACAAE/freesite-HOWTO-4/", "Freesite HOWTO");
+		uploadTutorial.addChild("#", " - " + l10n("freesiteHowtoExplanation"));
 		
 		NodeL10n.getBase().addL10nSubstitution(contentBox.addChild("p"), "InsertFreesiteToadlet.contentThingamablog",
 		        new String[] { "thingamablog", "thingamablog-freenet" },

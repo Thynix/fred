@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import freenet.support.htmlprimitives.Div;
+import freenet.support.uielements.OutputList;
 import net.i2p.util.NativeBigInteger;
 import freenet.clients.http.ExternalLinkToadlet;
 import freenet.crypt.BlockCipher;
@@ -2060,9 +2061,9 @@ public class FNPPacketMangler implements OutgoingPacketMangler {
 			        new String[] { "count", "link" },
 			        new HTMLNode[] { HTMLNode.text(peers.length),
 			                HTMLNode.link(ExternalLinkToadlet.escape("https://bugs.freenetproject.org/view.php?id=2692")) });
-			HTMLNode list = div_.addChild("ul");
+			OutputList list = div_.addList();
 			for(Peer peer : peers) {
-				list.addChild("li", peer.toString());
+				list.addItem(peer.toString());
 			}
 			return div_;
 		}

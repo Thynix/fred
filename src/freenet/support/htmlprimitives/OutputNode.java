@@ -2,10 +2,16 @@ package freenet.support.htmlprimitives;
 
 import freenet.support.HTMLNode;
 import freenet.support.uielements.InfoboxWidget;
+import freenet.support.uielements.OutputList;
 
 public class OutputNode extends HTMLNode {
-	OutputNode(String Name) {
+
+	public OutputNode(String Name) {
 		super(Name);
+	}
+
+	public OutputNode(String Name, String Content) {
+		super(Name, Content);
 	}
 
 	public OutputNode addChild(OutputNode childNode) {
@@ -29,6 +35,16 @@ public class OutputNode extends HTMLNode {
 		addChild(newDiv);
 		return newDiv;
 	}
+	public Div addDiv(HTMLID ID) {
+		Div newDiv = new Div(ID);
+		addChild(newDiv);
+		return newDiv;
+	}
+	public Div addDiv(HTMLID ID, String content) {
+		Div newDiv = new Div(ID, content);
+		addChild(newDiv);
+		return newDiv;
+	}
 	public Div addDiv(HTMLClass CLASS) {
 		Div newDiv = new Div(CLASS);
 		addChild(newDiv);
@@ -41,18 +57,23 @@ public class OutputNode extends HTMLNode {
 	}
 
 	//methods for creating List children
-	public List addList() {
-		List newList = new List();
+	public OutputList addList() {
+		OutputList newList = new OutputList();
 		addChild(newList);
 		return newList;
 	}
-	public List addList(HTMLClass CLASS) {
-		List newList = new List(CLASS);
+	public OutputList addList(HTMLClass CLASS) {
+		OutputList newList = new OutputList(CLASS);
 		addChild(newList);
 		return newList;
 	}
-	public List addList(List.Type type, HTMLClass CLASS) {
-		List newList = new List(type, CLASS);
+	public OutputList addList(HTMLID ID) {
+		OutputList newList = new OutputList(ID);
+		addChild(newList);
+		return newList;
+	}
+	public OutputList addList(OutputList.Type type, HTMLClass CLASS) {
+		OutputList newList = new OutputList(type, CLASS);
 		addChild(newList);
 		return newList;
 	}

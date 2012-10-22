@@ -36,6 +36,7 @@ import java.util.Random;
 import java.util.Set;
 
 import freenet.support.htmlprimitives.Div;
+import freenet.support.uielements.OutputList;
 import org.tanukisoftware.wrapper.WrapperManager;
 
 import com.db4o.Db4o;
@@ -3287,19 +3288,19 @@ public class Node implements TimeSkewDetectorCallback {
 				public HTMLNode getHTMLText() {
 					Div div_ = new Div();
 					div_.addChild("#", NodeL10n.getBase().getString("Node.storeSaltHashMigrated"));
-					HTMLNode ul = div_.addChild("ul");
+					OutputList keyList = div_.addList();
 
 					for (String type : new String[] { "chk", "pubkey", "ssk" })
 						for (String storecache : new String[] { "store", "store.keys", "store.lru", "cache",
 						        "cache.keys", "cache.lru" }) {
 							File f = storeDir.file(type + suffix + "." + storecache);
 							if (f.exists())
-								ul.addChild("li", f.getAbsolutePath());
+								keyList.addItem(f.getAbsolutePath());
 						}
 
 					File dbDir = storeDir.file("database" + suffix);
 					if (dbDir.exists())
-						ul.addChild("li", dbDir.getAbsolutePath());
+						keyList.addItem(dbDir.getAbsolutePath());
 
 					return div_;
 				}

@@ -29,6 +29,7 @@ import freenet.support.Logger.LogLevel;
 import freenet.support.api.HTTPRequest;
 import freenet.support.htmlprimitives.Div;
 import freenet.support.htmlprimitives.HTMLClass;
+import freenet.support.uielements.OutputList;
 import freenet.support.io.FileUtil;
 import freenet.support.io.FileUtil.OperatingSystem;
 import freenet.support.uielements.InfoboxWidget;
@@ -79,7 +80,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 			// Handle the security level changes.
 			HTMLNode pageNode = null;
 			HTMLNode content = null;
-			HTMLNode ul = null;
+			OutputList secLevelList = null;
 			HTMLNode formNode = null;
 			boolean changedAnything = false;
 			String configName = "security-levels.networkThreatLevel";
@@ -96,8 +97,9 @@ public class SecurityLevelsToadlet extends Toadlet {
 							pageNode = page.outer;
 							content = page.content;
 							formNode = ctx.addFormChild(content, ".", "configFormSecLevels");
-							ul = formNode.addChild("ul", "class", "config");
-							HTMLNode seclevelGroup = ul.addChild("li");
+							secLevelList = new OutputList(HTMLClass.CONFIG);
+							formNode.addChild(secLevelList);
+							HTMLNode seclevelGroup = secLevelList.addItem();
 							seclevelGroup.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", configName, networkThreatLevel });
 							InfoboxWidget networkthreatlevelconfirm = new InfoboxWidget(InfoboxWidget.Type.INFORMATION, l10nSec("networkThreatLevelConfirmTitle", "mode", SecurityLevels.localisedName(newThreatLevel)));
 							seclevelGroup.addChild(networkthreatlevelconfirm);
@@ -488,8 +490,9 @@ public class SecurityLevelsToadlet extends Toadlet {
 		HTMLNode formNode = ctx.addFormChild(configformcontainer.body, ".", "configFormSecLevels");
 		// Network security level
 		formNode.addChild(new Div(HTMLClass.CONFIGPREFIX, l10nSec("networkThreatLevelShort")));
-		HTMLNode ul = formNode.addChild("ul", "class", "config");
-		HTMLNode seclevelGroup = ul.addChild("li");
+		OutputList secLevelList = new OutputList(HTMLClass.CONFIG);
+		formNode.addChild(secLevelList);
+		HTMLNode seclevelGroup = secLevelList.addItem();
 		seclevelGroup.addChild("#", l10nSec("networkThreatLevel.opennetIntro"));
 
 		NETWORK_THREAT_LEVEL networkLevel = node.securityLevels.getNetworkThreatLevel();
@@ -541,8 +544,8 @@ public class SecurityLevelsToadlet extends Toadlet {
 
 		// Physical security level
 		formNode.addChild(new Div(HTMLClass.CONFIGPREFIX, l10nSec("physicalThreatLevelShort")));
-		ul = formNode.addChild("ul", "class", "config");
-		seclevelGroup = ul.addChild("li");
+		secLevelList = new OutputList(HTMLClass.CONFIG);
+		seclevelGroup = secLevelList.addItem();
 		seclevelGroup.addChild("#", l10nSec("physicalThreatLevel"));
 		
 		NodeL10n.getBase().addL10nSubstitution(seclevelGroup.addChild("p").addChild("i"), "SecurityLevels.physicalThreatLevelTruecrypt",

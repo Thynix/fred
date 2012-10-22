@@ -2,8 +2,11 @@ package freenet.support.htmlprimitives;
 
 public enum HTMLClass {
 
+	ADVANCED("advanced"),
 	ALERTSLINE("alerts-line"),
 	BOOKMARKSBOX("bookmarks-box"),
+	CAT("cat"),
+	CONFIG("config"),
 	CONFIGPREFIX("configprefix"),
 	CONTAINSALERT("contains-alert"),
 	CONTAINSINFORMATION("contains-information"),
@@ -24,6 +27,9 @@ public enum HTMLClass {
 	INFOBOXQUERY("infobox-query"),
 	INFOBOXSUCCESS("infobox-success"),
 	INFOBOXWARNING("infobox-warning"),
+	ITEM("item"),
+	NAVLISTSELECTED("navlist-selected"),
+	NAVLISTNOTSELECTED("navlist-not-selected"),
 	N2NTMMESSAGETEXT("n2ntm-message-text"),
 	NONE("none"),
 	NULL(""),
@@ -50,7 +56,13 @@ public enum HTMLClass {
 	REQUESTPRIORITY("request-priority"),
 	REQUESTRECOMMEND("request-recommend"),
 	REQUESTTABLEFORM("request-table-form"),
+	ROOT("root"),
 	SEPERATOR("separator"),
+	SIMPLE("simple"),
+	SUBMENUSELECTED("submenuitem-selected"),
+	SUBMENUNOTSELECTED("submenuitem-not-selected"),
+	SUBNAVLIST("subnavlist"),
+	SUBNAVLISTSELECTED("subnavlist-selected"),
 	TOGGLEABLE("toggleable"),
 	TRANSLATION("translation"),
 	WARNING("warning");
