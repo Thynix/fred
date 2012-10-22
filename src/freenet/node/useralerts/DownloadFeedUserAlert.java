@@ -9,7 +9,7 @@ import freenet.node.PeerNode;
 import freenet.node.fcp.FCPMessage;
 import freenet.node.fcp.URIFeedMessage;
 import freenet.support.HTMLNode;
-import freenet.support.htmlprimitives.Div;
+import freenet.clients.http.uielements.Div;
 
 public class DownloadFeedUserAlert extends AbstractUserAlert {
 	private final WeakReference<PeerNode> peerRef;

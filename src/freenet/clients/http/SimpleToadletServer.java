@@ -13,7 +13,7 @@ import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import freenet.support.htmlprimitives.Div;
+import freenet.clients.http.uielements.Div;
 import org.tanukisoftware.wrapper.WrapperManager;
 
 import freenet.client.filter.HTMLFilter;

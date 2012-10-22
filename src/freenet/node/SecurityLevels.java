@@ -15,7 +15,7 @@ import freenet.node.DarknetPeerNode.FRIEND_TRUST;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.api.StringCallback;
-import freenet.support.htmlprimitives.Div;
+import freenet.clients.http.uielements.Div;
 
 /**
  * We have 3 basic security settings. The user chooses these in the first-time 

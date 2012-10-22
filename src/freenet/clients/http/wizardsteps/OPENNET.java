@@ -4,9 +4,9 @@ import freenet.clients.http.FirstTimeWizardToadlet;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlprimitives.Div;
-import freenet.support.htmlprimitives.HTMLClass;
-import freenet.support.uielements.OutputList;
+import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.HTMLClass;
+import freenet.clients.http.uielements.OutputList;
 
 /**
  * This step allows the user to choose between darknet and opennet, explaining each briefly.

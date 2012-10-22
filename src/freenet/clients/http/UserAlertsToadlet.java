@@ -14,9 +14,7 @@ import freenet.node.useralerts.UserAlertManager;
 import freenet.support.HTMLNode;
 import freenet.support.MultiValueTable;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlprimitives.Div;
-import freenet.support.htmlprimitives.HTMLClass;
-import freenet.support.uielements.InfoboxWidget;
+import freenet.clients.http.uielements.InfoboxWidget;
 
 /**
  * A page consisting entirely of useralerts.

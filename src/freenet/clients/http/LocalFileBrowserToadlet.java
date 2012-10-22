@@ -8,10 +8,10 @@ import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlprimitives.Div;
-import freenet.support.htmlprimitives.HTMLID;
-import freenet.support.uielements.OutputList;
-import freenet.support.uielements.InfoboxWidget;
+import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.HTMLID;
+import freenet.clients.http.uielements.OutputList;
+import freenet.clients.http.uielements.InfoboxWidget;
 
 import java.io.File;
 import java.io.IOException;

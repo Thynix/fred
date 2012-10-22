@@ -8,7 +8,7 @@ import freenet.node.DarknetPeerNode;
 import freenet.node.PeerNode;
 import freenet.node.fcp.BookmarkFeed;
 import freenet.support.HTMLNode;
-import freenet.support.htmlprimitives.Div;
+import freenet.clients.http.uielements.Div;
 
 public class BookmarkFeedUserAlert extends AbstractUserAlert {
 	private final WeakReference<PeerNode> peerRef;

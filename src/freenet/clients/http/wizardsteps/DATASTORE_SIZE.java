@@ -12,7 +12,7 @@ import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.SizeUtil;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlprimitives.Div;
+import freenet.clients.http.uielements.Div;
 import freenet.support.io.FileUtil;
 
 /**

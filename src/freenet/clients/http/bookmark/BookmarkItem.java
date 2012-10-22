@@ -18,7 +18,7 @@ import freenet.support.Fields;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.SimpleFieldSet;
-import freenet.support.htmlprimitives.Div;
+import freenet.clients.http.uielements.Div;
 
 public class BookmarkItem extends Bookmark {
     public static final String NAME = "Bookmark";

@@ -12,8 +12,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import freenet.support.htmlprimitives.Div;
-import freenet.support.uielements.OutputList;
+import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.OutputList;
 import net.i2p.util.NativeBigInteger;
 import freenet.clients.http.ExternalLinkToadlet;
 import freenet.crypt.BlockCipher;

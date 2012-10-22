@@ -27,12 +27,12 @@ import freenet.support.Logger;
 import freenet.support.MultiValueTable;
 import freenet.support.Logger.LogLevel;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlprimitives.Div;
-import freenet.support.htmlprimitives.HTMLClass;
-import freenet.support.uielements.OutputList;
+import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.HTMLClass;
+import freenet.clients.http.uielements.OutputList;
 import freenet.support.io.FileUtil;
 import freenet.support.io.FileUtil.OperatingSystem;
-import freenet.support.uielements.InfoboxWidget;
+import freenet.clients.http.uielements.InfoboxWidget;
 
 /**
  * The security levels page.

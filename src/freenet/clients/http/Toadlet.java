@@ -26,9 +26,7 @@ import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.MultiValueTable;
 import freenet.support.api.Bucket;
-import freenet.support.htmlprimitives.Div;
-import freenet.support.htmlprimitives.HTMLClass;
-import freenet.support.uielements.InfoboxWidget;
+import freenet.clients.http.uielements.InfoboxWidget;
 
 /**
  * Replacement for servlets. Just an easy to use HTTP interface, which is

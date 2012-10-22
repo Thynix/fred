@@ -29,7 +29,7 @@ import freenet.support.Logger;
 import freenet.support.SimpleFieldSet;
 import freenet.support.TimeUtil;
 import freenet.support.Logger.LogLevel;
-import freenet.support.htmlprimitives.Div;
+import freenet.clients.http.uielements.Div;
 import freenet.support.io.Closer;
 import freenet.support.transport.ip.IPUtil;
 import java.util.Arrays;

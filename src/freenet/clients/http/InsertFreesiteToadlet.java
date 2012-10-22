@@ -8,7 +8,7 @@ import freenet.l10n.NodeL10n;
 import freenet.node.useralerts.UserAlertManager;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
-import freenet.support.uielements.OutputList;
+import freenet.clients.http.uielements.OutputList;
 
 /** This is just documentation, it will be replaced with a plugin wizard eventually. */
 public class InsertFreesiteToadlet extends Toadlet {

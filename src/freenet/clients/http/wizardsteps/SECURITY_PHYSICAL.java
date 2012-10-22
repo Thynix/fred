@@ -12,8 +12,8 @@ import freenet.node.SecurityLevels;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlprimitives.Div;
-import freenet.support.htmlprimitives.HTMLClass;
+import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.HTMLClass;
 import freenet.support.io.FileUtil;
 import freenet.support.io.FileUtil.OperatingSystem;
 

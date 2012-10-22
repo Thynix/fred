@@ -4,8 +4,8 @@
 package freenet.node.useralerts;
 
 import freenet.l10n.NodeL10n;
-import freenet.support.htmlprimitives.HTMLClass;
-import freenet.support.htmlprimitives.Div;
+import freenet.clients.http.uielements.HTMLClass;
+import freenet.clients.http.uielements.Div;
 
 public class SimpleUserAlert extends AbstractUserAlert {
 

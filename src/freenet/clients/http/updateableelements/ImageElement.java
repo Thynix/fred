@@ -21,8 +21,8 @@ import freenet.keys.FreenetURI;
 import freenet.support.Base64;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
-import freenet.support.htmlprimitives.HTMLClass;
-import freenet.support.htmlprimitives.Div;
+import freenet.clients.http.uielements.HTMLClass;
+import freenet.clients.http.uielements.Div;
 
 /** A pushed image, the progress is shown with the ImageCreatorToadlet */
 public class ImageElement extends BaseUpdateableElement {

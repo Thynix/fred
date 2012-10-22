@@ -7,7 +7,7 @@ import freenet.config.Option;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlprimitives.Div;
+import freenet.clients.http.uielements.Div;
 
 /**
  * This step is the first, and provides a small welcome screen and an option to change the language.

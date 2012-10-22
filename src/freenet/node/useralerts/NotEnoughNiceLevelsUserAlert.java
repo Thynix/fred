@@ -6,8 +6,8 @@ package freenet.node.useralerts;
 
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
-import freenet.support.htmlprimitives.Div;
-import freenet.support.htmlprimitives.HTMLClass;
+import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.HTMLClass;
 import freenet.support.io.NativeThread;
 
 /**

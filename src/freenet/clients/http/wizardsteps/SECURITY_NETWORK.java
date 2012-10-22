@@ -7,8 +7,8 @@ import freenet.node.SecurityLevels;
 import freenet.support.Fields;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlprimitives.HTMLClass;
-import freenet.support.htmlprimitives.Div;
+import freenet.clients.http.uielements.HTMLClass;
+import freenet.clients.http.uielements.Div;
 
 /**
  * This step allows the user to choose between security levels. If opennet is disabled, only high and maximum are shown.

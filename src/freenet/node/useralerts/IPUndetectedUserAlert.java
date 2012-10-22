@@ -8,10 +8,10 @@ import freenet.config.SubConfig;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
 import freenet.support.HTMLNode;
-import freenet.support.htmlprimitives.Div;
-import freenet.support.htmlprimitives.HTMLClass;
-import freenet.support.htmlprimitives.Li;
-import freenet.support.uielements.OutputList;
+import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.HTMLClass;
+import freenet.clients.http.uielements.Item;
+import freenet.clients.http.uielements.OutputList;
 
 public class IPUndetectedUserAlert extends AbstractUserAlert {
 	
@@ -89,7 +89,7 @@ public class IPUndetectedUserAlert extends AbstractUserAlert {
 		formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "subconfig", sc.getPrefix() });
 		OutputList listNode = new OutputList(HTMLClass.CONFIG);
 		formNode.addChild(listNode);
-		Li itemNode = listNode.addItem();
+		Item itemNode = listNode.addItem();
 		itemNode.addChild("span", "class", "configshortdesc", NodeL10n.getBase().getString(o.getShortDesc())).addChild("input", new String[] { "type", "name", "value" }, new String[] { "text", sc.getPrefix() + ".tempIPAddressHint", o.getValueString() });
 		itemNode.addChild("span", "class", "configlongdesc", NodeL10n.getBase().getString(o.getLongDesc()));
 		formNode.addChild("input", new String[] { "type", "value" }, new String[] { "submit", NodeL10n.getBase().getString("UserAlert.apply") });

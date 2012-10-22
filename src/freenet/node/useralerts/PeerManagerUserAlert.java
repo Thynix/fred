@@ -8,7 +8,7 @@ import freenet.node.NodeStats;
 import freenet.node.PeerManager;
 import freenet.node.updater.NodeUpdateManager;
 import freenet.support.HTMLNode;
-import freenet.support.htmlprimitives.Div;
+import freenet.clients.http.uielements.Div;
 
 public class PeerManagerUserAlert extends AbstractUserAlert {
 

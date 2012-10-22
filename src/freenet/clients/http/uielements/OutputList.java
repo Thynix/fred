@@ -1,9 +1,4 @@
-package freenet.support.uielements;
-
-import freenet.support.htmlprimitives.HTMLClass;
-import freenet.support.htmlprimitives.HTMLID;
-import freenet.support.htmlprimitives.Li;
-import freenet.support.htmlprimitives.OutputNode;
+package freenet.clients.http.uielements;
 
 public class OutputList extends OutputNode {
 
@@ -39,25 +34,24 @@ public class OutputList extends OutputNode {
 	}
 
 	//Methods for adding list items
-	public Li addItem(HTMLClass CLASS, String content) {
-		Li newListItem = new Li(CLASS, content);
+	public Item addItem(HTMLClass CLASS, String content) {
+		Item newListItem = new Item(CLASS, content);
 		addChild(newListItem);
 		return newListItem;
 	}
-	public Li addItem(String content) {
-		Li newListItem = new Li(content);
+	public Item addItem(String content) {
+		Item newListItem = new Item(content);
 		addChild(newListItem);
 		return newListItem;
 	}
-	public Li addItem(HTMLClass CLASS) {
-		Li newListItem = new Li(CLASS);
+	public Item addItem(HTMLClass CLASS) {
+		Item newListItem = new Item(CLASS);
 		addChild(newListItem);
 		return newListItem;
 	}
-	public Li addItem() {
-		Li newListItem = new Li();
+	public Item addItem() {
+		Item newListItem = new Item();
 		addChild(newListItem);
 		return newListItem;
 	}
 }
-

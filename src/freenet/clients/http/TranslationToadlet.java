@@ -21,8 +21,8 @@ import freenet.support.SimpleFieldSet;
 import freenet.support.Logger.LogLevel;
 import freenet.support.SimpleFieldSet.KeyIterator;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlprimitives.Div;
-import freenet.support.htmlprimitives.HTMLClass;
+import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.HTMLClass;
 import freenet.support.io.BucketTools;
 
 /**

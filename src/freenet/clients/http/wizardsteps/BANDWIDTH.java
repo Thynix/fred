@@ -4,7 +4,7 @@ import freenet.clients.http.FirstTimeWizardToadlet;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlprimitives.Div;
+import freenet.clients.http.uielements.Div;
 
 /**
  * Asks the user whether their connection has a monthly cap to inform how to prompt for bandwidth limits.

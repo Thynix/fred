@@ -1,4 +1,4 @@
-package freenet.support.htmlprimitives;
+package freenet.clients.http.uielements;
 
 public enum HTMLID {
 	BOOKMARKS("bookmarks"),

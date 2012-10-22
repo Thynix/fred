@@ -16,7 +16,7 @@ import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.api.HTTPRequest;
 import freenet.support.htmlprimitives.*;
-import freenet.support.uielements.OutputList;
+import freenet.clients.http.uielements.*;
 
 /** Simple class to output standard heads and tail for web interface pages. 
 */
@@ -477,7 +477,7 @@ public final class PageMaker {
 						nonEmpty = true;
 						String navigationTitle = menu.navigationLinkTitles.get(navigationLink);
 						String navigationPath = menu.navigationLinks.get(navigationLink);
-						Li sublistItem;
+						Item sublistItem;
 						if(activePath.equals(navigationPath)) {
 							sublistItem = subnavlist.addItem(HTMLClass.SUBMENUSELECTED);
 							isSelected = true;
@@ -514,7 +514,7 @@ public final class PageMaker {
 							sublistItem.addChild("a", "href", navigationPath, navigationLink);
 					}
 					if(nonEmpty) {
-						Li listItem = navbarMainList.addItem();
+						Item listItem = navbarMainList.addItem();
 						if(isSelected) {
 							selected = menu;
 							subnavlist.addClass(HTMLClass.SUBNAVLISTSELECTED);
@@ -568,7 +568,7 @@ public final class PageMaker {
 					String navigationTitle = selected.navigationLinkTitles.get(navigationLink);
 					String navigationPath = selected.navigationLinks.get(navigationLink);
 					OutputList subnavlist = pageDiv.addDiv(HTMLID.SELECTEDSUBNAVBAR).addList(HTMLID.SELECTEDSUBNAVBARLIST);
-					Li sublistItem;
+					Item sublistItem;
 					if (activePath.equals(navigationPath)) {
 						sublistItem = subnavlist.addItem(HTMLClass.SUBMENUSELECTED);
 					} else {

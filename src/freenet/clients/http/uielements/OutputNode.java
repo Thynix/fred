@@ -1,8 +1,6 @@
-package freenet.support.htmlprimitives;
+package freenet.clients.http.uielements;
 
 import freenet.support.HTMLNode;
-import freenet.support.uielements.InfoboxWidget;
-import freenet.support.uielements.OutputList;
 
 public class OutputNode extends HTMLNode {
 

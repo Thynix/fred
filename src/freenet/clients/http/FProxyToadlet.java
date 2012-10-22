@@ -61,15 +61,12 @@ import freenet.support.Logger.LogLevel;
 import freenet.support.api.Bucket;
 import freenet.support.api.BucketFactory;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlprimitives.Div;
-import freenet.support.htmlprimitives.HTMLClass;
-import freenet.support.htmlprimitives.Li;
-import freenet.support.uielements.OutputList;
+import freenet.clients.http.uielements.*;
+import freenet.clients.http.uielements.Item;
 import freenet.support.io.BucketTools;
 import freenet.support.io.Closer;
 import freenet.support.io.FileUtil;
 import freenet.support.io.NoFreeBucket;
-import freenet.support.uielements.InfoboxWidget;
 
 public final class FProxyToadlet extends Toadlet implements RequestClient {
 
@@ -190,7 +187,7 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 				dangerousRSSwarning.body.addChild("#", NodeL10n.getBase().getString("FProxyToadlet.dangerousRSS", new String[]{"type"}, new String[]{mimeType}));
 				dangerousRSSwarning.body.addChild("p", l10n("options"));
 				OutputList optionList = dangerousRSSwarning.body.addList();
-				Li option = optionList.addItem();
+				Item option = optionList.addItem();
 
 				NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.openPossRSSAsPlainText", new String[] { "link", "bold" },
 						new HTMLNode[] {
@@ -840,7 +837,7 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 				InfoboxWidget largeFile = new InfoboxWidget(InfoboxWidget.Type.INFORMATION, l10n("largeFile"));
 				contentNode.addChild(largeFile);
 				OutputList fileInformationList = largeFile.body.addList();
-				Li option = fileInformationList.addItem();
+				Item option = fileInformationList.addItem();
 				option.addChild("#", (l10n("filenameLabel") + ' '));
 				option.addChild("a", "href", '/' + key.toString(), getFilename(key, e.getExpectedMimeType()));
 
@@ -873,7 +870,7 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 				InfoboxWidget errorWithReason = new InfoboxWidget(InfoboxWidget.Type.ERROR, l10n("errorWithReason", "error", e.getShortMessage()));
 				contentNode.addChild(errorWithReason);
 				OutputList fileInformationList = errorWithReason.body.addList();
-				Li option = fileInformationList.addItem();
+				Item option = fileInformationList.addItem();
 				option.addChild("#", (l10n("filenameLabel") + ' '));
 				option.addChild("a", "href", '/' + key.toString(), getFilename(key, e.getExpectedMimeType()));
                                 String mime = writeSizeAndMIME(fileInformationList, e);

@@ -9,11 +9,11 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.List;
 
-import freenet.support.htmlprimitives.Div;
-import freenet.support.htmlprimitives.HTMLClass;
-import freenet.support.htmlprimitives.HTMLID;
-import freenet.support.uielements.OutputList;
-import freenet.support.uielements.InfoboxWidget;
+import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.HTMLClass;
+import freenet.clients.http.uielements.HTMLID;
+import freenet.clients.http.uielements.OutputList;
+import freenet.clients.http.uielements.InfoboxWidget;
 import org.tanukisoftware.wrapper.WrapperManager;
 
 import freenet.client.ClientMetadata;

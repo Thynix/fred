@@ -1,7 +1,4 @@
-package freenet.support.uielements;
-
-import freenet.support.htmlprimitives.Div;
-import freenet.support.htmlprimitives.HTMLClass;
+package freenet.clients.http.uielements;
 
 public class AlertLine extends InfoboxWidget {
 

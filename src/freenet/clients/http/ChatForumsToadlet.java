@@ -8,8 +8,8 @@ import freenet.pluginmanager.PluginManager;
 import freenet.support.HTMLNode;
 import freenet.support.MultiValueTable;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlprimitives.Li;
-import freenet.support.uielements.OutputList;
+import freenet.clients.http.uielements.Item;
+import freenet.clients.http.uielements.OutputList;
 
 import java.io.IOException;
 import java.net.URI;
@@ -43,7 +43,7 @@ public class ChatForumsToadlet extends Toadlet implements LinkEnabledCallback {
 		
 		OutputList chatPluginList = new OutputList();
 		contentBox.addChild(chatPluginList);
-		Li chatPlugin = chatPluginList.addItem();
+		Item chatPlugin = chatPluginList.addItem();
 		NodeL10n.getBase().addL10nSubstitution(chatPlugin, "ChatForumsToadlet.fms",
 		        new String[] { "fms", "fms-help" },
 		        new HTMLNode[] { HTMLNode.link("/USK@0npnMrqZNKRCRoGojZV93UNHCMN-6UU3rRSAmP6jNLE,~BG-edFtdCC1cSH4O3BWdeIYa8Sw5DfyrSV-TKdO5ec,AQACAAE/fms/127/"),

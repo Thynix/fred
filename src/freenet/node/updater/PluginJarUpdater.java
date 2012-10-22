@@ -14,7 +14,7 @@ import freenet.pluginmanager.PluginInfoWrapper;
 import freenet.pluginmanager.PluginManager;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
-import freenet.support.htmlprimitives.Div;
+import freenet.clients.http.uielements.Div;
 
 public class PluginJarUpdater extends NodeUpdater {
 

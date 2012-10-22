@@ -8,10 +8,10 @@ import freenet.config.SubConfig;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
 import freenet.support.HTMLNode;
-import freenet.support.htmlprimitives.Div;
-import freenet.support.htmlprimitives.HTMLClass;
-import freenet.support.htmlprimitives.Li;
-import freenet.support.uielements.OutputList;
+import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.HTMLClass;
+import freenet.clients.http.uielements.Item;
+import freenet.clients.http.uielements.OutputList;
 
 public class MeaningfulNodeNameUserAlert extends AbstractUserAlert {
 	private final Node node;
@@ -53,7 +53,7 @@ public class MeaningfulNodeNameUserAlert extends AbstractUserAlert {
 		formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "subconfig", sc.getPrefix() });
 		OutputList listNode = new OutputList(HTMLClass.CONFIG);
 		formNode.addChild(listNode);
-		Li itemNode = listNode.addItem();
+		Item itemNode = listNode.addItem();
 		itemNode.addChild("span", new String[]{ "class", "title", "style" },
 			new String[]{ "configshortdesc", NodeL10n.getBase().getString("ConfigToadlet.defaultIs", new String[] { "default" }, new String[] { o.getDefault() }),
 			"cursor: help;" }).addChild(NodeL10n.getBase().getHTMLNode(o.getShortDesc()));

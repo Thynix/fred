@@ -83,10 +83,10 @@ import freenet.support.TimeUtil;
 import freenet.support.api.Bucket;
 import freenet.support.api.HTTPRequest;
 import freenet.support.api.HTTPUploadedFile;
-import freenet.support.htmlprimitives.Div;
-import freenet.support.htmlprimitives.HTMLClass;
-import freenet.support.htmlprimitives.Li;
-import freenet.support.uielements.OutputList;
+import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.HTMLClass;
+import freenet.clients.http.uielements.Item;
+import freenet.clients.http.uielements.OutputList;
 import freenet.support.io.BucketTools;
 import freenet.support.io.Closer;
 import freenet.support.io.FileBucket;
@@ -235,7 +235,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 					String type = request.getPartAsStringFailsafe("type-"+part, MAX_TYPE_LENGTH);
 					String size = request.getPartAsStringFailsafe("size-"+part, 50);
 					if(filename != null) {
-						Li line = infoList.addItem();
+						Item line = infoList.addItem();
 						line.addChild("#", NodeL10n.getBase().getString("FProxyToadlet.filenameLabel")+" ");
 						if(keyString != null) {
 							line.addChild("a", "href", "/"+keyString, filename);

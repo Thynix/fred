@@ -24,10 +24,10 @@ import freenet.support.URLEncodedFormatException;
 import freenet.support.URLEncoder;
 import freenet.support.Logger.LogLevel;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlprimitives.HTMLClass;
-import freenet.support.htmlprimitives.HTMLID;
-import freenet.support.htmlprimitives.Li;
-import freenet.support.uielements.OutputList;
+import freenet.clients.http.uielements.HTMLClass;
+import freenet.clients.http.uielements.HTMLID;
+import freenet.clients.http.uielements.Item;
+import freenet.clients.http.uielements.OutputList;
 
 /**
  * BookmarkEditor Toadlet 
@@ -84,7 +84,7 @@ public class BookmarkEditorToadlet extends Toadlet {
 			BookmarkItem item =  items.get(i);
 
 			String itemPath = URLEncoder.encode(path + item.getName(), false);
-			Li bookmarkItem = bookmarkList.addItem(HTMLClass.ITEM, item.getVisibleName());
+			Item bookmarkItem = bookmarkList.addItem(HTMLClass.ITEM, item.getVisibleName());
 			String explain = item.getShortDescription();
 			if(explain != null && explain.length() > 0) {
 				bookmarkItem.addChild("#", " (");
@@ -117,7 +117,7 @@ public class BookmarkEditorToadlet extends Toadlet {
 			String catPath = path + cats.get(i).getName() + '/';
 			String catPathEncoded = URLEncoder.encode(catPath, false);
 
-			Li subCat = bookmarkList.addItem(HTMLClass.CAT, cats.get(i).getVisibleName());
+			Item subCat = bookmarkList.addItem(HTMLClass.CAT, cats.get(i).getVisibleName());
 
 			HTMLNode actions = new HTMLNode("span", "class", "actions");
 
@@ -157,7 +157,7 @@ public class BookmarkEditorToadlet extends Toadlet {
 	public HTMLNode getBookmarksList() {
 		OutputList bookmarks = new OutputList(HTMLID.BOOKMARKS);
 
-		Li root = bookmarks.addItem(HTMLClass.CAT, "/");
+		Item root = bookmarks.addItem(HTMLClass.CAT, "/");
 		root.addClass(HTMLClass.ROOT);
 		HTMLNode actions = root.addChild("span", "class", "actions");
 		String addBookmark = NodeL10n.getBase().getString("BookmarkEditorToadlet.addBookmark");

@@ -33,8 +33,8 @@ import freenet.support.HTMLNode;
 import freenet.support.SimpleFieldSet;
 import freenet.support.TimeUtil;
 import freenet.support.api.HTTPRequest;
-import freenet.support.uielements.OutputList;
-import freenet.support.uielements.InfoboxWidget;
+import freenet.clients.http.uielements.OutputList;
+import freenet.clients.http.uielements.InfoboxWidget;
 
 /**
  * Toadlet displaying information on the node's connectivity status.

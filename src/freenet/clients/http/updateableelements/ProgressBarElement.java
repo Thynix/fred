@@ -13,8 +13,8 @@ import freenet.keys.FreenetURI;
 import freenet.l10n.NodeL10n;
 import freenet.support.Base64;
 import freenet.support.HTMLNode;
-import freenet.support.htmlprimitives.Div;
-import freenet.support.htmlprimitives.HTMLClass;
+import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.HTMLClass;
 
 /** A pushed element that renders the progress bar when loading a page. */
 public class ProgressBarElement extends BaseUpdateableElement {

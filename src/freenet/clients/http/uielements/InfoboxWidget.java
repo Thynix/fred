@@ -1,8 +1,6 @@
-package freenet.support.uielements;
+package freenet.clients.http.uielements;
 
 import freenet.support.HTMLNode;
-import freenet.support.htmlprimitives.Div;
-import freenet.support.htmlprimitives.HTMLClass;
 
 public class InfoboxWidget extends Div {
 

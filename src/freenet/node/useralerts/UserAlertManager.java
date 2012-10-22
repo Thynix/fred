@@ -20,12 +20,11 @@ import freenet.node.fcp.FCPConnectionHandler;
 import freenet.support.Base64;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
-import freenet.support.htmlprimitives.Div;
-import freenet.support.htmlprimitives.HTMLClass;
-import freenet.support.htmlprimitives.HTMLID;
-import freenet.support.htmlprimitives.OutputNode;
-import freenet.support.uielements.AlertLine;
-import freenet.support.uielements.InfoboxWidget;
+import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.HTMLID;
+import freenet.clients.http.uielements.OutputNode;
+import freenet.clients.http.uielements.AlertLine;
+import freenet.clients.http.uielements.InfoboxWidget;
 
 /**
  * Collection of UserAlert's.

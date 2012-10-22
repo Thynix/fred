@@ -17,8 +17,8 @@ import freenet.support.Logger;
 import freenet.support.Logger.LogLevel;
 import freenet.support.OOMHandler;
 import freenet.support.TimeUtil;
-import freenet.support.htmlprimitives.Div;
-import freenet.support.uielements.OutputList;
+import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.OutputList;
 import freenet.support.io.NativeThread;
 import freenet.support.math.MersenneTwister;
 

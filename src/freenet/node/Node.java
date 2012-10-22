@@ -35,8 +35,8 @@ import java.util.MissingResourceException;
 import java.util.Random;
 import java.util.Set;
 
-import freenet.support.htmlprimitives.Div;
-import freenet.support.uielements.OutputList;
+import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.OutputList;
 import org.tanukisoftware.wrapper.WrapperManager;
 
 import com.db4o.Db4o;

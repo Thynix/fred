@@ -8,6 +8,8 @@ import java.util.Random;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 import freenet.support.LRUMap;
+import freenet.clients.http.uielements.Row;
+import freenet.clients.http.uielements.Table;
 import freenet.support.io.InetAddressComparator;
 
 /** Tracks announcements by IP address to identify nodes that announce repeatedly. */
@@ -146,24 +148,25 @@ public class SeedAnnounceTracker {
 	public void drawSeedStats(HTMLNode content) {
 		TrackerItem[] topItems = getTopTrackerItems(20);
 		if(topItems.length == 0) return;
-		HTMLNode table = content.addChild("table", "border", "0");
-		HTMLNode row = table.addChild("tr");
-		row.addChild("th", l10nStats("seedTableIP"));
-		row.addChild("th", l10nStats("seedTableConnections"));
-		row.addChild("th", l10nStats("seedTableAnnouncements"));
-		row.addChild("th", l10nStats("seedTableAccepted"));
-		row.addChild("th", l10nStats("seedTableCompleted"));
-		row.addChild("th", l10nStats("seedTableForwarded"));
-		row.addChild("th", l10nStats("seedTableVersion"));
+		Table SeedStats = new Table();
+		content.addChild(SeedStats);
+		Row header = SeedStats.addRow();
+		header.addHeader(l10nStats("seedTableIP"));
+		header.addHeader(l10nStats("seedTableConnections"));
+		header.addHeader(l10nStats("seedTableAnnouncements"));
+		header.addHeader(l10nStats("seedTableAccepted"));
+		header.addHeader(l10nStats("seedTableCompleted"));
+		header.addHeader(l10nStats("seedTableForwarded"));
+		header.addHeader(l10nStats("seedTableVersion"));
 		for(TrackerItem item : topItems) {
-			row = table.addChild("tr");
-			row.addChild("td", item.addr.getHostAddress());
-			row.addChild("td", Integer.toString(item.totalSeedConnects));
-			row.addChild("td", Integer.toString(item.totalAnnounceRequests));
-			row.addChild("td", Integer.toString(item.totalAcceptedAnnounceRequests));
-			row.addChild("td", Integer.toString(item.totalCompletedAnnounceRequests));
-			row.addChild("td", Integer.toString(item.totalSentRefs));
-			row.addChild("td", Integer.toString(item.lastVersion));
+			Row row = SeedStats.addRow();
+			row.addCell(item.addr.getHostAddress());
+			row.addCell(Integer.toString(item.totalSeedConnects));
+			row.addCell(Integer.toString(item.totalAnnounceRequests));
+			row.addCell(Integer.toString(item.totalAcceptedAnnounceRequests));
+			row.addCell(Integer.toString(item.totalCompletedAnnounceRequests));
+			row.addCell(Integer.toString(item.totalSentRefs));
+			row.addCell(Integer.toString(item.lastVersion));
 		}
 	}
 

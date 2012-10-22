@@ -7,7 +7,7 @@ import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlprimitives.Div;
+import freenet.clients.http.uielements.Div;
 
 /**
  * Allows the user to choose a node name for Darknet.

@@ -41,11 +41,11 @@ import freenet.support.HTMLNode;
 import freenet.support.SizeUtil;
 import freenet.support.TimeUtil;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlprimitives.Div;
-import freenet.support.htmlprimitives.HTMLClass;
-import freenet.support.uielements.OutputList;
+import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.HTMLClass;
+import freenet.clients.http.uielements.OutputList;
 import freenet.support.io.NativeThread;
-import freenet.support.uielements.InfoboxWidget;
+import freenet.clients.http.uielements.InfoboxWidget;
 
 public class StatisticsToadlet extends Toadlet {
 
