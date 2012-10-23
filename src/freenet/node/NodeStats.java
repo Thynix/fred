@@ -1,14 +1,5 @@
 package freenet.node;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.Map;
-
 import freenet.clients.http.uielements.BlockText;
 import freenet.clients.http.uielements.Row;
 import freenet.clients.http.uielements.Table;
@@ -28,25 +19,17 @@ import freenet.node.SecurityLevels.NETWORK_THREAT_LEVEL;
 import freenet.node.stats.StatsNotAvailableException;
 import freenet.node.stats.StoreLocationStats;
 import freenet.store.CHKStore;
-import freenet.support.HTMLNode;
-import freenet.support.Histogram2;
-import freenet.support.LogThresholdCallback;
-import freenet.support.Logger;
+import freenet.support.*;
 import freenet.support.Logger.LogLevel;
-import freenet.support.SimpleFieldSet;
-import freenet.support.SizeUtil;
-import freenet.support.StringCounter;
-import freenet.support.TimeUtil;
-import freenet.support.TokenBucket;
 import freenet.support.api.BooleanCallback;
 import freenet.support.api.IntCallback;
 import freenet.support.api.LongCallback;
 import freenet.support.io.NativeThread;
-import freenet.support.math.BootstrappingDecayingRunningAverage;
-import freenet.support.math.DecayingKeyspaceAverage;
-import freenet.support.math.RunningAverage;
-import freenet.support.math.TimeDecayingRunningAverage;
-import freenet.support.math.TrivialRunningAverage;
+import freenet.support.math.*;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.*;
 
 /** Node (as opposed to NodeClientCore) level statistics. Includes shouldRejectRequest(), but not limited
  * to stuff required to implement that. */
@@ -901,7 +884,7 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 		 * according to the *SR totals, and only compare the non-SR requests when
 		 * deciding whether the peer is over the limit. The updated limits are 
 		 * sent to the downstream node so that it can send the right number of requests.
-		 * @param node We need this to count the requests.
+		 * @param tracker We need this to count the requests.
 		 * @param source The peer we are interested in.
 		 * @param requestsToNode If true, count requests sent to the node and currently
 		 * running. If false, count requests originated by the node.
@@ -1463,7 +1446,6 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 	 * limit. However, the node is only guaranteed its fair share, which is defined as its
 	 * fraction of the part of the total that is above the lower limit.
 	 * @param input
-	 * @param dontTellPeer
 	 * @param transfersPerInsert
 	 * @param realTimeFlag
 	 * @param peers
@@ -3644,7 +3626,7 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 		synchronized(slotTimeoutsSync) {
 			if(fatalTimeoutsInWaitLocal + fatalTimeoutsInWaitRemote + 
 					allocatedSlotLocal + allocatedSlotRemote > 0) {
-				content.addChild("b", l10n("timeoutFractions"));
+				content.addB(l10n("timeoutFractions"));
 				table = new Table();
 				content.addChild(table);
 				header = table.addRow();

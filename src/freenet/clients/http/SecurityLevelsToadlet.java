@@ -495,7 +495,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 		NETWORK_THREAT_LEVEL networkLevel = node.securityLevels.getNetworkThreatLevel();
 
 		HTMLNode p = seclevelGroup.addChild(new BlockText());
-		p.addChild("b", l10nSec("networkThreatLevel.opennetLabel"));
+		p.addB(l10nSec("networkThreatLevel.opennetLabel"));
 		p.addChild("#", ": "+l10nSec("networkThreatLevel.opennetExplain"));
 		HTMLNode div = seclevelGroup.addChild(new Box(HTMLClass.OPENNETDIV));
 		
@@ -507,7 +507,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 			} else {
 				input = div.addChild(new BlockText()).addChild("input", new String[]{"type", "name", "value"}, new String[]{"radio", controlName, level.name()});
 			}
-			input.addChild("b", l10nSec("networkThreatLevel.name."+level));
+			input.addB(l10nSec("networkThreatLevel.name."+level));
 			input.addChild("#", ": ");
 			NodeL10n.getBase().addL10nSubstitution(input, "SecurityLevels.networkThreatLevel.choice."+level, new String[] { "bold" },
 					new HTMLNode[] { HTMLNode.STRONG });
@@ -518,7 +518,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 		}
 
 		p = seclevelGroup.addChild(new BlockText());
-		p.addChild("b", l10nSec("networkThreatLevel.darknetLabel"));
+		p.addB(l10nSec("networkThreatLevel.darknetLabel"));
 		p.addChild("#", ": "+l10nSec("networkThreatLevel.darknetExplain"));
 		div = seclevelGroup.addChild(new Box(HTMLClass.DARKNETDIV));
 		
@@ -529,7 +529,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 			} else {
 				input = div.addChild(new BlockText()).addChild("input", new String[]{"type", "name", "value"}, new String[]{"radio", controlName, level.name()});
 			}
-			input.addChild("b", l10nSec("networkThreatLevel.name."+level));
+			input.addB(l10nSec("networkThreatLevel.name."+level));
 			input.addChild("#", ": ");
 			NodeL10n.getBase().addL10nSubstitution(input, "SecurityLevels.networkThreatLevel.choice."+level, new String[] { "bold" },
 					new HTMLNode[] { HTMLNode.STRONG });
@@ -537,7 +537,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 			NodeL10n.getBase().addL10nSubstitution(inner, "SecurityLevels.networkThreatLevel.desc."+level, new String[] { "bold", "link" },
 					new HTMLNode[] { HTMLNode.STRONG, HTMLNode.link("/wizard/?step=OPENNET") });
 		}
-		seclevelGroup.addChild(new BlockText()).addChild("b", l10nSec("networkThreatLevel.opennetFriendsWarning"));
+		seclevelGroup.addChild(new BlockText()).addB(l10nSec("networkThreatLevel.opennetFriendsWarning"));
 
 		// Physical security level
 		formNode.addChild(new Box(HTMLClass.CONFIGPREFIX, l10nSec("physicalThreatLevelShort")));
@@ -568,7 +568,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 			} else {
 				input = seclevelGroup.addChild(new BlockText()).addChild("input", new String[]{"type", "name", "value"}, new String[]{"radio", controlName, level.name()});
 			}
-			input.addChild("b", l10nSec("physicalThreatLevel.name."+level));
+			input.addB(l10nSec("physicalThreatLevel.name."+level));
 			input.addChild("#", ": ");
 			NodeL10n.getBase().addL10nSubstitution(input, "SecurityLevels.physicalThreatLevel.choice."+level, new String[] { "bold" },
 					new HTMLNode[] { HTMLNode.STRONG });
@@ -577,17 +577,17 @@ public class SecurityLevelsToadlet extends Toadlet {
 					new HTMLNode[] { HTMLNode.STRONG });
 			if(level != PHYSICAL_THREAT_LEVEL.LOW && physicalLevel == PHYSICAL_THREAT_LEVEL.LOW && node.hasDatabase() && !node.isDatabaseEncrypted()) {
 				if(node.autoChangeDatabaseEncryption())
-					inner.addChild("b", " "+l10nSec("warningWillEncrypt"));
+					inner.addB(" "+l10nSec("warningWillEncrypt"));
 				else
-					inner.addChild("b", " "+l10nSec("warningWontEncrypt"));
+					inner.addB(" "+l10nSec("warningWontEncrypt"));
 			} else if(level == PHYSICAL_THREAT_LEVEL.LOW && physicalLevel != PHYSICAL_THREAT_LEVEL.LOW && node.hasDatabase() && node.isDatabaseEncrypted()) {
 				if(node.autoChangeDatabaseEncryption())
-					inner.addChild("b", " "+l10nSec("warningWillDecrypt"));
+					inner.addB(" "+l10nSec("warningWillDecrypt"));
 				else
-					inner.addChild("b", " "+l10nSec("warningWontDecrypt"));
+					inner.addB(" "+l10nSec("warningWontDecrypt"));
 			}
 			if(level == PHYSICAL_THREAT_LEVEL.MAXIMUM && node.hasDatabase()) {
-				inner.addChild("b", " "+l10nSec("warningMaximumWillDeleteQueue"));
+				inner.addB(" "+l10nSec("warningMaximumWillDeleteQueue"));
 			}
 			if(level == PHYSICAL_THREAT_LEVEL.HIGH) {
 				if(physicalLevel == level) {

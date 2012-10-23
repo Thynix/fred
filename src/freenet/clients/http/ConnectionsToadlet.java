@@ -800,23 +800,23 @@ public abstract class ConnectionsToadlet extends Toadlet {
 		peerAdditionForm.addChild("input", new String[] { "id", "type", "name" }, new String[] { "reffile", "file", "reffile" });
 		peerAdditionForm.addChild("br");
 		if(!isOpennet) {
-			peerAdditionForm.addChild("b", l10n("peerTrustTitle"));
+			peerAdditionForm.addB(l10n("peerTrustTitle"));
 			peerAdditionForm.addChild("#", " ");
 			peerAdditionForm.addChild("#", l10n("peerTrustIntroduction"));
 			for(FRIEND_TRUST trust : FRIEND_TRUST.valuesBackwards()) { // FIXME reverse order
 				HTMLNode input = peerAdditionForm.addChild("br").addChild("input", new String[] { "type", "name", "value" }, new String[] { "radio", "trust", trust.name() });
-				input.addChild("b", l10n("peerTrust."+trust.name())); // FIXME l10n
+				input.addB(l10n("peerTrust."+trust.name())); // FIXME l10n
 				input.addChild("#", ": ");
 				input.addChild("#", l10n("peerTrustExplain."+trust.name()));
 			}
 			peerAdditionForm.addChild("br");
 			
-			peerAdditionForm.addChild("b", l10n("peerVisibilityTitle"));
+			peerAdditionForm.addB(l10n("peerVisibilityTitle"));
 			peerAdditionForm.addChild("#", " ");
 			peerAdditionForm.addChild("#", l10n("peerVisibilityIntroduction"));
 			for(FRIEND_VISIBILITY trust : FRIEND_VISIBILITY.values()) { // FIXME reverse order
 				HTMLNode input = peerAdditionForm.addChild("br").addChild("input", new String[] { "type", "name", "value" }, new String[] { "radio", "visibility", trust.name() });
-				input.addChild("b", l10n("peerVisibility."+trust.name())); // FIXME l10n
+				input.addB(l10n("peerVisibility."+trust.name())); // FIXME l10n
 				input.addChild("#", ": ");
 				input.addChild("#", l10n("peerVisibilityExplain."+trust.name()));
 			}
@@ -898,7 +898,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 		// location column
 		if (advancedModeEnabled) {
 			Cell locationNode = peerRow.addCell(HTMLClass.PEERLOCATION);
-			locationNode.addChild("b", String.valueOf(peerNodeStatus.getLocation()));
+			locationNode.addB(String.valueOf(peerNodeStatus.getLocation()));
 			locationNode.addChild("br");
 			double[] peersLoc = peerNodeStatus.getPeersLocation();
 			if(peersLoc != null) {

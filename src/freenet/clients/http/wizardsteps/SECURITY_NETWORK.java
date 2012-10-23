@@ -103,7 +103,7 @@ public class SECURITY_NETWORK implements Step {
 			for(SecurityLevels.NETWORK_THREAT_LEVEL level : SecurityLevels.NETWORK_THREAT_LEVEL.DARKNET_VALUES) {
 				securityLevelChoice(div, level);
 			}
-			form.addChild(new BlockText()).addChild("b", WizardL10n.l10nSec("networkThreatLevel.opennetFriendsWarning"));
+			form.addChild(new BlockText()).addB(WizardL10n.l10nSec("networkThreatLevel.opennetFriendsWarning"));
 		}
 		form.addChild("input",
 		        new String[] { "type", "name", "value" },
@@ -122,7 +122,7 @@ public class SECURITY_NETWORK implements Step {
 		HTMLNode input = parent.addChild(new BlockText()).addChild("input",
 			new String[]{"type", "name", "value"},
 			new String[]{"radio", "security-levels.networkThreatLevel", level.name()});
-		input.addChild("b", WizardL10n.l10nSec("networkThreatLevel.name."+level));
+		input.addB(WizardL10n.l10nSec("networkThreatLevel.name."+level));
 		input.addChild("#", ": ");
 		NodeL10n.getBase().addL10nSubstitution(input, "SecurityLevels.networkThreatLevel.choice."+level,
 		        new String[] { "bold" },

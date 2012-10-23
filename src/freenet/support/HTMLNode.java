@@ -1,16 +1,11 @@
 package freenet.support;
 
+import freenet.clients.http.uielements.B;
 import freenet.clients.http.uielements.HTMLClass;
 import freenet.clients.http.uielements.HTMLID;
 import freenet.clients.http.uielements.I;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class HTMLNode implements XMLCharacterClasses {
@@ -511,16 +506,28 @@ public class HTMLNode implements XMLCharacterClasses {
 		return new HTMLNode("#", Short.toString(count));
 	}
 
-    @Deprecated
-    public HTMLNode addI(String content) {
-        I newI = new I(content);
-        this.addChild(newI);
-        return newI;
-    }
-    @Deprecated
-    public HTMLNode addI() {
-        I newI = new I();
-        this.addChild(newI);
-        return newI;
-    }
+	@Deprecated
+	public HTMLNode addI(String content) {
+		I newI = new I(content);
+		this.addChild(newI);
+		return newI;
+	}
+	@Deprecated
+	public HTMLNode addI() {
+		I newI = new I();
+		this.addChild(newI);
+		return newI;
+	}
+	@Deprecated
+	public HTMLNode addB(String content) {
+		B newB = new B(content);
+		this.addChild(newB);
+		return newB;
+	}
+	@Deprecated
+	public HTMLNode addB() {
+		B newB = new B();
+		this.addChild(newB);
+		return newB;
+	}
 }

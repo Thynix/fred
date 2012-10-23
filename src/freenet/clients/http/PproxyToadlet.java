@@ -569,10 +569,10 @@ public class PproxyToadlet extends Toadlet {
 		addOfficialForm.addChild("#", l10n("pluginSourceHTTPS"));
 		addOfficialForm.addChild("#", " ");
 		if(node.getOpennet() == null)
-			addOfficialForm.addChild("b").addChild("font", "color", "red", l10n("pluginSourceHTTPSWarningDarknet"));
+			addOfficialForm.addB().addChild("font", "color", "red", l10n("pluginSourceHTTPSWarningDarknet"));
 		else
 			// FIXME CSS-ize this
-			addOfficialForm.addChild("b", l10n("pluginSourceHTTPSWarning"));
+			addOfficialForm.addB(l10n("pluginSourceHTTPSWarning"));
 		
 		p = addOfficialForm.addChild(new BlockText());
 		
@@ -588,9 +588,9 @@ public class PproxyToadlet extends Toadlet {
 							new String[] { "radio", "plugin-name", pluginName });
 					option.addI(pluginName);
 					if(pluginDescription.deprecated)
-						option.addChild("b", " ("+l10n("loadLabelDeprecated")+")");
+						option.addB(" ("+l10n("loadLabelDeprecated")+")");
 					if(pluginDescription.experimental)
-						option.addChild("b", " ("+l10n("loadLabelExperimental")+")");
+						option.addB(" ("+l10n("loadLabelExperimental")+")");
 					if (advancedModeEnabled && pluginDescription.minimumVersion >= 0) {
 						option.addChild("#", " ("+l10n("pluginVersion")+" " + pluginDescription.minimumVersion + ")");
 					}

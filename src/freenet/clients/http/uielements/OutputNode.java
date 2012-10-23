@@ -34,6 +34,20 @@ public class OutputNode extends HTMLNode {
 		return childNode;
 	}
 
+	//methods for creating <b> tags
+	@Deprecated
+	public B addB() {
+		B newB = new B();
+		addChild(newB);
+		return newB;
+	}
+	@Deprecated
+	public B addB(String content) {
+		B newB = new B(content);
+		addChild(newB);
+		return newB;
+	}
+
 	//methods for creating Box children
 	public Box addDiv() {
 		Box newBox = new Box();
@@ -147,18 +161,18 @@ public class OutputNode extends HTMLNode {
 		return newInfobox;
 	}
 
-    //methods for creating <i> tags
-    @Deprecated
-    public I addI() {
-        I newI = new I();
-        addChild(newI);
-        return newI;
-    }
-    public I addI(String content) {
-        I newI = new I(content);
-        addChild(newI);
-        return newI;
-    }
+	//methods for creating <i> tags
+	@Deprecated
+	public I addI() {
+		I newI = new I();
+		addChild(newI);
+		return newI;
+	}
+	public I addI(String content) {
+		I newI = new I(content);
+		addChild(newI);
+		return newI;
+	}
 
     //methods for creating Link children
 	public Link addLink() {
