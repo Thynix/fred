@@ -78,7 +78,7 @@ public class ExternalLinkToadlet extends Toadlet {
 
 		final String target = request.getParam(magicHTTPEscapeString);
 		externalLinkForm.addChild("#", l10n("confirmExternalLinkWithURL", "url", target));
-		externalLinkForm.addChild("br");
+		externalLinkForm.addLineBreak();
 		externalLinkForm.addChild("input",
 			new String[]{"type", "name", "value"},
 			new String[]{"hidden", magicHTTPEscapeString, target});

@@ -3,15 +3,6 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.clients.http;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.util.HashSet;
-import java.util.List;
-
-import freenet.clients.http.uielements.*;
-import org.tanukisoftware.wrapper.WrapperManager;
-
 import freenet.client.ClientMetadata;
 import freenet.client.HighLevelSimpleClient;
 import freenet.client.InsertBlock;
@@ -20,22 +11,26 @@ import freenet.clients.http.PageMaker.RenderParameters;
 import freenet.clients.http.bookmark.BookmarkCategory;
 import freenet.clients.http.bookmark.BookmarkItem;
 import freenet.clients.http.bookmark.BookmarkManager;
+import freenet.clients.http.uielements.*;
 import freenet.keys.FreenetURI;
 import freenet.l10n.NodeL10n;
-import freenet.node.DarknetPeerNode;
-import freenet.node.Node;
-import freenet.node.NodeClientCore;
-import freenet.node.NodeStarter;
-import freenet.node.Version;
+import freenet.node.*;
 import freenet.node.useralerts.UserAlert;
 import freenet.support.HTMLNode;
 import freenet.support.LogThresholdCallback;
 import freenet.support.Logger;
-import freenet.support.MultiValueTable;
 import freenet.support.Logger.LogLevel;
+import freenet.support.MultiValueTable;
 import freenet.support.api.Bucket;
 import freenet.support.api.HTTPRequest;
 import freenet.support.io.FileUtil;
+import org.tanukisoftware.wrapper.WrapperManager;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.util.HashSet;
+import java.util.List;
 
 public class WelcomeToadlet extends Toadlet {
 
@@ -271,18 +266,18 @@ public class WelcomeToadlet extends Toadlet {
 			} catch (InsertException e) {
 				content = ctx.getPageMaker().getInfobox("infobox-error", l10n("insertFailedTitle"), contentNode, "failed-insert", false);
 				content.addChild("#", l10n("insertFailedWithMessage", "message", e.getMessage()));
-				content.addChild("br");
+				content.addLineBreak();
 				if (e.uri != null) {
 					content.addChild("#", l10n("uriWouldHaveBeen", "uri", e.uri.toString()));
 				}
 				int mode = e.getMode();
 				if ((mode == InsertException.FATAL_ERRORS_IN_BLOCKS) || (mode == InsertException.TOO_MANY_RETRIES_IN_BLOCKS)) {
-					content.addChild("br"); /* TODO */
+					content.addLineBreak(); /* TODO */
 					content.addChild("#", l10n("splitfileErrorLabel"));
 					content.addChild("pre", e.errorCodes.toVerboseString());
 				}
 			}
-			content.addChild("br");
+			content.addLineBreak();
 			addHomepageLink(content);
 			writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 			request.freeParts();
@@ -388,7 +383,7 @@ public class WelcomeToadlet extends Toadlet {
 				HTMLNode infoboxContent = ctx.getPageMaker().getInfobox("#", l10n("confirmAddBookmarkSubTitle"), contentNode, "add-bookmark-confirm", true);
 				HTMLNode addForm = ctx.addFormChild(infoboxContent, "/bookmarkEditor/", "editBookmarkForm");
 				addForm.addChild("#", l10n("confirmAddBookmarkWithKey", "key", request.getParam("newbookmark")));
-				addForm.addChild("br");
+				addForm.addLineBreak();
 				String key = request.getParam("newbookmark");
 				if (key.startsWith("freenet:")) {
 					key = key.substring(8);
@@ -399,15 +394,15 @@ public class WelcomeToadlet extends Toadlet {
 				}
 				addForm.addChild("label", "for", "name", NodeL10n.getBase().getString("BookmarkEditorToadlet.nameLabel") + ' ');
 				addForm.addChild("input", new String[]{"type", "name", "value"}, new String[]{"text", "name", request.getParam("desc")});
-				addForm.addChild("br");
+				addForm.addLineBreak();
 				addForm.addChild("input", new String[]{"type", "name", "value"}, new String[]{"hidden", "bookmark", "/"});
 				addForm.addChild("input", new String[]{"type", "name", "value"}, new String[]{"hidden", "action", "addItem"});
 				addForm.addChild("label", "for", "descB", NodeL10n.getBase().getString("BookmarkEditorToadlet.descLabel") + ' ');
-				addForm.addChild("br");
+				addForm.addLineBreak();
 				addForm.addChild("textarea", new String[]{"id", "name", "row", "cols"}, new String[]{"descB", "descB", "3", "70"});
 				if(node.getDarknetConnections().length > 0) {
-					addForm.addChild("br");
-					addForm.addChild("br");
+					addForm.addLineBreak();
+					addForm.addLineBreak();
 					Table peerTable = new Table(HTMLClass.DARKNETCONNECTIONS);
 					addForm.addChild(peerTable);
 					peerTable.addRow().addCell(2, NodeL10n.getBase().getString("BookmarkEditorToadlet.recommendToFriends"));
@@ -417,10 +412,10 @@ public class WelcomeToadlet extends Toadlet {
 						peerRow.addCell(HTMLClass.PEERNAME).addChild("#", peer.getName());
 					}
 					addForm.addChild("label", "for", "descB", (NodeL10n.getBase().getString("BookmarkEditorToadlet.publicDescLabel") + ' '));
-					addForm.addChild("br");
+					addForm.addLineBreak();
 					addForm.addChild("textarea", new String[]{"id", "name", "row", "cols"}, new String[]{"descB", "publicDescB", "3", "70"}, "");
 				}
-				addForm.addChild("br");
+				addForm.addLineBreak();
 				addForm.addChild("input", new String[]{"type", "name", "value"}, new String[]{"submit", "addbookmark", NodeL10n.getBase().getString("BookmarkEditorToadlet.addBookmark")});
 				this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 				return;
@@ -498,13 +493,13 @@ public class WelcomeToadlet extends Toadlet {
 		// Version info and Quit Form
 		HTMLNode versionContent = ctx.getPageMaker().getInfobox("infobox-information", l10n("versionHeader"), contentNode, "freenet-version", true);
 		versionContent.addChild(new InlineBox(HTMLClass.FREENETFULLVERSION, NodeL10n.getBase().getString("WelcomeToadlet.version", new String[]{"fullVersion", "build", "rev"}, new String[]{Version.publicVersion(), Integer.toString(Version.buildNumber()), Version.cvsRevision()})));
-		versionContent.addChild("br");
+		versionContent.addLineBreak();
 		if (NodeStarter.extBuildNumber < NodeStarter.RECOMMENDED_EXT_BUILD_NUMBER) {
 			versionContent.addChild(new InlineBox(HTMLClass.FREENETEXTVERSION, NodeL10n.getBase().getString("WelcomeToadlet.extVersionWithRecommended", new String[]{"build", "recbuild", "rev"}, new String[]{Integer.toString(NodeStarter.extBuildNumber), Integer.toString(NodeStarter.RECOMMENDED_EXT_BUILD_NUMBER), NodeStarter.extRevisionNumber})));
 		} else {
 			versionContent.addChild(new InlineBox(HTMLClass.FREENETEXTVERSION, NodeL10n.getBase().getString("WelcomeToadlet.extVersion", new String[]{"build", "rev"}, new String[]{Integer.toString(NodeStarter.extBuildNumber), NodeStarter.extRevisionNumber})));
 		}
-		versionContent.addChild("br");
+		versionContent.addLineBreak();
 		if (ctx.isAllowedFullAccess()) {
 			HTMLNode shutdownForm = ctx.addFormChild(versionContent, ".", "shutdownForm");
 			shutdownForm.addChild("input", new String[]{"type", "name"}, new String[]{"hidden", "exit"});

@@ -3,17 +3,16 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.clients.http;
 
-import java.io.IOException;
-import java.net.URI;
-
 import freenet.client.HighLevelSimpleClient;
 import freenet.clients.http.uielements.Cell;
-import freenet.clients.http.uielements.Row;
 import freenet.clients.http.uielements.Table;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
+
+import java.io.IOException;
+import java.net.URI;
 
 /**
  * Simple Help Toadlet.  Provides an offline means of looking up some basic info, howtos, and FAQ
@@ -49,9 +48,9 @@ public class SimpleHelpToadlet extends Toadlet {
 		helpScreenContent2.addChild(table);
 		Cell row = table.addRow().addCell();
 		row.addChild("#", NodeL10n.getBase().getString("SimpleHelpToadlet.CHK"));
-		row.addChild("br");
+		row.addLineBreak();
 		row.addChild("#", NodeL10n.getBase().getString("SimpleHelpToadlet.SSK"));
-		row.addChild("br");
+		row.addLineBreak();
 		row.addChild("#", NodeL10n.getBase().getString("SimpleHelpToadlet.USK"));
 
 		// Port forwarding, etc.

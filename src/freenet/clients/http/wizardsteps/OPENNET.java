@@ -3,11 +3,11 @@ package freenet.clients.http.wizardsteps;
 import freenet.clients.http.FirstTimeWizardToadlet;
 import freenet.clients.http.uielements.BlockText;
 import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.HTMLClass;
+import freenet.clients.http.uielements.OutputList;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
-import freenet.clients.http.uielements.HTMLClass;
-import freenet.clients.http.uielements.OutputList;
 
 /**
  * This step allows the user to choose between darknet and opennet, explaining each briefly.
@@ -28,11 +28,11 @@ public class OPENNET implements Step {
 		HTMLNode input = p.addChild("input",
 		        new String[] { "type", "name", "value" },
 		        new String[] { "radio", "opennet", "false" });
-		input.addB(WizardL10n.l10n("opennetChoiceConnectFriends")+":");
-		p.addChild("br");
+		input.addB(WizardL10n.l10n("opennetChoiceConnectFriends") + ":");
+		p.addLineBreak();
 		p.addI(WizardL10n.l10n("opennetChoicePro"));
 		p.addChild("#", ": "+WizardL10n.l10n("opennetChoiceConnectFriendsPRO") + "¹");
-		p.addChild("br");
+		p.addLineBreak();
 		p.addI(WizardL10n.l10n("opennetChoiceCon"));
 		p.addChild("#", ": "+WizardL10n.l10n("opennetChoiceConnectFriendsCON", "minfriends", "5"));
 
@@ -40,11 +40,11 @@ public class OPENNET implements Step {
 		input = p.addChild("input",
 		        new String[] { "type", "name", "value" },
 		        new String[] { "radio", "opennet", "true" });
-		input.addB(WizardL10n.l10n("opennetChoiceConnectStrangers")+":");
-		p.addChild("br");
+		input.addB(WizardL10n.l10n("opennetChoiceConnectStrangers") + ":");
+		p.addLineBreak();
 		p.addI(WizardL10n.l10n("opennetChoicePro"));
 		p.addChild("#", ": "+WizardL10n.l10n("opennetChoiceConnectStrangersPRO"));
-		p.addChild("br");
+		p.addLineBreak();
 		p.addI(WizardL10n.l10n("opennetChoiceCon"));
 		p.addChild("#", ": "+WizardL10n.l10n("opennetChoiceConnectStrangersCON"));
 

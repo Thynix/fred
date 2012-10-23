@@ -1,14 +1,14 @@
 package freenet.node.useralerts;
 
-import java.lang.ref.WeakReference;
-
+import freenet.clients.http.uielements.Box;
 import freenet.keys.FreenetURI;
 import freenet.l10n.NodeL10n;
 import freenet.node.DarknetPeerNode;
 import freenet.node.PeerNode;
 import freenet.node.fcp.BookmarkFeed;
 import freenet.support.HTMLNode;
-import freenet.clients.http.uielements.Box;
+
+import java.lang.ref.WeakReference;
 
 public class BookmarkFeedUserAlert extends AbstractUserAlert {
 	private final WeakReference<PeerNode> peerRef;
@@ -70,14 +70,14 @@ public class BookmarkFeedUserAlert extends AbstractUserAlert {
 		alertNode.addLink("/freenet:" + uri.toString()).addChild("#", name);
 		if (description != null && description.length() != 0) {
 			String[] lines = description.split("\n");
-			alertNode.addChild("br");
-			alertNode.addChild("br");
+			alertNode.addLineBreak();
+			alertNode.addLineBreak();
 			alertNode.addChild("#", l10n("bookmarkDescription"));
-			alertNode.addChild("br");
+			alertNode.addLineBreak();
 			for (int i = 0; i < lines.length; i++) {
 				alertNode.addChild("#", lines[i]);
 				if (i != lines.length - 1)
-					alertNode.addChild("br");
+					alertNode.addLineBreak();
 			}
 		}
 		return alertNode;

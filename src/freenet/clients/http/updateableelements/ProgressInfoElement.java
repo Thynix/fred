@@ -1,20 +1,14 @@
 package freenet.clients.http.updateableelements;
 
 import freenet.client.FetchContext;
-import freenet.clients.http.FProxyFetchInProgress;
-import freenet.clients.http.FProxyFetchResult;
-import freenet.clients.http.FProxyFetchTracker;
-import freenet.clients.http.FProxyFetchWaiter;
-import freenet.clients.http.FProxyToadlet;
-import freenet.clients.http.SimpleToadletServer;
-import freenet.clients.http.ToadletContext;
+import freenet.clients.http.*;
 import freenet.clients.http.complexhtmlnodes.SecondCounterNode;
 import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.HTMLClass;
 import freenet.keys.FreenetURI;
 import freenet.support.Base64;
 import freenet.support.HTMLNode;
 import freenet.support.SizeUtil;
-import freenet.clients.http.uielements.HTMLClass;
 
 /** This pushed element renders the information box when a page is downloading on the progress page. */
 public class ProgressInfoElement extends BaseUpdateableElement {
@@ -60,16 +54,16 @@ public class ProgressInfoElement extends BaseUpdateableElement {
 					new String[] { Integer.toString(fr.fetchedBlocks), Integer.toString(fr.requiredBlocks), Integer.toString(fr.totalBlocks), Integer.toString(fr.failedBlocks), Integer.toString(fr.fatallyFailedBlocks) }));
 		}
 		long elapsed = System.currentTimeMillis() - fr.timeStarted;
-		addChild("br");
+		addLineBreak();
 		addChild(new SecondCounterNode(elapsed, true, FProxyToadlet.l10n("timeElapsedLabel") + " "));
 		long eta = fr.eta - elapsed;
 		if (eta > 0) {
-			addChild("br");
+			addLineBreak();
 			addChild(new SecondCounterNode(eta, false, "ETA: "));
 		}
 		if (ctx.getContainer().isFProxyJavascriptEnabled()) {
 			HTMLNode lastRefreshNode = new HTMLNode("span", "class", "jsonly");
-			lastRefreshNode.addChild("br");
+			lastRefreshNode.addLineBreak();
 			lastRefreshNode.addChild(new SecondCounterNode(0, true, FProxyToadlet.l10n("lastRefresh")));
 			addChild(lastRefreshNode);
 		}

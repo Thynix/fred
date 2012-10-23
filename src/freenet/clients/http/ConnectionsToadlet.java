@@ -790,44 +790,44 @@ public abstract class ConnectionsToadlet extends Toadlet {
 		contentNode.addChild(peerAdditionInfobox);
 		HTMLNode peerAdditionForm = ctx.addFormChild(peerAdditionInfobox.body, formTarget, "addPeerForm");
 		peerAdditionForm.addChild("#", l10n("pasteReference"));
-		peerAdditionForm.addChild("br");
+		peerAdditionForm.addLineBreak();
 		peerAdditionForm.addChild("textarea", new String[] { "id", "name", "rows", "cols" }, new String[] { "reftext", "ref", "8", "74" });
-		peerAdditionForm.addChild("br");
+		peerAdditionForm.addLineBreak();
 		peerAdditionForm.addChild("#", (l10n("urlReference") + ' '));
 		peerAdditionForm.addChild("input", new String[] { "id", "type", "name" }, new String[] { "refurl", "text", "url" });
-		peerAdditionForm.addChild("br");
+		peerAdditionForm.addLineBreak();
 		peerAdditionForm.addChild("#", (l10n("fileReference") + ' '));
 		peerAdditionForm.addChild("input", new String[] { "id", "type", "name" }, new String[] { "reffile", "file", "reffile" });
-		peerAdditionForm.addChild("br");
+		peerAdditionForm.addLineBreak();
 		if(!isOpennet) {
 			peerAdditionForm.addB(l10n("peerTrustTitle"));
 			peerAdditionForm.addChild("#", " ");
 			peerAdditionForm.addChild("#", l10n("peerTrustIntroduction"));
 			for(FRIEND_TRUST trust : FRIEND_TRUST.valuesBackwards()) { // FIXME reverse order
-				HTMLNode input = peerAdditionForm.addChild("br").addChild("input", new String[] { "type", "name", "value" }, new String[] { "radio", "trust", trust.name() });
+				HTMLNode input = peerAdditionForm.addLineBreak().addChild("input", new String[] { "type", "name", "value" }, new String[] { "radio", "trust", trust.name() });
 				input.addB(l10n("peerTrust."+trust.name())); // FIXME l10n
 				input.addChild("#", ": ");
 				input.addChild("#", l10n("peerTrustExplain."+trust.name()));
 			}
-			peerAdditionForm.addChild("br");
+			peerAdditionForm.addLineBreak();
 			
 			peerAdditionForm.addB(l10n("peerVisibilityTitle"));
 			peerAdditionForm.addChild("#", " ");
 			peerAdditionForm.addChild("#", l10n("peerVisibilityIntroduction"));
 			for(FRIEND_VISIBILITY trust : FRIEND_VISIBILITY.values()) { // FIXME reverse order
-				HTMLNode input = peerAdditionForm.addChild("br").addChild("input", new String[] { "type", "name", "value" }, new String[] { "radio", "visibility", trust.name() });
+				HTMLNode input = peerAdditionForm.addLineBreak().addChild("input", new String[] { "type", "name", "value" }, new String[] { "radio", "visibility", trust.name() });
 				input.addB(l10n("peerVisibility."+trust.name())); // FIXME l10n
 				input.addChild("#", ": ");
 				input.addChild("#", l10n("peerVisibilityExplain."+trust.name()));
 			}
-			peerAdditionForm.addChild("br");
+			peerAdditionForm.addLineBreak();
 			
 		}
 		
 		if(!isOpennet) {
 			peerAdditionForm.addChild("#", (l10n("enterDescription") + ' '));
 			peerAdditionForm.addChild("input", new String[] { "id", "type", "name", "size", "maxlength", "value" }, new String[] { "peerPrivateNote", "text", "peerPrivateNote", "16", "250", "" });
-			peerAdditionForm.addChild("br");
+			peerAdditionForm.addLineBreak();
 		}
 		peerAdditionForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "add", l10n("add") });
 	}
@@ -899,11 +899,11 @@ public abstract class ConnectionsToadlet extends Toadlet {
 		if (advancedModeEnabled) {
 			Cell locationNode = peerRow.addCell(HTMLClass.PEERLOCATION);
 			locationNode.addB(String.valueOf(peerNodeStatus.getLocation()));
-			locationNode.addChild("br");
+			locationNode.addLineBreak();
 			double[] peersLoc = peerNodeStatus.getPeersLocation();
 			if(peersLoc != null) {
 				for(double loc : peersLoc)
-					locationNode.addI(String.valueOf(loc)).addChild("br");
+					locationNode.addI(String.valueOf(loc)).addLineBreak();
 			}
 		}
 
@@ -1106,13 +1106,13 @@ public abstract class ConnectionsToadlet extends Toadlet {
 		HTMLNode infoboxContent = ctx.getPageMaker().getInfobox("infobox-error", desc, contentNode, null, true);
 		infoboxContent.addChild("#", message);
 		if(returnToAddFriends) {
-			infoboxContent.addChild("br");
+			infoboxContent.addLineBreak();
 			infoboxContent.addChild(new Link(DarknetAddRefToadlet.PATH, l10n("returnToAddAFriendPage")));
-			infoboxContent.addChild("br");
+			infoboxContent.addLineBreak();
 		} else {
-			infoboxContent.addChild("br");
+			infoboxContent.addLineBreak();
 			infoboxContent.addChild(new Link(".", l10n("returnToPrevPage")));
-			infoboxContent.addChild("br");
+			infoboxContent.addLineBreak();
 		}
 		addHomepageLink(infoboxContent);
 		

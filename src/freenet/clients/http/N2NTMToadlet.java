@@ -3,12 +3,6 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.clients.http;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.HashMap;
-
 import freenet.client.HighLevelSimpleClient;
 import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
@@ -22,6 +16,12 @@ import freenet.support.MultiValueTable;
 import freenet.support.SizeUtil;
 import freenet.support.api.HTTPRequest;
 import freenet.support.api.HTTPUploadedFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashMap;
 
 public class N2NTMToadlet extends Toadlet {
 	private Node node;
@@ -284,20 +284,20 @@ public class N2NTMToadlet extends Toadlet {
 		}
 		messageForm.addChild("textarea", new String[] { "id", "name", "rows",
 				"cols" }, new String[] { "n2ntmtext", "message", "8", "74" });
-		messageForm.addChild("br");
+		messageForm.addLineBreak();
 		messageForm.addChild("#", NodeL10n.getBase().getString("N2NTMToadlet.mayAttachFile"));
 		if(ctx.isAllowedFullAccess()) {
-			messageForm.addChild("br");
+			messageForm.addLineBreak();
 			messageForm.addChild("#", NodeL10n.getBase().getString("QueueToadlet.insertFileBrowseLabel")+": ");
 			messageForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "n2nm-browse", NodeL10n.getBase().getString("QueueToadlet.insertFileBrowseButton") + "..." });
-			messageForm.addChild("br");
+			messageForm.addLineBreak();
 		}
 		if(advancedMode){
 			messageForm.addChild("#", NodeL10n.getBase().getString("N2NTMToadlet.sizeWarning", "limit", SizeUtil.formatSize(maxSize(), true)));
-			messageForm.addChild("br");
+			messageForm.addLineBreak();
 			messageForm.addChild("#", NodeL10n.getBase().getString("QueueToadlet.insertFileLabel") + ": ");
 			messageForm.addChild("input", new String[] {"type", "name", "value" }, new String[] { "file", "n2nm-upload", "" });
-			messageForm.addChild("br");
+			messageForm.addLineBreak();
 		}
 		messageForm.addChild("input", new String[] { "type", "name", "value" },
 				new String[] { "submit", "send", l10n("sendMessageShort") });

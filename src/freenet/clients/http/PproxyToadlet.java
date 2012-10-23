@@ -1,41 +1,22 @@
 package freenet.clients.http;
 
-import java.io.IOException;
-import java.net.SocketException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 import freenet.client.HighLevelSimpleClient;
 import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
 import freenet.node.NodeClientCore;
-import freenet.pluginmanager.AccessDeniedPluginHTTPException;
-import freenet.pluginmanager.DownloadPluginHTTPException;
-import freenet.pluginmanager.NotFoundPluginHTTPException;
-import freenet.pluginmanager.PluginHTTPException;
-import freenet.pluginmanager.PluginInfoWrapper;
-import freenet.pluginmanager.PluginManager;
-import freenet.pluginmanager.RedirectPluginHTTPException;
+import freenet.pluginmanager.*;
 import freenet.pluginmanager.PluginManager.OfficialPluginDescription;
 import freenet.pluginmanager.PluginManager.PluginProgress;
-import freenet.support.HTMLNode;
-import freenet.support.LogThresholdCallback;
-import freenet.support.Logger;
-import freenet.support.MultiValueTable;
-import freenet.support.TimeUtil;
+import freenet.support.*;
 import freenet.support.Logger.LogLevel;
 import freenet.support.api.HTTPRequest;
+
+import java.io.IOException;
+import java.net.SocketException;
+import java.net.URI;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class PproxyToadlet extends Toadlet {
 	private static final int MAX_PLUGIN_NAME_LENGTH = 1024;
@@ -200,7 +181,7 @@ public class PproxyToadlet extends Toadlet {
 				InfoboxWidget success = new InfoboxWidget(InfoboxWidget.Type.SUCCESS, l10n("pluginUnloaded"));
 				contentNode.addChild(success);
 				success.body.addChild("#", l10n("pluginUnloadedWithName", "name", pluginThreadName));
-				success.body.addChild("br");
+				success.body.addLineBreak();
 				success.body.addLink("/plugins/", l10n("returnToPluginPage"));
 				writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 				return;
@@ -561,7 +542,7 @@ public class PproxyToadlet extends Toadlet {
 		if(!loadFromWeb)
 			input.addAttribute("checked", "true");
 		addOfficialForm.addChild("#", l10n("pluginSourceFreenet"));
-		addOfficialForm.addChild("br");
+		addOfficialForm.addLineBreak();
 		input = addOfficialForm.addChild("input", new String[] { "type", "name", "value" },
 				new String[] { "radio", "pluginSource", "https" });
 		if(loadFromWeb)
@@ -588,9 +569,9 @@ public class PproxyToadlet extends Toadlet {
 							new String[] { "radio", "plugin-name", pluginName });
 					option.addI(pluginName);
 					if(pluginDescription.deprecated)
-						option.addB(" ("+l10n("loadLabelDeprecated")+")");
+						option.addB(" (" + l10n("loadLabelDeprecated") + ")");
 					if(pluginDescription.experimental)
-						option.addB(" ("+l10n("loadLabelExperimental")+")");
+						option.addB(" (" + l10n("loadLabelExperimental") + ")");
 					if (advancedModeEnabled && pluginDescription.minimumVersion >= 0) {
 						option.addChild("#", " ("+l10n("pluginVersion")+" " + pluginDescription.minimumVersion + ")");
 					}
@@ -611,7 +592,7 @@ public class PproxyToadlet extends Toadlet {
 		addOtherForm.addChild("input", new String[] { "type", "name", "size" }, new String[] { "text", "plugin-url", "80" });
 		addOtherForm.addChild("#", " ");
 		addOtherForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "submit-other", l10n("Load") });
-		addOtherForm.addChild("br");
+		addOtherForm.addLineBreak();
 		addOtherForm.addChild("input", new String[] { "type", "name", "checked" }, new String[] { "checkbox", "fileonly", "checked" });
 		addOtherForm.addChild("#", " " + l10n("fileonly"));
 	}

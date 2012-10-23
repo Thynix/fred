@@ -174,7 +174,14 @@ public class OutputNode extends HTMLNode {
 		return newI;
 	}
 
-    //methods for creating Link children
+	//methods for creating line break elements
+	public LineBreak addLineBreak() {
+		LineBreak newLineBreak = new LineBreak();
+		addChild(newLineBreak);
+		return newLineBreak;
+	}
+
+	//methods for creating Link children
 	public Link addLink() {
 		Link newLink = new Link();
 		addChild(newLink);

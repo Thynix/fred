@@ -3,43 +3,9 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.clients.http;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import com.db4o.ObjectContainer;
-
-import freenet.client.DefaultMIMETypes;
-import freenet.client.FetchException;
-import freenet.client.HighLevelSimpleClient;
-import freenet.client.HighLevelSimpleClientImpl;
-import freenet.client.InsertContext;
+import freenet.client.*;
 import freenet.client.InsertContext.CompatibilityMode;
-import freenet.client.MetadataUnresolvedException;
 import freenet.client.async.ClientContext;
 import freenet.client.async.DBJob;
 import freenet.client.async.DatabaseDisabledException;
@@ -54,41 +20,23 @@ import freenet.node.Node;
 import freenet.node.NodeClientCore;
 import freenet.node.RequestStarter;
 import freenet.node.SecurityLevels.PHYSICAL_THREAT_LEVEL;
-import freenet.node.fcp.ClientGet;
-import freenet.node.fcp.ClientPut;
+import freenet.node.fcp.*;
 import freenet.node.fcp.ClientPut.COMPRESS_STATE;
-import freenet.node.fcp.ClientPutDir;
-import freenet.node.fcp.ClientPutMessage;
-import freenet.node.fcp.ClientRequest;
-import freenet.node.fcp.DownloadRequestStatus;
-import freenet.node.fcp.FCPServer;
-import freenet.node.fcp.IdentifierCollisionException;
-import freenet.node.fcp.MessageInvalidException;
-import freenet.node.fcp.NotAllowedException;
-import freenet.node.fcp.RequestCompletionCallback;
-import freenet.node.fcp.RequestStatus;
-import freenet.node.fcp.UploadDirRequestStatus;
-import freenet.node.fcp.UploadFileRequestStatus;
-import freenet.node.fcp.UploadRequestStatus;
 import freenet.node.useralerts.StoringUserEvent;
 import freenet.node.useralerts.UserAlert;
-import freenet.support.HTMLNode;
-import freenet.support.HexUtil;
-import freenet.support.LogThresholdCallback;
-import freenet.support.Logger;
+import freenet.support.*;
 import freenet.support.Logger.LogLevel;
-import freenet.support.MultiValueTable;
-import freenet.support.MutableBoolean;
-import freenet.support.SizeUtil;
-import freenet.support.TimeUtil;
 import freenet.support.api.Bucket;
 import freenet.support.api.HTTPRequest;
 import freenet.support.api.HTTPUploadedFile;
-import freenet.support.io.BucketTools;
-import freenet.support.io.Closer;
-import freenet.support.io.FileBucket;
-import freenet.support.io.FileUtil;
-import freenet.support.io.NativeThread;
+import freenet.support.io.*;
+
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.NumberFormat;
+import java.util.*;
 
 public class QueueToadlet extends Toadlet implements RequestCompletionCallback, LinkEnabledCallback {
 
@@ -857,18 +805,18 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 					String key = request.getPartAsStringFailsafe("key-"+part.substring("identifier-".length()), MAX_KEY_LENGTH);
 					if(key == null || key.equals("")) continue;
 					form.addChild("#", l10n("key") + ":");
-					form.addChild("br");
+					form.addLineBreak();
 					form.addChild("#", key);
-					form.addChild("br");
+					form.addLineBreak();
 					form.addChild("input", new String[] { "type", "name", "value" },
 							new String[] { "hidden", "key-"+x, key });
 				}
 				form.addChild("label", "for", "descB", (l10n("recommendDescription") + ' '));
-				form.addChild("br");
+				form.addLineBreak();
 				form.addChild("textarea",
 				        new String[]{"id", "name", "row", "cols"},
 				        new String[]{"descB", "description", "3", "70"});
-				form.addChild("br");
+				form.addLineBreak();
 
 				Table peerTable = new Table(HTMLClass.DARKNETCONNECTIONS);
 				form.addChild(peerTable);
@@ -1820,7 +1768,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 			deleteBox.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "remove_request", l10n("removeFilesFromList") });
 		}
 		if(canRestart) {
-			deleteBox.addChild("br");
+			deleteBox.addLineBreak();
 			// FIXME: Split stuff with a permanent redirect to a separate grouping and use QueueToadlet.follow here?
 			String restartName = NodeL10n.getBase().getString(/*followRedirect ? "QueueToadlet.follow" : */ isUpload ? "QueueToadlet.restartUploads" : "QueueToadlet.restartDownloads");
 			deleteBox.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "restart_request", restartName });
@@ -1903,11 +1851,11 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		HTMLNode downloadBoxContent = infobox.content;
 		HTMLNode downloadForm = ctx.addFormChild(downloadBoxContent, path(), "queueDownloadForm");
 		downloadForm.addChild("#", l10n("downloadFilesInstructions"));
-		downloadForm.addChild("br");
+		downloadForm.addLineBreak();
 		downloadForm.addChild("textarea",
 		        new String[] { "id", "name", "cols", "rows" },
 		        new String[] { "bulkDownloads", "bulkDownloads", "120", "8" });
-		downloadForm.addChild("br");
+		downloadForm.addLineBreak();
 		PHYSICAL_THREAT_LEVEL threatLevel = core.node.securityLevels.getPhysicalThreatLevel();
 		//Force downloading to encrypted space if high/maximum threat level or if the user has disabled
 		//downloading to disk.
@@ -1922,14 +1870,14 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 			        new String[] { "hidden", "target", "disk" });
 			selectLocation(downloadForm);
 		} else {
-			downloadForm.addChild("br");
+			downloadForm.addLineBreak();
 			downloadForm.addChild("input",
 			        new String[] { "type", "value", "name" },
 			        new String[] { "radio", "disk", "target" },
 					//Nicer spacing for radio button
 			        ' '+l10n("bulkDownloadSelectOptionDisk")+' ');
 			selectLocation(downloadForm);
-			downloadForm.addChild("br");
+			downloadForm.addLineBreak();
 			downloadForm.addChild("input",
 			        new String[] { "type", "value", "name", "checked" },
 			        new String[] { "radio", "direct", "target", "checked" },
@@ -1940,7 +1888,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		        new String[] { "type", "name", "value", "checked" },
 		        new String[] { "checkbox", "filterData", "filterData", "checked"});
 		filterControl.addChild("#", l10n("filterDataMessage"));
-		downloadForm.addChild("br");
+		downloadForm.addLineBreak();
 		downloadForm.addChild("input",
 		        new String[] { "type", "name", "value" },
 		        new String[] { "submit", "insert", l10n("download") });

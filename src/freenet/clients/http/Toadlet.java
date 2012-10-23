@@ -3,21 +3,9 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.clients.http;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
-import java.net.URI;
-
-import freenet.client.FetchContext;
-import freenet.client.FetchException;
-import freenet.client.FetchResult;
-import freenet.client.FetchWaiter;
-import freenet.client.HighLevelSimpleClient;
-import freenet.client.InsertBlock;
-import freenet.client.InsertException;
+import freenet.client.*;
 import freenet.client.async.ClientGetter;
+import freenet.clients.http.uielements.InfoboxWidget;
 import freenet.clients.http.uielements.Link;
 import freenet.keys.FreenetURI;
 import freenet.l10n.NodeL10n;
@@ -27,7 +15,13 @@ import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.MultiValueTable;
 import freenet.support.api.Bucket;
-import freenet.clients.http.uielements.InfoboxWidget;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
+import java.net.URI;
 
 /**
  * Replacement for servlets. Just an easy to use HTTP interface, which is
@@ -304,9 +298,9 @@ public abstract class Toadlet {
 		
 		HTMLNode infoboxContent = ctx.getPageMaker().getInfobox("infobox-error", desc, contentNode, null, true);
 		infoboxContent.addChild(message);
-		infoboxContent.addChild("br");
+		infoboxContent.addLineBreak();
 		infoboxContent.addChild(new Link(".", l10n("returnToPrevPage")));
-		infoboxContent.addChild("br");
+		infoboxContent.addLineBreak();
 		addHomepageLink(infoboxContent);
 		
 		writeHTMLReply(ctx, code, desc, pageNode.generate());
@@ -328,7 +322,7 @@ public abstract class Toadlet {
 		
 		HTMLNode infoboxContent = ctx.getPageMaker().getInfobox("infobox-error", desc, contentNode, null, true);
 		infoboxContent.addChild("#", message);
-		infoboxContent.addChild("br");
+		infoboxContent.addLineBreak();
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		pw.println(t);
@@ -336,7 +330,7 @@ public abstract class Toadlet {
 		pw.close();
 		// FIXME what is the modern (CSS/XHTML) equivalent of <pre>?
 		infoboxContent.addChild("pre", sw.toString());
-		infoboxContent.addChild("br");
+		infoboxContent.addLineBreak();
 		infoboxContent.addChild(new Link(".", l10n("returnToPrevPage")));
 		addHomepageLink(infoboxContent);
 		

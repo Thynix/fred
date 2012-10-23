@@ -3,19 +3,9 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.clients.http;
 
-import java.io.IOException;
-import java.net.URI;
-
 import freenet.client.HighLevelSimpleClient;
 import freenet.clients.http.uielements.*;
-import freenet.config.Config;
-import freenet.config.ConfigCallback;
-import freenet.config.EnumerableOptionCallback;
-import freenet.config.InvalidConfigValueException;
-import freenet.config.NodeNeedRestartException;
-import freenet.config.Option;
-import freenet.config.SubConfig;
-import freenet.config.WrapperConfig;
+import freenet.config.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
 import freenet.node.NodeClientCore;
@@ -25,11 +15,14 @@ import freenet.node.useralerts.UserAlert;
 import freenet.pluginmanager.FredPluginConfigurable;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
-import freenet.support.MultiValueTable;
 import freenet.support.Logger.LogLevel;
+import freenet.support.MultiValueTable;
 import freenet.support.URLEncoder;
 import freenet.support.api.BooleanCallback;
 import freenet.support.api.HTTPRequest;
+
+import java.io.IOException;
+import java.net.URI;
 
 /**
  * Node Configuration Toadlet. Accessible from <code>http://.../config/</code>.
@@ -73,7 +66,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 			alertNode.addChild("#", l10n("needRestart"));
 
 			if (node.isUsingWrapper()) {
-				alertNode.addChild("br");
+				alertNode.addLineBreak();
 				HTMLNode restartForm = alertNode.addChild(
 						"form",
 						new String[] { "action", "method", "enctype", "id",
@@ -377,11 +370,11 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 			content.addChild("#", l10n("appliedSuccess"));
 
 			if (needRestart) {
-				content.addChild("br");
+				content.addLineBreak();
 				content.addChild("#", l10n("needRestart"));
 
 				if (node.isUsingWrapper()) {
-					content.addChild("br");
+					content.addLineBreak();
 					HTMLNode restartForm = ctx.addFormChild(content, "/",
 							"restartForm");
 					restartForm.addChild("input",//
@@ -405,7 +398,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 							contentNode, "configuration-error", true)
 					.addChild(new Box(HTMLClass.INFOBOXCONTENT));
 			content.addChild("#", l10n("appliedFailureExceptions"));
-			content.addChild("br");
+			content.addLineBreak();
 			content.addChild("#", errbuf.toString());
 		}
 
@@ -413,7 +406,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 				l10n("possibilitiesTitle"), contentNode,
 				"configuration-possibilities", false);
 		content.addChild(new Link(path(), l10n("shortTitle"), l10n("returnToNodeConfig")));
-		content.addChild("br");
+		content.addLineBreak();
 		addHomepageLink(content);
 
 		writeHTMLReply(ctx, 200, "OK", pageNode.generate());

@@ -3,10 +3,6 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node.useralerts;
 
-import java.lang.ref.WeakReference;
-import java.text.DateFormat;
-import java.util.Date;
-
 import freenet.clients.http.uielements.Box;
 import freenet.l10n.NodeL10n;
 import freenet.node.DarknetPeerNode;
@@ -14,6 +10,10 @@ import freenet.node.PeerNode;
 import freenet.node.fcp.FCPMessage;
 import freenet.node.fcp.TextFeedMessage;
 import freenet.support.HTMLNode;
+
+import java.lang.ref.WeakReference;
+import java.text.DateFormat;
+import java.util.Date;
 
 // Node To Node Text Message User Alert
 public class N2NTMUserAlert extends AbstractUserAlert {
@@ -76,7 +76,7 @@ public class N2NTMUserAlert extends AbstractUserAlert {
 		for (int i = 0, c = lines.length; i < c; i++) {
 			alertNode.addChild("#", lines[i]);
 			if (i != lines.length - 1)
-				alertNode.addChild("br");
+				alertNode.addLineBreak();
 		}
 		
 		DarknetPeerNode pn = (DarknetPeerNode) peerRef.get();

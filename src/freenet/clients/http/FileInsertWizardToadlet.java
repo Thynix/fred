@@ -1,8 +1,5 @@
 package freenet.clients.http;
 
-import java.io.IOException;
-import java.net.URI;
-
 import freenet.client.HighLevelSimpleClient;
 import freenet.client.InsertContext;
 import freenet.client.InsertContext.CompatibilityMode;
@@ -12,6 +9,9 @@ import freenet.node.NodeClientCore;
 import freenet.node.SecurityLevels.NETWORK_THREAT_LEVEL;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
+
+import java.io.IOException;
+import java.net.URI;
 
 public class FileInsertWizardToadlet extends Toadlet implements LinkEnabledCallback {
 
@@ -94,7 +94,7 @@ public class FileInsertWizardToadlet extends Toadlet implements LinkEnabledCallb
 		}
 		insertForm.addB(l10n("insertCanonicalTitle"));
 		insertForm.addChild("#", ": "+l10n("insertCanonical"));
-		insertForm.addChild("br");
+		insertForm.addLineBreak();
 		input = insertForm.addChild("input",
 		        new String[] { "type", "name", "value" },
 		        new String[] { "radio", "keytype", "SSK" });
@@ -104,7 +104,7 @@ public class FileInsertWizardToadlet extends Toadlet implements LinkEnabledCallb
 		insertForm.addB(l10n("insertRandomTitle"));
 		insertForm.addChild("#", ": "+l10n("insertRandom"));
 		if (isAdvancedModeEnabled) {
-			insertForm.addChild("br");
+			insertForm.addLineBreak();
 			insertForm.addChild("input",
 			        new String[] { "type", "name", "value" },
 			        new String[] { "radio", "keytype", "specify" });
@@ -115,8 +115,8 @@ public class FileInsertWizardToadlet extends Toadlet implements LinkEnabledCallb
 			        new String[] { "text", "key", "KSK@" });
 		}
 		if (isAdvancedModeEnabled) {
-			insertForm.addChild("br");
-			insertForm.addChild("br");
+			insertForm.addLineBreak();
+			insertForm.addLineBreak();
 			insertForm.addChild("input",
 			        new String[] { "type", "name", "checked" },
 			        new String[] { "checkbox", "compress", "checked" });
@@ -128,7 +128,7 @@ public class FileInsertWizardToadlet extends Toadlet implements LinkEnabledCallb
 			        new String[] { "hidden", "compress", "true" });
 		}
 		if(isAdvancedModeEnabled) {
-			insertForm.addChild("br");
+			insertForm.addLineBreak();
 			insertForm.addChild("#", NodeL10n.getBase().getString("QueueToadlet.compatModeLabel")+": ");
 			HTMLNode select = insertForm.addChild("select", "name", "compatibilityMode");
 			for(CompatibilityMode mode : InsertContext.CompatibilityMode.values()) {
@@ -138,14 +138,14 @@ public class FileInsertWizardToadlet extends Toadlet implements LinkEnabledCallb
 				        NodeL10n.getBase().getString("InsertContext.CompatibilityMode."+mode.name()));
 				if (mode == CompatibilityMode.COMPAT_CURRENT) option.addAttribute("selected", "");
 			}
-			insertForm.addChild("br");
+			insertForm.addLineBreak();
 			insertForm.addChild("#", l10n("splitfileCryptoKeyLabel")+": ");
 			insertForm.addChild("input",
 			        new String[] { "type", "name", "maxlength" },
 			        new String[] { "text", "overrideSplitfileKey", "64" });
 		}
-		insertForm.addChild("br");
-		insertForm.addChild("br");
+		insertForm.addLineBreak();
+		insertForm.addLineBreak();
 		// Local file browser
 		if (ctx.isAllowedFullAccess()) {
 			insertForm.addChild("#",
@@ -154,7 +154,7 @@ public class FileInsertWizardToadlet extends Toadlet implements LinkEnabledCallb
 			        new String[] { "type", "name", "value" },
 			        new String[] { "submit", "insert-local",
 			                NodeL10n.getBase().getString("QueueToadlet.insertFileBrowseButton") + "..." });
-			insertForm.addChild("br");
+			insertForm.addLineBreak();
 		}
 		insertForm.addChild("#", NodeL10n.getBase().getString("QueueToadlet.insertFileLabel") + ": ");
 		insertForm.addChild("input",

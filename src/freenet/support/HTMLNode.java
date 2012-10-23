@@ -1,9 +1,6 @@
 package freenet.support;
 
-import freenet.clients.http.uielements.B;
-import freenet.clients.http.uielements.HTMLClass;
-import freenet.clients.http.uielements.HTMLID;
-import freenet.clients.http.uielements.I;
+import freenet.clients.http.uielements.*;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -530,4 +527,11 @@ public class HTMLNode implements XMLCharacterClasses {
 		this.addChild(newB);
 		return newB;
 	}
+	@Deprecated
+	public HTMLNode addLineBreak() {
+		LineBreak newLineBreak = new LineBreak();
+		addChild(newLineBreak);
+		return newLineBreak;
+	}
+
 }

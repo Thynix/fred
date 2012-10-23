@@ -1,12 +1,5 @@
 package freenet.clients.http;
 
-import static freenet.clients.http.QueueToadlet.MAX_KEY_LENGTH;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.util.List;
-
 import freenet.client.HighLevelSimpleClient;
 import freenet.clients.http.bookmark.Bookmark;
 import freenet.clients.http.bookmark.BookmarkCategory;
@@ -17,14 +10,16 @@ import freenet.keys.FreenetURI;
 import freenet.l10n.NodeL10n;
 import freenet.node.DarknetPeerNode;
 import freenet.node.NodeClientCore;
-import freenet.support.HTMLNode;
-import freenet.support.LogThresholdCallback;
-import freenet.support.Logger;
-import freenet.support.URLDecoder;
-import freenet.support.URLEncodedFormatException;
-import freenet.support.URLEncoder;
+import freenet.support.*;
 import freenet.support.Logger.LogLevel;
 import freenet.support.api.HTTPRequest;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.util.List;
+
+import static freenet.clients.http.QueueToadlet.MAX_KEY_LENGTH;
 
 /**
  * BookmarkEditor Toadlet 
@@ -242,22 +237,22 @@ public class BookmarkEditorToadlet extends Toadlet {
 					form.addChild("label", "for", "name", (NodeL10n.getBase().getString("BookmarkEditorToadlet.nameLabel") + ' '));
 					form.addChild("input", new String[]{"type", "id", "name", "size", "value"}, new String[]{"text", "name", "name", "20", !isNew ? bookmark.getVisibleName() : ""});
 
-					form.addChild("br");
+					form.addLineBreak();
 					if(("edit".equals(action) && bookmark instanceof BookmarkItem) || "addItem".equals(action) || "share".equals(action)) {
 						BookmarkItem item = isNew ? null : (BookmarkItem) bookmark;
 						String key = !isNew ? item.getKey() : "";
 						form.addChild("label", "for", "key", (NodeL10n.getBase().getString("BookmarkEditorToadlet.keyLabel") + ' '));
 						form.addChild("input", new String[] {"type", "id", "name", "size", "value"}, new String[] {"text", "key", "key", "50", key});
-						form.addChild("br");
+						form.addLineBreak();
 						if("edit".equals(action) || "addItem".equals(action)) {
 							form.addChild("label", "for", "descB", (NodeL10n.getBase().getString("BookmarkEditorToadlet.descLabel") + ' '));
-							form.addChild("br");
+							form.addLineBreak();
 							form.addChild("textarea", new String[]{"id", "name", "row", "cols"}, new String[]{"descB", "descB", "3", "70"}, (isNew ? "" : item.getDescription()));
-							form.addChild("br");
+							form.addLineBreak();
 							form.addChild("label", "for", "descB", (NodeL10n.getBase().getString("BookmarkEditorToadlet.explainLabel") + ' '));
-							form.addChild("br");
+							form.addLineBreak();
 							form.addChild("textarea", new String[]{"id", "name", "row", "cols"}, new String[]{"explain", "explain", "3", "70"}, (isNew ? "" : item.getShortDescription()));
-							form.addChild("br");
+							form.addLineBreak();
 						}
 						form.addChild("label", "for", "hasAnActivelink", (NodeL10n.getBase().getString("BookmarkEditorToadlet.hasAnActivelinkLabel") + ' '));
 						if(!isNew && item.hasAnActivelink())
@@ -265,8 +260,8 @@ public class BookmarkEditorToadlet extends Toadlet {
 						else
 							form.addChild("input", new String[]{"type", "id", "name"}, new String[]{"checkbox", "hasAnActivelink", "hasAnActivelink"});
 						if(core.node.getDarknetConnections().length > 0 && ("addItem".equals(action) || "share".equals(action))) {
-							form.addChild("br");
-							form.addChild("br");
+							form.addLineBreak();
+							form.addLineBreak();
 							Table peerTable = new Table(HTMLClass.DARKNETCONNECTIONS);
 							form.addChild(peerTable);
 							peerTable.addRow().addHeader(2, NodeL10n.getBase().getString("QueueToadlet.recommendToFriends"));
@@ -276,9 +271,9 @@ public class BookmarkEditorToadlet extends Toadlet {
 								peerRow.addCell(HTMLClass.PEERNAME).addChild("#", peer.getName());
 							}
 							form.addChild("label", "for", "descB", (NodeL10n.getBase().getString("BookmarkEditorToadlet.publicDescLabel") + ' '));
-							form.addChild("br");
+							form.addLineBreak();
 							form.addChild("textarea", new String[]{"id", "name", "row", "cols"}, new String[]{"descB", "publicDescB", "3", "70"}, (isNew ? "" : item.getDescription()));
-							form.addChild("br");
+							form.addLineBreak();
 						}
 					}
 

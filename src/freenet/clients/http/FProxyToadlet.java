@@ -328,7 +328,7 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 				filterControl.addChild(new Box(HTMLClass.NONE, l10n("filterDataMessage")));
 			}
 			if (threatLevel == PHYSICAL_THREAT_LEVEL.HIGH) {
-				optionForm.addChild("br");
+				optionForm.addLineBreak();
 				NodeL10n.getBase().addL10nSubstitution(optionForm,
 				        "FProxyToadlet.downloadToDiskSecurityWarning",
 				        new String[] {"bold" }, new HTMLNode[] { HTMLNode.STRONG });
@@ -580,9 +580,9 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 			contentNode.addChild(errorInfobox);
 			errorInfobox.body.addChild("#", l10n("expectedKeyButGot"));
 			errorInfobox.body.addChild("code", ks);
-			errorInfobox.body.addChild("br");
+			errorInfobox.body.addLineBreak();
 			errorInfobox.body.addChild(ctx.getPageMaker().createBackLink(ctx, l10n("goBack")));
-			errorInfobox.body.addChild("br");
+			errorInfobox.body.addLineBreak();
 			addHomepageLink(errorInfobox.body);
 
 			this.writeHTMLReply(ctx, 400, l10n("invalidKeyTitle"), pageNode.generate());

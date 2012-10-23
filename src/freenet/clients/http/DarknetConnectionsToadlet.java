@@ -1,30 +1,25 @@
 package freenet.clients.http;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Comparator;
-import java.util.HashMap;
-
 import freenet.client.HighLevelSimpleClient;
 import freenet.clients.http.uielements.BlockText;
 import freenet.clients.http.uielements.Cell;
 import freenet.clients.http.uielements.HTMLClass;
 import freenet.clients.http.uielements.Row;
 import freenet.l10n.NodeL10n;
-import freenet.node.DarknetPeerNode;
+import freenet.node.*;
 import freenet.node.DarknetPeerNode.FRIEND_TRUST;
 import freenet.node.DarknetPeerNode.FRIEND_VISIBILITY;
-import freenet.node.DarknetPeerNodeStatus;
-import freenet.node.Node;
-import freenet.node.NodeClientCore;
-import freenet.node.PeerManager;
-import freenet.node.PeerNodeStatus;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.MultiValueTable;
 import freenet.support.SimpleFieldSet;
 import freenet.support.api.HTTPRequest;
 import freenet.support.io.FileUtil;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.Comparator;
+import java.util.HashMap;
 
 public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 	
@@ -176,13 +171,13 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 		actionSelect.addChild("option", "value", "", l10n("separator"));
 		actionSelect.addChild("option", "value", "remove", l10n("removePeers"));
 		peerForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "doAction", l10n("go") });
-		peerForm.addChild("br");
+		peerForm.addLineBreak();
 		peerForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "doChangeTrust", l10n("changeTrustButton") });
 		HTMLNode changeTrustLevelSelect = peerForm.addChild("select", new String[] { "id", "name" }, new String[] { "changeTrust", "changeTrust" });
 		for(FRIEND_TRUST trust : FRIEND_TRUST.valuesBackwards()) {
 			changeTrustLevelSelect.addChild("option", "value", trust.name(), l10n("peerTrust."+trust.name()));
 		}
-		peerForm.addChild("br");
+		peerForm.addLineBreak();
 		peerForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "doChangeVisibility", l10n("changeVisibilityButton") });
 		HTMLNode changeVisibilitySelect = peerForm.addChild("select", new String[] { "id", "name" }, new String[] { "changeVisibility", "changeVisibility" });
 		for(FRIEND_VISIBILITY trust : FRIEND_VISIBILITY.values()) {
