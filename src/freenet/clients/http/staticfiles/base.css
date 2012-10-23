@@ -288,7 +288,7 @@ div.infobox-content {
  * inherit font information from its parent because of a rule we set up a 
  * long time ago that can't be changed without breaking other things. */
 
-div.infobox-header, span.search-title-label {
+div.infobox-header, .search-title-label {
 	font-weight: bold;
 }
 

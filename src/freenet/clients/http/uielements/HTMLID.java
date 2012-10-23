@@ -9,6 +9,7 @@ public enum HTMLID {
 	NAVBAR("navbar"),
 	NAVLIST("navlist"),
 	N2NBOX("n2nbox"),
+	SEARCH("search-freenet"),
 	SELECTEDSUBNAVBAR("selected-subnavbar"),
 	SELECTEDSUBNAVBARLIST("selected-subnavbar-list"),
 	STATUSBAR("statusbar"),

@@ -9,6 +9,8 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Map;
 
+import freenet.clients.http.uielements.Row;
+import freenet.clients.http.uielements.Table;
 import freenet.config.InvalidConfigValueException;
 import freenet.config.NodeNeedRestartException;
 import freenet.config.SubConfig;
@@ -2156,7 +2158,8 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 	private final NumberFormat thousandPoint = NumberFormat.getInstance();
 
 	public void fillSuccessRateBox(HTMLNode parent) {
-		HTMLNode list = parent.addChild("table", "border", "0");
+		Table fillSuccessRate = new Table();
+		parent.addChild(fillSuccessRate);
 		final RunningAverage[] averages = new RunningAverage[] {
 				globalFetchPSuccess,
 				chkLocalFetchPSuccess,
@@ -2179,29 +2182,30 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 				l10n("blockTransfersLocal"),
 				l10n("transfersTimedOut")
 		};
-		HTMLNode row = list.addChild("tr");
-		row.addChild("th", l10n("group"));
-		row.addChild("th", l10n("pSuccess"));
-		row.addChild("th", l10n("count"));
+		Row headerRow = fillSuccessRate.addRow();
+		headerRow.addHeader(l10n("group"));
+		headerRow.addHeader(l10n("pSuccess"));
+		headerRow.addHeader(l10n("count"));
 
+		Row row;
 		for(int i=0;i<averages.length;i++) {
-			row = list.addChild("tr");
-			row.addChild("td", names[i]);
+			row = fillSuccessRate.addRow();
+			row.addCell(names[i]);
 			if (averages[i].countReports()==0) {
-				row.addChild("td", "-");
-				row.addChild("td", "0");
+				row.addCell("-");
+				row.addCell("0");
 			} else {
-				row.addChild("td", fix3p3pct.format(averages[i].currentValue()));
-				row.addChild("td", thousandPoint.format(averages[i].countReports()));
+				row.addCell(fix3p3pct.format(averages[i].currentValue()));
+				row.addCell(thousandPoint.format(averages[i].countReports()));
 			}
 		}
 
-		row = list.addChild("tr");
+		fillSuccessRate.addRow();
 		long[] bulkSuccess = BulkTransmitter.transferSuccess();
-		row = list.addChild("tr");
-		row.addChild("td", l10n("bulkSends"));
-		row.addChild("td", fix3p3pct.format(((double)bulkSuccess[1])/((double)bulkSuccess[0])));
-		row.addChild("td", Long.toString(bulkSuccess[0]));
+		row = fillSuccessRate.addRow();
+		row.addCell(l10n("bulkSends"));
+		row.addCell(fix3p3pct.format(((double) bulkSuccess[1]) / ((double) bulkSuccess[0])));
+		row.addCell(Long.toString(bulkSuccess[0]));
 	}
 
 	/* Total bytes sent by requests and inserts, excluding payload */
@@ -2928,29 +2932,30 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 	}
 
 	public void fillDetailedTimingsBox(HTMLNode html) {
-		HTMLNode table = html.addChild("table");
-		HTMLNode row = table.addChild("tr");
-		row.addChild("td");
-		row.addChild("td", "colspan", "2", "CHK");
-		row.addChild("td", "colspan", "2", "SSK");
-		row = table.addChild("tr");
-		row.addChild("td", l10n("successfulHeader"));
-		row.addChild("td", TimeUtil.formatTime((long)successfulLocalCHKFetchTimeAverageBulk.currentValue(), 2, true));
-		row.addChild("td", TimeUtil.formatTime((long)successfulLocalCHKFetchTimeAverageRT.currentValue(), 2, true));
-		row.addChild("td", TimeUtil.formatTime((long)successfulLocalSSKFetchTimeAverageBulk.currentValue(), 2, true));
-		row.addChild("td", TimeUtil.formatTime((long)successfulLocalSSKFetchTimeAverageRT.currentValue(), 2, true));
-		row = table.addChild("tr");
-		row.addChild("td", l10n("unsuccessfulHeader"));
-		row.addChild("td", TimeUtil.formatTime((long)unsuccessfulLocalCHKFetchTimeAverageBulk.currentValue(), 2, true));
-		row.addChild("td", TimeUtil.formatTime((long)unsuccessfulLocalCHKFetchTimeAverageRT.currentValue(), 2, true));
-		row.addChild("td", TimeUtil.formatTime((long)unsuccessfulLocalSSKFetchTimeAverageBulk.currentValue(), 2, true));
-		row.addChild("td", TimeUtil.formatTime((long)unsuccessfulLocalSSKFetchTimeAverageRT.currentValue(), 2, true));
-		row = table.addChild("tr");
-		row.addChild("td", l10n("averageHeader"));
-		row.addChild("td", TimeUtil.formatTime((long)localCHKFetchTimeAverageBulk.currentValue(), 2, true));
-		row.addChild("td", TimeUtil.formatTime((long)localCHKFetchTimeAverageRT.currentValue(), 2, true));
-		row.addChild("td", TimeUtil.formatTime((long)localSSKFetchTimeAverageBulk.currentValue(), 2, true));
-		row.addChild("td", TimeUtil.formatTime((long)localSSKFetchTimeAverageRT.currentValue(), 2, true));
+		Table table = new Table();
+		html.addChild(table);
+		Row row = table.addRow();
+		row.addCell();
+		row.addCell(2, "CHK");
+		row.addCell(2, "SSK");
+		row = table.addRow();
+		row.addCell(l10n("successfulHeader"));
+		row.addCell(TimeUtil.formatTime((long) successfulLocalCHKFetchTimeAverageBulk.currentValue(), 2, true));
+		row.addCell(TimeUtil.formatTime((long) successfulLocalCHKFetchTimeAverageRT.currentValue(), 2, true));
+		row.addCell(TimeUtil.formatTime((long) successfulLocalSSKFetchTimeAverageBulk.currentValue(), 2, true));
+		row.addCell(TimeUtil.formatTime((long) successfulLocalSSKFetchTimeAverageRT.currentValue(), 2, true));
+		row = table.addRow();
+		row.addCell(l10n("unsuccessfulHeader"));
+		row.addCell(TimeUtil.formatTime((long) unsuccessfulLocalCHKFetchTimeAverageBulk.currentValue(), 2, true));
+		row.addCell(TimeUtil.formatTime((long) unsuccessfulLocalCHKFetchTimeAverageRT.currentValue(), 2, true));
+		row.addCell(TimeUtil.formatTime((long) unsuccessfulLocalSSKFetchTimeAverageBulk.currentValue(), 2, true));
+		row.addCell(TimeUtil.formatTime((long) unsuccessfulLocalSSKFetchTimeAverageRT.currentValue(), 2, true));
+		row = table.addRow();
+		row.addCell(l10n("averageHeader"));
+		row.addCell(TimeUtil.formatTime((long) localCHKFetchTimeAverageBulk.currentValue(), 2, true));
+		row.addCell(TimeUtil.formatTime((long) localCHKFetchTimeAverageRT.currentValue(), 2, true));
+		row.addCell(TimeUtil.formatTime((long) localSSKFetchTimeAverageBulk.currentValue(), 2, true));
+		row.addCell(TimeUtil.formatTime((long) localSSKFetchTimeAverageRT.currentValue(), 2, true));
 	}
 
 	private HourlyStats hourlyStatsRT;
@@ -3620,31 +3625,33 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 	public void drawNewLoadManagementDelayTimes(HTMLNode content) {
 		WaitingForSlots waitingSlots = node.tracker.countRequestsWaitingForSlots();
 		content.addChild("p").addChild("#", l10n("slotsWaiting", new String[] { "local", "remote" }, new String[] { Integer.toString(waitingSlots.local), Integer.toString(waitingSlots.remote) }));
-		HTMLNode table = content.addChild("table", "border", "0");
-		HTMLNode header = table.addChild("tr");
-		header.addChild("th", l10n("delayTimes"));
-		header.addChild("th", l10n("localHeader"));
-		header.addChild("th", l10n("remoteHeader"));
-		HTMLNode row = table.addChild("tr");
-		row.addChild("th", l10n("realTimeHeader"));
-		row.addChild("td", TimeUtil.formatTime((int)nlmDelayRTLocal.currentValue(), 2, true));
-		row.addChild("td", TimeUtil.formatTime((int)nlmDelayRTRemote.currentValue(), 2, true));
-		row = table.addChild("tr");
-		row.addChild("th", l10n("bulkHeader"));
-		row.addChild("td", TimeUtil.formatTime((int)nlmDelayBulkLocal.currentValue(), 2, true));
-		row.addChild("td", TimeUtil.formatTime((int)nlmDelayBulkRemote.currentValue(), 2, true));
+		Table table = new Table();
+		content.addChild(table);
+		Row header = table.addRow();
+		header.addHeader(l10n("delayTimes"));
+		header.addHeader(l10n("localHeader"));
+		header.addHeader(l10n("remoteHeader"));
+		Row row = table.addRow();
+		row.addHeader(l10n("realTimeHeader"));
+		row.addCell(TimeUtil.formatTime((int) nlmDelayRTLocal.currentValue(), 2, true));
+		row.addCell(TimeUtil.formatTime((int) nlmDelayRTRemote.currentValue(), 2, true));
+		row = table.addRow();
+		row.addHeader(l10n("bulkHeader"));
+		row.addCell(TimeUtil.formatTime((int) nlmDelayBulkLocal.currentValue(), 2, true));
+		row.addCell(TimeUtil.formatTime((int) nlmDelayBulkRemote.currentValue(), 2, true));
 		
 		synchronized(slotTimeoutsSync) {
 			if(fatalTimeoutsInWaitLocal + fatalTimeoutsInWaitRemote + 
 					allocatedSlotLocal + allocatedSlotRemote > 0) {
 				content.addChild("b", l10n("timeoutFractions"));
-				table = content.addChild("table", "border", "0");
-				header = table.addChild("tr");
-				header.addChild("th", l10n("localHeader"));
-				header.addChild("th", l10n("remoteHeader"));
-				row = table.addChild("tr");
-				row.addChild("td", this.fix3p3pct.format(((double)fatalTimeoutsInWaitLocal)/((double)(fatalTimeoutsInWaitLocal + allocatedSlotLocal))));
-				row.addChild("td", this.fix3p3pct.format(((double)fatalTimeoutsInWaitRemote)/((double)(fatalTimeoutsInWaitRemote + allocatedSlotRemote))));
+				table = new Table();
+				content.addChild(table);
+				header = table.addRow();
+				header.addHeader(l10n("localHeader"));
+				header.addHeader(l10n("remoteHeader"));
+				row = table.addRow();
+				row.addCell(this.fix3p3pct.format(((double)fatalTimeoutsInWaitLocal)/((double)(fatalTimeoutsInWaitLocal + allocatedSlotLocal))));
+				row.addCell(this.fix3p3pct.format(((double)fatalTimeoutsInWaitRemote)/((double)(fatalTimeoutsInWaitRemote + allocatedSlotRemote))));
 			}
 		}
 	}

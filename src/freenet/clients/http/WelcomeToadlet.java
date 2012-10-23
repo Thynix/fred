@@ -9,11 +9,7 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.List;
 
-import freenet.clients.http.uielements.Div;
-import freenet.clients.http.uielements.HTMLClass;
-import freenet.clients.http.uielements.HTMLID;
-import freenet.clients.http.uielements.OutputList;
-import freenet.clients.http.uielements.InfoboxWidget;
+import freenet.clients.http.uielements.*;
 import org.tanukisoftware.wrapper.WrapperManager;
 
 import freenet.client.ClientMetadata;
@@ -92,26 +88,25 @@ public class WelcomeToadlet extends Toadlet {
 		List<BookmarkItem> items = cat.getItems();
 		if (items.size() > 0) {
 		// FIXME CSS noborder ...
-			HTMLNode table = list.addList().addChild("table", new String[]{"border", "style"}, new String[]{"0", "border: none"});
+			Table table = list.addItem().addTable(HTMLClass.BOOKMARKLIST);
 			for (int i = 0; i < items.size(); i++) {
 				BookmarkItem item = items.get(i);
-				HTMLNode row = table.addChild("tr");
-				HTMLNode cell = row.addChild("td", "style", "border: none");
+				Row bookmarkItemRow = table.addRow(HTMLClass.BOOKMARKLIST);
 				if (item.hasAnActivelink() && !noActiveLinks) {
 					String initialKey = item.getKey();
 					String key = '/' + initialKey + (initialKey.endsWith("/") ? "" : "/") + "activelink.png";
-					cell.addChild("a", "href", '/' + item.getKey()).addChild("img", new String[]{"src", "height", "width", "alt", "title"},
-					new String[]{ key, "36", "108", "activelink", item.getDescription()});
+					bookmarkItemRow.addCell(HTMLClass.BOOKMARKLIST).addChild("a", "href", '/' + item.getKey()).addChild("img", new String[]{"src", "height", "width", "alt", "title"},
+						new String[]{key, "36", "108", "activelink", item.getDescription()});
 				} else {
-					cell.addChild("#", " ");
+					bookmarkItemRow.addCell(HTMLClass.BOOKMARKLIST).addChild("#", " ");
 				}
-				cell = row.addChild("td", "style", "border: none");
-				cell.addChild("a", new String[]{"href", "title", "class"}, new String[]{ '/' + item.getKey(), item.getDescription(), "bookmark-title"}, item.getVisibleName());
+				Cell linkCell = bookmarkItemRow.addCell(HTMLClass.BOOKMARKLIST);
+				linkCell.addChild("a", new String[]{"href", "title", "class"}, new String[]{'/' + item.getKey(), item.getDescription(), "bookmark-title"}, item.getVisibleName());
 				String explain = item.getShortDescription();
-				if(explain != null && explain.length() > 0) {
-					cell.addChild("#", " (");
-					cell.addChild("#", explain);
-					cell.addChild("#", ")");
+				if (explain != null && explain.length() > 0) {
+					linkCell.addChild("#", " (");
+					linkCell.addChild("#", explain);
+					linkCell.addChild("#", ")");
 				}
 			}
 		}
@@ -413,12 +408,13 @@ public class WelcomeToadlet extends Toadlet {
 				if(node.getDarknetConnections().length > 0) {
 					addForm.addChild("br");
 					addForm.addChild("br");
-					HTMLNode peerTable = addForm.addChild("table", "class", "darknet_connections");
-					peerTable.addChild("th", "colspan", "2", NodeL10n.getBase().getString("BookmarkEditorToadlet.recommendToFriends"));
+					Table peerTable = new Table(HTMLClass.DARKNETCONNECTIONS);
+					addForm.addChild(peerTable);
+					peerTable.addRow().addCell(2, NodeL10n.getBase().getString("BookmarkEditorToadlet.recommendToFriends"));
 					for(DarknetPeerNode peer : node.getDarknetConnections()) {
-						HTMLNode peerRow = peerTable.addChild("tr", "class", "darknet_connections_normal");
-						peerRow.addChild("td", "class", "peer-marker").addChild("input", new String[] { "type", "name" }, new String[] { "checkbox", "node_" + peer.hashCode() });
-						peerRow.addChild("td", "class", "peer-name").addChild("#", peer.getName());
+						Row peerRow = peerTable.addRow(HTMLClass.DARKNETCONNECTIONSNORMAL);
+						peerRow.addCell(HTMLClass.PEERMARKER).addChild("input", new String[]{"type", "name"}, new String[]{"checkbox", "node_" + peer.hashCode()});
+						peerRow.addCell(HTMLClass.PEERNAME).addChild("#", peer.getName());
 					}
 					addForm.addChild("label", "for", "descB", (NodeL10n.getBase().getString("BookmarkEditorToadlet.publicDescLabel") + ' '));
 					addForm.addChild("br");
@@ -457,10 +453,12 @@ public class WelcomeToadlet extends Toadlet {
 		contentNode.addChild(bookmarkBox);
 		bookmarkBox.addClass(HTMLClass.BOOKMARKSBOX);
 		bookmarkBox.header.addChild("a", new String[]{"class", "title"}, new String[]{"bookmarks-header-text", NodeL10n.getBase().getString("BookmarkEditorToadlet.myBookmarksExplanation")}, NodeL10n.getBase().getString("BookmarkEditorToadlet.myBookmarksTitle"));
+		HTMLNode editLink = new HTMLNode("#");
+		editLink.addChild("span", "class", "edit-bracket", "[");
+		editLink.addChild("span", "id", "bookmarkedit").addChild("a", new String[]{"href", "class"}, new String[]{"/bookmarkEditor/", "interfacelink"}, NodeL10n.getBase().getString("BookmarkEditorToadlet.edit"));
+		editLink.addChild("span", "class", "edit-bracket", "]");
 		if (ctx.isAllowedFullAccess()) {
-			bookmarkBox.header.addChild("span", "class", "edit-bracket", "[");
-			bookmarkBox.header.addChild("span", "id", "bookmarkedit").addChild("a", new String[]{"href", "class"}, new String[]{"/bookmarkEditor/", "interfacelink"}, NodeL10n.getBase().getString("BookmarkEditorToadlet.edit"));
-			bookmarkBox.header.addChild("span", "class", "edit-bracket", "]");
+			bookmarkBox.header.addChild(editLink);
 		}
 		OutputList bookmarksList = bookmarkBox.body.addList(HTMLID.BOOKMARKS);
 		if (ctx.isAllowedFullAccess() || !ctx.getContainer().publicGatewayMode()) {
@@ -473,8 +471,9 @@ public class WelcomeToadlet extends Toadlet {
 		// FIXME search box is BELOW bookmarks for now, until we get search fixed properly.
 		InfoboxWidget searchBox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, null);
 		contentNode.addChild(searchBox);
-		searchBox.addAttribute("id", "search-freenet");
-		searchBox.header.addChild("span", "class", "search-title-label", NodeL10n.getBase().getString("WelcomeToadlet.searchBoxLabel"));
+		searchBox.setID(HTMLID.SEARCH);
+		searchBox.header.addClass(HTMLClass.SEARCHTITLELABEL);
+		searchBox.header.setContent(NodeL10n.getBase().getString("WelcomeToadlet.searchBoxLabel"));
 		// Search form
 		if(core.node.pluginManager != null && core.node.pluginManager.isPluginLoaded("plugins.Library.Main")) {
 			// FIXME: Remove this once we have a non-broken index.

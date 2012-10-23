@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.DarknetPeerNode;
 import freenet.node.Node;
@@ -21,11 +22,6 @@ import freenet.support.MultiValueTable;
 import freenet.support.SizeUtil;
 import freenet.support.api.HTTPRequest;
 import freenet.support.api.HTTPUploadedFile;
-import freenet.clients.http.uielements.Div;
-import freenet.clients.http.uielements.HTMLClass;
-import freenet.clients.http.uielements.HTMLID;
-import freenet.clients.http.uielements.OutputList;
-import freenet.clients.http.uielements.InfoboxWidget;
 
 public class N2NTMToadlet extends Toadlet {
 	private Node node;
@@ -181,10 +177,10 @@ public class N2NTMToadlet extends Toadlet {
 				}
 			}
 
-			HTMLNode peerTable = peerTableInfobox.body.addChild("table", "class", "n2ntm-send-statuses");
-			HTMLNode peerTableHeaderRow = peerTable.addChild("tr");
-			peerTableHeaderRow.addChild("th", l10n("peerName"));
-			peerTableHeaderRow.addChild("th", l10n("sendStatus"));
+			Table peerTable = peerTableInfobox.body.addTable(HTMLClass.N2NTMSENDSTATUS);
+			Row peerTableHeaderRow = peerTable.addRow();
+			peerTableHeaderRow.addHeader(l10n("peerName"));
+			peerTableHeaderRow.addHeader(l10n("sendStatus"));
 			for (int i = 0; i < peerNodes.length; i++) {
 				if (request.isPartSet("node_" + peerNodes[i].hashCode())) {
 					DarknetPeerNode pn = peerNodes[i];
@@ -232,37 +228,36 @@ public class N2NTMToadlet extends Toadlet {
 					
 					String sendStatusShort;
 					String sendStatusLong;
-					String sendStatusClass;
+					HTMLClass sendStatusClass;
 					if(status == PeerManager.PEER_NODE_STATUS_ROUTING_BACKED_OFF) {
 						sendStatusShort = l10n("delayedTitle");
 						sendStatusLong = l10n("delayed");
-						sendStatusClass = "n2ntm-send-delayed";
+						sendStatusClass = HTMLClass.N2NTMSENDDELAYED;
 						Logger.normal(this, "Sent N2NTM to '"
 								+ pn.getName() + "': " + message);
 					} else if(status == PeerManager.PEER_NODE_STATUS_CONNECTED) {
 						sendStatusShort = l10n("sentTitle");
 						sendStatusLong = l10n("sent");
-						sendStatusClass = "n2ntm-send-sent";
+						sendStatusClass = HTMLClass.N2NTMSENDSENT;
 						Logger.normal(this, "Sent N2NTM to '"
 								+ pn.getName() + "': " + message);
 					} else {
 						sendStatusShort = l10n("queuedTitle");
 						sendStatusLong = l10n("queued");
-						sendStatusClass = "n2ntm-send-queued";
+						sendStatusClass = HTMLClass.N2NTMSENDQUEUED;
 						Logger.normal(this, "Queued N2NTM to '"
 								+ pn.getName() + "': " + message);
 					}
-					HTMLNode peerRow = peerTable.addChild("tr");
-					peerRow.addChild("td", "class", "peer-name").addChild("#", pn.getName());
-					peerRow.addChild("td", "class", sendStatusClass)
-									.addChild("span",
+					Row peerRow = peerTable.addRow();
+					peerRow.addCell("peer-name").addChild("#", pn.getName());
+					peerRow.addCell(sendStatusClass).addChild("span",
 									new String[] { "title", "style" },
 									new String[] { sendStatusLong,
 											"border-bottom: 1px dotted; cursor: help;" },
 									sendStatusShort);
 				}
 			}
-			HTMLNode infoboxContent = peerTableInfobox.body.addChild(new Div(HTMLClass.N2NTMMESSAGETEXT));
+			HTMLNode infoboxContent = peerTableInfobox.body.addDiv(HTMLClass.N2NTMMESSAGETEXT);
 			infoboxContent.addChild("#", message);
 			OutputList list = peerTableInfobox.body.addList();
 			Toadlet.addHomepageLink(list);

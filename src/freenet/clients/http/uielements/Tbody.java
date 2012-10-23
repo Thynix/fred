@@ -3,20 +3,17 @@ package freenet.clients.http.uielements;
 /**
  * Creates table cells
  */
-public class Table extends OutputNode {
-
-	public Tbody body;
+public class Tbody extends OutputNode {
 
 	//Constructors
-	public Table(HTMLClass CLASS) {
+	public Tbody(HTMLClass CLASS) {
 		this();
 		addClass(CLASS);
 	}
 
-	public Table() {
-		super("table");
+	public Tbody() {
+		super("thead");
 	}
-
 	//Methods for adding rows
 	public Row addRow() {
 		Row newRow = new Row();
@@ -27,12 +24,5 @@ public class Table extends OutputNode {
 		Row newRow = new Row(CLASS);
 		this.addChild(newRow);
 		return newRow;
-	}
-	//Methods for adding tbody
-	public Tbody addBody() {
-		Tbody newBody = new Tbody();
-		this.body = newBody;
-		this.addChild(newBody);
-		return body;
 	}
 }

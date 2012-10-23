@@ -3,6 +3,8 @@ package freenet.clients.http.wizardsteps;
 import java.text.DecimalFormat;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
+import freenet.clients.http.uielements.Row;
+import freenet.clients.http.uielements.Table;
 import freenet.config.Config;
 import freenet.config.InvalidConfigValueException;
 import freenet.l10n.NodeL10n;
@@ -73,12 +75,13 @@ public class BANDWIDTH_RATE extends BandwidthManipulator implements Step {
 		                new HTMLNode("#", NodeL10n.getBase().getString("ConfigToadlet.node"))});
 
 		//Table header
-		HTMLNode table = infoBox.addChild("table");
-		HTMLNode headerRow = table.addChild("tr");
-		headerRow.addChild("th", WizardL10n.l10n("bandwidthConnectionHeader"));
-		headerRow.addChild("th", WizardL10n.l10n("bandwidthDownloadHeader"));
-		headerRow.addChild("th", WizardL10n.l10n("bandwidthUploadHeader"));
-		headerRow.addChild("th", WizardL10n.l10n("bandwidthSelect"));
+		Table table = new Table();
+		infoBox.addChild(table);
+		Row headerRow = table.addRow();
+		headerRow.addHeader(WizardL10n.l10n("bandwidthConnectionHeader"));
+		headerRow.addHeader(WizardL10n.l10n("bandwidthDownloadHeader"));
+		headerRow.addHeader(WizardL10n.l10n("bandwidthUploadHeader"));
+		headerRow.addHeader(WizardL10n.l10n("bandwidthSelect"));
 
 		boolean addedDefault = false;
 		
@@ -101,9 +104,9 @@ public class BANDWIDTH_RATE extends BandwidthManipulator implements Step {
 		}
 
 		//Add custom option.
-		HTMLNode customForm = table.addChild("tr");
-		customForm.addChild("td", WizardL10n.l10n("bandwidthCustom"));
-		customForm.addChild("td").addChild("input",
+		Row customForm = table.addRow();
+		customForm.addCell(WizardL10n.l10n("bandwidthCustom"));
+		customForm.addCell().addChild("input",
 		        new String[] { "type", "name" },
 		        new String[] { "text", "customDown" });
 		customForm.addChild("td").addChild("input",

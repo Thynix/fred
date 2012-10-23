@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import freenet.clients.http.uielements.Row;
+import freenet.clients.http.uielements.Table;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.math.TrivialRunningAverage;
@@ -144,12 +146,13 @@ public class HourlyStatsRecord {
 	}
 
 	public void fillRemoteRequestHTLsBox(HTMLNode html) {
-		HTMLNode table = html.addChild("table");
-		HTMLNode row = table.addChild("tr");
-		row.addChild("th", "HTL");
-		row.addChild("th", "CHKs");
-		row.addChild("th", "SSKs");
-		row = table.addChild("tr");
+		Table table = new Table();
+		html.addChild(table);
+		Row row = table.addRow();
+		row.addHeader("HTL");
+		row.addHeader("CHKs");
+		row.addHeader("SSKs");
+		table.addRow();
 		char nbsp = (char)160;
 		int totalCHKLS = 0;
 		int totalCHKRS = 0;
@@ -159,8 +162,8 @@ public class HourlyStatsRecord {
 		int totalSSKT = 0;
 		synchronized(this) {
 			for(int htl = byHTL.length - 1; htl >= 0; htl--) {
-				row = table.addChild("tr");
-				row.addChild("td", Integer.toString(htl));
+				row = table.addRow();
+				row.addCell(Integer.toString(htl));
 				StatsLine line = byHTL[htl];
 				int chkLS = (int)line.chkLocalSuccess.countReports();
 				int chkRS = (int)line.chkRemoteSuccess.countReports();
@@ -181,8 +184,8 @@ public class HourlyStatsRecord {
 				if (chkT > 0) chkRate = ((double)(chkLS + chkRS)) / (chkT);
 				if (sskT > 0) sskRate = ((double)(sskLS + sskRS)) / (sskT);
 
-				row.addChild("td", fix3p3pct.format(chkRate) + nbsp + "(" + chkLS + "," + chkRS + "," + chkT + ")"+nbsp+"("+fix4p.format(locdiffCHK)+")");
-				row.addChild("td", fix3p3pct.format(sskRate) + nbsp + "(" + sskLS + "," + sskRS + "," + sskT + ")"+nbsp+"("+fix4p.format(locdiffSSK)+")");
+				row.addCell(fix3p3pct.format(chkRate) + nbsp + "(" + chkLS + "," + chkRS + "," + chkT + ")"+nbsp+"("+fix4p.format(locdiffCHK)+")");
+				row.addCell(fix3p3pct.format(sskRate) + nbsp + "(" + sskLS + "," + sskRS + "," + sskT + ")"+nbsp+"("+fix4p.format(locdiffSSK)+")");
 
 				totalCHKLS += chkLS;
 				totalCHKRS+= chkRS;
@@ -196,10 +199,10 @@ public class HourlyStatsRecord {
 			if (totalCHKT > 0) totalCHKRate = ((double)(totalCHKLS + totalCHKRS)) / totalCHKT;
 			if (totalSSKT > 0) totalSSKRate = ((double)(totalSSKLS + totalSSKRS)) / totalSSKT;
 
-			row = table.addChild("tr");
-			row.addChild("td", "Total");
-			row.addChild("td", fix3p3pct.format(totalCHKRate) + nbsp + "("+ totalCHKLS + "," + totalCHKRS + "," + totalCHKT + ")");
-			row.addChild("td", fix3p3pct.format(totalSSKRate) + nbsp + "("+ totalSSKLS + "," + totalSSKRS + "," + totalSSKT + ")");
+			row = table.addRow();
+			row.addCell("Total");
+			row.addCell(fix3p3pct.format(totalCHKRate) + nbsp + "("+ totalCHKLS + "," + totalCHKRS + "," + totalCHKT + ")");
+			row.addCell(fix3p3pct.format(totalSSKRate) + nbsp + "("+ totalSSKLS + "," + totalSSKRS + "," + totalSSKT + ")");
 		}
 	}
 

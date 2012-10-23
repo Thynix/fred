@@ -726,8 +726,9 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 				fetchingPage.body.addAttribute("id", "infoContent");
 				fetchingPage.body.addChild(new ProgressInfoElement(fetchTracker, key, fctx, maxSize, core.isAdvancedModeEnabled(), ctx, isWebPushingEnabled));
 
-				HTMLNode table = fetchingPage.body.addChild("table", "border", "0");
-				HTMLNode progressCell = table.addChild("tr").addChild("td", "class", "request-progress");
+				Table table = new Table();
+				fetchingPage.body.addChild(table);
+				Cell progressCell = table.addRow().addCell(HTMLClass.REQUESTPROGRESS);
 				if(fr.totalBlocks <= 0)
 					progressCell.addChild("#", NodeL10n.getBase().getString("QueueToadlet.unknown"));
 				else {

@@ -30,6 +30,7 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipException;
 
+import freenet.clients.http.uielements.Cell;
 import freenet.clients.http.uielements.Div;
 import org.tanukisoftware.wrapper.WrapperManager;
 
@@ -1663,15 +1664,15 @@ public class PluginManager {
 				return toString();
 		}
 
-		public HTMLNode toLocalisedHTML() {
+		public Cell toLocalisedHTML() {
 			if(pluginProgress == PROGRESS_STATE.DOWNLOADING && total > 0) {
 				return QueueToadlet.createProgressCell(false, true, ClientPut.COMPRESS_STATE.WORKING, current, failed, fatallyFailed, minSuccessful, total, finalisedTotal, false);
 			} else if(pluginProgress == PROGRESS_STATE.DOWNLOADING)
-				return new HTMLNode("td", NodeL10n.getBase().getString("PproxyToadlet.startingPluginStatus.downloading"));
+				return new Cell(NodeL10n.getBase().getString("PproxyToadlet.startingPluginStatus.downloading"));
 			else if(pluginProgress == PROGRESS_STATE.STARTING)
-				return new HTMLNode("td", NodeL10n.getBase().getString("PproxyToadlet.startingPluginStatus.starting"));
+				return new Cell(NodeL10n.getBase().getString("PproxyToadlet.startingPluginStatus.starting"));
 			else
-				return new HTMLNode("td", toString());
+				return new Cell(toString());
 		}
 
 		public void setDownloadProgress(int minSuccess, int current, int total, int failed, int fatallyFailed, boolean finalised) {

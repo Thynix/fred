@@ -8,6 +8,8 @@ import java.net.URI;
 import java.util.Vector;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.uielements.Row;
+import freenet.clients.http.uielements.Table;
 import freenet.l10n.BaseL10n;
 import freenet.l10n.NodeL10n;
 import freenet.l10n.PluginL10n;
@@ -71,24 +73,19 @@ public class TranslationToadlet extends Toadlet {
 			HTMLNode pageNode = page.outer;
 			HTMLNode contentNode = page.content;
 
-			HTMLNode translationNode = contentNode.addChild(new Div(HTMLClass.TRANSLATION));
-			HTMLNode legendTable = translationNode.addChild("table", "class", "translation");
+			Div translationNode = new Div(HTMLClass.TRANSLATION);
+			contentNode.addChild(translationNode);
+			Table legendTable = translationNode.addTable(HTMLClass.TRANSLATION);
 			
-			HTMLNode legendRow = legendTable.addChild("tr").addChild("b");
-			legendRow.addChild("td", "class", "translation-key", l10n("translationKeyLabel"));
-			legendRow.addChild("td", "class", "translation-key", l10n("originalVersionLabel"));
-			legendRow.addChild("td", "class", "translation-key", l10n("currentTranslationLabel"));
+			Row legendRow = legendTable.addRow();
+			legendRow.addCell(HTMLClass.TRANSLATIONKEY, l10n("translationKeyLabel"));
+			legendRow.addCell(HTMLClass.TRANSLATIONKEY, l10n("originalVersionLabel"));
+			legendRow.addCell(HTMLClass.TRANSLATIONKEY, l10n("currentTranslationLabel"));
 			
-			HTMLNode contentRow = legendTable.addChild("tr");
-			contentRow.addChild("td", "class", "translation-key",
-					key
-			);
-			contentRow.addChild("td", "class", "translation-orig",
-					this.base.getDefaultString(key)
-			);
-			contentRow.addChild("td", "class", "translation-new",
-					this.base.getString(key)
-			);
+			Row contentRow = legendTable.addRow();
+			contentRow.addCell(HTMLClass.TRANSLATIONKEY, key);
+			contentRow.addCell(HTMLClass.TRANSLATIONORIG, this.base.getDefaultString(key));
+			contentRow.addCell(HTMLClass.TRANSLATIONNEW, this.base.getString(key));
 			
 			HTMLNode footer = translationNode.addChild(new Div(HTMLClass.WARNING));
 			footer.addChild("a", "href", TOADLET_URL+"?getOverrideTranlationFile").addChild("#", l10n("downloadTranslationsFile"));
@@ -98,7 +95,7 @@ public class TranslationToadlet extends Toadlet {
 			footer.addChild("a", "href", TOADLET_URL + (showEverything ? "" : "?toTranslateOnly")).addChild("#", l10n("returnToTranslations"));
 
 			this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
-			return;				
+			return;
 		} else if (request.isParameterSet("translate")) {
 			boolean gotoNext = request.isParameterSet("gotoNext");
 			String key = request.getParam("translate");
@@ -108,22 +105,19 @@ public class TranslationToadlet extends Toadlet {
 
 			HTMLNode translationNode = contentNode.addChild(new Div(HTMLClass.TRANSLATION));
 			HTMLNode updateForm =  ctx.addFormChild(translationNode, TOADLET_URL, "trans_update");
-			HTMLNode legendTable = updateForm.addChild("table", "class", "translation");
+			Table legendTable = new Table(HTMLClass.TRANSLATION);
+			updateForm.addChild(legendTable);
 			
-			HTMLNode legendRow = legendTable.addChild("tr");
-			legendRow.addChild("td", "class", "translation-key", l10n("translationKeyLabel"));
-			legendRow.addChild("td", "class", "translation-key", l10n("originalVersionLabel"));
-			legendRow.addChild("td", "class", "translation-key", l10n("currentTranslationLabel"));
+			Row legendRow = legendTable.addRow();
+			legendRow.addCell(HTMLClass.TRANSLATIONKEY, l10n("translationKeyLabel"));
+			legendRow.addCell(HTMLClass.TRANSLATIONKEY, l10n("originalVersionLabel"));
+			legendRow.addCell(HTMLClass.TRANSLATIONKEY, l10n("currentTranslationLabel"));
 			
-			HTMLNode contentRow = legendTable.addChild("tr");
-			contentRow.addChild("td", "class", "translation-key",
-					key
-			);
-			contentRow.addChild("td", "class", "translation-orig",
-					this.base.getDefaultString(key)
-			);
+			Row contentRow = legendTable.addRow();
+			contentRow.addCell(HTMLClass.TRANSLATIONKEY, key);
+			contentRow.addCell(HTMLClass.TRANSLATIONORIG, this.base.getDefaultString(key));
 			
-			contentRow.addChild("td", "class", "translation-new").addChild(
+			contentRow.addCell(HTMLClass.TRANSLATIONNEW).addChild(
 					"textarea",
 					new String[] { "name", "rows", "cols" },
 					new String[] { "trans", "20", "80" },
@@ -191,7 +185,8 @@ public class TranslationToadlet extends Toadlet {
 		}
 		translatingForForm.addChild("input", "type", "submit");
 
-		HTMLNode translationNode = contentNode.addChild(new Div(HTMLClass.TRANSLATION));
+		Div translationNode = new Div(HTMLClass.TRANSLATION);
+		contentNode.addChild(translationNode);
 		HTMLNode translationHeaderNode = translationNode.addChild("p");
 		translationHeaderNode.addChild("#", l10n("contributingToLabelWithLang", "lang", this.base.getSelectedLanguage().fullName));
 		translationHeaderNode.addChild("a", "href", TOADLET_URL+"?getOverrideTranlationFile").addChild("#", l10n("downloadTranslationsFile"));
@@ -200,12 +195,12 @@ public class TranslationToadlet extends Toadlet {
 			translationHeaderNode.addChild("a", "href", TOADLET_URL+"?toTranslateOnly").addChild("#", l10n("hideAlreadyTranslated"));
 		else
 			translationHeaderNode.addChild("a", "href", TOADLET_URL).addChild("#", l10n("showEverything"));
-		HTMLNode legendTable = translationNode.addChild("table", "class", "translation");
+		Table legendTable = translationNode.addTable(HTMLClass.TRANSLATION);
 		
-		HTMLNode legendRow = legendTable.addChild("tr");
-		legendRow.addChild("td", "class", "translation-key", l10n("translationKeyLabel"));
-		legendRow.addChild("td", "class", "translation-key", l10n("originalVersionLabel"));
-		legendRow.addChild("td", "class", "translation-key", l10n("currentTranslationLabel"));
+		Row legendRow = legendTable.addRow();
+		legendRow.addCell(HTMLClass.TRANSLATIONKEY, l10n("translationKeyLabel"));
+		legendRow.addCell(HTMLClass.TRANSLATIONKEY, l10n("originalVersionLabel"));
+		legendRow.addCell(HTMLClass.TRANSLATIONKEY, l10n("currentTranslationLabel"));
 		
 		KeyIterator it = this.base.getDefaultLanguageTranslation().keyIterator("");
 		
@@ -213,17 +208,12 @@ public class TranslationToadlet extends Toadlet {
 			String key = it.nextKey();
 			boolean isOverriden = this.base.isOverridden(key);
 			if(!showEverything && (isOverriden || (this.base.getString(key, true) != null))) continue;
-			HTMLNode contentRow = legendTable.addChild("tr");
-			contentRow.addChild("td", "class", "translation-key",
-					key
-			);
-			contentRow.addChild("td", "class", "translation-orig",
-					this.base.getDefaultString(key)
-			);
-			
-			contentRow.addChild("td", "class", "translation-new").addChild(_setOrRemoveOverride(key, isOverriden, showEverything));
+			Row contentRow = legendTable.addRow();
+			contentRow.addCell(HTMLClass.TRANSLATIONKEY, key);
+			contentRow.addCell(HTMLClass.TRANSLATIONORIG, this.base.getDefaultString(key));
+			contentRow.addCell(HTMLClass.TRANSLATIONNEW).addChild(_setOrRemoveOverride(key, isOverriden, showEverything));
 		}
-		
+
 		this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 	}
 

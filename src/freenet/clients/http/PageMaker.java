@@ -15,7 +15,6 @@ import freenet.pluginmanager.FredPluginL10n;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.api.HTTPRequest;
-import freenet.support.htmlprimitives.*;
 import freenet.clients.http.uielements.*;
 
 /** Simple class to output standard heads and tail for web interface pages. 
@@ -406,7 +405,8 @@ public final class PageMaker {
 			}
 			if (node != null && node.clientCore != null) {
 				statusbar.addDiv(HTMLClass.SEPERATOR, "\u00a0");
-				Div secLevels = statusbar.addDiv(HTMLID.STATUSBARSECLEVELS, NodeL10n.getBase().getString("SecurityLevels.statusBarPrefix"));
+				Div secLevels = statusbar.addDiv(HTMLID.STATUSBARSECLEVELS);
+				secLevels.addChild("#", NodeL10n.getBase().getString("SecurityLevels.statusBarPrefix"));
 				final HTMLNode network = secLevels.addChild("a", "href", "/seclevels/", SecurityLevels.localisedName(node.securityLevels.getNetworkThreatLevel()) + "\u00a0");
 				network.addAttribute("title", NodeL10n.getBase().getString("SecurityLevels.networkThreatLevelShort"));
 				network.addAttribute("class", node.securityLevels.getNetworkThreatLevel().toString().toLowerCase());
@@ -560,6 +560,7 @@ public final class PageMaker {
 			}
 			// Some themes want the selected submenu separately.
 			if(selected != null) {
+				OutputList subnavlist = pageDiv.addDiv(HTMLID.SELECTEDSUBNAVBAR).addList(HTMLID.SELECTEDSUBNAVBARLIST);
 				for (String navigationLink :  fullAccess ? selected.navigationLinkTexts : selected.navigationLinkTextsNonFull) {
 					//Empty
 					LinkEnabledCallback cb = selected.navigationLinkCallbacks.get(navigationLink);
@@ -567,7 +568,6 @@ public final class PageMaker {
 					//Nonempty
 					String navigationTitle = selected.navigationLinkTitles.get(navigationLink);
 					String navigationPath = selected.navigationLinks.get(navigationLink);
-					OutputList subnavlist = pageDiv.addDiv(HTMLID.SELECTEDSUBNAVBAR).addList(HTMLID.SELECTEDSUBNAVBARLIST);
 					Item sublistItem;
 					if (activePath.equals(navigationPath)) {
 						sublistItem = subnavlist.addItem(HTMLClass.SUBMENUSELECTED);

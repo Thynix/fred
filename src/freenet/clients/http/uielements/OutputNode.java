@@ -12,8 +12,15 @@ public class OutputNode extends HTMLNode {
 		super(Name, Content);
 	}
 
+	public OutputNode addChild(String name, String attribute, String value, String content) {
+		OutputNode childNode = new OutputNode(name, content);
+		childNode.addAttribute(attribute, value);
+		this.addChild(childNode);
+		return childNode;
+	}
+
 	public OutputNode addChild(OutputNode childNode) {
-		if(this.readOnly)
+		if (this.readOnly)
 			throw new IllegalArgumentException("Read only");
 		if (childNode == null) throw new NullPointerException();
 		//since an efficient algorithm to check the loop presence
@@ -81,5 +88,17 @@ public class OutputNode extends HTMLNode {
 		InfoboxWidget newInfobox = new InfoboxWidget(type, title);
 		addChild(newInfobox);
 		return newInfobox;
+	}
+
+	//methods for creating table chidren
+	public Table addTable() {
+		Table newTable = new Table();
+		addChild(newTable);
+		return newTable;
+	}
+	public Table addTable(HTMLClass CLASS) {
+		Table newTable = new Table(CLASS);
+		addChild(newTable);
+		return newTable;
 	}
 }

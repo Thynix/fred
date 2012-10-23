@@ -21,6 +21,8 @@ import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
 import freenet.client.DefaultMIMETypes;
+import freenet.clients.http.uielements.Row;
+import freenet.clients.http.uielements.Table;
 import freenet.io.comm.DMT;
 import freenet.io.comm.DisconnectedException;
 import freenet.io.comm.FreenetInetAddress;
@@ -1325,28 +1327,29 @@ public class DarknetPeerNode extends PeerNode {
 		}
 
 		private void describeFile(HTMLNode div) {
-			HTMLNode table = div.addChild("table", "border", "0");
-			HTMLNode row = table.addChild("tr");
-			row.addChild("td").addChild("#", l10n("fileLabel"));
-			row.addChild("td").addChild("#", filename);
+			Table table = new Table();
+			div.addChild(table);
+			Row row = table.addRow();
+			row.addCell().addChild("#", l10n("fileLabel"));
+			row.addCell().addChild("#", filename);
 			if(destination != null) {
-				row = table.addChild("tr");
-				row.addChild("td").addChild("#", l10n("fileSavedToLabel"));
-				row.addChild("td").addChild("#", destination.getPath());
+				row = table.addRow();
+				row.addCell().addChild("#", l10n("fileSavedToLabel"));
+				row.addCell().addChild("#", destination.getPath());
 			}
-			row = table.addChild("tr");
-			row.addChild("td").addChild("#", l10n("sizeLabel"));
-			row.addChild("td").addChild("#", SizeUtil.formatSize(size));
-			row = table.addChild("tr");
-			row.addChild("td").addChild("#", l10n("mimeLabel"));
-			row.addChild("td").addChild("#", mimeType);
-			row = table.addChild("tr");
-			row.addChild("td").addChild("#", l10n("senderLabel"));
-			row.addChild("td").addChild("#", getName());
-			row = table.addChild("tr");
+			row = table.addRow();
+			row.addCell().addChild("#", l10n("sizeLabel"));
+			row.addCell().addChild("#", SizeUtil.formatSize(size));
+			row = table.addRow();
+			row.addCell().addChild("#", l10n("mimeLabel"));
+			row.addCell().addChild("#", mimeType);
+			row = table.addRow();
+			row.addCell().addChild("#", l10n("senderLabel"));
+			row.addCell().addChild("#", getName());
+			row = table.addRow();
 			if(comment != null && comment.length() > 0) {
-				row.addChild("td").addChild("#", l10n("commentLabel"));
-				addComment(row.addChild("td"));
+				row.addCell().addChild("#", l10n("commentLabel"));
+				addComment(row.addCell());
 			}
 		}
 	}

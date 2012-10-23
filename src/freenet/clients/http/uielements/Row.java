@@ -12,7 +12,7 @@ public class Row extends OutputNode {
 	}
 
 	public Row() {
-		super("td");
+		super("tr");
 	}
 
 	//Methods for adding cells
@@ -23,6 +23,11 @@ public class Row extends OutputNode {
 	}
 	public Cell addCell(HTMLClass CLASS) {
 		Cell newCell = new Cell(CLASS);
+		this.addChild(newCell);
+		return newCell;
+	}
+	public Cell addCell(int colspan, String content) {
+		Cell newCell = new Cell(colspan, content);
 		this.addChild(newCell);
 		return newCell;
 	}
@@ -44,6 +49,16 @@ public class Row extends OutputNode {
 	}
 	public Header addHeader(HTMLClass CLASS) {
 		Header newCell = new Header(CLASS);
+		this.addChild(newCell);
+		return newCell;
+	}
+	public Header addHeader(String width, String content) {
+		Header newCell = new Header(width, content);
+		this.addChild(newCell);
+		return newCell;
+	}
+	public Header addHeader(int colspan, String content) {
+		Header newCell = new Header(colspan, content);
 		this.addChild(newCell);
 		return newCell;
 	}

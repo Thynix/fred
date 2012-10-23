@@ -4,8 +4,8 @@ import freenet.support.HTMLNode;
 
 public class InfoboxWidget extends Div {
 
-	public Div header = new Div(HTMLClass.INFOBOXHEADER);
-	public Div body = new Div(HTMLClass.INFOBOXCONTENT);
+	public Div header;
+	public Div body;
 
 	public enum Type {
 		ALERT(HTMLClass.INFOBOXALERT),
@@ -31,12 +31,14 @@ public class InfoboxWidget extends Div {
 
 	protected InfoboxWidget(HTMLClass type, String title) {
 		super(HTMLClass.INFOBOX);
-		header.setContent(title);
 		if (type != HTMLClass.NONE) {
 			this.addClass(type);
 		}
+		this.header = new Div(HTMLClass.INFOBOXHEADER);
 		this.addChild(header);
+		this.body = new Div(HTMLClass.INFOBOXCONTENT);
 		this.addChild(body);
+		header.setContent(title);
 	}
 
 	public HTMLNode addContentNode() {

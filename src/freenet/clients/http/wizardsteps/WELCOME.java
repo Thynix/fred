@@ -1,6 +1,9 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.*;
+import freenet.clients.http.uielements.Cell;
+import freenet.clients.http.uielements.Row;
+import freenet.clients.http.uielements.Table;
 import freenet.config.Config;
 import freenet.config.EnumerableOptionCallback;
 import freenet.config.Option;
@@ -32,9 +35,10 @@ public class WELCOME implements Step {
 		HTMLNode contentNode = helper.getPageContent(WizardL10n.l10n("homepageTitle"));
 		boolean incognito = request.isParameterSet("incognito");
 
-		HTMLNode optionsTable = contentNode.addChild("table");
-		HTMLNode tableHeader = optionsTable.addChild("tr");
-		HTMLNode tableRow = optionsTable.addChild("tr");
+		Table optionsTable = new Table();
+		contentNode.addChild(optionsTable);
+		Row tableHeader = optionsTable.addRow();
+		Row tableRow = optionsTable.addRow();
 
 		//Low security option
 		addSecurityTableCell(tableHeader, tableRow, "Low", helper, incognito);
@@ -82,11 +86,11 @@ public class WELCOME implements Step {
 	 * @param helper used to add a form
 	 * @param incognito whether incognito mode is enabled
 	 */
-	private void addSecurityTableCell(HTMLNode header, HTMLNode row, String preset, PageHelper helper, boolean incognito) {
-		header.addChild("th", "width", "33%", WizardL10n.l10n("presetTitle"+preset));
-		HTMLNode tableCell = row.addChild("td");
+	private void addSecurityTableCell(Row header, Row row, String preset, PageHelper helper, boolean incognito) {
+		header.addHeader("33%", WizardL10n.l10n("presetTitle"+preset));
+		Cell tableCell = row.addCell();
 		tableCell.addChild("p", WizardL10n.l10n("preset" + preset));
-		HTMLNode centerForm = tableCell.addChild(new Div());
+		Div centerForm = tableCell.addDiv();
 		centerForm.addAttribute("style", "text-align:center;");
 		HTMLNode secForm = helper.addFormChild(centerForm, ".", "SecForm"+preset);
 		secForm.addChild("input",

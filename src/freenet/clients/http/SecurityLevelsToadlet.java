@@ -10,6 +10,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.uielements.*;
 import freenet.clients.http.wizardsteps.PageHelper;
 import freenet.clients.http.wizardsteps.WizardL10n;
 import freenet.l10n.NodeL10n;
@@ -27,12 +28,8 @@ import freenet.support.Logger;
 import freenet.support.MultiValueTable;
 import freenet.support.Logger.LogLevel;
 import freenet.support.api.HTTPRequest;
-import freenet.clients.http.uielements.Div;
-import freenet.clients.http.uielements.HTMLClass;
-import freenet.clients.http.uielements.OutputList;
 import freenet.support.io.FileUtil;
 import freenet.support.io.FileUtil.OperatingSystem;
-import freenet.clients.http.uielements.InfoboxWidget;
 
 /**
  * The security levels page.
@@ -612,16 +609,17 @@ public class SecurityLevelsToadlet extends Toadlet {
 	}
 
 	private void addPasswordChangeForm(HTMLNode inner) {
-		HTMLNode table = inner.addChild("table", "border", "0");
-		HTMLNode row = table.addChild("tr");
-		HTMLNode cell = row.addChild("td");
+		Table table = new Table();
+		inner.addChild(table);
+		Row row = table.addRow();
+		Cell cell = row.addCell();
 		cell.addChild("label", "for", "oldPasswordBox", l10nSec("oldPasswordLabel"));
-		cell = row.addChild("td");
+		cell = row.addCell();
 		cell.addChild("input", new String[] { "id", "type", "name", "size" }, new String[] { "oldPasswordBox", "password", "oldPassword", "100" });
-		row = table.addChild("tr");
-		cell = row.addChild("td");
+		row = table.addRow();
+		cell = row.addCell();
 		cell.addChild("label", "for", "newPasswordBox", l10nSec("newPasswordLabel"));
-		cell = row.addChild("td");
+		cell = row.addCell();
 		cell.addChild("input", new String[] { "id", "type", "name", "size" }, new String[] { "passwordBox", "password", "masterPassword", "100" });
 		HTMLNode p = inner.addChild("p");
 		p.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "changePassword", l10nSec("changePasswordButton") });

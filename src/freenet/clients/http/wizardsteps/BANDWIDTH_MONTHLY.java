@@ -1,6 +1,8 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
+import freenet.clients.http.uielements.Row;
+import freenet.clients.http.uielements.Table;
 import freenet.config.Config;
 import freenet.config.InvalidConfigValueException;
 import freenet.l10n.NodeL10n;
@@ -41,16 +43,17 @@ public class BANDWIDTH_MONTHLY extends BandwidthManipulator implements Step {
 		//TODO: demonstrate how to specify the limit, though.
 
 		//Table header
-		HTMLNode table = infoBox.addChild("table");
-		HTMLNode headerRow = table.addChild("tr");
-		headerRow.addChild("th", WizardL10n.l10n("bandwidthLimitMonthlyTitle"));
-		headerRow.addChild("th", WizardL10n.l10n("bandwidthSelect"));
+		Table table = new Table();
+		infoBox.addChild(table);
+		Row headerRow = table.addRow();
+		headerRow.addHeader(WizardL10n.l10n("bandwidthLimitMonthlyTitle"));
+		headerRow.addHeader(WizardL10n.l10n("bandwidthSelect"));
 
 		//Row for each cap
 		for (long cap : caps) {
-			HTMLNode row = table.addChild("tr");
+			Row row = table.addRow();
 			//ISPs are likely to list limits in GB instead of GiB, so display GB here.
-			row.addChild("td", String.valueOf(cap/GB)+" GB");
+			row.addCell(String.valueOf(cap/GB)+" GB");
 			HTMLNode selectForm = helper.addFormChild(row.addChild("td"), ".", "limit");
 			selectForm.addChild("input",
 			        new String[] { "type", "name", "value" },
@@ -61,7 +64,7 @@ public class BANDWIDTH_MONTHLY extends BandwidthManipulator implements Step {
 		}
 
 		//Row for custom entry
-		HTMLNode customForm = helper.addFormChild(table.addChild("tr"), ".", "custom-form");
+		HTMLNode customForm = helper.addFormChild(table.addRow(), ".", "custom-form");
 		customForm.addChild("td").addChild("input",
 			new String[]{"type", "name"},
 			new String[]{"text", "capTo"});

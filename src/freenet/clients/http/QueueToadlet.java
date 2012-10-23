@@ -46,6 +46,7 @@ import freenet.client.async.DatabaseDisabledException;
 import freenet.client.filter.ContentFilter;
 import freenet.client.filter.KnownUnsafeContentTypeException;
 import freenet.client.filter.MIMEType;
+import freenet.clients.http.uielements.*;
 import freenet.keys.FreenetURI;
 import freenet.l10n.NodeL10n;
 import freenet.node.DarknetPeerNode;
@@ -83,10 +84,6 @@ import freenet.support.TimeUtil;
 import freenet.support.api.Bucket;
 import freenet.support.api.HTTPRequest;
 import freenet.support.api.HTTPUploadedFile;
-import freenet.clients.http.uielements.Div;
-import freenet.clients.http.uielements.HTMLClass;
-import freenet.clients.http.uielements.Item;
-import freenet.clients.http.uielements.OutputList;
 import freenet.support.io.BucketTools;
 import freenet.support.io.Closer;
 import freenet.support.io.FileBucket;
@@ -874,14 +871,15 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 				        new String[]{"descB", "description", "3", "70"});
 				form.addChild("br");
 
-				HTMLNode peerTable = form.addChild("table", "class", "darknet_connections");
-				peerTable.addChild("th", "colspan", "2", l10n("recommendToFriends"));
+				Table peerTable = new Table(HTMLClass.DARKNETCONNECTIONS);
+				form.addChild(peerTable);
+				peerTable.addRow().addHeader(2, l10n("recommendToFriends"));
 				for(DarknetPeerNode peer : core.node.getDarknetConnections()) {
-					HTMLNode peerRow = peerTable.addChild("tr", "class", "darknet_connections_normal");
-					peerRow.addChild("td", "class", "peer-marker").addChild("input",
-					        new String[] { "type", "name" }, 
-					        new String[] { "checkbox", "node_" + peer.hashCode() });
-					peerRow.addChild("td", "class", "peer-name").addChild("#", peer.getName());
+					Row peerRow = peerTable.addRow(HTMLClass.DARKNETCONNECTIONSNORMAL);
+					peerRow.addCell(HTMLClass.PEERMARKER).addChild("input",
+						new String[]{"type", "name"},
+						new String[]{"checkbox", "node_" + peer.hashCode()});
+					peerRow.addCell(HTMLClass.PEERNAME).addChild("#", peer.getName());
 				}
 
 				form.addChild("input",
@@ -1486,11 +1484,15 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 
 		if(advancedModeEnabled) {
 			HTMLNode legendContent = pageMaker.getInfobox("legend", l10n("legend"), contentNode, "queue-legend", true);
-			HTMLNode legendTable = legendContent.addChild("table", "class", "queue");
-			HTMLNode legendRow = legendTable.addChild("tr");
-			for(int i=0; i<7; i++){
-				if(i > RequestStarter.INTERACTIVE_PRIORITY_CLASS || advancedModeEnabled || i <= lowestQueuedPrio)
-					legendRow.addChild("td", "class", "priority" + i, priorityClasses[i]);
+			Table legendTable = new Table(HTMLClass.QUEUE);
+			legendContent.addChild(legendTable);
+			Row legendRow = legendTable.addRow();
+			Cell cell;
+			for (int i=0; i<7; i++) {
+				if (i > RequestStarter.INTERACTIVE_PRIORITY_CLASS || advancedModeEnabled || i <= lowestQueuedPrio) {
+					cell = legendRow.addCell(priorityClasses[i]);
+					cell.addAttribute("class", "priority" + i);
+				}
 			}
 		}
 
@@ -1687,8 +1689,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		return createProgressCell(advancedMode, started, compressing, fetched, failed, fatallyFailed, min, total, finalized, upload);
 	}
 
-	public static HTMLNode createProgressCell(boolean advancedMode, boolean started, COMPRESS_STATE compressing, int fetched, int failed, int fatallyFailed, int min, int total, boolean finalized, boolean upload) {
-		HTMLNode progressCell = new HTMLNode("td", "class", "request-progress");
+	public static Cell createProgressCell(boolean advancedMode, boolean started, COMPRESS_STATE compressing, int fetched, int failed, int fatallyFailed, int min, int total, boolean finalized, boolean upload) {
+		Cell progressCell = new Cell(HTMLClass.REQUESTPROGRESS);
 		if (!started) {
 			progressCell.addChild("#", l10n("starting"));
 			return progressCell;
@@ -2006,60 +2008,62 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		if(advancedModeEnabled && !(isFailed || isCompleted))
 			form.addChild(createPriorityControl(pageMaker, ctx, RequestStarter.BULK_SPLITFILE_PRIORITY_CLASS, priorityClasses, advancedModeEnabled, isUpload));
 
-		HTMLNode table = form.addChild("table", "class", "requests");
-		HTMLNode headerRow = table.addChild("tr", "class", "table-header");
+		Table table = new Table(HTMLClass.REQUESTS);
+		form.addChild(table);
+		Row headerRow = table.addRow(HTMLClass.TABLEHEADER);
 
 		// Checkbox header
-		headerRow.addChild("th"); // No description
+		headerRow.addHeader(); // No description
 
 		//Add a header for each column.
 		for (QueueColumn column : columns) {
 			switch (column) {
 				case IDENTIFIER:
-					headerRow.addChild("th").addChild("a", "href", (isReversed ? "?sortBy=id" : "?sortBy=id&reversed")).addChild("#", l10n("identifier"));
+					headerRow.addHeader().addChild("a", "href", (isReversed ? "?sortBy=id" : "?sortBy=id&reversed")).addChild("#", l10n("identifier"));
 					break;
 				case SIZE:
-					headerRow.addChild("th").addChild("a", "href", (isReversed ? "?sortBy=size" : "?sortBy=size&reversed")).addChild("#", l10n("size"));
+					headerRow.addHeader().addChild("a", "href", (isReversed ? "?sortBy=size" : "?sortBy=size&reversed")).addChild("#", l10n("size"));
 					break;
 				case MIME_TYPE:
-					headerRow.addChild("th", l10n("mimeType"));
+					headerRow.addHeader(l10n("mimeType"));
 					break;
 				case PERSISTENCE:
-					headerRow.addChild("th", l10n("persistence"));
+					headerRow.addHeader(l10n("persistence"));
 					break;
 				case KEY:
-					headerRow.addChild("th", l10n("key"));
+					headerRow.addHeader(l10n("key"));
 					break;
 				case FILENAME:
-					headerRow.addChild("th", l10n("fileName"));
+					headerRow.addHeader(l10n("fileName"));
 					break;
 				case PRIORITY:
-					headerRow.addChild("th", l10n("priority"));
+					headerRow.addHeader(l10n("priority"));
 					break;
 				case FILES:
-					headerRow.addChild("th", l10n("files"));
+					headerRow.addHeader(l10n("files"));
 					break;
 				case TOTAL_SIZE:
-					headerRow.addChild("th", l10n("totalSize"));
+					headerRow.addHeader(l10n("totalSize"));
 					break;
 				case PROGRESS:
-					headerRow.addChild("th").addChild("a", "href", (isReversed ? "?sortBy=progress" : "?sortBy=progress&reversed")).addChild("#", l10n("progress"));
+					headerRow.addHeader().addChild("a", "href", (isReversed ? "?sortBy=progress" : "?sortBy=progress&reversed")).addChild("#", l10n("progress"));
 					break;
 				case REASON:
-					headerRow.addChild("th", l10n("reason"));
+					headerRow.addHeader(l10n("reason"));
 					break;
 				case LAST_ACTIVITY:
-					headerRow.addChild("th").addChild("a", "href", (isReversed ? "?sortBy=lastActivity" : "?sortBy=lastActivity&reversed"),  l10n("lastActivity"));
+					headerRow.addHeader().addChild("a", "href", (isReversed ? "?sortBy=lastActivity" : "?sortBy=lastActivity&reversed"),  l10n("lastActivity"));
 					break;
 				case COMPAT_MODE:
-					headerRow.addChild("th", l10n("compatibilityMode"));
+					headerRow.addHeader(l10n("compatibilityMode"));
 					break;
 			}
 		}
 		//Add a row with a checkbox for each request.
 		int x = 0;
 		for (RequestStatus clientRequest : requests) {
-			HTMLNode requestRow = table.addChild("tr", "class", "priority" + clientRequest.getPriority());
+			Row requestRow = table.addRow();
+			requestRow.addAttribute("style", "priority" + clientRequest.getPriority());
 			requestRow.addChild(createCheckboxCell(clientRequest, x++));
 
 			for (QueueColumn column : columns) {
@@ -2124,7 +2128,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 						if(clientRequest instanceof DownloadRequestStatus) {
 							requestRow.addChild(createCompatModeCell((DownloadRequestStatus)clientRequest));
 						} else {
-							requestRow.addChild("td");
+							requestRow.addCell();
 						}
 						break;
 				}
@@ -2133,8 +2137,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		return formDiv;
 	}
 
-	private HTMLNode createCheckboxCell(RequestStatus clientRequest, int counter) {
-		HTMLNode cell = new HTMLNode("td", "class", "checkbox-cell");
+	private Cell createCheckboxCell(RequestStatus clientRequest, int counter) {
+		Cell cell = new Cell(HTMLClass.CHECKBOXCELL);
 		String identifier = clientRequest.getIdentifier();
 		cell.addChild("input", new String[] { "type", "name", "value" },
 				new String[] { "checkbox", "identifier-"+counter, identifier } );

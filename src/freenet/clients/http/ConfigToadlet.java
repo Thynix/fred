@@ -449,7 +449,8 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 		contentNode.addChild(core.alerts.createSummary());
 
 		InfoboxWidget configformcontainer = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10n("title"));
-		HTMLNode formNode = ctx.addFormChild(configformcontainer.header, path(), "configForm");
+		contentNode.addChild(configformcontainer);
+		HTMLNode formNode = ctx.addFormChild(configformcontainer.body, path(), "configForm");
 
 		// Invisible apply button at the top so that an enter keypress will
 		// apply settings instead of

@@ -169,17 +169,7 @@ public class HTMLNode implements XMLCharacterClasses {
 		if ((name == null) || (!"#".equals(name) && !"%".equals(name) && !checkNamePattern(name))) {
 			throw new IllegalArgumentException("element name is not legal");
 		}
-		if ((attributeNames != null) && (attributeValues != null)) {
-			if (attributeNames.length != attributeValues.length) {
-				throw new IllegalArgumentException("attribute names and values differ in length");
-			}
-			for (int attributeIndex = 0, attributeCount = attributeNames.length; attributeIndex < attributeCount; attributeIndex++) {
-				if ((attributeNames[attributeIndex] == null) || !checkNamePattern(attributeNames[attributeIndex])) {
-					throw new IllegalArgumentException("attributeName is not legal");
-				}
-				addAttribute(attributeNames[attributeIndex], attributeValues[attributeIndex]);
-			}
-		}
+		addAttributes(attributeNames, attributeValues);
 		this.name = name.toLowerCase(Locale.ENGLISH);
 		if (content != null && !("#").equals(name)&& !("%").equals(name)) {
 			addChild(new HTMLNode("#", content));
@@ -220,6 +210,20 @@ public class HTMLNode implements XMLCharacterClasses {
 		// Oddly these problems were seen where the answer is almost certainly in the first matcher, because the tag name was "html"...
 		return simpleNamePattern.matcher(str).matches() || 
 			namePattern.matcher(str).matches();
+	}
+
+	public void addAttributes(String[] attributeNames, String[] attributeValues) {
+		if ((attributeNames != null) && (attributeValues != null)) {
+			if (attributeNames.length != attributeValues.length) {
+				throw new IllegalArgumentException("attribute names and values differ in length");
+			}
+			for (int attributeIndex = 0, attributeCount = attributeNames.length; attributeIndex < attributeCount; attributeIndex++) {
+				if ((attributeNames[attributeIndex] == null) || !checkNamePattern(attributeNames[attributeIndex])) {
+					throw new IllegalArgumentException("attributeName is not legal");
+				}
+				addAttribute(attributeNames[attributeIndex], attributeValues[attributeIndex]);
+			}
+		}
 	}
 
 	/**

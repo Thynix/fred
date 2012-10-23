@@ -19,6 +19,8 @@ import java.util.EnumMap;
 import java.util.Enumeration;
 import java.util.Map;
 
+import freenet.clients.http.uielements.Row;
+import freenet.clients.http.uielements.Table;
 import freenet.io.comm.ByteCounter;
 import freenet.io.comm.DMT;
 import freenet.io.comm.DisconnectedException;
@@ -1194,42 +1196,43 @@ public class OpennetManager {
 	}
 
 	public void drawOpennetStatsBox(HTMLNode box) {
-		HTMLNode table = box.addChild("table", "border", "0");
-		HTMLNode row = table.addChild("tr");
+		Table OpennetStats = new Table();
+		box.addChild(OpennetStats);
+		Row headerRow = OpennetStats.addRow();
 
-		row.addChild("th");
+		headerRow.addHeader();
 		for(ConnectionType type : ConnectionType.values()) {
-			row.addChild("th", type.name());
+			headerRow.addHeader(type.name());
 		}
 
-		row = table.addChild("tr");
+		Row row = OpennetStats.addRow();
 		row.addChild("td", "Connection attempts");
 		for(ConnectionType type : ConnectionType.values()) {
-			row.addChild("td", Long.toString(connectionAttempts.get(type)));
+			row.addCell(Long.toString(connectionAttempts.get(type)));
 		}
 
-		row = table.addChild("tr");
+		row = OpennetStats.addRow();
 		row.addChild("td", "Connections accepted");
 		for(ConnectionType type : ConnectionType.values()) {
-			row.addChild("td", Long.toString(connectionAttemptsAdded.get(type)));
+			row.addCell(Long.toString(connectionAttemptsAdded.get(type)));
 		}
 
-		row = table.addChild("tr");
+		row = OpennetStats.addRow();
 		row.addChild("td", "Accepted (free slots)");
 		for(ConnectionType type : ConnectionType.values()) {
-			row.addChild("td", Long.toString(connectionAttemptsAddedPlentySpace.get(type)));
+			row.addCell(Long.toString(connectionAttemptsAddedPlentySpace.get(type)));
 		}
 
-		row = table.addChild("tr");
+		row = OpennetStats.addRow();
 		row.addChild("td", "Rejected (per-type grace periods)");
 		for(ConnectionType type : ConnectionType.values()) {
-			row.addChild("td", Long.toString(connectionAttemptsRejectedByPerTypeEnforcement.get(type)));
+			row.addCell(Long.toString(connectionAttemptsRejectedByPerTypeEnforcement.get(type)));
 		}
 
-		row = table.addChild("tr");
+		row = OpennetStats.addRow();
 		row.addChild("td", "Rejected (no droppable peers)");
 		for(ConnectionType type : ConnectionType.values()) {
-			row.addChild("td", Long.toString(connectionAttemptsRejectedNoPeersDroppable.get(type)));
+			row.addCell(Long.toString(connectionAttemptsRejectedNoPeersDroppable.get(type)));
 		}
 
 	}

@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.net.URI;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.uielements.Cell;
+import freenet.clients.http.uielements.Row;
+import freenet.clients.http.uielements.Table;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
 import freenet.support.HTMLNode;
@@ -42,10 +45,11 @@ public class SimpleHelpToadlet extends Toadlet {
 		// Definitions infobox
 		HTMLNode helpScreenContent2 = ctx.getPageMaker().getInfobox("infobox-content", NodeL10n.getBase().getString("SimpleHelpToadlet.definitionsTitle"), contentNode, "freenet-definitions", true);
 		
-		HTMLNode table = helpScreenContent2.addChild("table", new String[]{"border", "style"}, new String[]{"0", "border: none"});
+		Table table = new Table();
+		helpScreenContent2.addChild(table);
        
-                HTMLNode row = table.addChild("tr");
-                HTMLNode cell = row.addChild("td", "style", "border: none");
+                Cell row = table.addRow().addCell();
+                //Cell cell = row.addCell();
               
 		        // cell.addChild("#", " ");
                 // }

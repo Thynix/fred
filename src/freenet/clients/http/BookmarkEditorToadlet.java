@@ -12,6 +12,7 @@ import freenet.clients.http.bookmark.Bookmark;
 import freenet.clients.http.bookmark.BookmarkCategory;
 import freenet.clients.http.bookmark.BookmarkItem;
 import freenet.clients.http.bookmark.BookmarkManager;
+import freenet.clients.http.uielements.*;
 import freenet.keys.FreenetURI;
 import freenet.l10n.NodeL10n;
 import freenet.node.DarknetPeerNode;
@@ -24,10 +25,6 @@ import freenet.support.URLEncodedFormatException;
 import freenet.support.URLEncoder;
 import freenet.support.Logger.LogLevel;
 import freenet.support.api.HTTPRequest;
-import freenet.clients.http.uielements.HTMLClass;
-import freenet.clients.http.uielements.HTMLID;
-import freenet.clients.http.uielements.Item;
-import freenet.clients.http.uielements.OutputList;
 
 /**
  * BookmarkEditor Toadlet 
@@ -277,12 +274,13 @@ public class BookmarkEditorToadlet extends Toadlet {
 						if(core.node.getDarknetConnections().length > 0 && ("addItem".equals(action) || "share".equals(action))) {
 							form.addChild("br");
 							form.addChild("br");
-							HTMLNode peerTable = form.addChild("table", "class", "darknet_connections");
-							peerTable.addChild("th", "colspan", "2", NodeL10n.getBase().getString("QueueToadlet.recommendToFriends"));
+							Table peerTable = new Table(HTMLClass.DARKNETCONNECTIONS);
+							form.addChild(peerTable);
+							peerTable.addRow().addHeader(2, NodeL10n.getBase().getString("QueueToadlet.recommendToFriends"));
 							for(DarknetPeerNode peer : core.node.getDarknetConnections()) {
-								HTMLNode peerRow = peerTable.addChild("tr", "class", "darknet_connections_normal");
-								peerRow.addChild("td", "class", "peer-marker").addChild("input", new String[] { "type", "name" }, new String[] { "checkbox", "node_" + peer.hashCode() });
-								peerRow.addChild("td", "class", "peer-name").addChild("#", peer.getName());
+								Row peerRow = peerTable.addRow(HTMLClass.DARKNETCONNECTIONSNORMAL);
+								peerRow.addCell(HTMLClass.PEERMARKER).addChild("input", new String[] { "type", "name" }, new String[] { "checkbox", "node_" + peer.hashCode() });
+								peerRow.addCell(HTMLClass.PEERNAME).addChild("#", peer.getName());
 							}
 							form.addChild("label", "for", "descB", (NodeL10n.getBase().getString("BookmarkEditorToadlet.publicDescLabel") + ' '));
 							form.addChild("br");

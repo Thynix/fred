@@ -4,14 +4,11 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
-import freenet.clients.http.uielements.Div;
-import freenet.clients.http.uielements.HTMLID;
-import freenet.clients.http.uielements.OutputList;
-import freenet.clients.http.uielements.InfoboxWidget;
 
 import java.io.File;
 import java.io.IOException;
@@ -336,43 +333,43 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 					return firstFile.getName().compareToIgnoreCase(secondFile.getName());
 				}
 			});
-			HTMLNode listingTable = filelist.body.addChild("table");
-			HTMLNode headerRow = listingTable.addChild("tr");
-			headerRow.addChild("th");
-			headerRow.addChild("th", l10n("fileHeader"));
-			headerRow.addChild("th", l10n("sizeHeader"));
+			Table listingTable = filelist.body.addTable();
+			Row headerRow = listingTable.addRow();
+			headerRow.addHeader();
+			headerRow.addHeader(l10n("fileHeader"));
+			headerRow.addHeader(l10n("sizeHeader"));
 			/* add filesystem roots (fsck windows) */
 			for (File currentRoot : File.listRoots()) {
 				if (allowedDir(currentRoot)) {
-				HTMLNode rootRow = listingTable.addChild("tr");
-				rootRow.addChild("td");
-				HTMLNode rootLinkCellNode = rootRow.addChild("td");
+				Row rootRow = listingTable.addRow();
+				rootRow.addCell();
+				HTMLNode rootLinkCellNode = rootRow.addCell();
 				HTMLNode rootLinkFormNode = ctx.addFormChild(rootLinkCellNode, path(),
 				        "insertLocalFileForm");
 					createChangeDirButton(rootLinkFormNode, currentRoot.getCanonicalPath(),
 					        currentRoot.getAbsolutePath(), persistenceFields);
-				rootRow.addChild("td");
+				rootRow.addCell();
 				}
 			}
 			/* add back link */
 			if (currentPath.getParent() != null) {
 				if (allowedDir(currentPath.getParentFile())) {
-				HTMLNode backlinkRow = listingTable.addChild("tr");
-				backlinkRow.addChild("td");
-				HTMLNode backLinkCellNode = backlinkRow.addChild("td");
-				HTMLNode backLinkFormNode = ctx.addFormChild(backLinkCellNode, path(),
-				        "insertLocalFileForm");
+					Row backlinkRow = listingTable.addRow();
+					backlinkRow.addCell();
+					HTMLNode backLinkCellNode = backlinkRow.addCell();
+					HTMLNode backLinkFormNode = ctx.addFormChild(backLinkCellNode, path(),
+						"insertLocalFileForm");
 					createChangeDirButton(backLinkFormNode, "..", currentPath.getParent(), persistenceFields);
-				backlinkRow.addChild("td");
+					backlinkRow.addCell();
 				}
 			}
 			for (File currentFile : files) {
-				HTMLNode fileRow = listingTable.addChild("tr");
+				Row fileRow = listingTable.addRow();
 				if (currentFile.isDirectory()) {
 					if (currentFile.canRead()) {
 						// Select directory
 						if (allowedDir(currentFile)) {
-						HTMLNode cellNode = fileRow.addChild("td");
+						Cell cellNode = fileRow.addCell();
 						HTMLNode formNode = ctx.addFormChild(cellNode, path(),
 						        "insertLocalFileForm");
 
@@ -380,36 +377,32 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 							        persistenceFields);
 
 						// Change directory
-						HTMLNode directoryCellNode = fileRow.addChild("td");
+						Cell directoryCellNode = fileRow.addCell();
 						HTMLNode directoryFormNode = ctx.addFormChild(directoryCellNode, path(),
 						        "insertLocalFileForm");
 							createChangeDirButton(directoryFormNode, currentFile.getName(),
 							        currentFile.getAbsolutePath(), persistenceFields);
 						}
 					} else {
-						fileRow.addChild("td");
-						fileRow.addChild("td", "class", "unreadable-file",
-						        currentFile.getName());
+						fileRow.addCell();
+						fileRow.addCell(HTMLClass.UNREADABLEFILE,currentFile.getName());
 					}
-					fileRow.addChild("td");
+					fileRow.addCell();
 				} else {
 					if (currentFile.canRead()) {
 						//Select file
-						HTMLNode cellNode = fileRow.addChild("td");
+						Cell cellNode = fileRow.addCell();
 						HTMLNode formNode = ctx.addFormChild(cellNode, path(),
 						        "insertLocalFileForm");
 						createSelectFileButton(formNode, currentFile.getAbsolutePath(),
 						        persistenceFields);
 						
-						fileRow.addChild("td", currentFile.getName());
-						fileRow.addChild("td", "class", "right-align",
-						        String.valueOf(currentFile.length()));
+						fileRow.addCell(currentFile.getName());
+						fileRow.addCell(HTMLClass.ALIGNRIGHT, String.valueOf(currentFile.length()));
 					} else {
-						fileRow.addChild("td");
-						fileRow.addChild("td", "class", "unreadable-file",
-						        currentFile.getName());
-						fileRow.addChild("td", "class", "right-align",
-						        String.valueOf(currentFile.length()));
+						fileRow.addCell();
+						fileRow.addCell(HTMLClass.UNREADABLEFILE, currentFile.getName());
+						fileRow.addCell(HTMLClass.ALIGNRIGHT, String.valueOf(currentFile.length()));
 					}
 				}
 			}
