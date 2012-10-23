@@ -1674,8 +1674,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		return pageNode;
 	}
 
-	private HTMLNode createReasonCell(String failureReason) {
-		HTMLNode reasonCell = new HTMLNode("td", "class", "request-reason");
+	private Cell createReasonCell(String failureReason) {
+		Cell reasonCell = new Cell(HTMLClass.REQUESTREASON);
 		if (failureReason == null) {
 			reasonCell.addChild("span", "class", "failure_reason_unknown", l10n("unknown"));
 		} else {
@@ -1759,14 +1759,14 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		return progressCell;
 	}
 
-	private HTMLNode createNumberCell(int numberOfFiles) {
-		HTMLNode numberCell = new HTMLNode("td", "class", "request-files");
+	private Cell createNumberCell(int numberOfFiles) {
+		Cell numberCell = new Cell(HTMLClass.REQUESTFILES);
 		numberCell.addChild("span", "class", "number_of_files", String.valueOf(numberOfFiles));
 		return numberCell;
 	}
 
-	private HTMLNode createFilenameCell(File filename) {
-		HTMLNode filenameCell = new HTMLNode("td", "class", "request-filename");
+	private Cell createFilenameCell(File filename) {
+		Cell filenameCell = new Cell(HTMLClass.REQUESTFILENAME);
 		if (filename != null) {
 			filenameCell.addChild("span", "class", "filename_is", filename.toString());
 		} else {
@@ -1775,8 +1775,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		return filenameCell;
 	}
 
-	private HTMLNode createPriorityCell(short priorityClass, String[] priorityClasses) {
-		HTMLNode priorityCell = new HTMLNode("td", "class", "request-priority");
+	private Cell createPriorityCell(short priorityClass, String[] priorityClasses) {
+		Cell priorityCell = new Cell(HTMLClass.REQUESTPRIORITY);
 		if(priorityClass < 0 || priorityClass >= priorityClasses.length) {
 			priorityCell.addChild("span", "class", "priority_unknown", l10n("unknown"));
 		} else {
@@ -1846,8 +1846,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		return panicBox;
 	}
 
-	private HTMLNode createIdentifierCell(FreenetURI uri, String identifier, boolean directory) {
-		HTMLNode identifierCell = new HTMLNode("td", "class", "request-identifier");
+	private Cell createIdentifierCell(FreenetURI uri, String identifier, boolean directory) {
+		Cell identifierCell = new Cell(HTMLClass.REQUESTIDENTIFIER);
 		if (uri != null) {
 			identifierCell.addChild("span", "class", "identifier_with_uri").addChild("a", "href", "/" + uri + (directory ? "/" : ""), identifier);
 		} else {
@@ -1856,8 +1856,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		return identifierCell;
 	}
 
-	private HTMLNode createPersistenceCell(boolean persistent, boolean persistentForever) {
-		HTMLNode persistenceCell = new HTMLNode("td", "class", "request-persistence");
+	private Cell createPersistenceCell(boolean persistent, boolean persistentForever) {
+		Cell persistenceCell = new Cell(HTMLClass.REQUESTPERSISTENCE);
 		if (persistentForever) {
 			persistenceCell.addChild("span", "class", "persistence_forever", l10n("persistenceForever"));
 		} else if (persistent) {
@@ -1868,8 +1868,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		return persistenceCell;
 	}
 
-	private HTMLNode createTypeCell(String type) {
-		HTMLNode typeCell = new HTMLNode("td", "class", "request-type");
+	private Cell createTypeCell(String type) {
+		Cell typeCell = new Cell(HTMLClass.REQUESTTYPE);
 		if (type != null) {
 			typeCell.addChild("span", "class", "mimetype_is", type);
 		} else {
@@ -1878,8 +1878,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		return typeCell;
 	}
 
-	private HTMLNode createSizeCell(long dataSize, boolean confirmed, boolean advancedModeEnabled) {
-		HTMLNode sizeCell = new HTMLNode("td", "class", "request-size");
+	private Cell createSizeCell(long dataSize, boolean confirmed, boolean advancedModeEnabled) {
+		Cell sizeCell = new Cell(HTMLClass.REQUESTSIZE);
 		if (dataSize > 0 && (confirmed || advancedModeEnabled)) {
 			sizeCell.addChild("span", "class", "filesize_is", (confirmed ? "" : ">= ") + SizeUtil.formatSize(dataSize) + (confirmed ? "" : " ??"));
 		} else {
@@ -1888,8 +1888,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		return sizeCell;
 	}
 
-	private HTMLNode createKeyCell(FreenetURI uri, boolean addSlash) {
-		HTMLNode keyCell = new HTMLNode("td", "class", "request-key");
+	private Cell createKeyCell(FreenetURI uri, boolean addSlash) {
+		Cell keyCell = new Cell(HTMLClass.REQUESTKEY);
 		if (uri != null) {
 			keyCell.addChild("span", "class", "key_is").addChild("a", "href", '/' + uri.toString() + (addSlash ? "/" : ""), uri.toShortString() + (addSlash ? "/" : ""));
 		} else {
@@ -1976,8 +1976,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 	 *            The last activity of the request
 	 * @return The created table cell HTML node
 	 */
-	private HTMLNode createLastActivityCell(long now, long lastActivity) {
-		HTMLNode lastActivityCell = new HTMLNode("td", "class", "request-last-activity");
+	private Cell createLastActivityCell(long now, long lastActivity) {
+		Cell lastActivityCell = new Cell(HTMLClass.REQUESTLASTACTIVITY);
 		if (lastActivity == 0) {
 			lastActivityCell.addChild("i", l10n("lastActivity.unknown"));
 		} else {
@@ -2168,8 +2168,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		return cell;
 	}
 
-	private HTMLNode createCompatModeCell(DownloadRequestStatus get) {
-		HTMLNode compatCell = new HTMLNode("td", "class", "request-compat-mode");
+	private Cell createCompatModeCell(DownloadRequestStatus get) {
+		Cell compatCell = new Cell(HTMLClass.REQUESTCOMPATMODE);
 		InsertContext.CompatibilityMode[] compat = get.getCompatibilityMode();
 		if(!(compat[0] == InsertContext.CompatibilityMode.COMPAT_UNKNOWN && compat[1] == InsertContext.CompatibilityMode.COMPAT_UNKNOWN)) {
 			if(compat[0] == compat[1])

@@ -157,7 +157,7 @@ public class ConnectivityToadlet extends Toadlet {
 				row.addCell(TimeUtil.formatTime(item.timeFromStartupToFirstReceivedPacket()));
 				Gap[] gaps = item.getGaps();
 				for(int k=0;k<AddressTrackerItem.TRACK_GAPS;k++) {
-					row.addChild("td", gaps[k].receivedPacketAt == 0 ? "" : 
+					row.addCell(gaps[k].receivedPacketAt == 0 ? "" :
 						(TimeUtil.formatTime(gaps[k].gapLength)+" @ "+TimeUtil.formatTime(now - gaps[k].receivedPacketAt)+" ago" /* fixme l10n */));
 				}
 			}

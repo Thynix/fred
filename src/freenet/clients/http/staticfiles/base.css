@@ -71,6 +71,10 @@
 	display: none;
 }
 
+.no-border {
+	border: none;
+}
+
 /* base font settings for entire page */
 
 div,

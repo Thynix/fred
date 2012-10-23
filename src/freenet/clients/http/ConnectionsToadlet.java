@@ -174,7 +174,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 	abstract SimpleColumn[] endColumnHeaders(boolean advancedModeEnabled);
 	
 	abstract class SimpleColumn {
-		abstract protected void drawColumn(HTMLNode peerRow, PeerNodeStatus peerNodeStatus);
+		abstract protected void drawColumn(Row peerRow, PeerNodeStatus peerNodeStatus);
 		abstract public String getSortString();
 		abstract public String getTitleKey();
 		abstract public String getExplanationKey();
@@ -1029,7 +1029,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 		return false;
 	}
 
-	protected void drawTrustColumn(HTMLNode peerRow, PeerNodeStatus peerNodeStatus) {
+	protected void drawTrustColumn(Row peerRow, PeerNodeStatus peerNodeStatus) {
 		// Do nothing
 	}
 
@@ -1037,7 +1037,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 		return false;
 	}
 
-	protected void drawVisibilityColumn(HTMLNode peerRow, PeerNodeStatus peerNodeStatus, boolean advancedModeEnabled) {
+	protected void drawVisibilityColumn(Row peerRow, PeerNodeStatus peerNodeStatus, boolean advancedModeEnabled) {
 		// Do nothing
 	}
 
@@ -1047,7 +1047,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 	/**
 	 * Draw the name column, if there is one. This will be directly after the status column.
 	 */
-	abstract protected void drawNameColumn(HTMLNode peerRow, PeerNodeStatus peerNodeStatus, boolean advanced);
+	abstract protected void drawNameColumn(Row peerRow, PeerNodeStatus peerNodeStatus, boolean advanced);
 
 	/**
 	 * Is there a private note column?
@@ -1057,12 +1057,12 @@ public abstract class ConnectionsToadlet extends Toadlet {
 	/**
 	 * Draw the private note column.
 	 */
-	abstract protected void drawPrivateNoteColumn(HTMLNode peerRow, PeerNodeStatus peerNodeStatus, boolean fProxyJavascriptEnabled);
+	abstract protected void drawPrivateNoteColumn(Row peerRow, PeerNodeStatus peerNodeStatus, boolean fProxyJavascriptEnabled);
 	
 	private void drawMessageTypes(Table peerTable, PeerNodeStatus peerNodeStatus) {
 		Row messageCountRow = peerTable.addRow(HTMLClass.MESSAGESTATUS);
-		messageCountRow.addCell(2, null);
-		Cell messageCountCell = messageCountRow.addCell(9, null);  // = total table row width - 2 from above colspan
+		messageCountRow.addCell(2);
+		Cell messageCountCell = messageCountRow.addCell(9);  // = total table row width - 2 from above colspan
 		Table messageCountTable = messageCountCell.addTable(HTMLClass.MESSAGECOUNT);
 		Row countHeaderRow = messageCountTable.addRow();
 		countHeaderRow.addHeader("Message");

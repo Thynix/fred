@@ -21,8 +21,18 @@ public class Row extends OutputNode {
 		this.addChild(newCell);
 		return newCell;
 	}
+	public Cell addCell(int colspan) {
+		Cell newCell = new Cell(colspan);
+		this.addChild(newCell);
+		return newCell;
+	}
 	public Cell addCell(HTMLClass CLASS) {
 		Cell newCell = new Cell(CLASS);
+		this.addChild(newCell);
+		return newCell;
+	}
+	public Cell addCell(int colspan, HTMLClass CLASS) {
+		Cell newCell = new Cell(colspan, CLASS);
 		this.addChild(newCell);
 		return newCell;
 	}

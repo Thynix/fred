@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.uielements.HTMLClass;
+import freenet.clients.http.uielements.Row;
 import freenet.l10n.NodeL10n;
 import freenet.node.DarknetPeerNode;
 import freenet.node.DarknetPeerNode.FRIEND_TRUST;
@@ -73,9 +75,9 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 	}
 	
 	@Override
-	protected void drawNameColumn(HTMLNode peerRow, PeerNodeStatus peerNodeStatus, boolean advanced) {
+	protected void drawNameColumn(Row peerRow, PeerNodeStatus peerNodeStatus, boolean advanced) {
 		// name column
-		HTMLNode cell = peerRow.addChild("td", "class", "peer-name");
+		HTMLNode cell = peerRow.addCell(HTMLClass.PEERNAME);
 		cell.addChild("a", "href", "/send_n2ntm/?peernode_hashcode=" + peerNodeStatus.hashCode(), ((DarknetPeerNodeStatus)peerNodeStatus).getName());
 		if(advanced && peerNodeStatus.hasFullNoderef) {
 			cell.addChild("#", " (");
@@ -90,8 +92,8 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 	}
 
 	@Override
-	protected void drawTrustColumn(HTMLNode peerRow, PeerNodeStatus peerNodeStatus) {
-		peerRow.addChild("td", "class", "peer-trust").addChild("#", ((DarknetPeerNodeStatus)peerNodeStatus).getTrustLevel().name());
+	protected void drawTrustColumn(Row peerRow, PeerNodeStatus peerNodeStatus) {
+		peerRow.addCell(HTMLClass.PEERTRUST).addChild("#", ((DarknetPeerNodeStatus)peerNodeStatus).getTrustLevel().name());
 	}
 
 	@Override
@@ -100,11 +102,11 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 	}
 
 	@Override
-	protected void drawVisibilityColumn(HTMLNode peerRow, PeerNodeStatus peerNodeStatus, boolean advancedModeEnabled) {
+	protected void drawVisibilityColumn(Row peerRow, PeerNodeStatus peerNodeStatus, boolean advancedModeEnabled) {
 		String content = ((DarknetPeerNodeStatus)peerNodeStatus).getOurVisibility().name();
 		if(advancedModeEnabled)
 			content += " ("+((DarknetPeerNodeStatus)peerNodeStatus).getTheirVisibility().name()+")";
-		peerRow.addChild("td", "class", "peer-trust").addChild("#", content);
+		peerRow.addCell(HTMLClass.PEERTRUST).addChild("#", content);
 	}
 
 	@Override
@@ -113,13 +115,13 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 	}
 
 	@Override
-	protected void drawPrivateNoteColumn(HTMLNode peerRow, PeerNodeStatus peerNodeStatus, boolean fProxyJavascriptEnabled) {
+	protected void drawPrivateNoteColumn(Row peerRow, PeerNodeStatus peerNodeStatus, boolean fProxyJavascriptEnabled) {
 		// private darknet node comment note column
 		DarknetPeerNodeStatus status = (DarknetPeerNodeStatus) peerNodeStatus;
 		if(fProxyJavascriptEnabled) {
-			peerRow.addChild("td", "class", "peer-private-darknet-comment-note").addChild("input", new String[] { "type", "name", "size", "maxlength", "onBlur", "onChange", "value" }, new String[] { "text", "peerPrivateNote_" + peerNodeStatus.hashCode(), "16", "250", "peerNoteBlur();", "peerNoteChange();", status.getPrivateDarknetCommentNote() });
+			peerRow.addCell(HTMLClass.PEERPRIVATEDARKNETCOMMENTNOTE).addChild("input", new String[] { "type", "name", "size", "maxlength", "onBlur", "onChange", "value" }, new String[] { "text", "peerPrivateNote_" + peerNodeStatus.hashCode(), "16", "250", "peerNoteBlur();", "peerNoteChange();", status.getPrivateDarknetCommentNote() });
 		} else {
-			peerRow.addChild("td", "class", "peer-private-darknet-comment-note").addChild("input", new String[] { "type", "name", "size", "maxlength", "value" }, new String[] { "text", "peerPrivateNote_" + peerNodeStatus.hashCode(), "16", "250", status.getPrivateDarknetCommentNote() });
+			peerRow.addCell(HTMLClass.PEERPRIVATEDARKNETCOMMENTNOTE).addChild("input", new String[] { "type", "name", "size", "maxlength", "value" }, new String[] { "text", "peerPrivateNote_" + peerNodeStatus.hashCode(), "16", "250", status.getPrivateDarknetCommentNote() });
 		}
 	}
 

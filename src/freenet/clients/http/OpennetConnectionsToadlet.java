@@ -5,6 +5,8 @@ import java.net.URI;
 import java.util.Comparator;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.uielements.HTMLClass;
+import freenet.clients.http.uielements.Row;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
 import freenet.node.NodeClientCore;
@@ -22,13 +24,13 @@ public class OpennetConnectionsToadlet extends ConnectionsToadlet implements Lin
 	}
 
 	@Override
-	protected void drawNameColumn(HTMLNode peerRow,
+	protected void drawNameColumn(Row peerRow,
 			PeerNodeStatus peerNodeStatus, boolean advanced) {
 		// Do nothing - no names on opennet
 	}
 
 	@Override
-	protected void drawPrivateNoteColumn(HTMLNode peerRow,
+	protected void drawPrivateNoteColumn(Row peerRow,
 			PeerNodeStatus peerNodeStatus, boolean fProxyJavascriptEnabled) {
 		// Do nothing - no private notes either (no such thing as negative trust in cyberspace)
 	}
@@ -127,28 +129,29 @@ public class OpennetConnectionsToadlet extends ConnectionsToadlet implements Lin
 	@Override
 	SimpleColumn[] endColumnHeaders(boolean advancedMode) {
 		if(!advancedMode) return null;
-		return new SimpleColumn[] { 
-				new SimpleColumn() {
+		return new SimpleColumn[] {
+			new SimpleColumn() {
 
-					@Override
-					protected void drawColumn(HTMLNode peerRow, PeerNodeStatus peerNodeStatus) {
-						OpennetPeerNodeStatus status = (OpennetPeerNodeStatus) peerNodeStatus;
-						long tLastSuccess = status.timeLastSuccess;
-						peerRow.addChild("td", "class", "peer-last-success", tLastSuccess > 0 ? TimeUtil.formatTime(System.currentTimeMillis() - tLastSuccess) : "NEVER");
-					}
-					@Override
-					public String getExplanationKey() {
-						return "OpennetConnectionsToadlet.successTime";
-					}
-					@Override
-					public String getSortString() {
-						return "successTime";
-					}
-					@Override
-					public String getTitleKey() {
-						return "OpennetConnectionsToadlet.successTimeTitle";
-					}
-				}};
+				@Override
+				protected void drawColumn(Row peerRow, PeerNodeStatus peerNodeStatus) {
+					OpennetPeerNodeStatus status = (OpennetPeerNodeStatus) peerNodeStatus;
+					long tLastSuccess = status.timeLastSuccess;
+					peerRow.addCell(HTMLClass.PEERLASTSUCCESS, tLastSuccess > 0 ? TimeUtil.formatTime(System.currentTimeMillis() - tLastSuccess) : "NEVER");
+				}
+				@Override
+				public String getExplanationKey() {
+					return "OpennetConnectionsToadlet.successTime";
+				}
+				@Override
+				public String getSortString() {
+					return "successTime";
+				}
+				@Override
+				public String getTitleKey() {
+					return "OpennetConnectionsToadlet.successTimeTitle";
+				}
+			}
+		};
 	}
 
 	@Override

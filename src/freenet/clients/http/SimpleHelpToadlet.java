@@ -53,7 +53,7 @@ public class SimpleHelpToadlet extends Toadlet {
               
 		        // cell.addChild("#", " ");
                 // }
-                // cell = row.addChild("td", "style", "border: none");
+                // cell = row.addCell("style", "border: none");
                 // cell.addChild("a", new String[]{"href", "title"}, new String[]{ ctx.fixLink('/' + item.getKey()), item.getDescription()}, item.getName());
      
 		row.addChild("#", NodeL10n.getBase().getString("SimpleHelpToadlet.CHK"));

@@ -80,8 +80,8 @@ public class WELCOME implements Step {
 
 	/**
 	 * Adds a table cell with information about a given security level and button.
-	 * @param row "tr" node to add cell content to
-	 * @param header "tr" node to add header to
+	 * @param row Row object to add cell content to
+	 * @param header Header object to add header to
 	 * @param preset suffix for security level keys.
 	 * @param helper used to add a form
 	 * @param incognito whether incognito mode is enabled

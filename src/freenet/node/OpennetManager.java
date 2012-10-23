@@ -19,6 +19,7 @@ import java.util.EnumMap;
 import java.util.Enumeration;
 import java.util.Map;
 
+import freenet.clients.http.uielements.Div;
 import freenet.clients.http.uielements.Row;
 import freenet.clients.http.uielements.Table;
 import freenet.io.comm.ByteCounter;
@@ -1195,42 +1196,41 @@ public class OpennetManager {
 			announcer.maybeSendAnnouncementOffThread();
 	}
 
-	public void drawOpennetStatsBox(HTMLNode box) {
-		Table OpennetStats = new Table();
-		box.addChild(OpennetStats);
+	public void drawOpennetStatsBox(Div box) {
+		Table OpennetStats = box.addTable();
 		Row headerRow = OpennetStats.addRow();
 
 		headerRow.addHeader();
-		for(ConnectionType type : ConnectionType.values()) {
+		for (ConnectionType type : ConnectionType.values()) {
 			headerRow.addHeader(type.name());
 		}
 
 		Row row = OpennetStats.addRow();
-		row.addChild("td", "Connection attempts");
+		row.addCell("Connection attempts");
 		for(ConnectionType type : ConnectionType.values()) {
 			row.addCell(Long.toString(connectionAttempts.get(type)));
 		}
 
 		row = OpennetStats.addRow();
-		row.addChild("td", "Connections accepted");
+		row.addCell("Connections accepted");
 		for(ConnectionType type : ConnectionType.values()) {
 			row.addCell(Long.toString(connectionAttemptsAdded.get(type)));
 		}
 
 		row = OpennetStats.addRow();
-		row.addChild("td", "Accepted (free slots)");
+		row.addCell("Accepted (free slots)");
 		for(ConnectionType type : ConnectionType.values()) {
 			row.addCell(Long.toString(connectionAttemptsAddedPlentySpace.get(type)));
 		}
 
 		row = OpennetStats.addRow();
-		row.addChild("td", "Rejected (per-type grace periods)");
+		row.addCell("Rejected (per-type grace periods)");
 		for(ConnectionType type : ConnectionType.values()) {
 			row.addCell(Long.toString(connectionAttemptsRejectedByPerTypeEnforcement.get(type)));
 		}
 
 		row = OpennetStats.addRow();
-		row.addChild("td", "Rejected (no droppable peers)");
+		row.addCell("Rejected (no droppable peers)");
 		for(ConnectionType type : ConnectionType.values()) {
 			row.addCell(Long.toString(connectionAttemptsRejectedNoPeersDroppable.get(type)));
 		}

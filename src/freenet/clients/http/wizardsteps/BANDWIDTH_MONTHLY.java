@@ -54,7 +54,7 @@ public class BANDWIDTH_MONTHLY extends BandwidthManipulator implements Step {
 			Row row = table.addRow();
 			//ISPs are likely to list limits in GB instead of GiB, so display GB here.
 			row.addCell(String.valueOf(cap/GB)+" GB");
-			HTMLNode selectForm = helper.addFormChild(row.addChild("td"), ".", "limit");
+			HTMLNode selectForm = helper.addFormChild(row.addCell(), ".", "limit");
 			selectForm.addChild("input",
 			        new String[] { "type", "name", "value" },
 			        new String[] { "hidden", "capTo", String.valueOf(cap)});

@@ -3,6 +3,7 @@ package freenet.clients.http.wizardsteps;
 import java.text.DecimalFormat;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
+import freenet.clients.http.uielements.Cell;
 import freenet.clients.http.uielements.Row;
 import freenet.clients.http.uielements.Table;
 import freenet.config.Config;
@@ -109,12 +110,12 @@ public class BANDWIDTH_RATE extends BandwidthManipulator implements Step {
 		customForm.addCell().addChild("input",
 		        new String[] { "type", "name" },
 		        new String[] { "text", "customDown" });
-		customForm.addChild("td").addChild("input",
-		        new String[] { "type", "name" },
-		        new String[] { "text", "customUp" });
+		customForm.addCell().addChild("input",
+			new String[]{"type", "name"},
+			new String[]{"text", "customUp"});
 		// This is valid if it's filled in. So don't show the selector.
 		// FIXME javascript to auto-select it?
-//		customForm.addChild("td").addChild("input",
+//		customForm.addCell().addChild("input",
 //				new String[] { "type", "name", "value" },
 //				new String[] { "radio", "bandwidth", "custom" });
 
@@ -228,9 +229,9 @@ public class BANDWIDTH_RATE extends BandwidthManipulator implements Step {
 	 * @param limit Limit to display.
 	 * @param recommended Whether to mark the limit with (Recommended) next to the select button.
 	 */
-	private void addLimitRow(HTMLNode table, PageHelper helper, BandwidthLimit limit, boolean recommended, boolean useMaybeDefault) {
-		HTMLNode row = table.addChild("tr");
-		row.addChild("td", WizardL10n.l10n(limit.descriptionKey));
+	private void addLimitRow(Table table, PageHelper helper, BandwidthLimit limit, boolean recommended, boolean useMaybeDefault) {
+		Row row = table.addRow();
+		row.addCell(WizardL10n.l10n(limit.descriptionKey));
 		String downColumn = SizeUtil.formatSize(limit.downBytes)+WizardL10n.l10n("bandwidthPerSecond");
 		if(limit.downBytes >= 32*1024) {
 			downColumn += " (= ";
@@ -240,10 +241,10 @@ public class BANDWIDTH_RATE extends BandwidthManipulator implements Step {
 				downColumn += ((limit.downBytes*8)/(1024*1024));
 			downColumn+="Mbps)";
 		}
-		row.addChild("td", downColumn);
-		row.addChild("td", SizeUtil.formatSize(limit.upBytes)+WizardL10n.l10n("bandwidthPerSecond"));
+		row.addCell(downColumn);
+		row.addCell(SizeUtil.formatSize(limit.upBytes) + WizardL10n.l10n("bandwidthPerSecond"));
 
-		HTMLNode buttonCell = row.addChild("td");
+		Cell buttonCell = row.addCell();
 		
 		HTMLNode radio = 
 			buttonCell.addChild("input",

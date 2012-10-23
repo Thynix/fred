@@ -14,8 +14,18 @@ public class Cell extends OutputNode {
 	}
 
 	public Cell(int colspan, String content) {
+		this(content);
+		setColspan(colspan);
+	}
+
+	public Cell(int colspan, HTMLClass CLASS) {
+		this(CLASS);
+		setColspan(colspan);
+	}
+
+	public Cell(int colspan) {
 		this();
-		this.setContent(content);
+		setColspan(colspan);
 	}
 
 	public Cell(String width, String content) {
