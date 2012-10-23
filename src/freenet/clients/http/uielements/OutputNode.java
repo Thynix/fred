@@ -147,7 +147,20 @@ public class OutputNode extends HTMLNode {
 		return newInfobox;
 	}
 
-	//methods for creating Link children
+    //methods for creating <i> tags
+    @Deprecated
+    public I addI() {
+        I newI = new I();
+        addChild(newI);
+        return newI;
+    }
+    public I addI(String content) {
+        I newI = new I(content);
+        addChild(newI);
+        return newI;
+    }
+
+    //methods for creating Link children
 	public Link addLink() {
 		Link newLink = new Link();
 		addChild(newLink);

@@ -511,7 +511,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 			input.addChild("#", ": ");
 			NodeL10n.getBase().addL10nSubstitution(input, "SecurityLevels.networkThreatLevel.choice."+level, new String[] { "bold" },
 					new HTMLNode[] { HTMLNode.STRONG });
-			HTMLNode inner = input.addChild(new BlockText()).addChild("i");
+			HTMLNode inner = input.addChild(new BlockText()).addI();
 
 			NodeL10n.getBase().addL10nSubstitution(inner, "SecurityLevels.networkThreatLevel.desc."+level, new String[] { "bold" },
 					new HTMLNode[] { HTMLNode.STRONG });
@@ -533,7 +533,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 			input.addChild("#", ": ");
 			NodeL10n.getBase().addL10nSubstitution(input, "SecurityLevels.networkThreatLevel.choice."+level, new String[] { "bold" },
 					new HTMLNode[] { HTMLNode.STRONG });
-			HTMLNode inner = input.addChild(new BlockText()).addChild("i");
+			HTMLNode inner = input.addChild(new BlockText()).addI();
 			NodeL10n.getBase().addL10nSubstitution(inner, "SecurityLevels.networkThreatLevel.desc."+level, new String[] { "bold", "link" },
 					new HTMLNode[] { HTMLNode.STRONG, HTMLNode.link("/wizard/?step=OPENNET") });
 		}
@@ -545,11 +545,11 @@ public class SecurityLevelsToadlet extends Toadlet {
 		seclevelGroup = secLevelList.addItem();
 		seclevelGroup.addChild("#", l10nSec("physicalThreatLevel"));
 		
-		NodeL10n.getBase().addL10nSubstitution(seclevelGroup.addChild(new BlockText()).addChild("i"), "SecurityLevels.physicalThreatLevelTruecrypt",
+		NodeL10n.getBase().addL10nSubstitution(seclevelGroup.addChild(new BlockText()).addI(), "SecurityLevels.physicalThreatLevelTruecrypt",
 		        new String[]{"bold", "truecrypt"},
 		        new HTMLNode[]{HTMLNode.STRONG,
 		                HTMLNode.linkInNewWindow(ExternalLinkToadlet.escape("http://www.truecrypt.org/"))});
-		HTMLNode swapWarning = seclevelGroup.addChild(new BlockText()).addChild("i");
+		HTMLNode swapWarning = seclevelGroup.addChild(new BlockText()).addI();
 		OperatingSystem os = FileUtil.detectedOS;
 		swapWarning.addChild("#", NodeL10n.getBase().getString("SecurityLevels.physicalThreatLevelSwapfile",
 		        "operatingSystem",
@@ -572,7 +572,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 			input.addChild("#", ": ");
 			NodeL10n.getBase().addL10nSubstitution(input, "SecurityLevels.physicalThreatLevel.choice."+level, new String[] { "bold" },
 					new HTMLNode[] { HTMLNode.STRONG });
-			HTMLNode inner = input.addChild(new BlockText()).addChild("i");
+			HTMLNode inner = input.addChild(new BlockText()).addI();
 			NodeL10n.getBase().addL10nSubstitution(inner, "SecurityLevels.physicalThreatLevel.desc."+level, new String[] { "bold" },
 					new HTMLNode[] { HTMLNode.STRONG });
 			if(level != PHYSICAL_THREAT_LEVEL.LOW && physicalLevel == PHYSICAL_THREAT_LEVEL.LOW && node.hasDatabase() && !node.isDatabaseEncrypted()) {

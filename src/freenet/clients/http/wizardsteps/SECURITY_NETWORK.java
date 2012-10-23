@@ -127,7 +127,7 @@ public class SECURITY_NETWORK implements Step {
 		NodeL10n.getBase().addL10nSubstitution(input, "SecurityLevels.networkThreatLevel.choice."+level,
 		        new String[] { "bold" },
 		        new HTMLNode[] { HTMLNode.STRONG });
-		HTMLNode inner = input.addChild(new BlockText()).addChild("i");
+		HTMLNode inner = input.addChild(new BlockText()).addI();
 		NodeL10n.getBase().addL10nSubstitution(inner, "SecurityLevels.networkThreatLevel.desc."+level,
 		        new String[] { "bold" },
 		        new HTMLNode[] { HTMLNode.STRONG });

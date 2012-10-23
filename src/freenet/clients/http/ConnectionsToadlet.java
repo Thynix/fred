@@ -1,5 +1,22 @@
 package freenet.clients.http;
 
+import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.geoip.IPConverter;
+import freenet.clients.http.geoip.IPConverter.Country;
+import freenet.clients.http.uielements.*;
+import freenet.io.comm.PeerParseException;
+import freenet.io.comm.ReferenceSignatureVerificationException;
+import freenet.io.xfer.PacketThrottle;
+import freenet.l10n.NodeL10n;
+import freenet.node.*;
+import freenet.node.DarknetPeerNode.FRIEND_TRUST;
+import freenet.node.DarknetPeerNode.FRIEND_VISIBILITY;
+import freenet.node.PeerNode.IncomingLoadSummaryStats;
+import freenet.node.updater.NodeUpdateManager;
+import freenet.support.*;
+import freenet.support.Logger.LogLevel;
+import freenet.support.api.HTTPRequest;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,45 +26,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import freenet.client.HighLevelSimpleClient;
-import freenet.clients.http.geoip.IPConverter;
-import freenet.clients.http.geoip.IPConverter.Country;
-import freenet.clients.http.uielements.*;
-import freenet.io.comm.PeerParseException;
-import freenet.io.comm.ReferenceSignatureVerificationException;
-import freenet.io.xfer.PacketThrottle;
-import freenet.l10n.NodeL10n;
-import freenet.node.DarknetPeerNode;
-import freenet.node.DarknetPeerNode.FRIEND_VISIBILITY;
-import freenet.node.DarknetPeerNode.FRIEND_TRUST;
-import freenet.node.FSParseException;
-import freenet.node.Node;
-import freenet.node.NodeClientCore;
-import freenet.node.NodeStats;
-import freenet.node.PeerManager;
-import freenet.node.PeerNode;
-import freenet.node.PeerNode.IncomingLoadSummaryStats;
-import freenet.node.PeerNodeStatus;
-import freenet.node.Version;
-import freenet.node.updater.NodeUpdateManager;
-import freenet.support.Fields;
-import freenet.support.HTMLNode;
-import freenet.support.Logger;
-import freenet.support.Logger.LogLevel;
-import freenet.support.MultiValueTable;
-import freenet.support.SimpleFieldSet;
-import freenet.support.SizeUtil;
-import freenet.support.TimeUtil;
-import freenet.support.api.HTTPRequest;
+import java.util.*;
 
 /** Base class for DarknetConnectionsToadlet and OpennetConnectionsToadlet */
 public abstract class ConnectionsToadlet extends Toadlet {
@@ -924,7 +903,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 			double[] peersLoc = peerNodeStatus.getPeersLocation();
 			if(peersLoc != null) {
 				for(double loc : peersLoc)
-					locationNode.addChild("i", String.valueOf(loc)).addChild("br");
+					locationNode.addI(String.valueOf(loc)).addChild("br");
 			}
 		}
 

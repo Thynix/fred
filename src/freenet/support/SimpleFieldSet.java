@@ -1,35 +1,13 @@
 package freenet.support;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-
 import com.db4o.ObjectContainer;
-
 import freenet.node.FSParseException;
 import freenet.support.io.Closer;
 import freenet.support.io.LineReader;
 import freenet.support.io.Readers;
+
+import java.io.*;
+import java.util.*;
 
 /**
  * @author amphibian
@@ -548,7 +526,7 @@ public class SimpleFieldSet {
     	 * which passes through every key.
     	 * (e.g. for key1=value1 key2.sub2=value2 key1.sub=value3
     	 * it will provide key1,key2.sub2,key1.sub)
-    	 * @param a prefix to put BEFORE every key
+    	 * @param prefix a prefix to put BEFORE every key
     	 * (e.g. for key1=value, if the iterator is created with prefix "aPrefix",
     	 * it will provide aPrefixkey1
     	 */
@@ -687,7 +665,7 @@ public class SimpleFieldSet {
 	 * foo.bar.boo=foobarboo
 	 * calling it with the parameter "foo"
 	 * means to drop the second and the third line.
-	 * @param is the subset to remove
+	 * @param key is the subset to remove
 	 */
 	public synchronized void removeSubset(String key) {
 		if(subsets == null) return;

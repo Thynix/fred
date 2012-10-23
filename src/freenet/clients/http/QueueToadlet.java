@@ -1977,7 +1977,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 	private Cell createLastActivityCell(long now, long lastActivity) {
 		Cell lastActivityCell = new Cell(HTMLClass.REQUESTLASTACTIVITY);
 		if (lastActivity == 0) {
-			lastActivityCell.addChild("i", l10n("lastActivity.unknown"));
+			lastActivityCell.addI(l10n("lastActivity.unknown"));
 		} else {
 			lastActivityCell.addChild("#", l10n("lastActivity.ago", "time", TimeUtil.formatTime(now - lastActivity)));
 		}

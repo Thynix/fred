@@ -60,7 +60,7 @@ public class SECURITY_PHYSICAL implements Step {
 		HTMLNode form = helper.addFormChild(infoboxContent, ".", "physicalSecurityForm");
 		HTMLNode div = form.addChild(new Box(HTMLClass.OPENNETDIV));
 		String controlName = "security-levels.physicalThreatLevel";
-		HTMLNode swapWarning = div.addChild(new BlockText()).addChild("i");
+		HTMLNode swapWarning = div.addChild(new BlockText()).addI();
 		NodeL10n.getBase().addL10nSubstitution(swapWarning, "SecurityLevels.physicalThreatLevelTruecrypt",
 		        new String[]{"bold", "truecrypt"},
 		        new HTMLNode[]{HTMLNode.STRONG,

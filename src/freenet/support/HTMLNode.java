@@ -2,6 +2,7 @@ package freenet.support;
 
 import freenet.clients.http.uielements.HTMLClass;
 import freenet.clients.http.uielements.HTMLID;
+import freenet.clients.http.uielements.I;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -509,4 +510,17 @@ public class HTMLNode implements XMLCharacterClasses {
 	public static HTMLNode text(short count) {
 		return new HTMLNode("#", Short.toString(count));
 	}
+
+    @Deprecated
+    public HTMLNode addI(String content) {
+        I newI = new I(content);
+        this.addChild(newI);
+        return newI;
+    }
+    @Deprecated
+    public HTMLNode addI() {
+        I newI = new I();
+        this.addChild(newI);
+        return newI;
+    }
 }
