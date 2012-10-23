@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
 
+import freenet.clients.http.uielements.Box;
 import freenet.io.comm.PeerParseException;
 import freenet.io.comm.ReferenceSignatureVerificationException;
 import freenet.l10n.NodeL10n;
@@ -29,7 +30,6 @@ import freenet.support.Logger;
 import freenet.support.SimpleFieldSet;
 import freenet.support.TimeUtil;
 import freenet.support.Logger.LogLevel;
-import freenet.clients.http.uielements.Div;
 import freenet.support.io.Closer;
 import freenet.support.transport.ip.IPUtil;
 import java.util.Arrays;
@@ -287,14 +287,14 @@ public class Announcer {
 		
 		@Override
 		public HTMLNode getHTMLText() {
-			Div div_ = new Div();
-			div_.addChild("#", l10n("announceDisabledTooOld"));
+			Box box_ = new Box();
+			box_.addChild("#", l10n("announceDisabledTooOld"));
 			if(!node.nodeUpdater.isEnabled()) {
-				div_.addChild("#", " ");
-				NodeL10n.getBase().addL10nSubstitution(div_, "Announcer.announceDisabledTooOldUpdateDisabled", new String[] { "config" }, new HTMLNode[] { HTMLNode.link("/config/node.updater") });
+				box_.addChild("#", " ");
+				NodeL10n.getBase().addL10nSubstitution(box_, "Announcer.announceDisabledTooOldUpdateDisabled", new String[] { "config" }, new HTMLNode[] { HTMLNode.link("/config/node.updater") });
 			}
 			// No point with !armed() or blown() because they have their own messages.
-			return div_;
+			return box_;
 		}
 		
 		@Override

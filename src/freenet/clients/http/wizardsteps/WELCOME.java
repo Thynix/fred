@@ -1,6 +1,7 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.*;
+import freenet.clients.http.uielements.Box;
 import freenet.clients.http.uielements.Cell;
 import freenet.clients.http.uielements.Row;
 import freenet.clients.http.uielements.Table;
@@ -10,7 +11,6 @@ import freenet.config.Option;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.api.HTTPRequest;
-import freenet.clients.http.uielements.Div;
 
 /**
  * This step is the first, and provides a small welcome screen and an option to change the language.
@@ -90,7 +90,7 @@ public class WELCOME implements Step {
 		header.addHeader("33%", WizardL10n.l10n("presetTitle"+preset));
 		Cell tableCell = row.addCell();
 		tableCell.addBlockText( WizardL10n.l10n("preset" + preset));
-		Div centerForm = tableCell.addDiv();
+		Box centerForm = tableCell.addDiv();
 		centerForm.addAttribute("style", "text-align:center;");
 		HTMLNode secForm = helper.addFormChild(centerForm, ".", "SecForm"+preset);
 		secForm.addChild("input",

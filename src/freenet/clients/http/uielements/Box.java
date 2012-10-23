@@ -3,29 +3,29 @@ package freenet.clients.http.uielements;
 /**
  * Creates a block element
  */
-public class Div extends OutputNode {
+public class Box extends OutputNode {
 
-	public Div(HTMLID ID, String content) {
+	public Box(HTMLID ID, String content) {
 		this(ID);
 		this.setContent(content);
 	}
 
-	public Div(HTMLID ID) {
+	public Box(HTMLID ID) {
 		this();
 		setID(ID);
 	}
 
-	public Div(HTMLClass CLASS, String content) {
+	public Box(HTMLClass CLASS, String content) {
 		this(CLASS);
 		this.setContent(content);
 	}
 
-	public Div(HTMLClass CLASS) {
+	public Box(HTMLClass CLASS) {
 		this();
 		addClass(CLASS);
 	}
 
-	public Div() {
+	public Box() {
 		super("div");
 	}
 }

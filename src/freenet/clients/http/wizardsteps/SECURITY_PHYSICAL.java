@@ -4,6 +4,7 @@ import freenet.clients.http.ExternalLinkToadlet;
 import freenet.clients.http.FirstTimeWizardToadlet;
 import freenet.clients.http.SecurityLevelsToadlet;
 import freenet.clients.http.uielements.BlockText;
+import freenet.clients.http.uielements.Box;
 import freenet.l10n.NodeL10n;
 import freenet.node.MasterKeysFileSizeException;
 import freenet.node.MasterKeysWrongPasswordException;
@@ -13,7 +14,6 @@ import freenet.node.SecurityLevels;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.api.HTTPRequest;
-import freenet.clients.http.uielements.Div;
 import freenet.clients.http.uielements.HTMLClass;
 import freenet.support.io.FileUtil;
 import freenet.support.io.FileUtil.OperatingSystem;
@@ -58,7 +58,7 @@ public class SECURITY_PHYSICAL implements Step {
 		infoboxContent.addChild(new BlockText(WizardL10n.l10nSec("physicalThreatLevel")));
 
 		HTMLNode form = helper.addFormChild(infoboxContent, ".", "physicalSecurityForm");
-		HTMLNode div = form.addChild(new Div(HTMLClass.OPENNETDIV));
+		HTMLNode div = form.addChild(new Box(HTMLClass.OPENNETDIV));
 		String controlName = "security-levels.physicalThreatLevel";
 		HTMLNode swapWarning = div.addChild(new BlockText()).addChild("i");
 		NodeL10n.getBase().addL10nSubstitution(swapWarning, "SecurityLevels.physicalThreatLevelTruecrypt",
@@ -67,16 +67,16 @@ public class SECURITY_PHYSICAL implements Step {
 		                HTMLNode.linkInNewWindow(ExternalLinkToadlet.escape("http://www.truecrypt.org/"))});
 		OperatingSystem os = FileUtil.detectedOS;
 		div.addChild(new BlockText(NodeL10n.getBase().getString("SecurityLevels.physicalThreatLevelSwapfile",
-		        "operatingSystem",
-		        NodeL10n.getBase().getString("OperatingSystemName."+os.name()))));
+			"operatingSystem",
+			NodeL10n.getBase().getString("OperatingSystemName." + os.name()))));
 		if(os == FileUtil.OperatingSystem.Windows) {
 			swapWarning.addChild("#", " " + WizardL10n.l10nSec("physicalThreatLevelSwapfileWindows"));
 		}
 		for(SecurityLevels.PHYSICAL_THREAT_LEVEL level : SecurityLevels.PHYSICAL_THREAT_LEVEL.values()) {
 			HTMLNode input;
 			input = div.addChild(new BlockText()).addChild("input",
-			        new String[] { "type", "name", "value" },
-			        new String[] { "radio", controlName, level.name() });
+				new String[]{"type", "name", "value"},
+				new String[]{"radio", controlName, level.name()});
 			input.addChild("b", WizardL10n.l10nSec("physicalThreatLevel.name." + level));
 			input.addChild("#", ": ");
 			NodeL10n.getBase().addL10nSubstitution(input, "SecurityLevels.physicalThreatLevel.choice."+level, new String[] { "bold" }, new HTMLNode[] { HTMLNode.STRONG });
@@ -294,7 +294,7 @@ public class SECURITY_PHYSICAL implements Step {
 
 	private void addBackToPhysicalSeclevelsButton(HTMLNode form) {
 		form.addChild(new BlockText()).addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "backToMain", WizardL10n.l10n("backToSecurityLevels")});
+			new String[]{"type", "name", "value"},
+			new String[]{"submit", "backToMain", WizardL10n.l10n("backToSecurityLevels")});
 	}
 }

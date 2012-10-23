@@ -201,7 +201,7 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 	 * @return result HTMLNode containing hidden persistence fields
 	 */
 	private HTMLNode renderPersistenceFields (Hashtable<String, String> fieldPairs) {
-		Div result = new Div();
+		Box result = new Box();
 		result.setID(HTMLID.PERSISTENCEFIELDS);
 		for (String key : fieldPairs.keySet()) {
 			result.addChild("input", 

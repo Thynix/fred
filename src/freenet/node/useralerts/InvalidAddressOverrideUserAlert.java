@@ -8,7 +8,7 @@ import freenet.config.SubConfig;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
 import freenet.support.HTMLNode;
-import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.Box;
 import freenet.clients.http.uielements.HTMLClass;
 import freenet.clients.http.uielements.Item;
 import freenet.clients.http.uielements.OutputList;
@@ -41,7 +41,7 @@ public class InvalidAddressOverrideUserAlert extends AbstractUserAlert {
 		SubConfig sc = node.config.get("node");
 		Option<?> o = sc.getOption("ipAddressOverride");
 		
-		Div textNode = new Div();
+		Box textNode = new Box();
 		NodeL10n.getBase().addL10nSubstitution(textNode, "InvalidAddressOverrideUserAlert.unknownAddressWithConfigLink", 
 				new String[] { "link" }, 
 				new HTMLNode[] { HTMLNode.link("/config/node")});

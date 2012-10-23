@@ -2,6 +2,7 @@ package freenet.node.useralerts;
 
 import java.lang.ref.WeakReference;
 
+import freenet.clients.http.uielements.Box;
 import freenet.keys.FreenetURI;
 import freenet.l10n.NodeL10n;
 import freenet.node.DarknetPeerNode;
@@ -9,7 +10,6 @@ import freenet.node.PeerNode;
 import freenet.node.fcp.FCPMessage;
 import freenet.node.fcp.URIFeedMessage;
 import freenet.support.HTMLNode;
-import freenet.clients.http.uielements.Div;
 
 public class DownloadFeedUserAlert extends AbstractUserAlert {
 	private final WeakReference<PeerNode> peerRef;
@@ -55,7 +55,7 @@ public class DownloadFeedUserAlert extends AbstractUserAlert {
 
 	@Override
 	public HTMLNode getHTMLText() {
-		Div alertNode = new Div();
+		Box alertNode = new Box();
 		alertNode.addLink("/" + uri).addChild("#", uri.toShortString());
 		if (description != null && description.length() != 0) {
 			String[] lines = description.split("\n");

@@ -2,8 +2,8 @@ package freenet.clients.http.uielements;
 
 public class AlertLine extends InfoboxWidget {
 
-	public Div header = new Div(HTMLClass.INFOBOXHEADER);
-	public Div body = new Div(HTMLClass.INFOBOXCONTENT);
+	public Box header = new Box(HTMLClass.INFOBOXHEADER);
+	public Box body = new Box(HTMLClass.INFOBOXCONTENT);
 
 	public enum Type {
 		ALERT(HTMLClass.CONTAINSALERT),

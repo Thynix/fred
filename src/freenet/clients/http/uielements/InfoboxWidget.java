@@ -2,10 +2,10 @@ package freenet.clients.http.uielements;
 
 import freenet.support.HTMLNode;
 
-public class InfoboxWidget extends Div {
+public class InfoboxWidget extends Box {
 
-	public Div header;
-	public Div body;
+	public Box header;
+	public Box body;
 
 	public enum Type {
 		ALERT(HTMLClass.INFOBOXALERT),
@@ -34,15 +34,15 @@ public class InfoboxWidget extends Div {
 		if (type != HTMLClass.NONE) {
 			this.addClass(type);
 		}
-		this.header = new Div(HTMLClass.INFOBOXHEADER);
+		this.header = new Box(HTMLClass.INFOBOXHEADER);
 		this.addChild(header);
-		this.body = new Div(HTMLClass.INFOBOXCONTENT);
+		this.body = new Box(HTMLClass.INFOBOXCONTENT);
 		this.addChild(body);
 		header.setContent(title);
 	}
 
 	public HTMLNode addContentNode() {
-		return this.addChild(new Div(HTMLClass.INFOBOXCONTENT));
+		return this.addChild(new Box(HTMLClass.INFOBOXCONTENT));
 	}
 
 	public void setTitle(String newtitle) {

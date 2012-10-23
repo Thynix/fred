@@ -70,7 +70,7 @@ public class TranslationToadlet extends Toadlet {
 			HTMLNode pageNode = page.outer;
 			HTMLNode contentNode = page.content;
 
-			Div translationNode = new Div(HTMLClass.TRANSLATION);
+			Box translationNode = new Box(HTMLClass.TRANSLATION);
 			contentNode.addChild(translationNode);
 			Table legendTable = translationNode.addTable(HTMLClass.TRANSLATION);
 			
@@ -84,7 +84,7 @@ public class TranslationToadlet extends Toadlet {
 			contentRow.addCell(HTMLClass.TRANSLATIONORIG, this.base.getDefaultString(key));
 			contentRow.addCell(HTMLClass.TRANSLATIONNEW, this.base.getString(key));
 			
-			Div footer = translationNode.addDiv(HTMLClass.WARNING);
+			Box footer = translationNode.addDiv(HTMLClass.WARNING);
 			footer.addLink(TOADLET_URL + "?getOverrideTranlationFile").addChild("#", l10n("downloadTranslationsFile"));
 			footer.addChild("%", "&nbsp;&nbsp;");
 			footer.addLink(TOADLET_URL + "?translate=" + key + (showEverything ? "" : "&toTranslateOnly")).addChild("#", l10n("reEdit"));
@@ -100,7 +100,7 @@ public class TranslationToadlet extends Toadlet {
 			HTMLNode pageNode = page.outer;
 			HTMLNode contentNode = page.content;
 
-			HTMLNode translationNode = contentNode.addChild(new Div(HTMLClass.TRANSLATION));
+			HTMLNode translationNode = contentNode.addChild(new Box(HTMLClass.TRANSLATION));
 			HTMLNode updateForm =  ctx.addFormChild(translationNode, TOADLET_URL, "trans_update");
 			Table legendTable = new Table(HTMLClass.TRANSLATION);
 			updateForm.addChild(legendTable);
@@ -144,8 +144,8 @@ public class TranslationToadlet extends Toadlet {
 
 			HTMLNode content = ctx.getPageMaker().getInfobox("infobox-warning", l10n("removeOverrideWarningTitle"), contentNode, "translation-override", true);
 			content.addChild(new BlockText()).addChild("#",
-					NodeL10n.getBase().getString("TranslationToadlet.confirmRemoveOverride", new String[] { "key", "value" },
-							new String[] { key, this.base.getString(key) }));
+				NodeL10n.getBase().getString("TranslationToadlet.confirmRemoveOverride", new String[]{"key", "value"},
+					new String[]{key, this.base.getString(key)}));
 			HTMLNode removeForm = ctx.addFormChild(content.addChild(new BlockText()), TOADLET_URL, "remove_confirmed");
 			if(!showEverything)
 				removeForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "toTranslateOnly", key });
@@ -182,7 +182,7 @@ public class TranslationToadlet extends Toadlet {
 		}
 		translatingForForm.addChild("input", "type", "submit");
 
-		Div translationNode = new Div(HTMLClass.TRANSLATION);
+		Box translationNode = new Box(HTMLClass.TRANSLATION);
 		contentNode.addChild(translationNode);
 		BlockText translationHeaderNode = translationNode.addBlockText();
 		translationHeaderNode.addChild("#", l10n("contributingToLabelWithLang", "lang", this.base.getSelectedLanguage().fullName));

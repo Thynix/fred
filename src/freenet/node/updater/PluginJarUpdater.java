@@ -14,7 +14,7 @@ import freenet.pluginmanager.PluginInfoWrapper;
 import freenet.pluginmanager.PluginManager;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
-import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.Box;
 
 public class PluginJarUpdater extends NodeUpdater {
 
@@ -150,25 +150,25 @@ public class PluginJarUpdater extends NodeUpdater {
 				
 				@Override
 				public HTMLNode getHTMLText() {
-					Div div_ = new Div();
+					Box box_ = new Box();
 					// Text saying the plugin has been updated...
 					synchronized(this) {
 					
 						if(deployOnNoRevocation || deployOnNextNoRevocation) {
-							div_.addChild("#", l10n("willDeployAfterRevocationCheck", "name", pluginName));
+							box_.addChild("#", l10n("willDeployAfterRevocationCheck", "name", pluginName));
 						} else {
-							div_.addChild("#", l10n("pluginUpdatedText", new String[]{"name", "newVersion"}, new String[]{pluginName, Long.toString(fetchedVersion)}));
+							box_.addChild("#", l10n("pluginUpdatedText", new String[]{"name", "newVersion"}, new String[]{pluginName, Long.toString(fetchedVersion)}));
 							
 							// Form to deploy the updated version.
 							// This is not the same as reloading because we haven't written it yet.
 							
-							HTMLNode formNode = div_.addChild("form", new String[] { "action", "method" }, new String[] { PproxyToadlet.PATH, "post" });
+							HTMLNode formNode = box_.addChild("form", new String[] { "action", "method" }, new String[] { PproxyToadlet.PATH, "post" });
 							formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", node.clientCore.formPassword });
 							formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "update", pluginName });
 							formNode.addChild("input", new String[] { "type", "value" }, new String[] { "submit", l10n("updatePlugin") });
 						}
 					}
-					return div_;
+					return box_;
 				}
 			};
 		}

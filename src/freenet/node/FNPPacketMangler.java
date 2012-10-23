@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.Box;
 import freenet.clients.http.uielements.OutputList;
 import net.i2p.util.NativeBigInteger;
 import freenet.clients.http.ExternalLinkToadlet;
@@ -2051,21 +2051,21 @@ public class FNPPacketMangler implements OutgoingPacketMangler {
 
 		@Override
 		public HTMLNode getHTMLText() {
-			Div div_ = new Div();
+			Box box_ = new Box();
 			Peer[] peers;
 			synchronized(peersWithProblems) {
 				peers = peersWithProblems.toArray(new Peer[peersWithProblems.size()]);
 			}
-			NodeL10n.getBase().addL10nSubstitution(div_,
+			NodeL10n.getBase().addL10nSubstitution(box_,
 			        "FNPPacketMangler.somePeersDisconnectedStillNotAckedDetail",
 			        new String[] { "count", "link" },
 			        new HTMLNode[] { HTMLNode.text(peers.length),
 			                HTMLNode.link(ExternalLinkToadlet.escape("https://bugs.freenetproject.org/view.php?id=2692")) });
-			OutputList list = div_.addList();
+			OutputList list = box_.addList();
 			for(Peer peer : peers) {
 				list.addItem(peer.toString());
 			}
-			return div_;
+			return box_;
 		}
 
 		@Override

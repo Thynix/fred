@@ -22,7 +22,7 @@ import freenet.support.Base64;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.clients.http.uielements.HTMLClass;
-import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.Box;
 
 /** A pushed image, the progress is shown with the ImageCreatorToadlet */
 public class ImageElement extends BaseUpdateableElement {
@@ -179,10 +179,10 @@ public class ImageElement extends BaseUpdateableElement {
 					waiter = tracker.makeFetcher(key, maxSize, null, REFILTER_POLICY.RE_FILTER);
 					fr = waiter.getResultFast();
 				} catch (FetchException fe) {
-					whenJsEnabled.addChild(new Div(HTMLClass.NONE, "error"));
+					whenJsEnabled.addChild(new Box(HTMLClass.NONE, "error"));
 				}
 				if (fr == null) {
-					whenJsEnabled.addChild(new Div(HTMLClass.NONE, "No fetcher found"));
+					whenJsEnabled.addChild(new Box(HTMLClass.NONE, "No fetcher found"));
 				} else {
 
 					if (fr.isFinished() && fr.hasData()) {

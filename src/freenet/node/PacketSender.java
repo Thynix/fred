@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import freenet.clients.http.ExternalLinkToadlet;
+import freenet.clients.http.uielements.Box;
 import freenet.io.comm.Peer;
 import freenet.l10n.NodeL10n;
 import freenet.node.useralerts.AbstractUserAlert;
@@ -17,7 +18,6 @@ import freenet.support.Logger;
 import freenet.support.Logger.LogLevel;
 import freenet.support.OOMHandler;
 import freenet.support.TimeUtil;
-import freenet.clients.http.uielements.Div;
 import freenet.clients.http.uielements.OutputList;
 import freenet.support.io.NativeThread;
 import freenet.support.math.MersenneTwister;
@@ -540,21 +540,21 @@ public class PacketSender implements Runnable {
 
         @Override
 		public HTMLNode getHTMLText() {
-			Div div_ = new Div();
+			Box box_ = new Box();
 			Peer[] peers;
 			synchronized(peersDumpedBlockedTooLong) {
 				peers = peersDumpedBlockedTooLong.toArray(new Peer[peersDumpedBlockedTooLong.size()]);
 			}
-			NodeL10n.getBase().addL10nSubstitution(div_,
+			NodeL10n.getBase().addL10nSubstitution(box_,
 			        "PacketSender.somePeersDisconnectedBlockedTooLongDetail",
 			        new String[] { "count", "link" },
 			        new HTMLNode[] { HTMLNode.text(peers.length),
 			                HTMLNode.link(ExternalLinkToadlet.escape("https://bugs.freenetproject.org/"))});
-			OutputList list = div_.addList();
+			OutputList list = box_.addList();
 			for(Peer peer : peers) {
 				list.addItem(peer.toString());
 			}
-			return div_;
+			return box_;
 		}
 
         @Override

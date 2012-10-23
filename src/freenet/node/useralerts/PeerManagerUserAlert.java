@@ -3,12 +3,12 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node.useralerts;
 
+import freenet.clients.http.uielements.Box;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeStats;
 import freenet.node.PeerManager;
 import freenet.node.updater.NodeUpdateManager;
 import freenet.support.HTMLNode;
-import freenet.clients.http.uielements.Div;
 
 public class PeerManagerUserAlert extends AbstractUserAlert {
 
@@ -191,7 +191,7 @@ public class PeerManagerUserAlert extends AbstractUserAlert {
 	
 	@Override
 	public HTMLNode getHTMLText() {
-		Div alertNode = new Div();
+		Box alertNode = new Box();
 		
 		synchronized(this) {
 			if(isOutdated)

@@ -9,11 +9,11 @@ import freenet.clients.http.FProxyFetchTracker;
 import freenet.clients.http.FProxyFetchWaiter;
 import freenet.clients.http.SimpleToadletServer;
 import freenet.clients.http.ToadletContext;
+import freenet.clients.http.uielements.Box;
 import freenet.keys.FreenetURI;
 import freenet.l10n.NodeL10n;
 import freenet.support.Base64;
 import freenet.support.HTMLNode;
-import freenet.clients.http.uielements.Div;
 import freenet.clients.http.uielements.HTMLClass;
 
 /** A pushed element that renders the progress bar when loading a page. */
@@ -54,7 +54,7 @@ public class ProgressBarElement extends BaseUpdateableElement {
 		FProxyFetchWaiter waiter = progress == null ? null : progress.getWaiter();
 		FProxyFetchResult fr = waiter == null ? null : waiter.getResult();
 		if (fr == null) {
-			addChild(new Div(HTMLClass.NONE, "No fetcher found"));
+			addChild(new Box(HTMLClass.NONE, "No fetcher found"));
 		} else {
 			if (fr.isFinished() || fr.hasData() || fr.failed != null) {
 				// If finished then we just send a FINISHED text. It will reload the page
@@ -64,18 +64,18 @@ public class ProgressBarElement extends BaseUpdateableElement {
 				int fetchedPercent = (int) (fr.fetchedBlocks / (double) total * 100);
 				int failedPercent = (int) (fr.failedBlocks / (double) total * 100);
 				int fatallyFailedPercent = (int) (fr.fatallyFailedBlocks / (double) total * 100);
-				HTMLNode progressBar = addChild(new Div(HTMLClass.PROGRESSBAR));
-				Div done = new Div(HTMLClass.PROGRESSBARDONE);
+				HTMLNode progressBar = addChild(new Box(HTMLClass.PROGRESSBAR));
+				Box done = new Box(HTMLClass.PROGRESSBARDONE);
 				done.addAttribute("style", "width: " + fetchedPercent + "%;");
 				progressBar.addChild(done);
 
 				if (fr.failedBlocks > 0) {
-					Div failed = new Div(HTMLClass.PROGRESSBARFAILED);
+					Box failed = new Box(HTMLClass.PROGRESSBARFAILED);
 					failed.addAttribute("style", "width: " + failedPercent + "%;");
 					progressBar.addChild(failed);
 				}
 				if (fr.fatallyFailedBlocks > 0) {
-					Div failed2 = new Div(HTMLClass.PROGRESSBARFAILED2);
+					Box failed2 = new Box(HTMLClass.PROGRESSBARFAILED2);
 					failed2.addAttribute("style", "width: " + fatallyFailedPercent + "%;");
 					progressBar.addChild(failed2);
 				}
@@ -84,13 +84,13 @@ public class ProgressBarElement extends BaseUpdateableElement {
 				nf.setMaximumFractionDigits(1);
 				String prefix = '('+Integer.toString(fr.fetchedBlocks) + "/ " + Integer.toString(total)+"): ";
 				if (fr.finalizedBlocks) {
-					Div finalized = new Div(HTMLClass.PROGRESSBARFINAL, nf.format((int) ((fr.fetchedBlocks / (double) total) * 1000) / 10.0) + '%');
+					Box finalized = new Box(HTMLClass.PROGRESSBARFINAL, nf.format((int) ((fr.fetchedBlocks / (double) total) * 1000) / 10.0) + '%');
 					finalized.addAttribute("title", prefix + NodeL10n.getBase().getString("QueueToadlet.progressbarAccurate"));
 					progressBar.addChild(finalized);
 				} else {
 					String text = nf.format((int) ((fr.fetchedBlocks / (double) total) * 1000) / 10.0)+ '%';
 					text = "" + fr.fetchedBlocks + " ("+text+"??)";
-					Div notfinalized = new Div(HTMLClass.PROGRESSBARNOTFINAL, text);
+					Box notfinalized = new Box(HTMLClass.PROGRESSBARNOTFINAL, text);
 					notfinalized.addAttribute("title", prefix + NodeL10n.getBase().getString("QueueToadlet.progressbarNotAccurate"));
 					progressBar.addChild(notfinalized);
 				}

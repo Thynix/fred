@@ -5,7 +5,7 @@ package freenet.node.useralerts;
 
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
-import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.Box;
 import freenet.clients.http.uielements.HTMLClass;
 
 /**
@@ -46,7 +46,7 @@ public class TimeSkewDetectedUserAlert extends AbstractUserAlert {
 
 	@Override
 	public HTMLNode getHTMLText() {
-		return new Div(HTMLClass.NONE, getText());
+		return new Box(HTMLClass.NONE, getText());
 	}
 
 }

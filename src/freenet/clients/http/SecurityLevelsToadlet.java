@@ -172,7 +172,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 
 								content = ctx.getPageMaker().getInfobox("infobox-error",
 										l10nSec("passwordWrongTitle"), contentNode, "wrong-password", true).
-										addChild(new Div(HTMLClass.INFOBOXCONTENT));
+										addChild(new Box(HTMLClass.INFOBOXCONTENT));
 
 								SecurityLevelsToadlet.generatePasswordFormPage(true, ctx.getContainer(), content, false, false, true, newPhysicalLevel.name(), null);
 
@@ -230,7 +230,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 
 								content = ctx.getPageMaker().getInfobox("infobox-error",
 										l10nSec("passwordWrongTitle"), contentNode, "wrong-password", true).
-										addChild(new Div(HTMLClass.INFOBOXCONTENT));
+										addChild(new Box(HTMLClass.INFOBOXCONTENT));
 
 								SecurityLevelsToadlet.generatePasswordFormPage(true, ctx.getContainer(), content, false, true, false, newPhysicalLevel.name(), null);
 
@@ -259,7 +259,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 
 							content = ctx.getPageMaker().getInfobox("infobox-error",
 									l10nSec("passwordForDecryptTitle"), contentNode, "password-prompt", false).
-									addChild(new Div(HTMLClass.INFOBOXCONTENT));
+									addChild(new Box(HTMLClass.INFOBOXCONTENT));
 
 							if(password != null && password.length() == 0) {
 								content.addChild(new BlockText(l10nSec("passwordNotZeroLength")));
@@ -365,7 +365,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 		HTMLNode contentNode = helper.getPageContent(l10nSec("cantDeletePasswordFileTitle"));
 		HTMLNode content = helper.getInfobox("infobox-error",
 		        l10nSec("cantDeletePasswordFileTitle"), contentNode, "password-error", true).
-		        addChild(new Div(HTMLClass.INFOBOXCONTENT));
+		        addChild(new Box(HTMLClass.INFOBOXCONTENT));
 		HTMLNode form = helper.addFormChild(content, "/wizard/", "masterPasswordForm");
 		sendCantDeleteMasterKeysFileInner(content, form, filename, physicalSecurityLevel);
 	}
@@ -377,7 +377,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 
 		HTMLNode content = ctx.getPageMaker().getInfobox("infobox-error",
 				l10nSec("cantDeletePasswordFileTitle"), contentNode, "password-error", true).
-				addChild(new Div(HTMLClass.INFOBOXCONTENT));
+				addChild(new Box(HTMLClass.INFOBOXCONTENT));
 
 		HTMLNode form = forFirstTimeWizard ? ctx.addFormChild(content, "/wizard/", "masterPasswordForm") :
 			ctx.addFormChild(content, "/seclevels/", "masterPasswordForm");
@@ -413,7 +413,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 
 		HTMLNode content = ctx.getPageMaker().getInfobox("infobox-error",
 				l10nSec("changePasswordTitle"), contentNode, "password-change", true).
-				addChild(new Div(HTMLClass.INFOBOXCONTENT));
+				addChild(new Box(HTMLClass.INFOBOXCONTENT));
 
 		if(emptyPassword) {
 			content.addChild(new BlockText(l10nSec("passwordNotZeroLength")));
@@ -446,7 +446,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 
 		HTMLNode content = ctx.getPageMaker().getInfobox("infobox-error",
 				l10nSec("setPasswordTitle"), contentNode, "password-prompt", false).
-				addChild(new Div(HTMLClass.INFOBOXCONTENT));
+				addChild(new Box(HTMLClass.INFOBOXCONTENT));
 
 		if(emptyPassword) {
 			content.addChild(new BlockText(l10nSec("passwordNotZeroLength")));
@@ -486,7 +486,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 		contentNode.addChild(configformcontainer);
 		HTMLNode formNode = ctx.addFormChild(configformcontainer.body, ".", "configFormSecLevels");
 		// Network security level
-		formNode.addChild(new Div(HTMLClass.CONFIGPREFIX, l10nSec("networkThreatLevelShort")));
+		formNode.addChild(new Box(HTMLClass.CONFIGPREFIX, l10nSec("networkThreatLevelShort")));
 		OutputList secLevelList = new OutputList(HTMLClass.CONFIG);
 		formNode.addChild(secLevelList);
 		HTMLNode seclevelGroup = secLevelList.addItem();
@@ -497,15 +497,15 @@ public class SecurityLevelsToadlet extends Toadlet {
 		HTMLNode p = seclevelGroup.addChild(new BlockText());
 		p.addChild("b", l10nSec("networkThreatLevel.opennetLabel"));
 		p.addChild("#", ": "+l10nSec("networkThreatLevel.opennetExplain"));
-		HTMLNode div = seclevelGroup.addChild(new Div(HTMLClass.OPENNETDIV));
+		HTMLNode div = seclevelGroup.addChild(new Box(HTMLClass.OPENNETDIV));
 		
 		String controlName = "security-levels.networkThreatLevel";
 		for(NETWORK_THREAT_LEVEL level : NETWORK_THREAT_LEVEL.OPENNET_VALUES) {
 			HTMLNode input;
 			if(level == networkLevel) {
-				input = div.addChild(new BlockText()).addChild("input", new String[] { "type", "checked", "name", "value" }, new String[] { "radio", "on", controlName, level.name() });
+				input = div.addChild(new BlockText()).addChild("input", new String[]{"type", "checked", "name", "value"}, new String[]{"radio", "on", controlName, level.name()});
 			} else {
-				input = div.addChild(new BlockText()).addChild("input", new String[] { "type", "name", "value" }, new String[] { "radio", controlName, level.name() });
+				input = div.addChild(new BlockText()).addChild("input", new String[]{"type", "name", "value"}, new String[]{"radio", controlName, level.name()});
 			}
 			input.addChild("b", l10nSec("networkThreatLevel.name."+level));
 			input.addChild("#", ": ");
@@ -520,14 +520,14 @@ public class SecurityLevelsToadlet extends Toadlet {
 		p = seclevelGroup.addChild(new BlockText());
 		p.addChild("b", l10nSec("networkThreatLevel.darknetLabel"));
 		p.addChild("#", ": "+l10nSec("networkThreatLevel.darknetExplain"));
-		div = seclevelGroup.addChild(new Div(HTMLClass.DARKNETDIV));
+		div = seclevelGroup.addChild(new Box(HTMLClass.DARKNETDIV));
 		
 		for(NETWORK_THREAT_LEVEL level : NETWORK_THREAT_LEVEL.DARKNET_VALUES) {
 			HTMLNode input;
 			if(level == networkLevel) {
-				input = div.addChild(new BlockText()).addChild("input", new String[] { "type", "checked", "name", "value" }, new String[] { "radio", "on", controlName, level.name() });
+				input = div.addChild(new BlockText()).addChild("input", new String[]{"type", "checked", "name", "value"}, new String[]{"radio", "on", controlName, level.name()});
 			} else {
-				input = div.addChild(new BlockText()).addChild("input", new String[] { "type", "name", "value" }, new String[] { "radio", controlName, level.name() });
+				input = div.addChild(new BlockText()).addChild("input", new String[]{"type", "name", "value"}, new String[]{"radio", controlName, level.name()});
 			}
 			input.addChild("b", l10nSec("networkThreatLevel.name."+level));
 			input.addChild("#", ": ");
@@ -540,7 +540,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 		seclevelGroup.addChild(new BlockText()).addChild("b", l10nSec("networkThreatLevel.opennetFriendsWarning"));
 
 		// Physical security level
-		formNode.addChild(new Div(HTMLClass.CONFIGPREFIX, l10nSec("physicalThreatLevelShort")));
+		formNode.addChild(new Box(HTMLClass.CONFIGPREFIX, l10nSec("physicalThreatLevelShort")));
 		secLevelList = new OutputList(HTMLClass.CONFIG);
 		seclevelGroup = secLevelList.addItem();
 		seclevelGroup.addChild("#", l10nSec("physicalThreatLevel"));
@@ -564,9 +564,9 @@ public class SecurityLevelsToadlet extends Toadlet {
 		for(PHYSICAL_THREAT_LEVEL level : PHYSICAL_THREAT_LEVEL.values()) {
 			HTMLNode input;
 			if(level == physicalLevel) {
-				input = seclevelGroup.addChild(new BlockText()).addChild("input", new String[] { "type", "checked", "name", "value" }, new String[] { "radio", "on", controlName, level.name() });
+				input = seclevelGroup.addChild(new BlockText()).addChild("input", new String[]{"type", "checked", "name", "value"}, new String[]{"radio", "on", controlName, level.name()});
 			} else {
-				input = seclevelGroup.addChild(new BlockText()).addChild("input", new String[] { "type", "name", "value" }, new String[] { "radio", controlName, level.name() });
+				input = seclevelGroup.addChild(new BlockText()).addChild("input", new String[]{"type", "name", "value"}, new String[]{"radio", controlName, level.name()});
 			}
 			input.addChild("b", l10nSec("physicalThreatLevel.name."+level));
 			input.addChild("#", ": ");
@@ -653,7 +653,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 		HTMLNode contentNode = helper.getPageContent(l10nSec("passwordFileCorruptedTitle"));
 		HTMLNode infoBox = helper.getInfobox("infobox-error",
 		        l10nSec("passwordFileCorruptedTitle"), contentNode, "password-error", false).
-		        addChild(new Div(HTMLClass.INFOBOXCONTENT));
+		        addChild(new Box(HTMLClass.INFOBOXCONTENT));
 		sendPasswordFileCorruptedPageInner(infoBox, masterPasswordFile);
 	}
 
@@ -663,7 +663,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 		HTMLNode contentNode = page.content;
 		HTMLNode infoBox = ctx.getPageMaker().getInfobox("infobox-error",
 		        l10nSec("passwordFileCorruptedTitle"), contentNode, "password-error", false).
-		        addChild(new Div(HTMLClass.INFOBOXCONTENT));
+		        addChild(new Box(HTMLClass.INFOBOXCONTENT));
 		sendPasswordFileCorruptedPageInner(infoBox, masterPasswordFile);
 		return pageNode;
 	}
@@ -693,7 +693,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 
 		HTMLNode content = ctx.getPageMaker().getInfobox("infobox-error",
 				wasWrong ? l10nSec("passwordWrongTitle") : l10nSec("enterPasswordTitle"), contentNode, "password-error", false).
-				addChild(new Div(HTMLClass.INFOBOXCONTENT));
+				addChild(new Box(HTMLClass.INFOBOXCONTENT));
 
 		generatePasswordFormPage(wasWrong, ctx.getContainer(), content, false, false, false, null, null);
 

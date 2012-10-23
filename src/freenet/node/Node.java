@@ -36,7 +36,7 @@ import java.util.Random;
 import java.util.Set;
 
 import freenet.clients.http.uielements.BlockText;
-import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.Box;
 import freenet.clients.http.uielements.InfoboxWidget;
 import freenet.clients.http.uielements.OutputList;
 import org.tanukisoftware.wrapper.WrapperManager;
@@ -3165,7 +3165,7 @@ public class Node implements TimeSkewDetectorCallback {
 
 		@Override
 		public HTMLNode getHTMLText() {
-			Div content = new Div();
+			Box content = new Box();
 			SecurityLevelsToadlet.generatePasswordFormPage(false, clientCore.getToadletContainer(), content, false, false, false, null, null);
 			return content;
 		}
@@ -3288,9 +3288,9 @@ public class Node implements TimeSkewDetectorCallback {
 
 				@Override
 				public HTMLNode getHTMLText() {
-					Div div_ = new Div();
-					div_.addChild("#", NodeL10n.getBase().getString("Node.storeSaltHashMigrated"));
-					OutputList keyList = div_.addList();
+					Box box_ = new Box();
+					box_.addChild("#", NodeL10n.getBase().getString("Node.storeSaltHashMigrated"));
+					OutputList keyList = box_.addList();
 
 					for (String type : new String[] { "chk", "pubkey", "ssk" })
 						for (String storecache : new String[] { "store", "store.keys", "store.lru", "cache",
@@ -3304,7 +3304,7 @@ public class Node implements TimeSkewDetectorCallback {
 					if (dbDir.exists())
 						keyList.addItem(dbDir.getAbsolutePath());
 
-					return div_;
+					return box_;
 				}
 
 				@Override

@@ -678,8 +678,8 @@ public class StatisticsToadlet extends Toadlet {
 	}
 
 	private void drawClientRequestersBox(HTMLNode box) {
-		box.addChild(new Div(HTMLClass.INFOBOXHEADER, l10n("clientRequesterObjects")));
-		Div masterContent = new Div(HTMLClass.INFOBOXCONTENT);
+		box.addChild(new Box(HTMLClass.INFOBOXHEADER, l10n("clientRequesterObjects")));
+		Box masterContent = new Box(HTMLClass.INFOBOXCONTENT);
 		box.addChild(masterContent);
 		Table table = masterContent.addTable();
 		Row row = table.addRow();
@@ -730,11 +730,11 @@ public class StatisticsToadlet extends Toadlet {
 
 	private void drawStoreSizeBox(InfoboxWidget storeSizeInfobox, double loc, long nodeUptimeSeconds) {
 		storeSizeInfobox.setTitle(l10n("datastore"));
-		Div scrollDiv = new Div();
-		scrollDiv.addAttribute("style", "overflow:scr");
-		storeSizeInfobox.body.addChild(scrollDiv);
+		Box scrollBox = new Box();
+		scrollBox.addAttribute("style", "overflow:scr");
+		storeSizeInfobox.body.addChild(scrollBox);
 
-		Table storeSizeTable = scrollDiv.addTable(HTMLClass.NOBORDER);
+		Table storeSizeTable = scrollBox.addTable(HTMLClass.NOBORDER);
 		Row row = storeSizeTable.addRow();
 
 		//FIXME - Non-breaking space? "Stat-name"?
@@ -1353,7 +1353,7 @@ public class StatisticsToadlet extends Toadlet {
 		Cell nodeCircleTableCell = nodeCircleTableRow.addCell(10, HTMLClass.FIRST);
 		Cell nodeHistogramLegendCell;
 		Cell nodeHistogramGraphCell;
-		Div nodeCircleInfoboxContent = nodeCircleTableCell.addDiv(HTMLClass.PEERCIRCLE);
+		Box nodeCircleInfoboxContent = nodeCircleTableCell.addDiv(HTMLClass.PEERCIRCLE);
 		nodeCircleInfoboxContent.addAttribute("style", "position: relative; height: " + ((PEER_CIRCLE_RADIUS + PEER_CIRCLE_ADDITIONAL_FREE_SPACE) * 2) + "px; width: " + ((PEER_CIRCLE_RADIUS + PEER_CIRCLE_ADDITIONAL_FREE_SPACE) * 2) + "px");
 		nodeCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0, false, 1.0), HTMLClass.MARK, "|");
 		nodeCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0.125, false, 1.0), HTMLClass.MARK, "+");
@@ -1416,7 +1416,7 @@ public class StatisticsToadlet extends Toadlet {
 				 nodeHistogramGraphCell2 = nodeHistogramGraphCell2.addInlineBox(HTMLClass.ME);
 			}
 			nodeHistogramGraphCell2.addChild("#", fix1p1.format(((double) i) / incomingRequestLocation.length ));
-			Div graphCell = new Div(HTMLClass.HISTOGRAMCONNECTED, "\u00a0");
+			Box graphCell = new Box(HTMLClass.HISTOGRAMCONNECTED, "\u00a0");
 			graphCell.addAttribute("style", "height: " + fix3pctUS.format(((double)incomingRequestLocation[i]) / incomingRequestsCount) + "; width: 100%;");
 			nodeHistogramGraphCell.addChild(graphCell);
 		}
@@ -1436,10 +1436,10 @@ public class StatisticsToadlet extends Toadlet {
 				 nodeHistogramGraphCell2 = nodeHistogramGraphCell2.addInlineBox(HTMLClass.ME);
 			}
 			nodeHistogramGraphCell2.addChild("#", fix1p1.format(((double) i) / locallyOriginatingRequests.length ));
-			Div graphCell = new Div(HTMLClass.HISTOGRAMCONNECTED, "\u00a0");
+			Box graphCell = new Box(HTMLClass.HISTOGRAMCONNECTED, "\u00a0");
 			graphCell.addAttribute("style", "height: " + fix3pctUS.format(((double)locallyOriginatingRequests[i]) / locallyOriginatingRequestsCount) + "; width: 100%;");
 			nodeHistogramGraphCell.addChild(graphCell);
-			graphCell = new Div(HTMLClass.HISTOGRAMDISCONNECTED, "\u00a0");
+			graphCell = new Box(HTMLClass.HISTOGRAMDISCONNECTED, "\u00a0");
 			graphCell.addAttribute("style", "height: " + fix3pctUS.format(((double) remotelyOriginatingRequests[i]) / remotelyOriginatingRequestsCount) + "; width: 100%;");
 			nodeHistogramGraphCell.addChild(graphCell);
 		}
@@ -1458,7 +1458,7 @@ public class StatisticsToadlet extends Toadlet {
 		Cell peerCircleTableCell = peerCircleTableRow.addCell(10, HTMLClass.FIRST);
 		Cell peerHistogramLegendCell;
 		Cell peerHistogramGraphCell;
-		Div peerCircleInfoboxContent = peerCircleTableCell.addDiv(HTMLClass.PEERCIRCLE);
+		Box peerCircleInfoboxContent = peerCircleTableCell.addDiv(HTMLClass.PEERCIRCLE);
 		peerCircleInfoboxContent.addAttribute("style", "position: relative; height: " + ((PEER_CIRCLE_RADIUS + PEER_CIRCLE_ADDITIONAL_FREE_SPACE) * 2) + "px; width: " + ((PEER_CIRCLE_RADIUS + PEER_CIRCLE_ADDITIONAL_FREE_SPACE) * 2) + "px");
 		peerCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0, false, 1.0), HTMLClass.MARK, "|");
 		peerCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0.125, false, 1.0), HTMLClass.MARK, "+");
@@ -1505,15 +1505,15 @@ public class StatisticsToadlet extends Toadlet {
 			peerHistogramLegendCell = peerHistogramLegendTableRow.addCell();
 			peerHistogramGraphCell = peerHistogramGraphTableRow.addCell();
 			peerHistogramGraphCell.addAttribute("style", "height: 100px;");
-			peerHistogramLegendCell.addChild(new Div(HTMLClass.HISTOGRAMLABEL)).addChild("#", fix1p2.format(((double) i) / ( HISTOGRAM_LENGTH * 2 )));
+			peerHistogramLegendCell.addChild(new Box(HTMLClass.HISTOGRAMLABEL)).addChild("#", fix1p2.format(((double) i) / ( HISTOGRAM_LENGTH * 2 )));
 			//
 			histogramPercent = ((double) histogramConnected[ i ] ) / newPeerCount;
-			Div graphCell = new Div(HTMLClass.HISTOGRAMCONNECTED, "\u00a0");
+			Box graphCell = new Box(HTMLClass.HISTOGRAMCONNECTED, "\u00a0");
 			graphCell.addAttribute("style", "height: " + fix3pctUS.format(histogramPercent) + "; width: 100%;");
 			peerHistogramGraphCell.addChild(graphCell);
 			//
 			histogramPercent = ((double) histogramDisconnected[ i ] ) / newPeerCount;
-			graphCell = new Div(HTMLClass.HISTOGRAMDISCONNECTED, "\u00a0");
+			graphCell = new Box(HTMLClass.HISTOGRAMDISCONNECTED, "\u00a0");
 			graphCell.addAttribute("style", "height: " + fix3pctUS.format(histogramPercent) + "; width: 100%;");
 			peerHistogramGraphCell.addChild(graphCell);
 		}

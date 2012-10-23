@@ -34,31 +34,31 @@ public class OutputNode extends HTMLNode {
 		return childNode;
 	}
 
-	//methods for creating Div children
-	public Div addDiv() {
-		Div newDiv = new Div();
-		addChild(newDiv);
-		return newDiv;
+	//methods for creating Box children
+	public Box addDiv() {
+		Box newBox = new Box();
+		addChild(newBox);
+		return newBox;
 	}
-	public Div addDiv(HTMLID ID) {
-		Div newDiv = new Div(ID);
-		addChild(newDiv);
-		return newDiv;
+	public Box addDiv(HTMLID ID) {
+		Box newBox = new Box(ID);
+		addChild(newBox);
+		return newBox;
 	}
-	public Div addDiv(HTMLID ID, String content) {
-		Div newDiv = new Div(ID, content);
-		addChild(newDiv);
-		return newDiv;
+	public Box addDiv(HTMLID ID, String content) {
+		Box newBox = new Box(ID, content);
+		addChild(newBox);
+		return newBox;
 	}
-	public Div addDiv(HTMLClass CLASS) {
-		Div newDiv = new Div(CLASS);
-		addChild(newDiv);
-		return newDiv;
+	public Box addDiv(HTMLClass CLASS) {
+		Box newBox = new Box(CLASS);
+		addChild(newBox);
+		return newBox;
 	}
-	public Div addDiv(HTMLClass CLASS, String content) {
-		Div newDiv = new Div(CLASS, content);
-		addChild(newDiv);
-		return newDiv;
+	public Box addDiv(HTMLClass CLASS, String content) {
+		Box newBox = new Box(CLASS, content);
+		addChild(newBox);
+		return newBox;
 	}
 
 	//methods for creating blockText children

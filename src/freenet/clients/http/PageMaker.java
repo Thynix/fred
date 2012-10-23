@@ -375,12 +375,12 @@ public final class PageMaker {
 			bodyNode.addChild("script", new String[] { "type", "language" }, new String[] { "text/javascript", "javascript" }).addChild("%", PushingTagReplacerCallback.getClientSideLocalizationScript());
 		}
 
-		Div pageDiv = new Div(HTMLID.PAGE);
-		bodyNode.addChild(pageDiv);
+		Box pageBox = new Box(HTMLID.PAGE);
+		bodyNode.addChild(pageBox);
 		//generate the statusbar
 		if (renderParameters.isRenderStatus() && fullAccess) {
-			Div statusbarcontainer = pageDiv.addDiv(HTMLID.STATUSBARCONTAINER);
-			Div statusbar = statusbarcontainer.addDiv(HTMLID.STATUSBAR);
+			Box statusbarcontainer = pageBox.addDiv(HTMLID.STATUSBARCONTAINER);
+			Box statusbar = statusbarcontainer.addDiv(HTMLID.STATUSBAR);
 			if (node != null && node.clientCore != null) {
 				OutputNode alerts = node.clientCore.alerts.createSummary(true);
 				if (alerts != null) {
@@ -399,13 +399,13 @@ public final class PageMaker {
 				/* overwrite any previously existing parameter value. */
 				parameters.put(MODE_SWITCH_PARAMETER, newModeSwitchValues);
 				statusbar.addDiv(HTMLClass.SEPERATOR, "\u00a0");
-				Div switchmode = statusbar.addDiv(HTMLID.STATUSBARSWITCHMODE);
+				Box switchmode = statusbar.addDiv(HTMLID.STATUSBARSWITCHMODE);
 				switchmode.addClass(isAdvancedMode ? HTMLClass.SIMPLE : HTMLClass.ADVANCED);
 				switchmode.addLink("?" + HTTPRequestImpl.createQueryString(parameters, false), isAdvancedMode ? NodeL10n.getBase().getString("StatusBar.switchToSimpleMode") : NodeL10n.getBase().getString("StatusBar.switchToAdvancedMode"));
 			}
 			if (node != null && node.clientCore != null) {
 				statusbar.addDiv(HTMLClass.SEPERATOR, "\u00a0");
-				Div secLevels = statusbar.addDiv(HTMLID.STATUSBARSECLEVELS);
+				Box secLevels = statusbar.addDiv(HTMLID.STATUSBARSECLEVELS);
 				secLevels.addChild("#", NodeL10n.getBase().getString("SecurityLevels.statusBarPrefix"));
 				final HTMLNode network = secLevels.addLink("/seclevels/", SecurityLevels.localisedName(node.securityLevels.getNetworkThreatLevel()) + "\u00a0");
 				network.addAttribute("title", NodeL10n.getBase().getString("SecurityLevels.networkThreatLevelShort"));
@@ -448,24 +448,24 @@ public final class PageMaker {
 						additionalClass = HTMLClass.PEERSFULL;
 					}
 				}
-				Div progressBar = statusbar.addDiv(HTMLClass.PROGRESSBAR);
-				Div peers = progressBar.addDiv(HTMLClass.PROGRESSBARDONE);
+				Box progressBar = statusbar.addDiv(HTMLClass.PROGRESSBAR);
+				Box peers = progressBar.addDiv(HTMLClass.PROGRESSBARDONE);
 				peers.addClass(HTMLClass.PROGRESSBARPEERS);
 				peers.addClass(additionalClass);
 				peers.addAttribute("style", "width: " + Math.min(100, Math.floor(100 * connectedRatio)) + "%;");
-				Div connectedpeers = progressBar.addDiv(HTMLClass.PROGRESSBARFINAL, Integer.toString(connectedPeers) + ((totalPeers != Integer.MAX_VALUE) ? " / " + Integer.toString(totalPeers) : ""));
+				Box connectedpeers = progressBar.addDiv(HTMLClass.PROGRESSBARFINAL, Integer.toString(connectedPeers) + ((totalPeers != Integer.MAX_VALUE) ? " / " + Integer.toString(totalPeers) : ""));
 				connectedpeers.addAttribute("title", NodeL10n.getBase().getString("StatusBar.connectedPeers", new String[]{"X", "Y"}, new String[]{Integer.toString(node.peers.countConnectedDarknetPeers()), Integer.toString(node.peers.countConnectedOpennetPeers())}));
 			}
 		}
 		//Generate the page header area
-		Div topbar = pageDiv.addDiv(HTMLID.TOPBAR);
+		Box topbar = pageBox.addDiv(HTMLID.TOPBAR);
 		topbar.addChild("h1", title);
 		if (renderParameters.isRenderNavigationLinks()) {
 			SubMenu selected = null;
 			// Render the full menu.
-			Div navbarDiv = new Div(HTMLID.NAVBAR);
-			pageDiv.addChild(navbarDiv);
-			OutputList navbarMainList = navbarDiv.addList(HTMLID.NAVLIST);
+			Box navbarBox = new Box(HTMLID.NAVBAR);
+			pageBox.addChild(navbarBox);
+			OutputList navbarMainList = navbarBox.addList(HTMLID.NAVLIST);
 			synchronized (this) {
 				for (SubMenu menu : menuList) {
 					OutputList subnavlist = new OutputList();
@@ -560,7 +560,7 @@ public final class PageMaker {
 			}
 			// Some themes want the selected submenu separately.
 			if(selected != null) {
-				OutputList subnavlist = pageDiv.addDiv(HTMLID.SELECTEDSUBNAVBAR).addList(HTMLID.SELECTEDSUBNAVBARLIST);
+				OutputList subnavlist = pageBox.addDiv(HTMLID.SELECTEDSUBNAVBAR).addList(HTMLID.SELECTEDSUBNAVBARLIST);
 				for (String navigationLink :  fullAccess ? selected.navigationLinkTexts : selected.navigationLinkTextsNonFull) {
 					//Empty
 					LinkEnabledCallback cb = selected.navigationLinkCallbacks.get(navigationLink);
@@ -592,8 +592,8 @@ public final class PageMaker {
 				}
 			}
 		}
-		Div contentDiv = pageDiv.addDiv(HTMLID.CONTENT);
-		return new PageNode(pageNode, headNode, contentDiv);
+		Box contentBox = pageBox.addDiv(HTMLID.CONTENT);
+		return new PageNode(pageNode, headNode, contentBox);
 	}
 
 	/**
@@ -682,7 +682,7 @@ public final class PageMaker {
 			classes.append(title);
 		}
 
-		Div infobox = new Div();
+		Box infobox = new Box();
 		//It's not possible to use the enum values here because of the way this method is written.
 		infobox.addAttribute("class", classes.toString());
 
@@ -690,8 +690,8 @@ public final class PageMaker {
 			infobox.addAttribute("id", title);
 		}
 
-		infobox.addChild(new Div(HTMLClass.INFOBOXHEADER)).addChild(header);
-		return new InfoboxNode(infobox, infobox.addChild(new Div(HTMLClass.INFOBOXCONTENT)));
+		infobox.addChild(new Box(HTMLClass.INFOBOXHEADER)).addChild(header);
+		return new InfoboxNode(infobox, infobox.addChild(new Box(HTMLClass.INFOBOXCONTENT)));
 	}
 	
 	private HTMLNode getOverrideContent() {

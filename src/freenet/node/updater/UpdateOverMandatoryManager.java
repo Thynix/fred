@@ -59,7 +59,7 @@ import freenet.support.SizeUtil;
 import freenet.support.TimeUtil;
 import freenet.support.Logger.LogLevel;
 import freenet.support.api.Bucket;
-import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.Box;
 import freenet.clients.http.uielements.OutputList;
 import freenet.support.io.ArrayBucket;
 import freenet.support.io.FileBucket;
@@ -609,9 +609,9 @@ public class UpdateOverMandatoryManager implements RequestClient {
 
 		@Override
 		public HTMLNode getHTMLText() {
-			Div div_ = new Div();
+			Box box_ = new Box();
 
-			div_.addBlockText().addChild("#", l10n("intro"));
+			box_.addBlockText().addChild("#", l10n("intro"));
 
 			PeerNode[][] nodes = getNodesSayBlown();
 			PeerNode[] nodesSayBlownConnected = nodes[0];
@@ -619,35 +619,35 @@ public class UpdateOverMandatoryManager implements RequestClient {
 			PeerNode[] nodesSayBlownFailedTransfer = nodes[2];
 
 			if(nodesSayBlownConnected.length > 0)
-				div_.addBlockText().addChild("#", l10n("fetching"));
+				box_.addBlockText().addChild("#", l10n("fetching"));
 			else
-				div_.addBlockText().addChild("#", l10n("failedFetch"));
+				box_.addBlockText().addChild("#", l10n("failedFetch"));
 
 			if(nodesSayBlownConnected.length > 0) {
-				div_.addBlockText().addChild("#", l10n("connectedSayBlownLabel"));
-				OutputList list = div_.addList();
+				box_.addBlockText().addChild("#", l10n("connectedSayBlownLabel"));
+				OutputList list = box_.addList();
 				for(int i = 0; i < nodesSayBlownConnected.length; i++) {
 					list.addItem(nodesSayBlownConnected[i].userToString() + " (" + nodesSayBlownConnected[i].getPeer() + ")");
 				}
 			}
 
 			if(nodesSayBlownDisconnected.length > 0) {
-				div_.addBlockText().addChild("#", l10n("disconnectedSayBlownLabel"));
-				OutputList list = div_.addList();
+				box_.addBlockText().addChild("#", l10n("disconnectedSayBlownLabel"));
+				OutputList list = box_.addList();
 				for(int i = 0; i < nodesSayBlownDisconnected.length; i++) {
 					list.addItem(nodesSayBlownDisconnected[i].userToString() + " (" + nodesSayBlownDisconnected[i].getPeer() + ")");
 				}
 			}
 
 			if(nodesSayBlownFailedTransfer.length > 0) {
-				div_.addBlockText().addChild("#", l10n("failedTransferSayBlownLabel"));
-				OutputList list = div_.addList();
+				box_.addBlockText().addChild("#", l10n("failedTransferSayBlownLabel"));
+				OutputList list = box_.addList();
 				for(int i = 0; i < nodesSayBlownFailedTransfer.length; i++) {
 					list.addItem(nodesSayBlownFailedTransfer[i].userToString() + " (" + nodesSayBlownFailedTransfer[i].getPeer() + ")");
 				}
 			}
 
-			return div_;
+			return box_;
 		}
 
 		private String l10n(String key) {

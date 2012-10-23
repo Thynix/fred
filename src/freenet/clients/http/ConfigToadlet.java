@@ -69,7 +69,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 
 		@Override
 		public HTMLNode getHTMLText() {
-			HTMLNode alertNode = new Div();
+			HTMLNode alertNode = new Box();
 			alertNode.addChild("#", l10n("needRestart"));
 
 			if (node.isUsingWrapper()) {
@@ -79,11 +79,11 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 						new String[] { "action", "method", "enctype", "id",
 								"accept-charset" },
 						new String[] { "/", "post", "multipart/form-data",
-								"restartForm", "utf-8" }).addChild(new Div());
+								"restartForm", "utf-8" }).addChild(new Box());
 				restartForm.addChild("input", new String[] { "type", "name",
 						"value" }, new String[] { "hidden", "formPassword",
 						node.clientCore.formPassword });
-				restartForm.addChild(new Div());
+				restartForm.addChild(new Box());
 				restartForm.addChild("input",//
 						new String[] { "type", "name" },//
 						new String[] { "hidden", "restart" });
@@ -403,7 +403,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 					.getPageMaker()
 					.getInfobox("infobox-error", l10n("appliedFailureTitle"),
 							contentNode, "configuration-error", true)
-					.addChild(new Div(HTMLClass.INFOBOXCONTENT));
+					.addChild(new Box(HTMLClass.INFOBOXCONTENT));
 			content.addChild("#", l10n("appliedFailureExceptions"));
 			content.addChild("br");
 			content.addChild("#", errbuf.toString());
@@ -470,7 +470,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 						MAX_PARAM_VALUE_SIZE);
 			}
 			if (curValue != null) {
-				formNode.addChild(new Div(HTMLClass.CONFIGPREFIX, l10n("wrapper")));
+				formNode.addChild(new Box(HTMLClass.CONFIGPREFIX, l10n("wrapper")));
 				OutputList configOptionList = new OutputList(HTMLClass.CONFIG);
 				formNode.addChild(configOptionList);
 				Item configOption = configOptionList.addItem();
@@ -625,7 +625,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 		}
 
 		if (displayedConfigElements > 0) {
-			formNode.addChild(new Div(HTMLClass.CONFIGPREFIX, (plugin == null) ? l10n(subConfig.getPrefix())
+			formNode.addChild(new Box(HTMLClass.CONFIGPREFIX, (plugin == null) ? l10n(subConfig.getPrefix())
 				: plugin.getString(subConfig.getPrefix())));
 			formNode.addChild("a", "id", subConfig.getPrefix());
 			formNode.addChild(configGroupUlNode);

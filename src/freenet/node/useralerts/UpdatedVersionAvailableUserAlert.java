@@ -5,13 +5,13 @@ package freenet.node.useralerts;
 
 import java.io.File;
 
+import freenet.clients.http.uielements.Box;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
 import freenet.node.updater.NodeUpdateManager;
 import freenet.node.updater.RevocationChecker;
 import freenet.support.HTMLNode;
 import freenet.support.TimeUtil;
-import freenet.clients.http.uielements.Div;
 
 public class UpdatedVersionAvailableUserAlert extends AbstractUserAlert {
 	private final NodeUpdateManager updater;
@@ -83,7 +83,7 @@ public class UpdatedVersionAvailableUserAlert extends AbstractUserAlert {
 		
 		UpdateThingy ut = createUpdateThingy();
 		
-		Div alertNode = new Div();
+		Box alertNode = new Box();
 		
 		alertNode.addChild("#", ut.firstBit);
 		

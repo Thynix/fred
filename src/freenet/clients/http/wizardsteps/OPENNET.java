@@ -2,10 +2,10 @@ package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
 import freenet.clients.http.uielements.BlockText;
+import freenet.clients.http.uielements.Box;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
-import freenet.clients.http.uielements.Div;
 import freenet.clients.http.uielements.HTMLClass;
 import freenet.clients.http.uielements.OutputList;
 
@@ -55,10 +55,10 @@ public class OPENNET implements Step {
 		        new String[] { "type", "name", "value" },
 		        new String[] { "submit", "next", NodeL10n.getBase().getString("Toadlet.next")});
 
-		Div foot = new Div(HTMLClass.TOGGLEABLE);
+		Box foot = new Box(HTMLClass.TOGGLEABLE);
 		infoboxContent.addChild(foot);
 		foot.addChild("i", "¹: " + WizardL10n.l10n("opennetChoiceHowSafeIsFreenetToggle"));
-		Div footHidden = foot.addDiv(HTMLClass.HIDDEN);
+		Box footHidden = foot.addDiv(HTMLClass.HIDDEN);
 		OutputList footList = footHidden.addList(OutputList.Type.ORDERED, HTMLClass.NULL);
 		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetStupid"));
 		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetFriends") + "²");

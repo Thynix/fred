@@ -19,7 +19,7 @@ import java.util.EnumMap;
 import java.util.Enumeration;
 import java.util.Map;
 
-import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.Box;
 import freenet.clients.http.uielements.Row;
 import freenet.clients.http.uielements.Table;
 import freenet.io.comm.ByteCounter;
@@ -45,7 +45,6 @@ import freenet.support.LRUQueue;
 import freenet.support.LogThresholdCallback;
 import freenet.support.Logger;
 import freenet.support.SimpleFieldSet;
-import freenet.support.SizeUtil;
 import freenet.support.TimeSortedHashtable;
 import freenet.support.Logger.LogLevel;
 import freenet.support.io.ByteArrayRandomAccessThing;
@@ -1196,7 +1195,7 @@ public class OpennetManager {
 			announcer.maybeSendAnnouncementOffThread();
 	}
 
-	public void drawOpennetStatsBox(Div box) {
+	public void drawOpennetStatsBox(Box box) {
 		Table OpennetStats = box.addTable();
 		Row headerRow = OpennetStats.addRow();
 

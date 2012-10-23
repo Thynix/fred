@@ -1,13 +1,13 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
+import freenet.clients.http.uielements.Box;
 import freenet.config.Config;
 import freenet.config.ConfigException;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.api.HTTPRequest;
-import freenet.clients.http.uielements.Div;
 
 /**
  * Allows the user to choose a node name for Darknet.
@@ -30,7 +30,7 @@ public class NAME_SELECTION implements Step {
 		HTMLNode nnameForm = helper.addFormChild(nnameInfoboxContent, ".", "nnameForm");
 		nnameForm.addChild("input", "name", "nname");
 
-		HTMLNode lineBelow = nnameForm.addChild(new Div());
+		HTMLNode lineBelow = nnameForm.addChild(new Box());
 		lineBelow.addChild("input",
 		        new String[] { "type", "name", "value" },
 		        new String[] { "submit", "back", NodeL10n.getBase().getString("Toadlet.back")});

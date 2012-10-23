@@ -347,12 +347,12 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 			        new String[] { "submit", "select-location",
 				        NodeL10n.getBase().getString("QueueToadlet.browseToChange")+"..."} );
 			if(!dontShowFilter) {
-				HTMLNode filterControl = optionForm.addChild(new Div(HTMLClass.NONE, l10n("filterData")));
+				HTMLNode filterControl = optionForm.addChild(new Box(HTMLClass.NONE, l10n("filterData")));
 				HTMLNode f = filterControl.addChild("input",
 				        new String[] { "type", "name", "value" },
 				        new String[] { "checkbox", "filterData", "filterData"});
 				if(filterChecked) f.addAttribute("checked", "checked");
-				filterControl.addChild(new Div(HTMLClass.NONE, l10n("filterDataMessage")));
+				filterControl.addChild(new Box(HTMLClass.NONE, l10n("filterDataMessage")));
 			}
 			if (threatLevel == PHYSICAL_THREAT_LEVEL.HIGH) {
 				optionForm.addChild("br");
@@ -387,12 +387,12 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 			        "FProxyToadlet.downloadInBackgroundToTempSpace",
 			        new String[] { "page", "bold" }, new HTMLNode[] { DOWNLOADS_LINK, HTMLNode.STRONG });
 			if(!dontShowFilter) {
-				HTMLNode filterControl = optionForm.addChild(new Div(HTMLClass.NONE, l10n("filterData")));
+				HTMLNode filterControl = optionForm.addChild(new Box(HTMLClass.NONE, l10n("filterData")));
 				HTMLNode f = filterControl.addChild("input",
 						new String[] { "type", "name", "value" },
 						new String[] { "checkbox", "filterData", "filterData"});
 				if(filterChecked) f.addAttribute("checked", "checked");
-				filterControl.addChild(new Div(HTMLClass.NONE, l10n("filterDataMessage")));
+				filterControl.addChild(new Box(HTMLClass.NONE, l10n("filterDataMessage")));
 			}
 		}
 	}

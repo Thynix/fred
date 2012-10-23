@@ -9,11 +9,11 @@ import freenet.clients.http.FProxyToadlet;
 import freenet.clients.http.SimpleToadletServer;
 import freenet.clients.http.ToadletContext;
 import freenet.clients.http.complexhtmlnodes.SecondCounterNode;
+import freenet.clients.http.uielements.Box;
 import freenet.keys.FreenetURI;
 import freenet.support.Base64;
 import freenet.support.HTMLNode;
 import freenet.support.SizeUtil;
-import freenet.clients.http.uielements.Div;
 import freenet.clients.http.uielements.HTMLClass;
 
 /** This pushed element renders the information box when a page is downloading on the progress page. */
@@ -47,7 +47,7 @@ public class ProgressInfoElement extends BaseUpdateableElement {
 		FProxyFetchWaiter waiter = tracker.makeWaiterForFetchInProgress(key, maxSize, fctx);
 		FProxyFetchResult fr = waiter.getResult();
 		if (fr == null) {
-			addChild( new Div(HTMLClass.NONE, "No fetcher found"));
+			addChild( new Box(HTMLClass.NONE, "No fetcher found"));
 		}
 		
 		addChild("#", FProxyToadlet.l10n("filenameLabel")+ " ");
