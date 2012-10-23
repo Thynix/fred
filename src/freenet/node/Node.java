@@ -35,7 +35,9 @@ import java.util.MissingResourceException;
 import java.util.Random;
 import java.util.Set;
 
+import freenet.clients.http.uielements.BlockText;
 import freenet.clients.http.uielements.Div;
+import freenet.clients.http.uielements.InfoboxWidget;
 import freenet.clients.http.uielements.OutputList;
 import org.tanukisoftware.wrapper.WrapperManager;
 
@@ -5182,21 +5184,19 @@ public class Node implements TimeSkewDetectorCallback {
 		return false;
 	}
 
-	public void drawClientCacheBox(HTMLNode storeSizeInfobox) {
-		HTMLNode div_ = storeSizeInfobox.addChild(new Div());
-		div_.addChild("p", "Client cache max size: " + this.maxClientCacheKeys + " keys");
-		div_.addChild("p", "Client cache size: CHK " + this.chkClientcache.keyCount() + " pubkey " + this.pubKeyClientcache.keyCount() + " SSK " + this.sskClientcache.keyCount());
-		div_.addChild("p", "Client cache misses: CHK " + this.chkClientcache.misses() + " pubkey " + this.pubKeyClientcache.misses() + " SSK " + this.sskClientcache.misses());
-		div_.addChild("p", "Client cache hits: CHK " + this.chkClientcache.hits() + " pubkey " + this.pubKeyClientcache.hits() + " SSK " + this.sskClientcache.hits());
+	public void drawClientCacheBox(InfoboxWidget storeSizeInfobox) {
+		storeSizeInfobox.body.addBlockText("Client cache max size: " + this.maxClientCacheKeys + " keys");
+		storeSizeInfobox.body.addBlockText("Client cache size: CHK " + this.chkClientcache.keyCount() + " pubkey " + this.pubKeyClientcache.keyCount() + " SSK " + this.sskClientcache.keyCount());
+		storeSizeInfobox.body.addBlockText("Client cache misses: CHK " + this.chkClientcache.misses() + " pubkey " + this.pubKeyClientcache.misses() + " SSK " + this.sskClientcache.misses());
+		storeSizeInfobox.body.addBlockText("Client cache hits: CHK " + this.chkClientcache.hits() + " pubkey " + this.pubKeyClientcache.hits() + " SSK " + this.sskClientcache.hits());
 	}
 
-	public void drawSlashdotCacheBox(HTMLNode storeSizeInfobox) {
-		HTMLNode div_ = storeSizeInfobox.addChild(new Div());
-		div_.addChild("p", "Slashdot/ULPR cache max size: " + maxSlashdotCacheKeys + " keys");
-		div_.addChild("p", "Slashdot/ULPR cache size: CHK " + this.chkSlashdotcache.keyCount() + " pubkey " + this.pubKeySlashdotcache.keyCount() + " SSK " + this.sskSlashdotcache.keyCount());
-		div_.addChild("p", "Slashdot/ULPR cache misses: CHK " + this.chkSlashdotcache.misses() + " pubkey " + this.pubKeySlashdotcache.misses() + " SSK " + this.sskSlashdotcache.misses());
-		div_.addChild("p", "Slashdot/ULPR cache hits: CHK " + this.chkSlashdotcache.hits() + " pubkey " + this.pubKeySlashdotcache.hits() + " SSK " + this.sskSlashdotcache.hits());
-		div_.addChild("p", "Slashdot/ULPR cache writes: CHK " + this.chkSlashdotcache.writes() + " pubkey " + this.pubKeySlashdotcache.writes() + " SSK " + this.sskSlashdotcache.writes());
+	public void drawSlashdotCacheBox(InfoboxWidget storeSizeInfobox) {
+		storeSizeInfobox.body.addBlockText("Slashdot/ULPR cache max size: " + maxSlashdotCacheKeys + " keys");
+		storeSizeInfobox.body.addBlockText("Slashdot/ULPR cache size: CHK " + this.chkSlashdotcache.keyCount() + " pubkey " + this.pubKeySlashdotcache.keyCount() + " SSK " + this.sskSlashdotcache.keyCount());
+		storeSizeInfobox.body.addBlockText("Slashdot/ULPR cache misses: CHK " + this.chkSlashdotcache.misses() + " pubkey " + this.pubKeySlashdotcache.misses() + " SSK " + this.sskSlashdotcache.misses());
+		storeSizeInfobox.body.addBlockText("Slashdot/ULPR cache hits: CHK " + this.chkSlashdotcache.hits() + " pubkey " + this.pubKeySlashdotcache.hits() + " SSK " + this.sskSlashdotcache.hits());
+		storeSizeInfobox.body.addBlockText("Slashdot/ULPR cache writes: CHK " + this.chkSlashdotcache.writes() + " pubkey " + this.pubKeySlashdotcache.writes() + " SSK " + this.sskSlashdotcache.writes());
 	}
 
 	private boolean enteredPassword;
@@ -5427,9 +5427,9 @@ public class Node implements TimeSkewDetectorCallback {
 
 	public synchronized void drawStoreStats(HTMLNode infobox) {
 		if (completeInsertsTotal != 0) {
-			infobox.addChild("p", "Stored inserts: "+completeInsertsStored+" of "+completeInsertsTotal+" ("+fix3p3pct.format((completeInsertsStored*1.0)/completeInsertsTotal)+")");
-			infobox.addChild("p", "Would have stored: "+completeInsertsOldStore+" of "+completeInsertsTotal+" ("+fix3p3pct.format((completeInsertsOldStore*1.0)/completeInsertsTotal)+")");
-			infobox.addChild("p", "Would have stored but wasn't stored: "+completeInsertsNotStoredWouldHaveStored+" of "+completeInsertsTotal+" ("+fix3p3pct.format((completeInsertsNotStoredWouldHaveStored*1.0)/completeInsertsTotal)+")");
+			infobox.addChild(new BlockText("Stored inserts: " + completeInsertsStored + " of " + completeInsertsTotal + " (" + fix3p3pct.format((completeInsertsStored * 1.0) / completeInsertsTotal) + ")"));
+			infobox.addChild(new BlockText("Would have stored: " + completeInsertsOldStore + " of " + completeInsertsTotal + " (" + fix3p3pct.format((completeInsertsOldStore * 1.0) / completeInsertsTotal) + ")"));
+			infobox.addChild(new BlockText("Would have stored but wasn't stored: " + completeInsertsNotStoredWouldHaveStored + " of " + completeInsertsTotal + " (" + fix3p3pct.format((completeInsertsNotStoredWouldHaveStored * 1.0) / completeInsertsTotal) + ")"));
 		}
 	}
 

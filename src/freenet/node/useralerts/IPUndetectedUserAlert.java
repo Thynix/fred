@@ -70,14 +70,14 @@ public class IPUndetectedUserAlert extends AbstractUserAlert {
 		
 		int peers = node.peers.getDarknetPeers().length;
 		if(peers > 0)
-			textNode.addChild("p", l10n("noIPMaybeFromPeers", "number", Integer.toString(peers)));
+			textNode.addBlockText( l10n("noIPMaybeFromPeers", "number", Integer.toString(peers)));
 		
 		if(node.ipDetector.noDetectPlugins()) {
-			HTMLNode p = textNode.addChild("p");
+			HTMLNode p = textNode.addBlockText();
 			NodeL10n.getBase().addL10nSubstitution(p, "IPUndetectedUserAlert.loadDetectPlugins", new String[] { "plugins", "config", },
 					new HTMLNode[] { HTMLNode.link("/plugins/"), HTMLNode.link("/config/node") });
 		} else if(!node.ipDetector.hasJSTUN() && !node.ipDetector.isDetecting()) {
-			HTMLNode p = textNode.addChild("p");
+			HTMLNode p = textNode.addBlockText();
 			NodeL10n.getBase().addL10nSubstitution(p, "IPUndetectedUserAlert.loadJSTUN", new String[] { "plugins" },
 					new HTMLNode[] { HTMLNode.link("/plugins/") });
 		}
@@ -90,8 +90,8 @@ public class IPUndetectedUserAlert extends AbstractUserAlert {
 		OutputList listNode = new OutputList(HTMLClass.CONFIG);
 		formNode.addChild(listNode);
 		Item itemNode = listNode.addItem();
-		itemNode.addChild("span", "class", "configshortdesc", NodeL10n.getBase().getString(o.getShortDesc())).addChild("input", new String[] { "type", "name", "value" }, new String[] { "text", sc.getPrefix() + ".tempIPAddressHint", o.getValueString() });
-		itemNode.addChild("span", "class", "configlongdesc", NodeL10n.getBase().getString(o.getLongDesc()));
+		itemNode.addInlineBox(HTMLClass.CONFIGSHORTDESC, NodeL10n.getBase().getString(o.getShortDesc())).addChild("input", new String[] { "type", "name", "value" }, new String[] { "text", sc.getPrefix() + ".tempIPAddressHint", o.getValueString() });
+		itemNode.addInlineBox(HTMLClass.CONFIGLONGDESC, NodeL10n.getBase().getString(o.getLongDesc()));
 		formNode.addChild("input", new String[] { "type", "value" }, new String[] { "submit", NodeL10n.getBase().getString("UserAlert.apply") });
 		formNode.addChild("input", new String[] { "type", "value" }, new String[] { "reset", NodeL10n.getBase().getString("UserAlert.reset") });
 		

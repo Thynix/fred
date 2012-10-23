@@ -566,14 +566,14 @@ public class PluginManager {
 		@Override
 		public HTMLNode getHTMLText() {
 			Div div_ = new Div();
-			HTMLNode p = div_.addChild("p");
+			HTMLNode p = div_.addBlockText();
 			p.addChild("#", l10n("pluginLoadingFailedWithMessage", new String[] { "name", "message" }, new String[] { filename, message }));
 			if(stillTryingOverFreenet) {
-				div_.addChild("p", l10n("pluginLoadingFailedStillTryingOverFreenet"));
+				div_.addBlockText( l10n("pluginLoadingFailedStillTryingOverFreenet"));
 			}
 
 			if(official) {
-				p = div_.addChild("p");
+				p = div_.addBlockText();
 				if(officialFromFreenet)
 					p.addChild("#", l10n("officialPluginLoadFailedSuggestTryAgainFreenet"));
 				else

@@ -1,6 +1,7 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.*;
+import freenet.clients.http.uielements.BlockText;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
 import freenet.node.SecurityLevels;
@@ -40,7 +41,7 @@ public class SECURITY_NETWORK implements Step {
 			        new String[] { "type", "name", "value" },
 			        new String[] { "hidden", "security-levels.networkThreatLevel", networkThreatLevel });
 			if(newThreatLevel == SecurityLevels.NETWORK_THREAT_LEVEL.MAXIMUM) {
-				HTMLNode p = formNode.addChild("p");
+				HTMLNode p = formNode.addChild(new BlockText());
 				NodeL10n.getBase().addL10nSubstitution(p, "SecurityLevels.maximumNetworkThreatLevelWarning",
 				        new String[] { "bold" },
 				        new HTMLNode[] { HTMLNode.STRONG });
@@ -48,18 +49,18 @@ public class SECURITY_NETWORK implements Step {
 				NodeL10n.getBase().addL10nSubstitution(p, "SecurityLevels.maxSecurityYouNeedFriends",
 				        new String[] { "bold" },
 				        new HTMLNode[] { HTMLNode.STRONG });
-				formNode.addChild("p").addChild("input",
+				formNode.addChild(new BlockText()).addChild("input",
 				        new String[] { "type", "name", "value" },
 				        new String[] { "checkbox", "security-levels.networkThreatLevel.confirm", "off" },
 				        WizardL10n.l10nSec("maximumNetworkThreatLevelCheckbox"));
 			} else /*if(newThreatLevel == NETWORK_THREAT_LEVEL.HIGH)*/ {
-				HTMLNode p = formNode.addChild("p");
+				HTMLNode p = formNode.addChild(new BlockText());
 				NodeL10n.getBase().addL10nSubstitution(p, "FirstTimeWizardToadlet.highNetworkThreatLevelWarning",
 				        new String[] { "bold", "addAFriend", "friends" },
 				        new HTMLNode[] { HTMLNode.STRONG,
 				                new HTMLNode("#", NodeL10n.getBase().getString("FProxyToadlet.addFriendTitle")),
 				                new HTMLNode("#", NodeL10n.getBase().getString("FProxyToadlet.categoryFriends"))});
-				HTMLNode checkbox = formNode.addChild("p").addChild("input",
+				HTMLNode checkbox = formNode.addChild(new BlockText()).addChild("input",
 				        new String[] { "type", "name", "value" },
 				        new String[] { "checkbox", "security-levels.networkThreatLevel.confirm", "off" });
 				NodeL10n.getBase().addL10nSubstitution(checkbox,
@@ -85,7 +86,7 @@ public class SECURITY_NETWORK implements Step {
 		if(opennet) {
 			HTMLNode infoboxContent = helper.getInfobox("infobox-normal",
 			        WizardL10n.l10n("networkThreatLevelHeaderOpennet"), contentNode, null, false);
-			infoboxContent.addChild("p", WizardL10n.l10n("networkThreatLevelIntroOpennet"));
+			infoboxContent.addChild(new BlockText(WizardL10n.l10n("networkThreatLevelIntroOpennet")));
 
 			form = helper.addFormChild(infoboxContent, ".", "networkSecurityForm");
 			HTMLNode div = form.addChild(new Div(HTMLClass.OPENNETDIV));
@@ -95,14 +96,14 @@ public class SECURITY_NETWORK implements Step {
 		} else {
 			HTMLNode infoboxContent = helper.getInfobox("infobox-normal",
 			        WizardL10n.l10n("networkThreatLevelHeaderDarknet"), contentNode, null, false);
-			infoboxContent.addChild("p", WizardL10n.l10n("networkThreatLevelIntroDarknet"));
+			infoboxContent.addChild(new BlockText(WizardL10n.l10n("networkThreatLevelIntroDarknet")));
 
 			form = helper.addFormChild(infoboxContent, ".", "networkSecurityForm");
 			HTMLNode div = form.addChild(new Div(HTMLClass.DARKNETDIV));
 			for(SecurityLevels.NETWORK_THREAT_LEVEL level : SecurityLevels.NETWORK_THREAT_LEVEL.DARKNET_VALUES) {
 				securityLevelChoice(div, level);
 			}
-			form.addChild("p").addChild("b", WizardL10n.l10nSec("networkThreatLevel.opennetFriendsWarning"));
+			form.addChild(new BlockText()).addChild("b", WizardL10n.l10nSec("networkThreatLevel.opennetFriendsWarning"));
 		}
 		form.addChild("input",
 		        new String[] { "type", "name", "value" },
@@ -118,7 +119,7 @@ public class SECURITY_NETWORK implements Step {
 	 * @param level to add content about.
 	 */
 	private void securityLevelChoice(HTMLNode parent, SecurityLevels.NETWORK_THREAT_LEVEL level) {
-		HTMLNode input = parent.addChild("p").addChild("input",
+		HTMLNode input = parent.addChild(new BlockText()).addChild("input",
 		        new String[] { "type", "name", "value" },
 		        new String[] { "radio", "security-levels.networkThreatLevel", level.name() });
 		input.addChild("b", WizardL10n.l10nSec("networkThreatLevel.name."+level));
@@ -126,7 +127,7 @@ public class SECURITY_NETWORK implements Step {
 		NodeL10n.getBase().addL10nSubstitution(input, "SecurityLevels.networkThreatLevel.choice."+level,
 		        new String[] { "bold" },
 		        new HTMLNode[] { HTMLNode.STRONG });
-		HTMLNode inner = input.addChild("p").addChild("i");
+		HTMLNode inner = input.addChild(new BlockText()).addChild("i");
 		NodeL10n.getBase().addL10nSubstitution(inner, "SecurityLevels.networkThreatLevel.desc."+level,
 		        new String[] { "bold" },
 		        new HTMLNode[] { HTMLNode.STRONG });

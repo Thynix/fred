@@ -185,7 +185,7 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 				InfoboxWidget dangerousRSSwarning = new InfoboxWidget(InfoboxWidget.Type.ALERT, l10n("dangerousRSSSubtitle"));
 				contentNode.addChild(dangerousRSSwarning);
 				dangerousRSSwarning.body.addChild("#", NodeL10n.getBase().getString("FProxyToadlet.dangerousRSS", new String[]{"type"}, new String[]{mimeType}));
-				dangerousRSSwarning.body.addChild("p", l10n("options"));
+				dangerousRSSwarning.body.addBlockText( l10n("options"));
 				OutputList optionList = dangerousRSSwarning.body.addList();
 				Item option = optionList.addItem();
 
@@ -738,14 +738,12 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 				InfoboxWidget fetchingPageOptions = new InfoboxWidget(InfoboxWidget.Type.INFORMATION, l10n("fetchingPageOptions"));
 				contentNode.addChild(fetchingPageOptions);
 				OutputList optionList = fetchingPageOptions.body.addList();
-				optionList.addItem().addChild("p", l10n("progressOptionZero"));
+				optionList.addItem().addBlockText( l10n("progressOptionZero"));
 
 				addDownloadOptions(ctx, optionList, key, mimeType, false, false, core);
 
 				optionList.addItem().addChild(ctx.getPageMaker().createBackLink(ctx, l10n("goBackToPrev")));
-				optionList.addItem().addChild("a", new String[] { "href", "title" },
-						new String[] { "/", NodeL10n.getBase().getString("Toadlet.homepage") }, l10n("abortToHomepage"));
-
+				optionList.addItem().addLink("/", NodeL10n.getBase().getString("Toadlet.homepage"), l10n("abortToHomepage"));
 				MultiValueTable<String, String> retHeaders = new MultiValueTable<String, String>();
 				//retHeaders.put("Refresh", "2; url="+location);
 				writeHTMLReply(ctx, 200, "OK", retHeaders, pageNode.generate());
@@ -840,7 +838,7 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 				OutputList fileInformationList = largeFile.body.addList();
 				Item option = fileInformationList.addItem();
 				option.addChild("#", (l10n("filenameLabel") + ' '));
-				option.addChild("a", "href", '/' + key.toString(), getFilename(key, e.getExpectedMimeType()));
+				option.addLink('/' + key.toString(), getFilename(key, e.getExpectedMimeType()));
 
 				String mime = writeSizeAndMIME(fileInformationList, e);
 
@@ -860,7 +858,7 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 					optionForm.addChild("#", " - " + l10n("fetchLargeFileAnywayAndDisplay"));
 					addDownloadOptions(ctx, optionList, key, mime, false, false, core);
 				}
-				optionList.addItem().addChild("a", new String[] { "href", "title" }, new String[] { "/", NodeL10n.getBase().getString("Toadlet.homepage") }, l10n("abortToHomepage"));
+				optionList.addItem().addLink( "/", NodeL10n.getBase().getString("Toadlet.homepage"), l10n("abortToHomepage"));
 				optionList.addItem().addChild(ctx.getPageMaker().createBackLink(ctx, l10n("goBackToPrev")));
 				writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 			} else {
@@ -873,19 +871,19 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 				OutputList fileInformationList = errorWithReason.body.addList();
 				Item option = fileInformationList.addItem();
 				option.addChild("#", (l10n("filenameLabel") + ' '));
-				option.addChild("a", "href", '/' + key.toString(), getFilename(key, e.getExpectedMimeType()));
+				option.addLink('/' + key.toString(), getFilename(key, e.getExpectedMimeType()));
                                 String mime = writeSizeAndMIME(fileInformationList, e);
 
 				InfoboxWidget explanationTitle = new InfoboxWidget(InfoboxWidget.Type.ERROR, l10n("explanationTitle"));
 				contentNode.addChild(explanationTitle);
-				explanationTitle.body.addChild("p", l10n("unableToRetrieve"));
+				explanationTitle.body.addBlockText( l10n("unableToRetrieve"));
 				UnsafeContentTypeException filterException = null;
 				if(e.getCause() != null && e.getCause() instanceof UnsafeContentTypeException) {
 					filterException = (UnsafeContentTypeException)e.getCause();
 				}
 				if(e.isFatal() && filterException == null)
-					explanationTitle.body.addChild("p", l10n("errorIsFatal"));
-				explanationTitle.body.addChild("p", msg);
+					explanationTitle.body.addBlockText( l10n("errorIsFatal"));
+				explanationTitle.body.addBlockText( msg);
 				if(filterException != null) {
 					if(filterException.details() != null) {
 						OutputList detailList = explanationTitle.body.addList();
@@ -895,7 +893,7 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 					}
 				}
 				if(e.errorCodes != null) {
-					explanationTitle.body.addChild("p").addChild("pre").addChild("#", e.errorCodes.toVerboseString());
+					explanationTitle.body.addBlockText().addChild("pre").addChild("#", e.errorCodes.toVerboseString());
 				}
 
 				InfoboxWidget options = new InfoboxWidget(InfoboxWidget.Type.ERROR, l10n("options"));
@@ -938,17 +936,14 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 					}
 				}
 
-				if((!e.isFatal() || filterException != null) && (ctx.isAllowedFullAccess() || !container.publicGatewayMode())) {
+				if ((!e.isFatal() || filterException != null) && (ctx.isAllowedFullAccess() || !container.publicGatewayMode())) {
 					addDownloadOptions(ctx, optionList, key, mimeType, filterException != null, filterException != null, core);
-					if(filterException == null)
-						optionList.addItem().
-							addChild("a", "href", getLink(key, requestedMimeType, maxSize, httprequest.getParam("force", null),
-									httprequest.isParameterSet("forcedownload"), maxRetries, overrideSize)).addChild("#", l10n("retryNow"));
+					if (filterException == null) {
+						optionList.addItem().addLink(getLink(key, requestedMimeType, maxSize,httprequest.getParam("force", null),httprequest.isParameterSet("forcedownload"), maxRetries, overrideSize)).addChild("#", l10n("retryNow"));
+					}
 				}
 
-				optionList.addItem().addChild("a", new String[] { "href", "title" }, new String[] { "/", NodeL10n.getBase().
-						getString("Toadlet.homepage") }, l10n("abortToHomepage"));
-
+				optionList.addItem().addLink("/", NodeL10n.getBase().getString("Toadlet.homepage"), l10n("abortToHomepage"));
 				optionList.addItem().addChild(ctx.getPageMaker().createBackLink(ctx, l10n("goBackToPrev")));
 				this.writeHTMLReply(ctx, (e.mode == 10) ? 404 : 500 /* close enough - FIXME probably should depend on status code */,
 						"Internal Error", pageNode.generate());

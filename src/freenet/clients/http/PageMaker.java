@@ -254,9 +254,9 @@ public final class PageMaker {
 	public HTMLNode createBackLink(ToadletContext toadletContext, String name) {
 		String referer = toadletContext.getHeaders().get("referer");
 		if (referer != null) {
-			return new HTMLNode("a", new String[] { "href", "title" }, new String[] { referer, name }, name);
+			return new Link(referer, name, name);
 		}
-		return new HTMLNode("a", new String[] { "href", "title" }, new String[] { "javascript:back()", name }, name);
+		return new Link("javascript:back()", name, name);
 	}
 
 	/**
@@ -388,7 +388,7 @@ public final class PageMaker {
 					statusbar.addDiv(HTMLClass.SEPERATOR, "\u00a0");
 				}
 			}
-			statusbar.addDiv(HTMLID.STATUSBARLANGUAGE).addChild("a", "href", "/config/node#l10n", NodeL10n.getBase().getSelectedLanguage().fullName);
+			statusbar.addDiv(HTMLID.STATUSBARLANGUAGE).addLink("/config/node#l10n", NodeL10n.getBase().getSelectedLanguage().fullName);
 			if (node.clientCore != null && ctx != null && renderParameters.isRenderModeSwitch()) {
 				parseMode(ctx);
 				boolean isAdvancedMode = ctx.activeToadlet().container.isAdvancedModeEnabled();
@@ -401,16 +401,16 @@ public final class PageMaker {
 				statusbar.addDiv(HTMLClass.SEPERATOR, "\u00a0");
 				Div switchmode = statusbar.addDiv(HTMLID.STATUSBARSWITCHMODE);
 				switchmode.addClass(isAdvancedMode ? HTMLClass.SIMPLE : HTMLClass.ADVANCED);
-				switchmode.addChild("a", "href", "?" + HTTPRequestImpl.createQueryString(parameters, false), isAdvancedMode ? NodeL10n.getBase().getString("StatusBar.switchToSimpleMode") : NodeL10n.getBase().getString("StatusBar.switchToAdvancedMode"));
+				switchmode.addLink("?" + HTTPRequestImpl.createQueryString(parameters, false), isAdvancedMode ? NodeL10n.getBase().getString("StatusBar.switchToSimpleMode") : NodeL10n.getBase().getString("StatusBar.switchToAdvancedMode"));
 			}
 			if (node != null && node.clientCore != null) {
 				statusbar.addDiv(HTMLClass.SEPERATOR, "\u00a0");
 				Div secLevels = statusbar.addDiv(HTMLID.STATUSBARSECLEVELS);
 				secLevels.addChild("#", NodeL10n.getBase().getString("SecurityLevels.statusBarPrefix"));
-				final HTMLNode network = secLevels.addChild("a", "href", "/seclevels/", SecurityLevels.localisedName(node.securityLevels.getNetworkThreatLevel()) + "\u00a0");
+				final HTMLNode network = secLevels.addLink("/seclevels/", SecurityLevels.localisedName(node.securityLevels.getNetworkThreatLevel()) + "\u00a0");
 				network.addAttribute("title", NodeL10n.getBase().getString("SecurityLevels.networkThreatLevelShort"));
 				network.addAttribute("class", node.securityLevels.getNetworkThreatLevel().toString().toLowerCase());
-				final HTMLNode physical = secLevels.addChild("a", "href", "/seclevels/", SecurityLevels.localisedName(node.securityLevels.getPhysicalThreatLevel()));
+				final HTMLNode physical = secLevels.addLink("/seclevels/", SecurityLevels.localisedName(node.securityLevels.getPhysicalThreatLevel()));
 				physical.addAttribute("title", NodeL10n.getBase().getString("SecurityLevels.physicalThreatLevelShort"));
 				physical.addAttribute("class", node.securityLevels.getPhysicalThreatLevel().toString().toLowerCase());
 				statusbar.addDiv(HTMLClass.SEPERATOR, "\u00a0");
@@ -509,9 +509,9 @@ public final class PageMaker {
 							if(navigationLink != null) navigationLink = NodeL10n.getBase().getString(navigationLink);
 						}
 						if(navigationTitle != null)
-							sublistItem.addChild("a", new String[] { "href", "title" }, new String[] { navigationPath, navigationTitle }, navigationLink);
+							sublistItem.addLink(navigationPath, navigationTitle, navigationLink);
 						else
-							sublistItem.addChild("a", "href", navigationPath, navigationLink);
+							sublistItem.addLink(navigationPath, navigationLink);
 					}
 					if(nonEmpty) {
 						Item listItem = navbarMainList.addItem();
@@ -553,7 +553,7 @@ public final class PageMaker {
 							}
 						}
 						
-						listItem.addChild("a", new String[] { "href", "title" }, new String[] { menu.defaultNavigationLink, menuItemTitle }, text);
+						listItem.addLink(menu.defaultNavigationLink, menuItemTitle, text);
 						listItem.addChild(subnavlist);
 					}
 				}
@@ -583,10 +583,12 @@ public final class PageMaker {
 						if(navigationTitle != null) navigationTitle = NodeL10n.getBase().getString(navigationTitle);
 						if(navigationLink != null) navigationLink = NodeL10n.getBase().getString(navigationLink);
 					}
-					if(navigationTitle != null)
-						sublistItem.addChild("a", new String[] { "href", "title" }, new String[] { navigationPath, navigationTitle }, navigationLink);
-					else
-						sublistItem.addChild("a", "href", navigationPath, navigationLink);
+					if (navigationTitle != null) {
+						sublistItem.addLink(navigationPath, navigationTitle, navigationLink);
+					}
+					else {
+						sublistItem.addLink(navigationPath, navigationLink);
+					}
 				}
 			}
 		}

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.uielements.*;
 import freenet.config.Config;
 import freenet.config.ConfigCallback;
 import freenet.config.EnumerableOptionCallback;
@@ -29,10 +30,6 @@ import freenet.support.Logger.LogLevel;
 import freenet.support.URLEncoder;
 import freenet.support.api.BooleanCallback;
 import freenet.support.api.HTTPRequest;
-import freenet.clients.http.uielements.Div;
-import freenet.clients.http.uielements.HTMLClass;
-import freenet.clients.http.uielements.OutputList;
-import freenet.clients.http.uielements.InfoboxWidget;
 
 /**
  * Node Configuration Toadlet. Accessible from <code>http://.../config/</code>.
@@ -415,8 +412,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 		HTMLNode content = ctx.getPageMaker().getInfobox("infobox-normal",
 				l10n("possibilitiesTitle"), contentNode,
 				"configuration-possibilities", false);
-		content.addChild("a", new String[] { "href", "title" }, new String[] {
-				path(), l10n("shortTitle") }, l10n("returnToNodeConfig"));
+		content.addChild(new Link(path(), l10n("shortTitle"), l10n("returnToNodeConfig")));
 		content.addChild("br");
 		addHomepageLink(content);
 
@@ -477,30 +473,24 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 				formNode.addChild(new Div(HTMLClass.CONFIGPREFIX, l10n("wrapper")));
 				OutputList configOptionList = new OutputList(HTMLClass.CONFIG);
 				formNode.addChild(configOptionList);
-				HTMLNode configOption = configOptionList.addItem();
+				Item configOption = configOptionList.addItem();
 				//FIME can't use enum here
 				configOption.addAttribute("class", OptionType.TEXT.cssClass);
 				// FIXME how to get the real default???
 				String defaultValue = "256";
-				configOption.addChild(
-						"span",
-						new String[] { "class", "title", "style" },
-						new String[] {
-								"configshortdesc",
-								NodeL10n.getBase().getString(
-										"ConfigToadlet.defaultIs",
-										new String[] { "default" },
-										new String[] { defaultValue }),
-								"cursor: help;" }).addChild(
-						NodeL10n.getBase().getHTMLNode(
+				configOption.addInlineBox(HTMLClass.CONFIGSHORTDESC,
+					NodeL10n.getBase().getString("ConfigToadlet.defaultIs",
+						new String[] { "default" },
+						new String[] { defaultValue })).addChild(
+							NodeL10n.getBase().getHTMLNode(
 								"WrapperConfig." + configName + ".short"));
-				configOption.addChild("span", "class", "config")
-						.addChild(
+								configOption.addInlineBox(HTMLClass.CONFIG)
+							.addChild(
 								"input",
 								new String[] { "type", "class", "name", "value" },
 								new String[] { "text", "config", configName,
 										curValue });
-				configOption.addChild("span", "class", "configlongdesc").addChild(
+				configOption.addInlineBox(HTMLClass.CONFIGLONGDESC).addChild(
 						NodeL10n.getBase().getHTMLNode(
 								"WrapperConfig." + configName + ".long"));
 			}
@@ -565,7 +555,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 						.getHTMLNode(o.getLongDesc()) : new HTMLNode("#",
 						plugin.getString(o.getLongDesc()));
 
-				HTMLNode configItemNode = configGroupUlNode.addItem();
+				Item configItemNode = configGroupUlNode.addItem();
 				String defaultValue;
 				if (callback instanceof BooleanCallback) {
 					// Only case where values are localised.
@@ -577,22 +567,16 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 
 				configItemNode.addAttribute("class", optionType.cssClass);
 				configItemNode
-						.addChild("a", new String[] { "name", "id" },
-								new String[] { configName, configName })
-						.addChild(
-								"span",
-								new String[] { "class", "title", "style" },
-								new String[] {
-										"configshortdesc",
-										NodeL10n.getBase().getString(
-												"ConfigToadlet.defaultIs",
-												new String[] { "default" },
-												new String[] { defaultValue })
-												+ (advancedModeEnabled ? " ["
-														+ fullName + ']' : ""),
-										"cursor: help;" }).addChild(shortDesc);
-				HTMLNode configItemValueNode = configItemNode.addChild("span",
-						"class", "config");
+						.addChild(new Link(Link.linkType.ANCHOR, configName, configName ))
+						.addChild(new InlineBox(HTMLClass.CONFIGSHORTDESC,
+							NodeL10n.getBase().getString(
+								"ConfigToadlet.defaultIs",
+								new String[]{"default"},
+								new String[]{defaultValue})
+								+ (advancedModeEnabled ? " ["
+								+ fullName + ']' : "")))
+							.addChild(shortDesc);
+				InlineBox configItemValueNode = configItemNode.addInlineBox(HTMLClass.CONFIG);
 
 				// Values persisted through browser or backing down from
 				// resetting to defaults
@@ -636,9 +620,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 							false));
 					break;
 				}
-
-				configItemNode.addChild("span", "class", "configlongdesc")
-						.addChild(longDesc);
+				configItemNode.addInlineBox(HTMLClass.CONFIGLONGDESC).addChild(longDesc);
 			}
 		}
 

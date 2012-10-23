@@ -1,6 +1,7 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
+import freenet.clients.http.uielements.BlockText;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
@@ -65,7 +66,7 @@ public class BROWSER_WARNING implements Step {
 		HTMLNode infoboxContent = helper.getInfobox("infobox-normal", infoBoxHeader, contentNode, null, false);
 
 		if(isOldFirefox) {
-			HTMLNode p = infoboxContent.addChild("p");
+			HTMLNode p = infoboxContent.addChild(new BlockText());
 			p.addChild("#", WizardL10n.l10n("browserWarningOldFirefox"));
 			if (showTabWarning) {
 				p.addChild("#", " " + WizardL10n.l10n("browserWarningFirefoxMightHaveClobberedTabs"));
@@ -75,9 +76,9 @@ public class BROWSER_WARNING implements Step {
 		}
 
 		if(isRelativelySafe) {
-			infoboxContent.addChild("p", incognito ?
+			infoboxContent.addChild(new BlockText(incognito ?
 			        WizardL10n.l10n("browserWarningIncognitoMaybeSafe") :
-			        WizardL10n.l10n("browserWarningMaybeSafe"));
+			        WizardL10n.l10n("browserWarningMaybeSafe")));
 		} else {
 			NodeL10n.getBase().addL10nSubstitution(infoboxContent, incognito ?
 			        "FirstTimeWizardToadlet.browserWarningIncognito" :
@@ -87,12 +88,12 @@ public class BROWSER_WARNING implements Step {
 		}
 
 		if(incognito) {
-			infoboxContent.addChild("p", WizardL10n.l10n("browserWarningIncognitoSuggestion"));
+			infoboxContent.addChild(new BlockText(WizardL10n.l10n("browserWarningIncognitoSuggestion")));
 		} else {
-			infoboxContent.addChild("p", WizardL10n.l10n("browserWarningSuggestion"));
+			infoboxContent.addChild(new BlockText(WizardL10n.l10n("browserWarningSuggestion")));
 		}
 
-		HTMLNode form = helper.addFormChild(infoboxContent.addChild("p"), ".", "continueForm");
+		HTMLNode form = helper.addFormChild(infoboxContent.addChild(new BlockText()), ".", "continueForm");
 		form.addChild("input",
 		        new String[] { "type", "name", "value" },
 		        new String[] { "submit", "back", NodeL10n.getBase().getString("Toadlet.back")});

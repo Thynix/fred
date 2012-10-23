@@ -1,6 +1,7 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
+import freenet.clients.http.uielements.BlockText;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
@@ -19,11 +20,11 @@ public class OPENNET implements Step {
 		HTMLNode infoboxContent = helper.getInfobox("infobox-normal", WizardL10n.l10n("opennetChoiceTitle"),
 		        contentNode, null, false);
 
-		infoboxContent.addChild("p", WizardL10n.l10n("opennetChoiceIntroduction"));
+		infoboxContent.addChild(new BlockText(WizardL10n.l10n("opennetChoiceIntroduction")));
 
 		HTMLNode form = helper.addFormChild(infoboxContent, ".", "opennetForm", false);
 
-		HTMLNode p = form.addChild("p");
+		HTMLNode p = form.addChild(new BlockText());
 		HTMLNode input = p.addChild("input",
 		        new String[] { "type", "name", "value" },
 		        new String[] { "radio", "opennet", "false" });
@@ -35,7 +36,7 @@ public class OPENNET implements Step {
 		p.addChild("i", WizardL10n.l10n("opennetChoiceCon"));
 		p.addChild("#", ": "+WizardL10n.l10n("opennetChoiceConnectFriendsCON", "minfriends", "5"));
 
-		p = form.addChild("p");
+		p = form.addChild(new BlockText());
 		input = p.addChild("input",
 		        new String[] { "type", "name", "value" },
 		        new String[] { "radio", "opennet", "true" });
@@ -69,7 +70,7 @@ public class OPENNET implements Step {
 		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetBigPriv"));
 		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetDistant"));
 		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetBugs"));
-		HTMLNode foot2 = footHidden.addChild("p");
+		HTMLNode foot2 = footHidden.addBlockText();
 		foot2.addChild("#", "²: " + WizardL10n.l10n("opennetChoiceHowSafeIsFreenetFoot2"));
 	}
 

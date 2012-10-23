@@ -66,7 +66,7 @@ public class N2NTMUserAlert extends AbstractUserAlert {
 	@Override
 	public HTMLNode getHTMLText() {
 		Div alertNode = new Div();
-		alertNode.addChild("p", l10n("header", new String[] { "from",
+		alertNode.addBlockText( l10n("header", new String[] { "from",
 				"composed", "sent", "received" }, new String[] {
 				sourceNodeName,
 				DateFormat.getInstance().format(new Date(composedTime)),
@@ -81,9 +81,7 @@ public class N2NTMUserAlert extends AbstractUserAlert {
 		
 		DarknetPeerNode pn = (DarknetPeerNode) peerRef.get();
 		if(pn != null)
-			alertNode.addChild("p").addChild("a", "href",
-					"/send_n2ntm/?peernode_hashcode=" + pn.hashCode(),
-					l10n("reply"));
+			alertNode.addBlockText().addLink("/send_n2ntm/?peernode_hashcode=" + pn.hashCode(), l10n("reply"));
 		return alertNode;
 	}
 

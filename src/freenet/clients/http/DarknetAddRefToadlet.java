@@ -6,6 +6,7 @@ import java.io.StringWriter;
 import java.net.URI;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.uielements.BlockText;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
 import freenet.node.NodeClientCore;
@@ -80,13 +81,13 @@ public class DarknetAddRefToadlet extends Toadlet {
 		contentNode.addChild(core.alerts.createSummary());
 		
 		HTMLNode boxContent = pageMaker.getInfobox("infobox-information", l10n("explainBoxTitle"), contentNode, "darknet-explanations", true);
-		boxContent.addChild("p", l10n("explainBox1"));
-		boxContent.addChild("p", l10n("explainBox2"));
+		boxContent.addChild(new BlockText(l10n("explainBox1")));
+		boxContent.addChild(new BlockText(l10n("explainBox2")));
 				
 		File installer = node.nodeUpdater.getInstallerWindows();
 		String shortFilename = NodeUpdateManager.WINDOWS_FILENAME;
 		
-		HTMLNode p = boxContent.addChild("p");
+		HTMLNode p = boxContent.addChild(new BlockText());
 		
 		if(installer != null)
 			NodeL10n.getBase().addL10nSubstitution(p, "DarknetAddRefToadlet.explainInstallerWindows", new String[] { "filename", "get-windows" },
@@ -99,7 +100,7 @@ public class DarknetAddRefToadlet extends Toadlet {
 		
 		boxContent.addChild("#", " ");
 		
-		p = boxContent.addChild("p");
+		p = boxContent.addChild(new BlockText());
 		
 		if(installer != null)
 			NodeL10n.getBase().addL10nSubstitution(p, "DarknetAddRefToadlet.explainInstallerNonWindows", new String[] { "filename", "get-nonwindows", "shortfilename" },

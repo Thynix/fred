@@ -18,6 +18,7 @@ import freenet.client.HighLevelSimpleClient;
 import freenet.client.InsertBlock;
 import freenet.client.InsertException;
 import freenet.client.async.ClientGetter;
+import freenet.clients.http.uielements.Link;
 import freenet.keys.FreenetURI;
 import freenet.l10n.NodeL10n;
 import freenet.node.RequestClient;
@@ -304,7 +305,7 @@ public abstract class Toadlet {
 		HTMLNode infoboxContent = ctx.getPageMaker().getInfobox("infobox-error", desc, contentNode, null, true);
 		infoboxContent.addChild(message);
 		infoboxContent.addChild("br");
-		infoboxContent.addChild("a", "href", ".", l10n("returnToPrevPage"));
+		infoboxContent.addChild(new Link(".", l10n("returnToPrevPage")));
 		infoboxContent.addChild("br");
 		addHomepageLink(infoboxContent);
 		
@@ -336,7 +337,7 @@ public abstract class Toadlet {
 		// FIXME what is the modern (CSS/XHTML) equivalent of <pre>?
 		infoboxContent.addChild("pre", sw.toString());
 		infoboxContent.addChild("br");
-		infoboxContent.addChild("a", "href", ".", l10n("returnToPrevPage"));
+		infoboxContent.addChild(new Link(".", l10n("returnToPrevPage")));
 		addHomepageLink(infoboxContent);
 		
 		writeHTMLReply(ctx, 500, desc, pageNode.generate());
@@ -355,7 +356,7 @@ public abstract class Toadlet {
 	}
 	
 	protected static void addHomepageLink(HTMLNode content) {
-		content.addChild("a", new String[]{"href", "title"}, new String[]{"/", l10n("homepage")}, l10n("returnToNodeHomepage"));
+		content.addChild(new Link("/", l10n("homepage"), l10n("returnToNodeHomepage")));
 	}
 
 	/**

@@ -95,13 +95,13 @@ public class WelcomeToadlet extends Toadlet {
 				if (item.hasAnActivelink() && !noActiveLinks) {
 					String initialKey = item.getKey();
 					String key = '/' + initialKey + (initialKey.endsWith("/") ? "" : "/") + "activelink.png";
-					bookmarkItemRow.addCell(HTMLClass.BOOKMARKLIST).addChild("a", "href", '/' + item.getKey()).addChild("img", new String[]{"src", "height", "width", "alt", "title"},
+					bookmarkItemRow.addCell(HTMLClass.BOOKMARKLIST).addLink('/' + item.getKey()).addChild("img", new String[]{"src", "height", "width", "alt", "title"},
 						new String[]{key, "36", "108", "activelink", item.getDescription()});
 				} else {
 					bookmarkItemRow.addCell(HTMLClass.BOOKMARKLIST).addChild("#", " ");
 				}
 				Cell linkCell = bookmarkItemRow.addCell(HTMLClass.BOOKMARKLIST);
-				linkCell.addChild("a", new String[]{"href", "title", "class"}, new String[]{'/' + item.getKey(), item.getDescription(), "bookmark-title"}, item.getVisibleName());
+				linkCell.addLink('/' + item.getKey(), item.getDescription(), HTMLClass.BOOKMARKTITLE, item.getVisibleName());
 				String explain = item.getShortDescription();
 				if (explain != null && explain.length() > 0) {
 					linkCell.addChild("#", " (");
@@ -122,7 +122,7 @@ public class WelcomeToadlet extends Toadlet {
 		HTMLNode fetchKeyContent = ctx.getPageMaker().getInfobox("infobox-normal", l10n("fetchKeyLabel"), contentNode, "fetch-key", true);
 		fetchKeyContent.addAttribute("id", "keyfetchbox");
 		HTMLNode fetchKeyForm = fetchKeyContent.addChild("form", new String[]{"action", "method"}, new String[]{"/", "get"}).addChild(new Div());
-		fetchKeyForm.addChild("span", "class", "fetch-key-label", l10n("keyRequestLabel") + ' ');
+		fetchKeyForm.addChild(new InlineBox(HTMLClass.FETCHKEYLABEL, l10n("keyRequestLabel") + ' '));
 		fetchKeyForm.addChild("input", new String[]{"type", "size", "name"}, new String[]{"text", "80", "key"});
 		fetchKeyForm.addChild("input", new String[]{"type", "value"}, new String[]{"submit", l10n("fetch")});
 	}
@@ -183,8 +183,8 @@ public class WelcomeToadlet extends Toadlet {
 			HTMLNode pageNode = page.outer;
 			HTMLNode contentNode = page.content;
 			HTMLNode content = ctx.getPageMaker().getInfobox("infobox-information", l10n("updatingTitle"), contentNode, null, true);
-			content.addChild("p").addChild("#", l10n("updating"));
-			content.addChild("p").addChild("#", l10n("thanks"));
+			content.addChild(new BlockText()).addChild("#", l10n("updating"));
+			content.addChild(new BlockText()).addChild("#", l10n("thanks"));
 			writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 			Logger.normal(this, "Node is updating/restarting");
 			node.getNodeUpdater().arm();
@@ -193,7 +193,7 @@ public class WelcomeToadlet extends Toadlet {
 			HTMLNode pageNode = page.outer;
 			HTMLNode contentNode = page.content;
 			HTMLNode content = ctx.getPageMaker().getInfobox("infobox-query", l10n("nodeUpdateConfirmTitle"), contentNode, "update-node-confirm", true);
-			content.addChild("p").addChild("#", l10n("nodeUpdateConfirm"));
+			content.addChild(new BlockText()).addChild("#", l10n("nodeUpdateConfirm"));
 			HTMLNode updateForm = ctx.addFormChild(content, "/", "updateConfirmForm");
 			updateForm.addChild("input", new String[]{"type", "name", "value"}, new String[]{"submit", "cancel", NodeL10n.getBase().getString("Toadlet.cancel")});
 			updateForm.addChild("input", new String[]{"type", "name", "value"}, new String[]{"submit", "updateconfirm", l10n("update")});
@@ -292,8 +292,8 @@ public class WelcomeToadlet extends Toadlet {
 			HTMLNode pageNode = page.outer;
 			HTMLNode contentNode = page.content;
 			HTMLNode content = ctx.getPageMaker().getInfobox("infobox-query", l10n("shutdownConfirmTitle"), contentNode, "shutdown-confirm", true);
-			content.addChild("p").addChild("#", l10n("shutdownConfirm"));
-			HTMLNode shutdownForm = ctx.addFormChild(content.addChild("p"), "/", "confirmShutdownForm");
+			content.addChild(new BlockText()).addChild("#", l10n("shutdownConfirm"));
+			HTMLNode shutdownForm = ctx.addFormChild(content.addChild(new BlockText()), "/", "confirmShutdownForm");
 			shutdownForm.addChild("input", new String[]{"type", "name", "value"}, new String[]{"submit", "cancel", NodeL10n.getBase().getString("Toadlet.cancel")});
 			shutdownForm.addChild("input", new String[]{"type", "name", "value"}, new String[]{"submit", "shutdownconfirm", l10n("shutdown")});
 			writeHTMLReply(ctx, 200, "OK", pageNode.generate());
@@ -318,8 +318,8 @@ public class WelcomeToadlet extends Toadlet {
 			HTMLNode pageNode = page.outer;
 			HTMLNode contentNode = page.content;
 			HTMLNode content = ctx.getPageMaker().getInfobox("infobox-query", l10n("restartConfirmTitle"), contentNode, "restart-confirm", true);
-			content.addChild("p").addChild("#", l10n("restartConfirm"));
-			HTMLNode restartForm = ctx.addFormChild(content.addChild("p"), "/", "confirmRestartForm");
+			content.addChild(new BlockText()).addChild("#", l10n("restartConfirm"));
+			HTMLNode restartForm = ctx.addFormChild(content.addChild(new BlockText()), "/", "confirmRestartForm");
 			restartForm.addChild("input", new String[]{"type", "name", "value"}, new String[]{"submit", "cancel", NodeL10n.getBase().getString("Toadlet.cancel")});
 			restartForm.addChild("input", new String[]{"type", "name", "value"}, new String[]{"submit", "restartconfirm", l10n("restart")});
 			writeHTMLReply(ctx, 200, "OK", pageNode.generate());
@@ -452,11 +452,11 @@ public class WelcomeToadlet extends Toadlet {
 		InfoboxWidget bookmarkBox = new InfoboxWidget(InfoboxWidget.Type.NORMAL,null);
 		contentNode.addChild(bookmarkBox);
 		bookmarkBox.addClass(HTMLClass.BOOKMARKSBOX);
-		bookmarkBox.header.addChild("a", new String[]{"class", "title"}, new String[]{"bookmarks-header-text", NodeL10n.getBase().getString("BookmarkEditorToadlet.myBookmarksExplanation")}, NodeL10n.getBase().getString("BookmarkEditorToadlet.myBookmarksTitle"));
-		HTMLNode editLink = new HTMLNode("#");
-		editLink.addChild("span", "class", "edit-bracket", "[");
-		editLink.addChild("span", "id", "bookmarkedit").addChild("a", new String[]{"href", "class"}, new String[]{"/bookmarkEditor/", "interfacelink"}, NodeL10n.getBase().getString("BookmarkEditorToadlet.edit"));
-		editLink.addChild("span", "class", "edit-bracket", "]");
+		bookmarkBox.header.addLink(HTMLClass.BOOKMARKSHEADERTEXT, NodeL10n.getBase().getString("BookmarkEditorToadlet.myBookmarksExplanation"), NodeL10n.getBase().getString("BookmarkEditorToadlet.myBookmarksTitle"));
+		OutputNode editLink = new OutputNode("#");
+		editLink.addInlineBox(HTMLClass.EDITBRACKET, "[");
+		editLink.addInlineBox(HTMLID.BOOKMARKEDIT).addLink("/bookmarkEditor/", HTMLClass.INTERFACELINK, NodeL10n.getBase().getString("BookmarkEditorToadlet.edit"));
+		editLink.addInlineBox(HTMLClass.EDITBRACKET, "]");
 		if (ctx.isAllowedFullAccess()) {
 			bookmarkBox.header.addChild(editLink);
 		}
@@ -477,7 +477,7 @@ public class WelcomeToadlet extends Toadlet {
 		// Search form
 		if(core.node.pluginManager != null && core.node.pluginManager.isPluginLoaded("plugins.Library.Main")) {
 			// FIXME: Remove this once we have a non-broken index.
-			searchBox.body.addChild("span", "class", "search-warning-text", l10n("searchBoxWarningSlow"));
+			searchBox.body.addInlineBox(HTMLClass.SEARCHWARNINGTEXT, l10n("searchBoxWarningSlow"));
 			HTMLNode searchForm = container.addFormChild(searchBox.body, "/library/", "searchform");
 			searchForm.addChild("input", new String[] { "type", "size", "name" }, new String[] { "text", "80", "search" });
 			searchForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "find", l10n("searchFreenet") });
@@ -485,11 +485,11 @@ public class WelcomeToadlet extends Toadlet {
 			searchForm.addAttribute("target", "_blank");
 		} else if(core.node.pluginManager == null || core.node.pluginManager.isPluginLoadedOrLoadingOrWantLoad("Library")) {
 			// Warn that search plugin is not loaded.
-			HTMLNode textSpan = searchBox.body.addChild("span", "class", "search-not-availible-warning");
+			InlineBox textSpan = searchBox.body.addInlineBox(HTMLClass.SEARCHNOTAVAILABLE);
 			NodeL10n.getBase().addL10nSubstitution(textSpan, "WelcomeToadlet.searchPluginLoading", new String[] { "link" }, new HTMLNode[] { HTMLNode.link("/plugins/") });
 		} else {
 			// Warn that search plugin is not loaded.
-			HTMLNode textSpan = searchBox.body.addChild("span", "class", "search-not-availible-warning");
+			InlineBox textSpan = searchBox.body.addInlineBox(HTMLClass.SEARCHNOTAVAILABLE);
 			NodeL10n.getBase().addL10nSubstitution(textSpan, "WelcomeToadlet.searchPluginNotLoaded", new String[] { "link" }, new HTMLNode[] { HTMLNode.link("/plugins/") });
 		}
 		if (!ctx.getPageMaker().getTheme().fetchKeyBoxAboveBookmarks) {
@@ -497,12 +497,12 @@ public class WelcomeToadlet extends Toadlet {
 		}
 		// Version info and Quit Form
 		HTMLNode versionContent = ctx.getPageMaker().getInfobox("infobox-information", l10n("versionHeader"), contentNode, "freenet-version", true);
-		versionContent.addChild("span", "class", "freenet-full-version", NodeL10n.getBase().getString("WelcomeToadlet.version", new String[]{"fullVersion", "build", "rev"}, new String[]{Version.publicVersion(), Integer.toString(Version.buildNumber()), Version.cvsRevision()}));
+		versionContent.addChild(new InlineBox(HTMLClass.FREENETFULLVERSION, NodeL10n.getBase().getString("WelcomeToadlet.version", new String[]{"fullVersion", "build", "rev"}, new String[]{Version.publicVersion(), Integer.toString(Version.buildNumber()), Version.cvsRevision()})));
 		versionContent.addChild("br");
 		if (NodeStarter.extBuildNumber < NodeStarter.RECOMMENDED_EXT_BUILD_NUMBER) {
-			versionContent.addChild("span", "class", "freenet-ext-version", NodeL10n.getBase().getString("WelcomeToadlet.extVersionWithRecommended", new String[]{"build", "recbuild", "rev"}, new String[]{Integer.toString(NodeStarter.extBuildNumber), Integer.toString(NodeStarter.RECOMMENDED_EXT_BUILD_NUMBER), NodeStarter.extRevisionNumber}));
+			versionContent.addChild(new InlineBox(HTMLClass.FREENETEXTVERSION, NodeL10n.getBase().getString("WelcomeToadlet.extVersionWithRecommended", new String[]{"build", "recbuild", "rev"}, new String[]{Integer.toString(NodeStarter.extBuildNumber), Integer.toString(NodeStarter.RECOMMENDED_EXT_BUILD_NUMBER), NodeStarter.extRevisionNumber})));
 		} else {
-			versionContent.addChild("span", "class", "freenet-ext-version", NodeL10n.getBase().getString("WelcomeToadlet.extVersion", new String[]{"build", "rev"}, new String[]{Integer.toString(NodeStarter.extBuildNumber), NodeStarter.extRevisionNumber}));
+			versionContent.addChild(new InlineBox(HTMLClass.FREENETEXTVERSION, NodeL10n.getBase().getString("WelcomeToadlet.extVersion", new String[]{"build", "rev"}, new String[]{Integer.toString(NodeStarter.extBuildNumber), NodeStarter.extRevisionNumber})));
 		}
 		versionContent.addChild("br");
 		if (ctx.isAllowedFullAccess()) {

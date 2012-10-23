@@ -210,10 +210,10 @@ public class StatisticsToadlet extends Toadlet {
 		OutputList logsList = new OutputList();
 		statGatheringContent.addChild(logsList);
 		if(nodeConfig.config.get("logger").getBoolean("enabled")) {
-			logsList.addItem().addChild("a", new String[]{"href", "target"}, new String[]{"/?latestlog", "_blank"}, l10n("getLogs"));
+			logsList.addItem().addLink("/?latestlog", "_blank", l10n("getLogs"));
 		}
-		logsList.addItem().addChild("a", "href", TranslationToadlet.TOADLET_URL+"?getOverrideTranlationFile").addChild("#", NodeL10n.getBase().getString("TranslationToadlet.downloadTranslationsFile"));
-		logsList.addItem().addChild("a", "href", DiagnosticToadlet.TOADLET_URL).addChild("#", NodeL10n.getBase().getString("FProxyToadlet.diagnostic"));
+		logsList.addItem().addLink(TranslationToadlet.TOADLET_URL+"?getOverrideTranlationFile").addChild("#", NodeL10n.getBase().getString("TranslationToadlet.downloadTranslationsFile"));
+		logsList.addItem().addLink(DiagnosticToadlet.TOADLET_URL).addChild("#", NodeL10n.getBase().getString("FProxyToadlet.diagnostic"));
 		
 		if(advancedMode) {
 			// store size box
@@ -941,102 +941,89 @@ public class StatisticsToadlet extends Toadlet {
 		OutputList peerStatsList = new OutputList();
 		peerStatsInfobox.body.addChild(peerStatsList);
 		if (numberOfConnected > 0) {
-			HTMLNode peerStatsConnectedListItem = peerStatsList.addItem().addChild("span");
-			peerStatsConnectedListItem.addChild("span", new String[] { "class", "title", "style" }, 
-					new String[] { "peer_connected", l10nDark("connected"), "border-bottom: 1px dotted; cursor: help;" }, l10nDark("connectedShort"));
-			peerStatsConnectedListItem.addChild("span", ":\u00a0" + numberOfConnected);
+			InlineBox peerStatsConnectedListItem = peerStatsList.addItem().addInlineBox();
+			peerStatsConnectedListItem.addInlineBox(HTMLClass.PEERCONNECTED, l10nDark("connected"), l10nDark("connectedShort"));
+			peerStatsConnectedListItem.addInlineBox(":\u00a0" + numberOfConnected);
 		}
 		if (numberOfRoutingBackedOff > 0) {
-			HTMLNode peerStatsRoutingBackedOffListItem = peerStatsList.addItem().addChild("span");
-			peerStatsRoutingBackedOffListItem.addChild("span", new String[] { "class", "title", "style" }, 
-					new String[] { "peer_backed_off", l10nDark(advancedModeEnabled ? "backedOff" : "busy"), 
-					"border-bottom: 1px dotted; cursor: help;" }, l10nDark((advancedModeEnabled ? "backedOff" : "busy")+"Short"));
-			peerStatsRoutingBackedOffListItem.addChild("span", ":\u00a0" + numberOfRoutingBackedOff);
+			InlineBox peerStatsRoutingBackedOffListItem = peerStatsList.addItem().addInlineBox();
+			peerStatsRoutingBackedOffListItem.addInlineBox(HTMLClass.PEERBACKEDOFF, l10nDark(advancedModeEnabled ? "backedOff" : "busy"), l10nDark((advancedModeEnabled ? "backedOff" : "busy")+"Short"));
+			peerStatsRoutingBackedOffListItem.addInlineBox(":\u00a0" + numberOfRoutingBackedOff);
 		}
 		if (numberOfTooNew > 0) {
-			HTMLNode peerStatsTooNewListItem = peerStatsList.addItem().addChild("span");
-			peerStatsTooNewListItem.addChild("span", new String[] { "class", "title", "style" }, 
-					new String[] { "peer_too_new", l10nDark("tooNew"), "border-bottom: 1px dotted; cursor: help;" }, l10nDark("tooNewShort"));
-			peerStatsTooNewListItem.addChild("span", ":\u00a0" + numberOfTooNew);
+			InlineBox peerStatsTooNewListItem = peerStatsList.addItem().addInlineBox();
+			peerStatsTooNewListItem.addInlineBox(HTMLClass.PEERTOONEW, l10nDark("tooNew"), l10nDark("tooNewShort"));
+			peerStatsTooNewListItem.addInlineBox(":\u00a0" + numberOfTooNew);
 		}
 		if (numberOfTooOld > 0) {
-			HTMLNode peerStatsTooOldListItem = peerStatsList.addItem().addChild("span");
-			peerStatsTooOldListItem.addChild("span", new String[] { "class", "title", "style" }, 
-					new String[] { "peer_too_old", l10nDark("tooOld"), "border-bottom: 1px dotted; cursor: help;" }, l10nDark("tooOldShort"));
-			peerStatsTooOldListItem.addChild("span", ":\u00a0" + numberOfTooOld);
+			InlineBox peerStatsTooOldListItem = peerStatsList.addItem().addInlineBox();
+			peerStatsTooOldListItem.addInlineBox(HTMLClass.PEERTOOOLD, l10nDark("tooOld"), l10nDark("tooOldShort"));
+			peerStatsTooOldListItem.addInlineBox(":\u00a0" + numberOfTooOld);
 		}
 		if (numberOfDisconnected > 0) {
-			HTMLNode peerStatsDisconnectedListItem = peerStatsList.addItem().addChild("span");
-			peerStatsDisconnectedListItem.addChild("span", new String[] { "class", "title", "style" }, 
-					new String[] { "peer_disconnected", l10nDark("notConnected"), "border-bottom: 1px dotted; cursor: help;" }, l10nDark("notConnectedShort"));
-			peerStatsDisconnectedListItem.addChild("span", ":\u00a0" + numberOfDisconnected);
+			InlineBox peerStatsDisconnectedListItem = peerStatsList.addItem().addInlineBox();
+			peerStatsDisconnectedListItem.addInlineBox(HTMLClass.PEERDISCONNECTED, l10nDark("notConnected"), l10nDark("notConnectedShort"));
+			peerStatsDisconnectedListItem.addInlineBox(":\u00a0" + numberOfDisconnected);
 		}
 		if (numberOfNeverConnected > 0) {
-			HTMLNode peerStatsNeverConnectedListItem = peerStatsList.addItem().addChild("span");
-			peerStatsNeverConnectedListItem.addChild("span", new String[] { "class", "title", "style" },
-					new String[] { "peer_never_connected", l10nDark("neverConnected"), "border-bottom: 1px dotted; cursor: help;" }, l10nDark("neverConnectedShort"));
-			peerStatsNeverConnectedListItem.addChild("span", ":\u00a0" + numberOfNeverConnected);
+			InlineBox peerStatsNeverConnectedListItem = peerStatsList.addItem().addInlineBox();
+			peerStatsNeverConnectedListItem.addInlineBox(HTMLClass.PEERNEVERCONNECTED, l10nDark("neverConnected"), l10nDark("neverConnectedShort"));
+			peerStatsNeverConnectedListItem.addInlineBox(":\u00a0" + numberOfNeverConnected);
 		}
 		if (numberOfDisabled > 0) {
-			HTMLNode peerStatsDisabledListItem = peerStatsList.addItem().addChild("span");
-			peerStatsDisabledListItem.addChild("span", new String[] { "class", "title", "style" }, 
-					new String[] { "peer_disabled", l10nDark("disabled"), "border-bottom: 1px dotted; cursor: help;" }, l10nDark("disabledShort"));
-			peerStatsDisabledListItem.addChild("span", ":\u00a0" + numberOfDisabled);
+			InlineBox peerStatsDisabledListItem = peerStatsList.addItem().addInlineBox();
+			peerStatsDisabledListItem.addInlineBox(HTMLClass.PEERDISABLED, l10nDark("disabled"), l10nDark("disabledShort"));
+			peerStatsDisabledListItem.addInlineBox(":\u00a0" + numberOfDisabled);
 		}
 		if (numberOfBursting > 0) {
-			HTMLNode peerStatsBurstingListItem = peerStatsList.addItem().addChild("span");
-			peerStatsBurstingListItem.addChild("span", new String[] { "class", "title", "style" }, 
-					new String[] { "peer_bursting", l10nDark("bursting"), "border-bottom: 1px dotted; cursor: help;" }, l10nDark("burstingShort"));
-			peerStatsBurstingListItem.addChild("span", ":\u00a0" + numberOfBursting);
+			InlineBox peerStatsBurstingListItem = peerStatsList.addItem().addInlineBox();
+			peerStatsBurstingListItem.addInlineBox(HTMLClass.PEERBURSTING, l10nDark("bursting"), l10nDark("burstingShort"));
+			peerStatsBurstingListItem.addInlineBox(":\u00a0" + numberOfBursting);
 		}
 		if (numberOfListening > 0) {
-			HTMLNode peerStatsListeningListItem = peerStatsList.addItem().addChild("span");
-			peerStatsListeningListItem.addChild("span", new String[] { "class", "title", "style" }, 
-					new String[] { "peer_listening", l10nDark("listening"), "border-bottom: 1px dotted; cursor: help;" }, l10nDark("listeningShort"));
-			peerStatsListeningListItem.addChild("span", ":\u00a0" + numberOfListening);
+			InlineBox peerStatsListeningListItem = peerStatsList.addItem().addInlineBox();
+			peerStatsListeningListItem.addInlineBox(HTMLClass.PEERLISTENING, l10nDark("listening"), l10nDark("listeningShort"));
+			peerStatsListeningListItem.addInlineBox(":\u00a0" + numberOfListening);
 		}
 		if (numberOfListenOnly > 0) {
-			HTMLNode peerStatsListenOnlyListItem = peerStatsList.addItem().addChild("span");
-			peerStatsListenOnlyListItem.addChild("span", new String[] { "class", "title", "style" }, 
-					new String[] { "peer_listen_only", l10nDark("listenOnly"), "border-bottom: 1px dotted; cursor: help;" }, l10nDark("listenOnlyShort"));
-			peerStatsListenOnlyListItem.addChild("span", ":\u00a0" + numberOfListenOnly);
+			InlineBox peerStatsListenOnlyListItem = peerStatsList.addItem().addInlineBox();
+			peerStatsListenOnlyListItem.addInlineBox(HTMLClass.PEERLISTENONLY, l10nDark("listenOnly"), l10nDark("listenOnlyShort"));
+			peerStatsListenOnlyListItem.addInlineBox(":\u00a0" + numberOfListenOnly);
 		}
 		if (numberOfClockProblem > 0) {
-			HTMLNode peerStatsRoutingDisabledListItem = peerStatsList.addItem().addChild("span");
-			peerStatsRoutingDisabledListItem.addChild("span", new String[] { "class", "title", "style" }, new String[] { "peer_clock_problem", l10nDark("clockProblem"), "border-bottom: 1px dotted; cursor: help;" }, l10nDark("clockProblemShort"));
-			peerStatsRoutingDisabledListItem.addChild("span", ":\u00a0" + numberOfClockProblem);
+			InlineBox peerStatsRoutingDisabledListItem = peerStatsList.addItem().addInlineBox();
+			peerStatsRoutingDisabledListItem.addInlineBox(HTMLClass.PEERCLOCKPROBLEM, l10nDark("clockProblem"), l10nDark("clockProblemShort"));
+			peerStatsRoutingDisabledListItem.addInlineBox(":\u00a0" + numberOfClockProblem);
 		}
 		if (numberOfConnError > 0) {
-			HTMLNode peerStatsRoutingDisabledListItem = peerStatsList.addItem().addChild("span");
-			peerStatsRoutingDisabledListItem.addChild("span", new String[] { "class", "title", "style" }, new String[] { "peer_routing_disabled", l10nDark("connError"), "border-bottom: 1px dotted; cursor: help;" }, l10nDark("connErrorShort"));
-			peerStatsRoutingDisabledListItem.addChild("span", ":\u00a0" + numberOfClockProblem);
+			InlineBox peerStatsRoutingDisabledListItem = peerStatsList.addItem().addInlineBox();
+			peerStatsRoutingDisabledListItem.addInlineBox(HTMLClass.PEERROUTINGDISABLED, l10nDark("connError"), l10nDark("connErrorShort"));
+			peerStatsRoutingDisabledListItem.addInlineBox(":\u00a0" + numberOfClockProblem);
 		}
 		if (numberOfDisconnecting > 0) {
-			HTMLNode peerStatsListenOnlyListItem = peerStatsList.addItem().addChild("span");
-			peerStatsListenOnlyListItem.addChild("span", new String[] { "class", "title", "style" }, new String[] { "peer_disconnecting", l10nDark("disconnecting"), "border-bottom: 1px dotted; cursor: help;" }, l10nDark("disconnectingShort"));
-			peerStatsListenOnlyListItem.addChild("span", ":\u00a0" + numberOfDisconnecting);
+			InlineBox peerStatsListenOnlyListItem = peerStatsList.addItem().addInlineBox();
+			peerStatsListenOnlyListItem.addInlineBox(HTMLClass.PEERDISCONNECTING, l10nDark("disconnecting"), l10nDark("disconnectingShort"));
+			peerStatsListenOnlyListItem.addInlineBox(":\u00a0" + numberOfDisconnecting);
 		}
 		if (numberOfSeedServers > 0) {
-			HTMLNode peerStatsSeedServersListItem = peerStatsList.addItem().addChild("span");
-			peerStatsSeedServersListItem.addChild("span", new String[] { "class", "title", "style" },
-					new String[] { "peer_listening" /* FIXME */, l10nDark("seedServers"), "border-bottom: 1px dotted; cursor: help;" }, l10nDark("seedServersShort"));
-			peerStatsSeedServersListItem.addChild("span", ":\u00a0" + numberOfSeedServers);
+			InlineBox peerStatsSeedServersListItem = peerStatsList.addItem().addInlineBox();
+			peerStatsSeedServersListItem.addInlineBox(HTMLClass.SEEDSERVER, l10nDark("seedServers"), l10nDark("seedServersShort"));
+			peerStatsSeedServersListItem.addInlineBox(":\u00a0" + numberOfSeedServers);
 		}
 		if (numberOfSeedClients > 0) {
-			HTMLNode peerStatsSeedClientsListItem = peerStatsList.addItem().addChild("span");
-			peerStatsSeedClientsListItem.addChild("span", new String[] { "class", "title", "style" },
-					new String[] { "peer_listening" /* FIXME */, l10nDark("seedClients"), "border-bottom: 1px dotted; cursor: help;" }, l10nDark("seedClientsShort"));
-			peerStatsSeedClientsListItem.addChild("span", ":\u00a0" + numberOfSeedClients);
+			InlineBox peerStatsSeedClientsListItem = peerStatsList.addItem().addInlineBox();
+			peerStatsSeedClientsListItem.addInlineBox(HTMLClass.SEEDCLIENT, l10nDark("seedClients"), l10nDark("seedClientsShort"));
+			peerStatsSeedClientsListItem.addInlineBox(":\u00a0" + numberOfSeedClients);
 		}
 		if (numberOfRoutingDisabled > 0) {
-			HTMLNode peerStatsRoutingDisabledListItem = peerStatsList.addItem().addChild("span");
-			peerStatsRoutingDisabledListItem.addChild("span", new String[] { "class", "title", "style" }, new String[] { "peer_routing_disabled", l10nDark("routingDisabled"), "border-bottom: 1px dotted; cursor: help;" }, l10nDark("routingDisabledShort"));
-			peerStatsRoutingDisabledListItem.addChild("span", ":\u00a0" + numberOfRoutingDisabled);
+			InlineBox peerStatsRoutingDisabledListItem = peerStatsList.addItem().addInlineBox();
+			peerStatsRoutingDisabledListItem.addInlineBox(HTMLClass.PEERROUTINGDISABLED, l10nDark("routingDisabled"), l10nDark("routingDisabledShort"));
+			peerStatsRoutingDisabledListItem.addInlineBox(":\u00a0" + numberOfRoutingDisabled);
 		}
 		if (numberOfNoLoadStats > 0) {
-			HTMLNode peerStatsNoLoadStatsListItem = peerStatsList.addItem().addChild("span");
-			peerStatsNoLoadStatsListItem.addChild("span", new String[] { "class", "title", "style" }, new String[] { "peer_no_load_stats", l10nDark("noLoadStats"), "border-bottom: 1px dotted; cursor: help;" }, l10nDark("noLoadStatsShort"));
-			peerStatsNoLoadStatsListItem.addChild("span", ":\u00a0" + numberOfNoLoadStats);
+			InlineBox peerStatsNoLoadStatsListItem = peerStatsList.addItem().addInlineBox();
+			peerStatsNoLoadStatsListItem.addInlineBox(HTMLClass.PEERNOLOADSTATS, l10nDark("noLoadStats"), l10nDark("noLoadStatsShort"));
+			peerStatsNoLoadStatsListItem.addInlineBox(":\u00a0" + numberOfNoLoadStats);
 		}
 		OpennetManager om = node.getOpennet();
 		if(om != null) {
@@ -1368,15 +1355,15 @@ public class StatisticsToadlet extends Toadlet {
 		Cell nodeHistogramGraphCell;
 		Div nodeCircleInfoboxContent = nodeCircleTableCell.addDiv(HTMLClass.PEERCIRCLE);
 		nodeCircleInfoboxContent.addAttribute("style", "position: relative; height: " + ((PEER_CIRCLE_RADIUS + PEER_CIRCLE_ADDITIONAL_FREE_SPACE) * 2) + "px; width: " + ((PEER_CIRCLE_RADIUS + PEER_CIRCLE_ADDITIONAL_FREE_SPACE) * 2) + "px");
-		nodeCircleInfoboxContent.addChild("span", new String[] { "style", "class" }, new String[] { generatePeerCircleStyleString(0, false, 1.0),	 "mark" }, "|");
-		nodeCircleInfoboxContent.addChild("span", new String[] { "style", "class" }, new String[] { generatePeerCircleStyleString(0.125, false, 1.0), "mark" }, "+");
-		nodeCircleInfoboxContent.addChild("span", new String[] { "style", "class" }, new String[] { generatePeerCircleStyleString(0.25, false, 1.0),  "mark" }, "--");
-		nodeCircleInfoboxContent.addChild("span", new String[] { "style", "class" }, new String[] { generatePeerCircleStyleString(0.375, false, 1.0), "mark" }, "+");
-		nodeCircleInfoboxContent.addChild("span", new String[] { "style", "class" }, new String[] { generatePeerCircleStyleString(0.5, false, 1.0),   "mark" }, "|");
-		nodeCircleInfoboxContent.addChild("span", new String[] { "style", "class" }, new String[] { generatePeerCircleStyleString(0.625, false, 1.0), "mark" }, "+");
-		nodeCircleInfoboxContent.addChild("span", new String[] { "style", "class" }, new String[] { generatePeerCircleStyleString(0.75, false, 1.0),  "mark" }, "--");
-		nodeCircleInfoboxContent.addChild("span", new String[] { "style", "class" }, new String[] { generatePeerCircleStyleString(0.875, false, 1.0), "mark" }, "+");
-		nodeCircleInfoboxContent.addChild("span", new String[] { "style", "class" }, new String[] { "position: absolute; top: " + PEER_CIRCLE_RADIUS + "px; left: " + (PEER_CIRCLE_RADIUS + PEER_CIRCLE_ADDITIONAL_FREE_SPACE) + "px", "mark" }, "+");
+		nodeCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0, false, 1.0), HTMLClass.MARK, "|");
+		nodeCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0.125, false, 1.0), HTMLClass.MARK, "+");
+		nodeCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0.25, false, 1.0),  HTMLClass.MARK, "--");
+		nodeCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0.375, false, 1.0), HTMLClass.MARK, "+");
+		nodeCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0.5, false, 1.0),   HTMLClass.MARK, "|");
+		nodeCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0.625, false, 1.0), HTMLClass.MARK, "+");
+		nodeCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0.75, false, 1.0),  HTMLClass.MARK, "--");
+		nodeCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0.875, false, 1.0), HTMLClass.MARK, "+");
+		nodeCircleInfoboxContent.addInlineBox("position: absolute; top: " + PEER_CIRCLE_RADIUS + "px; left: " + (PEER_CIRCLE_RADIUS + PEER_CIRCLE_ADDITIONAL_FREE_SPACE) + "px", HTMLClass.MARK, "+");
 		final Object[] knownLocsCopy = stats.getKnownLocations(-1);
 		final Double[] locations = (Double[])knownLocsCopy[0];
 		final Long[] timestamps = (Long[])knownLocsCopy[1];
@@ -1399,9 +1386,9 @@ public class StatisticsToadlet extends Toadlet {
 			histogramIndex = (int) (Math.floor(location.doubleValue() * HISTOGRAM_LENGTH));
 			histogram[histogramIndex]++;
 			
-			nodeCircleInfoboxContent.addChild("span", new String[] { "style", "class" }, new String[] { generatePeerCircleStyleString(location.doubleValue(), false, strength), "connected" }, "x");
+			nodeCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(location.doubleValue(), false, strength), HTMLClass.CONNECTED, "x");
 		}
-		nodeCircleInfoboxContent.addChild("span", new String[] { "style", "class" }, new String[] { generatePeerCircleStyleString(myLocation, true, 1.0), "me" }, "x");
+		nodeCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(myLocation, true, 1.0), HTMLClass.ME, "x");
 		//
 		double histogramPercent;
 		for (int i = 0; i < HISTOGRAM_LENGTH; i++) {
@@ -1424,9 +1411,9 @@ public class StatisticsToadlet extends Toadlet {
 			Cell nodeHistogramLegendCell = nodeHistogramLegendTableRow.addCell();
 			Cell nodeHistogramGraphCell = nodeHistogramGraphTableRow.addCell();
 			nodeHistogramGraphCell.addAttribute("style", "height: 100px;");
-			HTMLNode nodeHistogramGraphCell2 = nodeHistogramLegendCell.addDiv(HTMLClass.HISTOGRAMLABEL);
+			OutputNode nodeHistogramGraphCell2 = nodeHistogramLegendCell.addDiv(HTMLClass.HISTOGRAMLABEL);
 			if(i == myIndex) {
-				 nodeHistogramGraphCell2 = nodeHistogramGraphCell2.addChild("span", "class", "me");
+				 nodeHistogramGraphCell2 = nodeHistogramGraphCell2.addInlineBox(HTMLClass.ME);
 			}
 			nodeHistogramGraphCell2.addChild("#", fix1p1.format(((double) i) / incomingRequestLocation.length ));
 			Div graphCell = new Div(HTMLClass.HISTOGRAMCONNECTED, "\u00a0");
@@ -1444,9 +1431,9 @@ public class StatisticsToadlet extends Toadlet {
 			Cell nodeHistogramLegendCell = nodeHistogramLegendTableRow.addCell();
 			Cell nodeHistogramGraphCell = nodeHistogramGraphTableRow.addCell();
 			nodeHistogramGraphTableRow.addAttribute("style", "height: 100px;");
-			HTMLNode nodeHistogramGraphCell2 = nodeHistogramLegendCell.addDiv(HTMLClass.HISTOGRAMLABEL);
+			OutputNode nodeHistogramGraphCell2 = nodeHistogramLegendCell.addDiv(HTMLClass.HISTOGRAMLABEL);
 			if(i == myIndex) {
-				 nodeHistogramGraphCell2 = nodeHistogramGraphCell2.addChild("span", "class", "me");
+				 nodeHistogramGraphCell2 = nodeHistogramGraphCell2.addInlineBox(HTMLClass.ME);
 			}
 			nodeHistogramGraphCell2.addChild("#", fix1p1.format(((double) i) / locallyOriginatingRequests.length ));
 			Div graphCell = new Div(HTMLClass.HISTOGRAMCONNECTED, "\u00a0");
@@ -1473,15 +1460,15 @@ public class StatisticsToadlet extends Toadlet {
 		Cell peerHistogramGraphCell;
 		Div peerCircleInfoboxContent = peerCircleTableCell.addDiv(HTMLClass.PEERCIRCLE);
 		peerCircleInfoboxContent.addAttribute("style", "position: relative; height: " + ((PEER_CIRCLE_RADIUS + PEER_CIRCLE_ADDITIONAL_FREE_SPACE) * 2) + "px; width: " + ((PEER_CIRCLE_RADIUS + PEER_CIRCLE_ADDITIONAL_FREE_SPACE) * 2) + "px");
-		peerCircleInfoboxContent.addChild("span", new String[]{"style", "class"}, new String[]{generatePeerCircleStyleString(0, false, 1.0), "mark"}, "|");
-		peerCircleInfoboxContent.addChild("span", new String[] { "style", "class" }, new String[] { generatePeerCircleStyleString(0.125, false, 1.0), "mark" }, "+");
-		peerCircleInfoboxContent.addChild("span", new String[] { "style", "class" }, new String[] { generatePeerCircleStyleString(0.25, false, 1.0),  "mark" }, "--");
-		peerCircleInfoboxContent.addChild("span", new String[] { "style", "class" }, new String[] { generatePeerCircleStyleString(0.375, false, 1.0), "mark" }, "+");
-		peerCircleInfoboxContent.addChild("span", new String[] { "style", "class" }, new String[] { generatePeerCircleStyleString(0.5, false, 1.0),   "mark" }, "|");
-		peerCircleInfoboxContent.addChild("span", new String[] { "style", "class" }, new String[] { generatePeerCircleStyleString(0.625, false, 1.0), "mark" }, "+");
-		peerCircleInfoboxContent.addChild("span", new String[] { "style", "class" }, new String[] { generatePeerCircleStyleString(0.75, false, 1.0),  "mark" }, "--");
-		peerCircleInfoboxContent.addChild("span", new String[] { "style", "class" }, new String[] { generatePeerCircleStyleString(0.875, false, 1.0), "mark" }, "+");
-		peerCircleInfoboxContent.addChild("span", new String[] { "style", "class" }, new String[] { "position: absolute; top: " + PEER_CIRCLE_RADIUS + "px; left: " + (PEER_CIRCLE_RADIUS + PEER_CIRCLE_ADDITIONAL_FREE_SPACE) + "px", "mark" }, "+");
+		peerCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0, false, 1.0), HTMLClass.MARK, "|");
+		peerCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0.125, false, 1.0), HTMLClass.MARK, "+");
+		peerCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0.25, false, 1.0),  HTMLClass.MARK, "--");
+		peerCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0.375, false, 1.0), HTMLClass.MARK, "+");
+		peerCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0.5, false, 1.0),   HTMLClass.MARK, "|");
+		peerCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0.625, false, 1.0), HTMLClass.MARK, "+");
+		peerCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0.75, false, 1.0),  HTMLClass.MARK, "--");
+		peerCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0.875, false, 1.0), HTMLClass.MARK, "+");
+		peerCircleInfoboxContent.addInlineBox("position: absolute; top: " + PEER_CIRCLE_RADIUS + "px; left: " + (PEER_CIRCLE_RADIUS + PEER_CIRCLE_ADDITIONAL_FREE_SPACE) + "px", HTMLClass.MARK, "+");
 
 		PeerNodeStatus peerNodeStatus;
 		double peerLocation;
@@ -1498,7 +1485,7 @@ public class StatisticsToadlet extends Toadlet {
 			if (foafLocations!=null && peerNodeStatus.isRoutable()) {
 				for (double foafLocation : foafLocations) {
 					//one grey dot for each "Friend-of-a-friend"
-					peerCircleInfoboxContent.addChild("span", new String[] { "style", "class" }, new String[] { generatePeerCircleStyleString(foafLocation, false, 0.9), "disconnected" }, ".");
+					peerCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(foafLocation, false, 0.9), HTMLClass.DISCONNECTED, ".");
 				}
 			}
 			newPeerCount++;
@@ -1509,9 +1496,9 @@ public class StatisticsToadlet extends Toadlet {
 			} else {
 				histogramDisconnected[histogramIndex]++;
 			}
-			peerCircleInfoboxContent.addChild("span", new String[] { "style", "class" }, new String[] { generatePeerCircleStyleString(peerLocation, false, (1.0 - peerNodeStatus.getPReject())), ((peerNodeStatus.isConnected())?"connected":"disconnected") }, ((peerNodeStatus.isOpennet())?"o":"x"));
+			peerCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(peerLocation, false, (1.0 - peerNodeStatus.getPReject())), ((peerNodeStatus.isConnected())? HTMLClass.CONNECTED :HTMLClass.DISCONNECTED), ((peerNodeStatus.isOpennet())?"o":"x"));
 		}
-		peerCircleInfoboxContent.addChild("span", new String[] { "style", "class" }, new String[] { generatePeerCircleStyleString(myLocation, true, 1.0), "me" }, "x");
+		peerCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(myLocation, true, 1.0), HTMLClass.ME, "x");
 		//
 		double histogramPercent;
 		for (int i = 0; i < HISTOGRAM_LENGTH; i++) {

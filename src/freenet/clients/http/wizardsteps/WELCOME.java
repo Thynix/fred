@@ -89,7 +89,7 @@ public class WELCOME implements Step {
 	private void addSecurityTableCell(Row header, Row row, String preset, PageHelper helper, boolean incognito) {
 		header.addHeader("33%", WizardL10n.l10n("presetTitle"+preset));
 		Cell tableCell = row.addCell();
-		tableCell.addChild("p", WizardL10n.l10n("preset" + preset));
+		tableCell.addBlockText( WizardL10n.l10n("preset" + preset));
 		Div centerForm = tableCell.addDiv();
 		centerForm.addAttribute("style", "text-align:center;");
 		HTMLNode secForm = helper.addFormChild(centerForm, ".", "SecForm"+preset);

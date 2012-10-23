@@ -47,29 +47,14 @@ public class SimpleHelpToadlet extends Toadlet {
 		
 		Table table = new Table();
 		helpScreenContent2.addChild(table);
-       
-                Cell row = table.addRow().addCell();
-                //Cell cell = row.addCell();
-              
-		        // cell.addChild("#", " ");
-                // }
-                // cell = row.addCell("style", "border: none");
-                // cell.addChild("a", new String[]{"href", "title"}, new String[]{ ctx.fixLink('/' + item.getKey()), item.getDescription()}, item.getName());
-     
+		Cell row = table.addRow().addCell();
 		row.addChild("#", NodeL10n.getBase().getString("SimpleHelpToadlet.CHK"));
 		row.addChild("br");
 		row.addChild("#", NodeL10n.getBase().getString("SimpleHelpToadlet.SSK"));
 		row.addChild("br");
 		row.addChild("#", NodeL10n.getBase().getString("SimpleHelpToadlet.USK"));
-		
-		// helpScreenContent2.addchild("#", NodeL10n.getBase().getString("SimpleHelpToadlet.CHK"));
-		// helpScreenContent2.addchild("br");
-		// helpScreenContent2.addchild("#", NodeL10n.getBase().getString("SimpleHelpToadlet.SSK"));
-		// helpScreenContent2.addchild("br");
-		// helpScreenContent2.addchild("#", NodeL10n.getBase().getString("SimpleHelpToadlet.USK"));
-		
-		
-		// Port forwarding, etc.	
+
+		// Port forwarding, etc.
 		HTMLNode helpScreenContent3 = ctx.getPageMaker().getInfobox("infobox-content", NodeL10n.getBase().getString("SimpleHelpToadlet.connectivityTitle"), contentNode, "freenet-connectivity", true);
 		helpScreenContent3.addChild("#", NodeL10n.getBase().getString("SimpleHelpToadlet.connectivityText"));
 		

@@ -51,8 +51,8 @@ public class InvalidAddressOverrideUserAlert extends AbstractUserAlert {
 		OutputList listNode = new OutputList(HTMLClass.CONFIG);
 		formNode.addChild(listNode);
 		Item itemNode = listNode.addItem();
-		itemNode.addChild("span", "class", "configshortdesc", NodeL10n.getBase().getString(o.getShortDesc())).addChild("input", new String[] { "type", "name", "value" }, new String[] { "text", sc.getPrefix() + ".ipAddressOverride", o.getValueString() });
-		itemNode.addChild("span", "class", "configlongdesc", NodeL10n.getBase().getString(o.getLongDesc()));
+		itemNode.addInlineBox(HTMLClass.CONFIGSHORTDESC, NodeL10n.getBase().getString(o.getShortDesc())).addChild("input", new String[] { "type", "name", "value" }, new String[] { "text", sc.getPrefix() + ".ipAddressOverride", o.getValueString() });
+		itemNode.addInlineBox(HTMLClass.CONFIGLONGDESC, NodeL10n.getBase().getString(o.getLongDesc()));
 		formNode.addChild("input", new String[] { "type", "value" }, new String[] { "submit", NodeL10n.getBase().getString("UserAlert.apply") });
 		formNode.addChild("input", new String[] { "type", "value" }, new String[] { "reset", NodeL10n.getBase().getString("UserAlert.reset") });
 		return textNode;

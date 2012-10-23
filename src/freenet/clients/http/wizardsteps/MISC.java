@@ -1,6 +1,7 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
+import freenet.clients.http.uielements.BlockText;
 import freenet.config.Config;
 import freenet.config.ConfigException;
 import freenet.l10n.NodeL10n;
@@ -30,19 +31,19 @@ public class MISC implements Step {
 		HTMLNode miscInfoboxContent = helper.getInfobox("infobox-normal", WizardL10n.l10n("autoUpdate"),
 		        form, null, false);
 
-		miscInfoboxContent.addChild("p", WizardL10n.l10n("autoUpdateLong"));
-		miscInfoboxContent.addChild("p").addChild("input",
+		miscInfoboxContent.addChild(new BlockText(WizardL10n.l10n("autoUpdateLong")));
+		miscInfoboxContent.addChild(new BlockText()).addChild("input",
 		        new String[] { "type", "checked", "name", "value" },
 		        new String[] { "radio", "on", "autodeploy", "true" }, WizardL10n.l10n("autoUpdateAutodeploy"));
-		miscInfoboxContent.addChild("p").addChild("input",
+		miscInfoboxContent.addChild(new BlockText()).addChild("input",
 		        new String[] { "type", "name", "value" },
 		        new String[] { "radio", "autodeploy", "false" }, WizardL10n.l10n("autoUpdateNoAutodeploy"));
 
 		miscInfoboxContent = helper.getInfobox("infobox-normal", WizardL10n.l10n("plugins"),
 		        form, null, false);
 
-		miscInfoboxContent.addChild("p", WizardL10n.l10n("pluginsLong"));
-		miscInfoboxContent.addChild("p").addChild("input",
+		miscInfoboxContent.addChild(new BlockText(WizardL10n.l10n("pluginsLong")));
+		miscInfoboxContent.addChild(new BlockText()).addChild("input",
 		        new String[] { "type", "checked", "name", "value" },
 		        new String[] { "checkbox", "on", "upnp", "true" }, WizardL10n.l10n("enableUPnP"));
 		miscInfoboxContent.addChild("input",

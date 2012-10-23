@@ -54,11 +54,9 @@ public class MeaningfulNodeNameUserAlert extends AbstractUserAlert {
 		OutputList listNode = new OutputList(HTMLClass.CONFIG);
 		formNode.addChild(listNode);
 		Item itemNode = listNode.addItem();
-		itemNode.addChild("span", new String[]{ "class", "title", "style" },
-			new String[]{ "configshortdesc", NodeL10n.getBase().getString("ConfigToadlet.defaultIs", new String[] { "default" }, new String[] { o.getDefault() }),
-			"cursor: help;" }).addChild(NodeL10n.getBase().getHTMLNode(o.getShortDesc()));
+		itemNode.addInlineBox(NodeL10n.getBase().getString("ConfigToadlet.defaultIs"), HTMLClass.CONFIGSHORTDESC).addChild(NodeL10n.getBase().getHTMLNode(o.getShortDesc()));
 		itemNode.addChild("input", new String[] { "type", "class", "alt", "name", "value" }, new String[] { "text", "config", o.getShortDesc(), "node.name", o.getValueString() });
-		itemNode.addChild("span", "class", "configlongdesc").addChild(NodeL10n.getBase().getHTMLNode(o.getLongDesc()));
+		itemNode.addInlineBox(HTMLClass.CONFIGLONGDESC).addChild(NodeL10n.getBase().getHTMLNode(o.getLongDesc()));
 		formNode.addChild("input", new String[] { "type", "value" }, new String[] { "submit", NodeL10n.getBase().getString("UserAlert.apply") });
 		formNode.addChild("input", new String[] { "type", "value" }, new String[] { "reset", NodeL10n.getBase().getString("UserAlert.reset") });
 

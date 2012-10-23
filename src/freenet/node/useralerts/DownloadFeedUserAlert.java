@@ -56,7 +56,7 @@ public class DownloadFeedUserAlert extends AbstractUserAlert {
 	@Override
 	public HTMLNode getHTMLText() {
 		Div alertNode = new Div();
-		alertNode.addChild("a", "href", "/" + uri).addChild("#", uri.toShortString());
+		alertNode.addLink("/" + uri).addChild("#", uri.toShortString());
 		if (description != null && description.length() != 0) {
 			String[] lines = description.split("\n");
 			alertNode.addChild("br");

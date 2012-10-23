@@ -6,6 +6,7 @@ import java.net.URI;
 import freenet.client.HighLevelSimpleClient;
 import freenet.client.InsertContext;
 import freenet.client.InsertContext.CompatibilityMode;
+import freenet.clients.http.uielements.BlockText;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
 import freenet.node.SecurityLevels.NETWORK_THREAT_LEVEL;
@@ -81,7 +82,7 @@ public class FileInsertWizardToadlet extends Toadlet implements LinkEnabledCallb
 		        NodeL10n.getBase().getString("QueueToadlet.insertFile"), "insert-queue", true);
 		HTMLNode insertBox = infobox.outer;
 		HTMLNode insertContent = infobox.content;
-		insertContent.addChild("p", l10n("insertIntro"));
+		insertContent.addChild(new BlockText(l10n("insertIntro")));
 		NETWORK_THREAT_LEVEL seclevel = core.node.securityLevels.getNetworkThreatLevel();
 		HTMLNode insertForm = ctx.addFormChild(insertContent, QueueToadlet.PATH_UPLOADS, "queueInsertForm");
 		HTMLNode input = insertForm.addChild("input",

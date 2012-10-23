@@ -14,17 +14,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
 import freenet.node.fcp.FCPConnectionHandler;
 import freenet.support.Base64;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
-import freenet.clients.http.uielements.Div;
-import freenet.clients.http.uielements.HTMLID;
-import freenet.clients.http.uielements.OutputNode;
-import freenet.clients.http.uielements.AlertLine;
-import freenet.clients.http.uielements.InfoboxWidget;
 
 /**
  * Collection of UserAlert's.
@@ -194,7 +190,7 @@ public class UserAlertManager implements Comparator<UserAlert> {
 			if (!alert.isValid())
 				continue;
 			totalNumber++;
-			alertsNode.addChild("a", "name", alert.anchor());
+			alertsNode.addLink(Link.linkType.ANCHOR, alert.anchor());
 			alertsNode.addChild(renderAlert(alert));
 		}
 		if (totalNumber == 0) {
@@ -244,7 +240,7 @@ public class UserAlertManager implements Comparator<UserAlert> {
 		return createAlerts(true);
 	}
 	
-	static final HTMLNode ALERTS_LINK = new HTMLNode("a", "href", "/alerts/").setReadOnly();
+	static final HTMLNode ALERTS_LINK = new Link("/alerts/").setReadOnly();
 
 	/**
 	 * Write the alert summary as HTML to a StringBuilder
@@ -340,7 +336,7 @@ public class UserAlertManager implements Comparator<UserAlert> {
 			NodeL10n.getBase().addL10nSubstitution(summaryBox.body, "UserAlertManager.alertsOnAlertsPage",
 				new String[] { "link" }, new HTMLNode[] { ALERTS_LINK });
 		} else {
-			summaryBox.body.addChild("a", "href", "/alerts/", NodeL10n.getBase().getString("StatusBar.alerts") + " " + alertSummaryString.toString());
+			summaryBox.body.addLink("/alerts/", NodeL10n.getBase().getString("StatusBar.alerts") + " " + alertSummaryString.toString());
 		}
 		summaryBox.setID(HTMLID.MESSAGESUMMARYBOX);
 		return summaryBox;

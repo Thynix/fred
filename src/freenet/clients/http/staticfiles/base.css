@@ -477,6 +477,27 @@ div.infobox-warning span.configlongdesc {
  * <a> tags with a <span> inside them??? Reciting the
  * code that produces this probably summons Cthulhu. */
 
+span.connection-help,
+span.peer_connected,
+span.peer_backed_off
+span.peer_too_new
+span.peer_too_old
+span.peer_disconnected
+span.peer_never_connected
+span.peer_disabled
+span.peer_bursting
+span.peer_listening
+span.peer_listen_only
+span.peer_clock_problem
+span.peer_routing_disabled
+span.peer_disconnecting
+span.seed_server
+span.seed_client
+span.peer_no_load_stats {
+	border-bottom: 1px dotted;
+	cursor: help;
+}
+
 table.darknet_connections td,
 table.darknet_connections th,
 table.darknet_connections span {
@@ -602,6 +623,11 @@ div.n2ntm-message-text {
 
 #n2nbox li {
 	font-weight: bold;
+}
+
+span.n2ntm-send-statuses {
+	border-bottom: 1px dotted;
+	cursor: help;
 }
 
 /* 

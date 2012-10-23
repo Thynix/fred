@@ -9,6 +9,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Map;
 
+import freenet.clients.http.uielements.BlockText;
 import freenet.clients.http.uielements.Row;
 import freenet.clients.http.uielements.Table;
 import freenet.config.InvalidConfigValueException;
@@ -3624,7 +3625,7 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 
 	public void drawNewLoadManagementDelayTimes(HTMLNode content) {
 		WaitingForSlots waitingSlots = node.tracker.countRequestsWaitingForSlots();
-		content.addChild("p").addChild("#", l10n("slotsWaiting", new String[] { "local", "remote" }, new String[] { Integer.toString(waitingSlots.local), Integer.toString(waitingSlots.remote) }));
+		content.addChild(new BlockText()).addChild("#", l10n("slotsWaiting", new String[]{"local", "remote"}, new String[]{Integer.toString(waitingSlots.local), Integer.toString(waitingSlots.remote)}));
 		Table table = new Table();
 		content.addChild(table);
 		Row header = table.addRow();

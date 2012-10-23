@@ -250,27 +250,27 @@ public class SecurityLevels {
 		if((newThreatLevel == NETWORK_THREAT_LEVEL.HIGH && networkThreatLevel != NETWORK_THREAT_LEVEL.MAXIMUM) || 
 				newThreatLevel == NETWORK_THREAT_LEVEL.MAXIMUM) {
 			if(node.peers.getDarknetPeers().length == 0) {
-				parent.addChild("p", l10n("noFriendsWarning"));
+				parent.addBlockText( l10n("noFriendsWarning"));
 				if(newThreatLevel == NETWORK_THREAT_LEVEL.MAXIMUM) {
-					HTMLNode p = parent.addChild("p");
+					HTMLNode p = parent.addBlockText();
 					NodeL10n.getBase().addL10nSubstitution(p, "SecurityLevels.maximumNetworkThreatLevelWarning", new String[] { "bold" },
 							new HTMLNode[] { HTMLNode.STRONG });
 				}
 				parent.addChild("input", new String[] { "type", "name", "value" }, new String[] { "checkbox", checkboxName, "off" }, l10n("noFriendsCheckbox"));
 				return parent;
 			} else if(node.peers.countConnectedDarknetPeers() == 0) {
-				parent.addChild("p", l10n("noConnectedFriendsWarning", "added", Integer.toString(node.peers.getDarknetPeers().length)));
+				parent.addBlockText( l10n("noConnectedFriendsWarning", "added", Integer.toString(node.peers.getDarknetPeers().length)));
 				if(newThreatLevel == NETWORK_THREAT_LEVEL.MAXIMUM) {
-					HTMLNode p = parent.addChild("p");
+					HTMLNode p = parent.addBlockText();
 					NodeL10n.getBase().addL10nSubstitution(p, "SecurityLevels.maximumNetworkThreatLevelWarning", new String[] { "bold" },
 							new HTMLNode[] { HTMLNode.STRONG });
 				}
 				parent.addChild("input", new String[] { "type", "name", "value" }, new String[] { "checkbox", checkboxName, "off" }, l10n("noConnectedFriendsCheckbox"));
 				return parent;
 			} else if(node.peers.countConnectedDarknetPeers() < 10) {
-				parent.addChild("p", l10n("fewConnectedFriendsWarning", new String[] { "connected", "added" }, new String[] { Integer.toString(node.peers.countConnectedDarknetPeers()), Integer.toString(node.peers.getDarknetPeers().length)}));
+				parent.addBlockText( l10n("fewConnectedFriendsWarning", new String[] { "connected", "added" }, new String[] { Integer.toString(node.peers.countConnectedDarknetPeers()), Integer.toString(node.peers.getDarknetPeers().length)}));
 				if(newThreatLevel == NETWORK_THREAT_LEVEL.MAXIMUM) {
-					HTMLNode p = parent.addChild("p");
+					HTMLNode p = parent.addBlockText();
 					NodeL10n.getBase().addL10nSubstitution(p, "SecurityLevels.maximumNetworkThreatLevelWarning", new String[] { "bold" },
 							new HTMLNode[] { HTMLNode.STRONG });
 				}
@@ -278,12 +278,12 @@ public class SecurityLevels {
 				return parent;
 			}
 		} else if(newThreatLevel == NETWORK_THREAT_LEVEL.LOW) {
-			parent.addChild("p", l10n("networkThreatLevelLowWarning"));
+			parent.addBlockText( l10n("networkThreatLevelLowWarning"));
 			parent.addChild("input", new String[] { "type", "name", "value" }, new String[] { "checkbox", checkboxName, "off" }, l10n("networkThreatLevelLowCheckbox"));
 			return parent;
 		} // Don't warn on switching to NORMAL.
 		if(newThreatLevel == NETWORK_THREAT_LEVEL.MAXIMUM) {
-			HTMLNode p = parent.addChild("p");
+			HTMLNode p = parent.addBlockText();
 			NodeL10n.getBase().addL10nSubstitution(p, "SecurityLevels.maximumNetworkThreatLevelWarning", new String[] { "bold" },
 					new HTMLNode[] { HTMLNode.STRONG });
 			p.addChild("#", " ");

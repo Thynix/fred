@@ -1041,7 +1041,7 @@ public class DarknetPeerNode extends PeerNode {
 				public HTMLNode getHTMLText() {
 					Div div_ = new Div();
 
-					div_.addChild("p", l10n("failedReceiveHeader", new String[]{"filename", "node"},
+					div_.addBlockText( l10n("failedReceiveHeader", new String[]{"filename", "node"},
 						new String[]{filename, getName()}));
 
 					// Descriptive table
@@ -1136,7 +1136,7 @@ public class DarknetPeerNode extends PeerNode {
 
 					// FIXME localise!!!
 
-					div_.addChild("p", l10n("succeededReceiveHeader", new String[]{"filename", "node"},
+					div_.addBlockText( l10n("succeededReceiveHeader", new String[]{"filename", "node"},
 						new String[]{filename, getName()}));
 
 					// Descriptive table
@@ -1207,7 +1207,7 @@ public class DarknetPeerNode extends PeerNode {
 				public HTMLNode getHTMLText() {
 					Div div_ = new Div();
 
-					div_.addChild("p", l10n("offeredFileHeader", "name", getName()));
+					div_.addBlockText( l10n("offeredFileHeader", "name", getName()));
 
 					// Descriptive table
 					describeFile(div_);

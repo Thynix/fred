@@ -117,9 +117,7 @@ public class N2NTMToadlet extends Toadlet {
 		peerInfobox.body.addChild("#", message);
 		OutputList peerList = peerInfobox.body.addList();
 		Toadlet.addHomepageLink(peerList);
-		peerList.addItem().addChild("a", new String[]{"href", "title"},
-			new String[]{"/friends/", l10n("returnToFriends")},
-			l10n("friends"));
+		peerList.addItem().addLink("/friends/", l10n("returnToFriends"), l10n("friends"));
 		return peerInfobox;
 	}
 
@@ -208,9 +206,7 @@ public class N2NTMToadlet extends Toadlet {
 											new String[]{SizeUtil.formatSize(size, true), SizeUtil.formatSize(limit, true)}));
 										OutputList friendList = peerTableInfobox.body.addList();
 										Toadlet.addHomepageLink(friendList);
-										friendList.addItem().addChild("a", new String[]{"href", "title"},
-											new String[]{"/friends/", l10n("returnToFriends")},
-											l10n("friends"));
+										friendList.addItem().addLink("/friends/", l10n("returnToFriends"), l10n("friends"));
 										this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 										return;
 									}
@@ -250,20 +246,14 @@ public class N2NTMToadlet extends Toadlet {
 					}
 					Row peerRow = peerTable.addRow();
 					peerRow.addCell("peer-name").addChild("#", pn.getName());
-					peerRow.addCell(sendStatusClass).addChild("span",
-									new String[] { "title", "style" },
-									new String[] { sendStatusLong,
-											"border-bottom: 1px dotted; cursor: help;" },
-									sendStatusShort);
+					peerRow.addCell(sendStatusClass).addInlineBox(HTMLClass.N2NTMSENDSTATUS, sendStatusLong, sendStatusShort);
 				}
 			}
 			HTMLNode infoboxContent = peerTableInfobox.body.addDiv(HTMLClass.N2NTMMESSAGETEXT);
 			infoboxContent.addChild("#", message);
 			OutputList list = peerTableInfobox.body.addList();
 			Toadlet.addHomepageLink(list);
-			list.addItem().addChild("a", new String[]{"href", "title"},
-				new String[]{"/friends/", l10n("returnToFriends")},
-				l10n("friends"));
+			list.addItem().addLink("/friends/", l10n("returnToFriends"), l10n("friends"));
 			this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 			return;
 		}
@@ -278,7 +268,7 @@ public class N2NTMToadlet extends Toadlet {
 		InfoboxWidget messageeditor = new InfoboxWidget(InfoboxWidget.Type.NONE, l10n("sendMessage"));
 		contentNode.addChild(messageeditor);
 		messageeditor.setID(HTMLID.N2NBOX);
-		messageeditor.body.addChild("p", l10n("composingMessageLabel"));
+		messageeditor.body.addBlockText( l10n("composingMessageLabel"));
 		OutputList messageTargetList = messageeditor.body.addList();
 		// Iterate peers
 		for (String peer_name: peers.values()) {

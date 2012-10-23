@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.uielements.BlockText;
+import freenet.clients.http.uielements.Cell;
 import freenet.clients.http.uielements.HTMLClass;
 import freenet.clients.http.uielements.Row;
 import freenet.l10n.NodeL10n;
@@ -77,11 +79,11 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 	@Override
 	protected void drawNameColumn(Row peerRow, PeerNodeStatus peerNodeStatus, boolean advanced) {
 		// name column
-		HTMLNode cell = peerRow.addCell(HTMLClass.PEERNAME);
-		cell.addChild("a", "href", "/send_n2ntm/?peernode_hashcode=" + peerNodeStatus.hashCode(), ((DarknetPeerNodeStatus)peerNodeStatus).getName());
-		if(advanced && peerNodeStatus.hasFullNoderef) {
+		Cell cell = peerRow.addCell(HTMLClass.PEERNAME);
+		cell.addLink("/send_n2ntm/?peernode_hashcode=" + peerNodeStatus.hashCode(), ((DarknetPeerNodeStatus) peerNodeStatus).getName());
+		if (advanced && peerNodeStatus.hasFullNoderef) {
 			cell.addChild("#", " (");
-			cell.addChild("a", "href", path()+"friend-"+peerNodeStatus.hashCode()+".fref", l10n("noderefLink"));
+			cell.addLink( path()+"friend-"+peerNodeStatus.hashCode()+".fref", l10n("noderefLink"));
 			cell.addChild("#", ")");
 		}
 	}
@@ -119,7 +121,7 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 		// private darknet node comment note column
 		DarknetPeerNodeStatus status = (DarknetPeerNodeStatus) peerNodeStatus;
 		if(fProxyJavascriptEnabled) {
-			peerRow.addCell(HTMLClass.PEERPRIVATEDARKNETCOMMENTNOTE).addChild("input", new String[] { "type", "name", "size", "maxlength", "onBlur", "onChange", "value" }, new String[] { "text", "peerPrivateNote_" + peerNodeStatus.hashCode(), "16", "250", "peerNoteBlur();", "peerNoteChange();", status.getPrivateDarknetCommentNote() });
+			peerRow.addCell(HTMLClass.PEERPRIVATEDARKNETCOMMENTNOTE).addChild("input", new String[]{"type", "name", "size", "maxlength", "onBlur", "onChange", "value"}, new String[]{"text", "peerPrivateNote_" + peerNodeStatus.hashCode(), "16", "250", "peerNoteBlur();", "peerNoteChange();", status.getPrivateDarknetCommentNote()});
 		} else {
 			peerRow.addCell(HTMLClass.PEERPRIVATEDARKNETCOMMENTNOTE).addChild("input", new String[] { "type", "name", "size", "maxlength", "value" }, new String[] { "text", "peerPrivateNote_" + peerNodeStatus.hashCode(), "16", "250", status.getPrivateDarknetCommentNote() });
 		}
@@ -405,8 +407,8 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 						HTMLNode pageNode = page.outer;
 						HTMLNode contentNode = page.content;
 						HTMLNode content =ctx.getPageMaker().getInfobox("infobox-warning", l10n("confirmRemoveNodeWarningTitle"), contentNode, "darknet-remove-node", true);
-						content.addChild("p").addChild("#",
-								NodeL10n.getBase().getString("DarknetConnectionsToadlet.confirmRemoveNode", new String[] { "name" }, new String[] { peerNodes[i].getName() }));
+						content.addChild(new BlockText()).addChild("#",
+							NodeL10n.getBase().getString("DarknetConnectionsToadlet.confirmRemoveNode", new String[]{"name"}, new String[]{peerNodes[i].getName()}));
 						HTMLNode removeForm = ctx.addFormChild(content, "/friends/", "removeConfirmForm");
 						removeForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "node_"+peerNodes[i].hashCode(), "remove" });
 						removeForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "cancel", NodeL10n.getBase().getString("Toadlet.cancel") });

@@ -1,6 +1,7 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.uielements.BlockText;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
 import freenet.node.useralerts.UserAlertManager;
@@ -36,10 +37,10 @@ public class ChatForumsToadlet extends Toadlet implements LinkEnabledCallback {
 		
 		HTMLNode contentBox = ctx.getPageMaker().getInfobox("infobox-information", l10n("title"), contentNode, "chat-list", true);
 		
-		contentBox.addChild("p", l10n("freetalkRecommended"));
-		contentBox.addChild("p", l10n("freetalkCaveat"));
+		contentBox.addChild(new BlockText(l10n("freetalkRecommended")));
+		contentBox.addChild(new BlockText(l10n("freetalkCaveat")));
 		ctx.addFormChild(contentBox, path(), "loadFreetalkButton").addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "loadFreetalk", l10n("freetalkButton") });
-		contentBox.addChild("p", l10n("othersIntro"));
+		contentBox.addChild(new BlockText(l10n("othersIntro")));
 		
 		OutputList chatPluginList = new OutputList();
 		contentBox.addChild(chatPluginList);
@@ -60,7 +61,7 @@ public class ChatForumsToadlet extends Toadlet implements LinkEnabledCallback {
 		       new String[] { "sone"},
 			       new HTMLNode[] {
 				   HTMLNode.link("/USK@nwa8lHa271k2QvJ8aa0Ov7IHAV-DFOCFgmDt3X6BpCI,DuQSUZiI~agF8c-6tjsFFGuZ8eICrzWCILB60nT8KKo,AQACAAE/sone/43/")});
-		contentBox.addChild("p", l10n("content2"));
+		contentBox.addChild(new BlockText(l10n("content2")));
 		
 		this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 	}
