@@ -144,65 +144,81 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 					forceString.equals(getForceValue(key, now-FORCE_GRAIN_INTERVAL)))
 				force = true;
 		}
-
-		if((!force) && (!forceDownload)) {
-			//Horrible hack needed for GWT as it relies on document.write() which is not supported in xhtml
-			if(mimeType.compareTo("application/xhtml+xml")==0){
-				mimeType="text/html";
+		if ((! force) && (! forceDownload)) {
+			//Horrible hack needed for GWT as it relies on document.write() which is not supported in
+			// xhtml
+			if (mimeType.compareTo("application/xhtml+xml") == 0) {
+				mimeType = "text/html";
 			}
-			if(horribleEvilHack(data) && !(mimeType.startsWith("application/rss+xml"))) {
-				PageNode page = context.getPageMaker().getPageNode(l10n("dangerousRSSTitle"), context);
-				HTMLNode pageNode = page.outer;
-				HTMLNode contentNode = page.content;
-
-				InfoboxWidget dangerousRSSwarning = new InfoboxWidget(InfoboxWidget.Type.ALERT, l10n("dangerousRSSSubtitle"));
-				contentNode.addChild(dangerousRSSwarning);
-				dangerousRSSwarning.body.addText(NodeL10n.getBase().getString("FProxyToadlet.dangerousRSS", new String[]{"type"}, new String[]{mimeType}));
-				dangerousRSSwarning.body.addBlockText( l10n("options"));
+			if (horribleEvilHack(data) && ! (mimeType.startsWith("application/rss+xml"))) {
+				Page downloadPage = context.getPageMaker().getPage(l10n("dangerousRSSTitle"),
+					context);
+				InfoboxWidget dangerousRSSwarning = downloadPage.content.addInfobox(
+					InfoboxWidget.Type.ALERT, l10n("dangerousRSSSubtitle"));
+				dangerousRSSwarning.body.addText(NodeL10n.getBase()
+					.getString("FProxyToadlet.dangerousRSS", new String[]{"type"},
+						new String[]{mimeType}));
+				dangerousRSSwarning.body.addBlockText(l10n("options"));
 				OutputList optionList = dangerousRSSwarning.body.addList();
 				Item option = optionList.addItem();
-
-				NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.openPossRSSAsPlainText", new String[] { "link", "bold" },
-						new HTMLNode[] {
-						new Link(basePath+key.toString()+"?type=text/plain&force="+getForceValue(key,now)+extrasNoMime),
+				NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.openPossRSSAsPlainText",
+					new String[]{"link", "bold"},
+					new HTMLNode[]{
+						new Link(basePath + key.toString() + "?type=text/plain&force=" +
+							getForceValue(key, now) + extrasNoMime),
 						HTMLNode.STRONG
-				});
+					});
 				// 	FIXME: is this safe? See bug #131
 				option = optionList.addItem();
-				NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.openPossRSSForceDisk", new String[] { "link", "bold" },
-						new HTMLNode[] {
-						new Link(basePath+key.toString()+"?forcedownload"+extras),
+				NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.openPossRSSForceDisk",
+					new String[]{"link", "bold"},
+					new HTMLNode[]{
+						new Link(basePath + key.toString() + "?forcedownload" + extras),
 						HTMLNode.STRONG
-				});
-				boolean mimeRSS = mimeType.startsWith("application/xml+rss") || mimeType.startsWith("text/xml"); /* blergh! */
-				if(!(mimeRSS || mimeType.startsWith("text/plain"))) {
+					});
+				boolean mimeRSS = mimeType.startsWith("application/xml+rss") ||
+					mimeType.startsWith("text/xml"); /* blergh! */
+				if (! (mimeRSS || mimeType.startsWith("text/plain"))) {
 					option = optionList.addItem();
-					NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.openRSSForce", new String[] { "link", "bold", "mime" },
-							new HTMLNode[] {
-							new Link(basePath+key.toString()+"?force="+getForceValue(key, now)+extras), HTMLNode.STRONG, new Text(mimeType) });
+					NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.openRSSForce",
+						new String[]{"link", "bold", "mime"},
+						new HTMLNode[]{
+							new Link(basePath + key.toString() + "?force=" +
+								getForceValue(key, now) + extras), HTMLNode.STRONG,
+							new Text(mimeType)});
 				}
 				option = optionList.addItem();
-				NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.openRSSAsRSS", new String[] { "link", "bold" },
-						new HTMLNode[] {
-						new Link(basePath + key.toString() + "?type=application/xml+rss&force=" + getForceValue(key, now)+extrasNoMime),
-						HTMLNode.STRONG });
-				addDownloadOptions(ctx, optionList, key, mimeType, true, false, core); // FIXME Or false, false? Or true, true? We don't have filter for rss/atom anyway, so it will be useless - only more confusion and clicking for user. When we *will* have one, we can just get rid of this warning page.
-				if(referrer != null) {
+				NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.openRSSAsRSS",
+					new String[]{"link", "bold"},
+					new HTMLNode[]{
+						new Link(
+							basePath + key.toString() +
+								"?type=application/xml+rss&force=" +
+								getForceValue(key, now) + extrasNoMime),
+						HTMLNode.STRONG});
+				addDownloadOptions(ctx, optionList, key, mimeType, true, false,
+					core); // FIXME Or false, false? Or true, true? We don't have filter for
+					// rss/atom anyway, so it will be useless - only more confusion and
+					// clicking for user. When we *will* have one, we can just get rid of this
+					// warning page.
+				if (referrer != null) {
 					option = optionList.addItem();
-					NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.backToReferrer", new String[] { "link" },
-							new HTMLNode[] { new Link(referrer) });
+					NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.backToReferrer",
+						new String[]{"link"},
+						new HTMLNode[]{new Link(referrer)});
 				}
 				option = optionList.addItem();
-				NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.backToFProxy", new String[] { "link" },
-						new HTMLNode[] { new Link("/") });
-
-				byte[] pageBytes = pageNode.generate().getBytes("UTF-8");
-				context.sendReplyHeaders(200, "OK", new MultiValueTable<String, String>(), "text/html; charset=utf-8", pageBytes.length);
+				NodeL10n.getBase()
+					.addL10nSubstitution(option, "FProxyToadlet.backToFProxy",
+						new String[]{"link"},
+						new HTMLNode[]{new Link("/")});
+				byte[] pageBytes = downloadPage.generate().getBytes("UTF-8");
+				context.sendReplyHeaders(200, "OK", new MultiValueTable<String, String>(),
+					"text/html; charset=utf-8", pageBytes.length);
 				context.writeData(pageBytes);
 				return;
 			}
 		}
-
 		if (forceDownload) {
 			MultiValueTable<String, String> headers = new MultiValueTable<String, String>();
 			headers.put("Content-Disposition", "attachment; filename=\"" + key.getPreferredFilename() + '"');
