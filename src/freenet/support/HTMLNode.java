@@ -798,6 +798,13 @@ public class HTMLNode implements XMLCharacterClasses {
 		return newList;
 	}
 
+	//methods for creating Noscript children
+	public Noscript addNoscript() {
+		Noscript newNoscript = new Noscript();
+		addChild(newNoscript);
+		return newNoscript;
+	}
+
 	//methods for creating Table children
 	public Table addTable() {
 		Table newTable = new Table();

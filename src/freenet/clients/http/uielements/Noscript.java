@@ -1,20 +1,12 @@
 package freenet.clients.http.uielements;
 
 /**
- * Creates a meta element
+ * Creates a noscript element
  */
-public class Head extends OutputNode {
+public class Noscript extends OutputNode {
 
-	public Title title;
-
-	public Head(String title) {
-		super("head");
-		this.title = new Title(title);
-		this.addChild(this.title);
-	}
-
-	public void setTitle(String title) {
-		this.title.setContent(title);
+	public Noscript() {
+		super("noscript");
 	}
 
 	public Meta addMeta(String equiv, String content) {
@@ -27,4 +19,5 @@ public class Head extends OutputNode {
 		this.addChild(newMeta);
 		return newMeta;
 	}
+
 }

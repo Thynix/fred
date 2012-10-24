@@ -9,9 +9,12 @@ public class Meta extends OutputNode {
 	public String equivContent;
 
 	public Meta(String equiv, String content) {
+		this(equiv);
+		setEquivContent(content);
+	}
+	public Meta(String equiv) {
 		this();
 		setEquiv(equiv);
-		setEquivContent(content);
 	}
 	public Meta() {
 		super("meta");
