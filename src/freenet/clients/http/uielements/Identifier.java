@@ -26,6 +26,7 @@ public enum Identifier {
 	FREESITEINSERT("freesite-insert"),
 	GROUPEDDOWNLOAD("grouped-downloads"),
 	IEWARNING("internet-explorer-used"),
+	INFOCONTENT("infoContent"),
 	INSERTQUEUE("insert-queue"),
 	JAVASCRIPTTEST("javascript-test"),
 	PAGE("page"),

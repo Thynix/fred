@@ -581,30 +581,24 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 				return;
 			}
 		}
-
 		FreenetURI key;
 		try {
 			key = new FreenetURI(ks);
 		} catch (MalformedURLException e) {
-			PageNode page = ctx.getPageMaker().getPageNode(l10n("invalidKeyTitle"), ctx);
-			HTMLNode pageNode = page.outer;
-			HTMLNode contentNode = page.content;
-
-			InfoboxWidget errorInfobox = new InfoboxWidget(InfoboxWidget.Type.ERROR, NodeL10n.getBase().
-				getString("FProxyToadlet.invalidKeyWithReason", new String[]{"reason"},
-					new String[]{e.toString()}));
-			contentNode.addChild(errorInfobox);
+			Page warningPage = ctx.getPageMaker().getPage(l10n("invalidKeyTitle"), ctx);
+			InfoboxWidget errorInfobox =
+				warningPage.content.addInfobox(InfoboxWidget.Type.ERROR, NodeL10n.getBase().
+					getString("FProxyToadlet.invalidKeyWithReason", new String[]{"reason"},
+						new String[]{e.toString()}));
 			errorInfobox.body.addText(l10n("expectedKeyButGot"));
 			errorInfobox.body.addChild("code", ks);
 			errorInfobox.body.addLineBreak();
 			errorInfobox.body.addChild(ctx.getPageMaker().createBackLink(ctx, l10n("goBack")));
 			errorInfobox.body.addLineBreak();
 			addHomepageLink(errorInfobox.body);
-
-			this.writeHTMLReply(ctx, 400, l10n("invalidKeyTitle"), pageNode.generate());
+			this.writeHTMLReply(ctx, 400, l10n("invalidKeyTitle"), warningPage.generate());
 			return;
 		}
-
 		FetchContext fctx = getFetchContext(maxSize);
 		// max-size=-1 => use default
 		maxSize = fctx.maxOutputLength;
@@ -648,101 +642,129 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 		String mimeType = null;
 		String referer = sanitizeReferer(ctx);
 		FetchException fe = null;
-
-
 		FProxyFetchResult fr = null;
-
-			FProxyFetchWaiter fetch = null;
-			try {
-				fetch = fetchTracker.makeFetcher(key, maxSize, fctx, ctx.getReFilterPolicy());
-			} catch (FetchException e) {
-				fe = fr.failed;
-			}
-			if(fetch != null)
-			while(true) {
-			fr = fetch.getResult(!canSendProgress);
-			if(fr.hasData()) {
-
-				if(fr.getFetchCount() > 1 && !fr.hasWaited() && fr.getFetchCount() > 1 && key.isUSK() && context.uskManager.lookupKnownGood(USK.create(key)) > key.getSuggestedEdition()) {
-					Logger.normal(this, "Loading later edition...");
-					fetch.progress.requestImmediateCancel();
-					fr = null;
-					fetch = null;
-					try {
-						fetch = fetchTracker.makeFetcher(key, maxSize, fctx, ctx.getReFilterPolicy());
-					} catch (FetchException e) {
-						fe = fr.failed;
+		FProxyFetchWaiter fetch = null;
+		try {
+			fetch = fetchTracker.makeFetcher(key, maxSize, fctx, ctx.getReFilterPolicy());
+		} catch (FetchException e) {
+			fe = fr.failed;
+		}
+		if (fetch != null) {
+			while (true) {
+				fr = fetch.getResult(! canSendProgress);
+				if (fr.hasData()) {
+					if (fr.getFetchCount() > 1 && ! fr.hasWaited() && fr.getFetchCount() > 1 &&
+						key.isUSK() && context.uskManager.lookupKnownGood(USK.create(key)) >
+						key.getSuggestedEdition()) {
+						Logger.normal(this, "Loading later edition...");
+						fetch.progress.requestImmediateCancel();
+						fr = null;
+						fetch = null;
+						try {
+							fetch = fetchTracker.makeFetcher(key, maxSize, fctx,
+								ctx.getReFilterPolicy());
+						} catch (FetchException e) {
+							fe = fr.failed;
+						}
+						if (fetch == null) {
+							break;
+						}
+						continue;
 					}
-					if(fetch == null) break;
-					continue;
-				}
-
-				if(logMINOR) Logger.minor(this, "Found data");
-				data = new NoFreeBucket(fr.data);
-				mimeType = fr.mimeType;
-				fetch.close(); // Not waiting any more, but still locked the results until sent
-				break;
-			} else if(fr.failed != null) {
-				if(logMINOR) Logger.minor(this, "Request failed");
-				fe = fr.failed;
-				fetch.close(); // Not waiting any more, but still locked the results until sent
-				break;
-			} else if(canSendProgress) {
-				if(logMINOR) Logger.minor(this, "Still in progress");
-				// Still in progress
-				boolean isJsEnabled=ctx.getContainer().isFProxyJavascriptEnabled() && ua != null && !ua.contains("AppleWebKit/");
-				boolean isWebPushingEnabled = false;
-				PageNode page = ctx.getPageMaker().getPageNode(l10n("fetchingPageTitle"), ctx);
-				HTMLNode pageNode = page.outer;
-				String location = getLink(key, requestedMimeType, maxSize, httprequest.getParam("force", null), httprequest.isParameterSet("forcedownload"), maxRetries, overrideSize);
-				HTMLNode headNode=page.headNode;
-				if(isJsEnabled){
-					//If the user has enabled javascript, we add a <noscript> http refresh(if he has disabled it in the browser)
-					headNode.addChild("noscript").addChild("meta", "http-equiv", "Refresh").addAttribute("content", "2;URL=" + location);
-						// If pushing is disabled, but js is enabled, then we add the original progresspage.js
-						if ((isWebPushingEnabled = ctx.getContainer().isFProxyWebPushingEnabled()) == false) {
-							HTMLNode scriptNode = headNode.addChild("script", "//abc");
+					if (logMINOR) {
+						Logger.minor(this, "Found data");
+					}
+					data = new NoFreeBucket(fr.data);
+					mimeType = fr.mimeType;
+					fetch.close(); // Not waiting any more, but still locked the results until
+					// sent
+					break;
+				} else if (fr.failed != null) {
+					if (logMINOR) {
+						Logger.minor(this, "Request failed");
+					}
+					fe = fr.failed;
+					fetch.close(); // Not waiting any more, but still locked the results until
+					// sent
+					break;
+				} else if (canSendProgress) {
+					if (logMINOR) {
+						Logger.minor(this, "Still in progress");
+					}
+					// Still in progress
+					boolean isJsEnabled =
+						ctx.getContainer().isFProxyJavascriptEnabled() && ua != null &&
+							! ua.contains("AppleWebKit/");
+					boolean isWebPushingEnabled = false;
+					Page progressPage = ctx.getPageMaker().getPage(l10n("fetchingPageTitle"),
+						ctx);
+					String location = getLink(key, requestedMimeType, maxSize,
+						httprequest.getParam("force", null),
+						httprequest.isParameterSet("forcedownload"), maxRetries,
+						overrideSize);
+					if (isJsEnabled) {
+						//If the user has enabled javascript, we add a <noscript> http
+						// refresh(if he has disabled it in the browser)
+						progressPage.root.head.addNoscript().addMeta("Refresh")
+							.addAttribute("content", "2;URL=" + location);
+						// If pushing is disabled, but js is enabled,
+						// then we add the original progresspage.js
+						if ((isWebPushingEnabled =
+							ctx.getContainer().isFProxyWebPushingEnabled()) == false) {
+							HTMLNode scriptNode =
+								progressPage.root.head.addChild("script", "//abc");
 							scriptNode.addAttribute("type", "text/javascript");
 							scriptNode.addAttribute("src", "/static/js/progresspage.js");
 						}
-				}else{
-					//If he disabled it, we just put the http refresh meta, without the noscript
-					headNode.addChild("meta", "http-equiv", "Refresh").addAttribute("content", "2;URL=" + location);
+					} else {
+						//If he disabled it, we just put the http refresh meta,
+						// without the noscript
+						progressPage.root.head.addMeta("Refresh")
+							.addAttribute("content", "2;URL=" + location);
+					}
+					InfoboxWidget fetchingPage = progressPage.content
+						.addInfobox(InfoboxWidget.Type.INFORMATION, l10n("fetchingPageBox"));
+					fetchingPage.body.setID(Identifier.INFOCONTENT);
+					fetchingPage.body.addChild(
+						new ProgressInfoElement(fetchTracker, key, fctx, maxSize,
+							core.isAdvancedModeEnabled(), ctx, isWebPushingEnabled));
+					Cell progressCell =
+						fetchingPage.body.addTable().addRow().addCell(Category
+							.REQUESTPROGRESS);
+					if (fr.totalBlocks <= 0) {
+						progressCell
+							.addText(NodeL10n.getBase().getString("QueueToadlet" +
+								".unknown"));
+					} else {
+						progressCell.addChild(
+							new ProgressBarElement(fetchTracker, key, fctx, maxSize, ctx,
+								isWebPushingEnabled));
+					}
+					InfoboxWidget fetchingPageOptions =
+						new InfoboxWidget(InfoboxWidget.Type.INFORMATION,
+							l10n("fetchingPageOptions"));
+					progressPage.content.addChild(fetchingPageOptions);
+					OutputList optionList = fetchingPageOptions.body.addList();
+					optionList.addItem().addBlockText(l10n("progressOptionZero"));
+					addDownloadOptions(ctx, optionList, key, mimeType, false, false, core);
+					optionList.addItem()
+						.addChild(ctx.getPageMaker().createBackLink(ctx,
+							l10n("goBackToPrev")));
+					optionList.addItem()
+						.addLink("/", NodeL10n.getBase().getString("Toadlet.homepage"),
+							l10n("abortToHomepage"));
+					MultiValueTable<String, String> retHeaders =
+						new MultiValueTable<String, String>();
+					//retHeaders.put("Refresh", "2; url="+location);
+					writeHTMLReply(ctx, 200, "OK", retHeaders, progressPage.generate());
+					fr.close();
+					fetch.close();
+					return;
+				} else if (fr != null) {
+					fr.close();
 				}
-				HTMLNode contentNode = page.content;
-				InfoboxWidget fetchingPage = new InfoboxWidget(InfoboxWidget.Type.INFORMATION, l10n("fetchingPageBox"));
-				contentNode.addChild(fetchingPage);
-				fetchingPage.body.addAttribute("id", "infoContent");
-				fetchingPage.body.addChild(new ProgressInfoElement(fetchTracker, key, fctx, maxSize, core.isAdvancedModeEnabled(), ctx, isWebPushingEnabled));
-
-				Table table = new Table();
-				fetchingPage.body.addChild(table);
-				Cell progressCell = table.addRow().addCell(Category.REQUESTPROGRESS);
-				if(fr.totalBlocks <= 0)
-					progressCell.addText(NodeL10n.getBase().getString("QueueToadlet.unknown"));
-				else {
-					progressCell.addChild(new ProgressBarElement(fetchTracker,key,fctx,maxSize,ctx, isWebPushingEnabled));
-				}
-
-				InfoboxWidget fetchingPageOptions = new InfoboxWidget(InfoboxWidget.Type.INFORMATION, l10n("fetchingPageOptions"));
-				contentNode.addChild(fetchingPageOptions);
-				OutputList optionList = fetchingPageOptions.body.addList();
-				optionList.addItem().addBlockText( l10n("progressOptionZero"));
-
-				addDownloadOptions(ctx, optionList, key, mimeType, false, false, core);
-
-				optionList.addItem().addChild(ctx.getPageMaker().createBackLink(ctx, l10n("goBackToPrev")));
-				optionList.addItem().addLink("/", NodeL10n.getBase().getString("Toadlet.homepage"), l10n("abortToHomepage"));
-				MultiValueTable<String, String> retHeaders = new MultiValueTable<String, String>();
-				//retHeaders.put("Refresh", "2; url="+location);
-				writeHTMLReply(ctx, 200, "OK", retHeaders, pageNode.generate());
-				fr.close();
-				fetch.close();
-				return;
-			} else if(fr != null)
-				fr.close();
 			}
-
+		}
 		try {
 			if(logMINOR)
 				Logger.minor(this, "FProxy fetching "+key+" ("+maxSize+ ')');
@@ -800,142 +822,203 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 		} catch (FetchException e) {
 			//Handle exceptions thrown from the ContentFilter
 			String msg = e.getMessage();
-			if(logMINOR) {
-				Logger.minor(this, "Failed to fetch "+uri+" : "+e);
+			if (logMINOR) {
+				Logger.minor(this, "Failed to fetch " + uri + " : " + e);
 			}
-			if(e.newURI != null) {
-				if(accept != null && (accept.startsWith("text/css") || accept.startsWith("image/")) && recursion++ < MAX_RECURSION) {
+			if (e.newURI != null) {
+				if (accept != null && (accept.startsWith("text/css") || accept.startsWith("image/")
+				) &&
+					recursion++ < MAX_RECURSION) {
 					// If it's an image or a CSS fetch, auto-follow the redirect, up to a limit.
-					String link = getLink(e.newURI, requestedMimeType, maxSize, httprequest.getParam("force", null), httprequest.isParameterSet("forcedownload"), maxRetries, overrideSize);
+					String link = getLink(e.newURI, requestedMimeType, maxSize,
+						httprequest.getParam("force", null),
+						httprequest.isParameterSet("forcedownload"), maxRetries,
+						overrideSize);
 					try {
 						uri = new URI(link);
 						innerHandleMethodGET(uri, httprequest, ctx, recursion);
 						return;
 					} catch (URISyntaxException e1) {
-						Logger.error(this, "Caught "+e1+" parsing new link "+link, e1);
+						Logger.error(this, "Caught " + e1 + " parsing new link " + link, e1);
 					}
 				}
 				Toadlet.writePermanentRedirect(ctx, msg,
-					getLink(e.newURI, requestedMimeType, maxSize, httprequest.getParam("force", null), httprequest.isParameterSet("forcedownload"), maxRetries, overrideSize));
-			} else if(e.mode == FetchException.TOO_BIG) {
-				PageNode page = ctx.getPageMaker().getPageNode(l10n("fileInformationTitle"), ctx);
-				HTMLNode pageNode = page.outer;
-				HTMLNode contentNode = page.content;
-
-				InfoboxWidget largeFile = new InfoboxWidget(InfoboxWidget.Type.INFORMATION, l10n("largeFile"));
-				contentNode.addChild(largeFile);
-				OutputList fileInformationList = largeFile.body.addList();
+					getLink(e.newURI, requestedMimeType, maxSize,
+						httprequest.getParam("force", null),
+						httprequest.isParameterSet("forcedownload"), maxRetries,
+						overrideSize));
+			} else if (e.mode == FetchException.TOO_BIG) {
+				Page largeFilePage = ctx.getPageMaker().getPage(l10n("fileInformationTitle"), ctx);
+				OutputList fileInformationList = largeFilePage.content
+					.addInfobox(InfoboxWidget.Type.INFORMATION, l10n("largeFile")).body.addList();
 				Item option = fileInformationList.addItem();
 				option.addText((l10n("filenameLabel") + ' '));
 				option.addLink('/' + key.toString(), getFilename(key, e.getExpectedMimeType()));
-
 				String mime = writeSizeAndMIME(fileInformationList, e);
-
-				InfoboxWidget explanationTitle = new InfoboxWidget(InfoboxWidget.Type.INFORMATION, l10n("explanationTitle"));
-				contentNode.addChild(explanationTitle);
+				InfoboxWidget explanationTitle = largeFilePage.content
+					.addInfobox(InfoboxWidget.Type.INFORMATION, l10n("explanationTitle"));
 				explanationTitle.body.addText(l10n("largeFileExplanationAndOptions"));
 				OutputList optionList = explanationTitle.body.addList();
-				if(!restricted) {
+				if (! restricted) {
 					option = optionList.addItem();
-					HTMLNode optionForm = option.addChild("form", new String[] { "action", "method" }, new String[] {'/' + key.toString(), "get" });
-					optionForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "max-size", String.valueOf(e.expectedSize == -1 ? Long.MAX_VALUE : e.expectedSize*2) });
-					if (requestedMimeType != null)
-						optionForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "type", requestedMimeType });
-					if(maxRetries >= -1)
-						optionForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "max-retries", Integer.toString(maxRetries) });
-					optionForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "fetch", l10n("fetchLargeFileAnywayAndDisplayButton") });
+					HTMLNode optionForm = option.addChild("form", new String[]{"action",
+						"method"},
+						new String[]{'/' + key.toString(), "get"});
+					optionForm.addChild("input", new String[]{"type", "name", "value"},
+						new String[]{"hidden", "max-size", String.valueOf(
+							e.expectedSize == - 1 ? Long.MAX_VALUE : e.expectedSize *
+								2)});
+					if (requestedMimeType != null) {
+						optionForm.addChild("input", new String[]{"type", "name", "value"},
+							new String[]{"hidden", "type", requestedMimeType});
+					}
+					if (maxRetries >= - 1) {
+						optionForm.addChild("input", new String[]{"type", "name", "value"},
+							new String[]{"hidden", "max-retries",
+								Integer.toString(maxRetries)});
+					}
+					optionForm.addChild("input", new String[]{"type", "name", "value"},
+						new String[]{"submit", "fetch",
+							l10n("fetchLargeFileAnywayAndDisplayButton")});
 					optionForm.addText(" - " + l10n("fetchLargeFileAnywayAndDisplay"));
 					addDownloadOptions(ctx, optionList, key, mime, false, false, core);
 				}
-				optionList.addItem().addLink( "/", NodeL10n.getBase().getString("Toadlet.homepage"), l10n("abortToHomepage"));
-				optionList.addItem().addChild(ctx.getPageMaker().createBackLink(ctx, l10n("goBackToPrev")));
-				writeHTMLReply(ctx, 200, "OK", pageNode.generate());
+				optionList.addItem().addLink("/", NodeL10n.getBase().getString("Toadlet.homepage"),
+					l10n("abortToHomepage"));
+				optionList.addItem()
+					.addChild(ctx.getPageMaker().createBackLink(ctx, l10n("goBackToPrev")));
+				writeHTMLReply(ctx, 200, "OK", largeFilePage.generate());
 			} else {
-				PageNode page = ctx.getPageMaker().getPageNode(e.getShortMessage(), ctx);
-				HTMLNode pageNode = page.outer;
-				HTMLNode contentNode = page.content;
-
-				InfoboxWidget errorWithReason = new InfoboxWidget(InfoboxWidget.Type.ERROR, l10n("errorWithReason", "error", e.getShortMessage()));
-				contentNode.addChild(errorWithReason);
-				OutputList fileInformationList = errorWithReason.body.addList();
+				Page errorPage = ctx.getPageMaker().getPage(e.getShortMessage(), ctx);
+				OutputList fileInformationList = errorPage.content.addInfobox(InfoboxWidget.Type
+					.ERROR,
+					l10n("errorWithReason", "error", e.getShortMessage())).body.addList();
 				Item option = fileInformationList.addItem();
 				option.addText((l10n("filenameLabel") + ' '));
 				option.addLink('/' + key.toString(), getFilename(key, e.getExpectedMimeType()));
-                                String mime = writeSizeAndMIME(fileInformationList, e);
-
-				InfoboxWidget explanationTitle = new InfoboxWidget(InfoboxWidget.Type.ERROR, l10n("explanationTitle"));
-				contentNode.addChild(explanationTitle);
-				explanationTitle.body.addBlockText( l10n("unableToRetrieve"));
+				String mime = writeSizeAndMIME(fileInformationList, e);
+				InfoboxWidget explanationTitle = errorPage.content
+					.addInfobox(InfoboxWidget.Type.ERROR, l10n("explanationTitle"));
+				explanationTitle.body.addBlockText(l10n("unableToRetrieve"));
 				UnsafeContentTypeException filterException = null;
-				if(e.getCause() != null && e.getCause() instanceof UnsafeContentTypeException) {
-					filterException = (UnsafeContentTypeException)e.getCause();
+				if (e.getCause() != null && e.getCause() instanceof UnsafeContentTypeException) {
+					filterException = (UnsafeContentTypeException) e.getCause();
 				}
-				if(e.isFatal() && filterException == null)
-					explanationTitle.body.addBlockText( l10n("errorIsFatal"));
-				explanationTitle.body.addBlockText( msg);
-				if(filterException != null) {
-					if(filterException.details() != null) {
+				if (e.isFatal() && filterException == null) {
+					explanationTitle.body.addBlockText(l10n("errorIsFatal"));
+				}
+				explanationTitle.body.addBlockText(msg);
+				if (filterException != null) {
+					if (filterException.details() != null) {
 						OutputList detailList = explanationTitle.body.addList();
-						for(String detail : filterException.details()) {
+						for (String detail : filterException.details()) {
 							detailList.addItem(detail);
 						}
 					}
 				}
-				if(e.errorCodes != null) {
-					explanationTitle.body.addBlockText().addChild("pre").addText(e.errorCodes.toVerboseString());
+				if (e.errorCodes != null) {
+					explanationTitle.body.addBlockText().addChild("pre")
+						.addText(e.errorCodes.toVerboseString());
 				}
-
-				InfoboxWidget options = new InfoboxWidget(InfoboxWidget.Type.ERROR, l10n("options"));
-				contentNode.addChild(options);
-				OutputList optionList = options.body.addList();
+				OutputList optionList =
+					errorPage.content.addInfobox(InfoboxWidget.Type.ERROR, l10n("options")).body
+						.addList();
 				PluginInfoWrapper keyUtil;
-				if((e.mode == FetchException.NOT_IN_ARCHIVE || e.mode == FetchException.NOT_ENOUGH_PATH_COMPONENTS)) {
+				if ((e.mode == FetchException.NOT_IN_ARCHIVE ||
+					e.mode == FetchException.NOT_ENOUGH_PATH_COMPONENTS)) {
 					// first look for the newest version
-					if ((keyUtil = core.node.pluginManager.getPluginInfo("plugins.KeyUtils.KeyUtilsPlugin")) != null) {
+					if ((keyUtil = core.node.pluginManager
+						.getPluginInfo("plugins.KeyUtils.KeyUtilsPlugin")) != null) {
 						option = optionList.addItem();
-						if (keyUtil.getPluginLongVersion() < 5010)
-							NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.openWithKeyExplorer", new String[] { "link" }, new HTMLNode[] { new Link("/KeyUtils/?automf=true&key=" + key.toString()) });
-						else {
-							NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.openWithKeyExplorer", new String[] { "link" }, new HTMLNode[] { new Link("/KeyUtils/?key=" + key.toString()) });
+						if (keyUtil.getPluginLongVersion() < 5010) {
+							NodeL10n.getBase().addL10nSubstitution(option,
+								"FProxyToadlet.openWithKeyExplorer",
+								new String[]{"link"}, new HTMLNode[]{new Link(
+								"/KeyUtils/?automf=true&key=" + key.toString())});
+						} else {
+							NodeL10n.getBase().addL10nSubstitution(option,
+								"FProxyToadlet.openWithKeyExplorer",
+								new String[]{"link"}, new HTMLNode[]{
+								new Link("/KeyUtils/?key=" + key.toString())});
 							option = optionList.addItem();
-							NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.openWithSiteExplorer", new String[] { "link" }, new HTMLNode[] { new Link("/KeyUtils/Site?key=" + key.toString()) });
+							NodeL10n.getBase().addL10nSubstitution(option,
+								"FProxyToadlet.openWithSiteExplorer",
+								new String[]{"link"}, new HTMLNode[]{
+								new Link("/KeyUtils/Site?key=" + key.toString())});
 						}
-					} else if ((keyUtil = core.node.pluginManager.getPluginInfo("plugins.KeyExplorer.KeyExplorer")) != null) {
+					} else if ((keyUtil = core.node.pluginManager
+						.getPluginInfo("plugins.KeyExplorer.KeyExplorer")) != null) {
 						option = optionList.addItem();
-						if (keyUtil.getPluginLongVersion() > 4999)
-							NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.openWithKeyExplorer", new String[] { "link" }, new HTMLNode[] { new Link("/KeyExplorer/?automf=true&key=" + key.toString())});
-						else
-							NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.openWithKeyExplorer", new String[] { "link" }, new HTMLNode[] { new Link("/plugins/plugins.KeyExplorer.KeyExplorer/?key=" + key.toString())});
+						if (keyUtil.getPluginLongVersion() > 4999) {
+							NodeL10n.getBase().addL10nSubstitution(option,
+								"FProxyToadlet.openWithKeyExplorer",
+								new String[]{"link"}, new HTMLNode[]{new Link(
+								"/KeyExplorer/?automf=true&key=" + key.toString())});
+						} else {
+							NodeL10n.getBase().addL10nSubstitution(option,
+								"FProxyToadlet.openWithKeyExplorer",
+								new String[]{"link"}, new HTMLNode[]{new Link(
+								"/plugins/plugins.KeyExplorer.KeyExplorer/?key=" +
+									key.toString())});
+						}
 					}
 				}
-				if(filterException != null) {
-					if((mime.equals("application/x-freenet-index")) && (core.node.pluginManager.isPluginLoaded("plugins.ThawIndexBrowser.ThawIndexBrowser"))) {
+				if (filterException != null) {
+					if ((mime.equals("application/x-freenet-index")) && (core.node.pluginManager
+						.isPluginLoaded("plugins.ThawIndexBrowser.ThawIndexBrowser"))) {
 						option = optionList.addItem();
-						NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.openAsThawIndex", new String[] { "link" }, new HTMLNode[] { new Link("/plugins/plugins.ThawIndexBrowser.ThawIndexBrowser/?key=" + key.toString()).addB() });
+						NodeL10n.getBase()
+							.addL10nSubstitution(option, "FProxyToadlet.openAsThawIndex",
+								new String[]{"link"}, new HTMLNode[]{new Link(
+								"/plugins/plugins.ThawIndexBrowser" +
+									".ThawIndexBrowser/?key=" +
+									key.toString()).addB()});
 					}
 					option = optionList.addItem();
 					// FIXME: is this safe? See bug #131
-					MediaType textMediaType = new MediaType("text/plain").setParameter("charset", (e.getExpectedMimeType() != null) ? new MediaType(e.getExpectedMimeType()).getParameter("charset") : null);
-					NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.openAsText", new String[] { "link" }, new HTMLNode[] { new Link(getLink(key, textMediaType.toString(), maxSize, null, false, maxRetries, overrideSize)) });
+					MediaType textMediaType = new MediaType("text/plain").setParameter("charset",
+						(e.getExpectedMimeType() != null) ?
+							new MediaType(e.getExpectedMimeType()).getParameter
+								("charset") :
+							null);
+					NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.openAsText",
+						new String[]{"link"}, new HTMLNode[]{new Link(
+						getLink(key, textMediaType.toString(), maxSize, null, false,
+							maxRetries,
+							overrideSize))});
 					option = optionList.addItem();
-					NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.openForceDisk", new String[] { "link" }, new HTMLNode[] { new Link(getLink(key, mime, maxSize, null, true, maxRetries, overrideSize)) });
-					if(!(mime.equals("application/octet-stream") || mime.equals("application/x-msdownload"))) {
+					NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.openForceDisk",
+						new String[]{"link"}, new HTMLNode[]{new Link(
+						getLink(key, mime, maxSize, null, true, maxRetries, overrideSize))});
+					if (! (mime.equals("application/octet-stream") ||
+						mime.equals("application/x-msdownload"))) {
 						option = optionList.addItem();
-						NodeL10n.getBase().addL10nSubstitution(option, "FProxyToadlet.openForce", new String[] { "link", "mime" }, new HTMLNode[] { new Link(getLink(key, mime, maxSize, getForceValue(key, now), false, maxRetries, overrideSize)), new Text(HTMLEncoder.encode(mime))});
+						NodeL10n.getBase()
+							.addL10nSubstitution(option, "FProxyToadlet.openForce",
+								new String[]{"link", "mime"}, new HTMLNode[]{new Link(
+								getLink(key, mime, maxSize, getForceValue(key, now),
+									false, maxRetries, overrideSize)),
+								new Text(HTMLEncoder.encode(mime))});
 					}
 				}
-
-				if ((!e.isFatal() || filterException != null) && (ctx.isAllowedFullAccess() || !container.publicGatewayMode())) {
-					addDownloadOptions(ctx, optionList, key, mimeType, filterException != null, filterException != null, core);
+				if ((! e.isFatal() || filterException != null) &&
+					(ctx.isAllowedFullAccess() || ! container.publicGatewayMode())) {
+					addDownloadOptions(ctx, optionList, key, mimeType, filterException != null,
+						filterException != null, core);
 					if (filterException == null) {
-						optionList.addItem().addLink(getLink(key, requestedMimeType, maxSize,httprequest.getParam("force", null),httprequest.isParameterSet("forcedownload"), maxRetries, overrideSize)).addText(l10n("retryNow"));
+						optionList.addItem().addLink(getLink(key, requestedMimeType, maxSize,
+							httprequest.getParam("force", null),
+							httprequest.isParameterSet("forcedownload"), maxRetries,
+							overrideSize)).addText(l10n("retryNow"));
 					}
 				}
-
-				optionList.addItem().addLink("/", NodeL10n.getBase().getString("Toadlet.homepage"), l10n("abortToHomepage"));
-				optionList.addItem().addChild(ctx.getPageMaker().createBackLink(ctx, l10n("goBackToPrev")));
-				this.writeHTMLReply(ctx, (e.mode == 10) ? 404 : 500 /* close enough - FIXME probably should depend on status code */,
-						"Internal Error", pageNode.generate());
+				optionList.addItem().addLink("/", NodeL10n.getBase().getString("Toadlet.homepage"),
+					l10n("abortToHomepage"));
+				optionList.addItem()
+					.addChild(ctx.getPageMaker().createBackLink(ctx, l10n("goBackToPrev")));
+				this.writeHTMLReply(ctx, (e.mode == 10) ? 404 : 500
+					/* close enough - FIXME probably should depend on status code */,
+					"Internal Error", errorPage.generate());
 			}
 		} catch (SocketException e) {
 			// Probably irrelevant
