@@ -506,30 +506,149 @@ public class HTMLNode implements XMLCharacterClasses {
 	public static HTMLNode text(short count) {
 		return new HTMLNode("#", Short.toString(count));
 	}
-	public Table addTable() {
-		Table newTable = new Table();
-		addChild(newTable);
-		return newTable;
+
+	//methods for creating <b> tags
+	@Deprecated
+	public B addB() {
+		B newB = new B();
+		addChild(newB);
+		return newB;
 	}
-	public Table addTable(Table newTable) {
-		addChild(newTable);
-		return newTable;
+	@Deprecated
+	public B addB(String content) {
+		B newB = new B(content);
+		addChild(newB);
+		return newB;
 	}
-	public OutputList addList(OutputList newList) {
-		addChild(newList);
-		return newList;
+
+	//methods for creating Box children
+	public Box addBox() {
+		Box newBox = new Box();
+		addChild(newBox);
+		return newBox;
 	}
-	public OutputList addList() {
-		OutputList newList = new OutputList();
-		addChild(newList);
-		return newList;
+	public Box addBox(HTMLID ID) {
+		Box newBox = new Box(ID);
+		addChild(newBox);
+		return newBox;
 	}
+	public Box addBox(HTMLID ID, String content) {
+		Box newBox = new Box(ID, content);
+		addChild(newBox);
+		return newBox;
+	}
+	public Box addBox(HTMLClass CLASS) {
+		Box newBox = new Box(CLASS);
+		addChild(newBox);
+		return newBox;
+	}
+	public Box addBox(HTMLClass CLASS, String content) {
+		Box newBox = new Box(CLASS, content);
+		addChild(newBox);
+		return newBox;
+	}
+
+	//methods for creating blockText children
+	public BlockText addBlockText() {
+		BlockText newBlockText = new BlockText();
+		addChild(newBlockText);
+		return newBlockText;
+	}
+	public BlockText addBlockText(String content) {
+		BlockText newBlockText = new BlockText(content);
+		addChild(newBlockText);
+		return newBlockText;
+	}
+	public BlockText addBlockText(HTMLID ID) {
+		BlockText newBlockText = new BlockText(ID);
+		addChild(newBlockText);
+		return newBlockText;
+	}
+	public BlockText addBlockText(HTMLID ID, String content) {
+		BlockText newBlockText = new BlockText(ID, content);
+		addChild(newBlockText);
+		return newBlockText;
+	}
+	public BlockText addBlockText(HTMLClass CLASS) {
+		BlockText newBlockText = new BlockText(CLASS);
+		addChild(newBlockText);
+		return newBlockText;
+	}
+	public BlockText addBlockText(HTMLClass CLASS, String content) {
+		BlockText newBlockText = new BlockText(CLASS, content);
+		addChild(newBlockText);
+		return newBlockText;
+	}
+
+	//methods for creating InlineBox children
+	public InlineBox addInlineBox() {
+		InlineBox newInlineBox = new InlineBox();
+		addChild(newInlineBox);
+		return newInlineBox;
+	}
+	public InlineBox addInlineBox(String content) {
+		InlineBox newInlineBox = new InlineBox(content);
+		addChild(newInlineBox);
+		return newInlineBox;
+	}
+	public InlineBox addInlineBox(HTMLID ID) {
+		InlineBox newInlineBox = new InlineBox(ID);
+		addChild(newInlineBox);
+		return newInlineBox;
+	}
+	public InlineBox addInlineBox(HTMLID ID, String content) {
+		InlineBox newInlineBox = new InlineBox(ID, content);
+		addChild(newInlineBox);
+		return newInlineBox;
+	}
+	public InlineBox addInlineBox(String title, HTMLClass CLASS) {
+		InlineBox newInlineBox = new InlineBox(title, CLASS);
+		addChild(newInlineBox);
+		return newInlineBox;
+	}
+	public InlineBox addInlineBox(HTMLClass CLASS) {
+		InlineBox newInlineBox = new InlineBox(CLASS);
+		addChild(newInlineBox);
+		return newInlineBox;
+	}
+	public InlineBox addInlineBox(HTMLClass CLASS, String content) {
+		InlineBox newInlineBox = new InlineBox(CLASS, content);
+		addChild(newInlineBox);
+		return newInlineBox;
+	}
+	public InlineBox addInlineBox(HTMLClass CLASS, String title, String content) {
+		InlineBox newInlineBox = new InlineBox(CLASS, title, content);
+		addChild(newInlineBox);
+		return newInlineBox;
+	}
+	public InlineBox addInlineBox(String style, HTMLClass CLASS, String content) {
+		InlineBox newInlineBox = new InlineBox(style, CLASS, content);
+		addChild(newInlineBox);
+		return newInlineBox;
+	}
+
+	//methods for creating Infobox children
 	public InfoboxWidget addInfobox(InfoboxWidget newInfobox) {
 		addChild(newInfobox);
 		return newInfobox;
 	}
 	public InfoboxWidget addInfobox(InfoboxWidget.Type type, String title) {
 		InfoboxWidget newInfobox = new InfoboxWidget(type, title);
+		addChild(newInfobox);
+		return newInfobox;
+	}
+	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLID ID, String title) {
+		InfoboxWidget newInfobox = new InfoboxWidget(type, ID, title);
+		addChild(newInfobox);
+		return newInfobox;
+	}
+	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLID ID, String title, OutputNode Content) {
+		InfoboxWidget newInfobox = new InfoboxWidget(type, ID, title, Content);
+		addChild(newInfobox);
+		return newInfobox;
+	}
+	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLID ID, String title, String Content) {
+		InfoboxWidget newInfobox = new InfoboxWidget(type, ID, title, Content);
 		addChild(newInfobox);
 		return newInfobox;
 	}
@@ -543,70 +662,141 @@ public class HTMLNode implements XMLCharacterClasses {
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLID ID, String title, OutputNode Content) {
-		InfoboxWidget newInfobox = new InfoboxWidget(type, ID, title, Content);
-		addChild(newInfobox);
-		return newInfobox;
-	}
 	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLClass Class, String title, String Content) {
 		InfoboxWidget newInfobox = new InfoboxWidget(type, Class, title, Content);
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLID ID, String title, String Content) {
-		InfoboxWidget newInfobox = new InfoboxWidget(type, ID, title, Content);
-		addChild(newInfobox);
-		return newInfobox;
+
+	//methods for creating <i> tags
+	@Deprecated
+	public I addI() {
+		I newI = new I();
+		addChild(newI);
+		return newI;
 	}
-	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLID ID, String title) {
-		InfoboxWidget newInfobox = new InfoboxWidget(type, ID, title);
-		addChild(newInfobox);
-		return newInfobox;
+	@Deprecated
+	public I addI(String content) {
+		I newI = new I(content);
+		addChild(newI);
+		return newI;
 	}
-	public Text addText(String content) {
-		Text newText = new Text(content);
-		this.addChild(newText);
-		return newText;
+
+	//methods for creating line break elements
+	public LineBreak addLineBreak() {
+		LineBreak newLineBreak = new LineBreak();
+		addChild(newLineBreak);
+		return newLineBreak;
+	}
+
+	//methods for creating Link children
+	public Link addLink() {
+		Link newLink = new Link();
+		addChild(newLink);
+		return newLink;
+	}
+	public Link addLink(Link.linkType type, HTMLID data) {
+		Link newLink = new Link(type, data);
+		addChild(newLink);
+		return newLink;
+	}
+	public Link addLink(Link.linkType type, String data) {
+		Link newLink = new Link(type, data);
+		addChild(newLink);
+		return newLink;
+	}
+	public Link addLink(Link.linkType type, String data, String ID) {
+		Link newLink = new Link(type, data, ID);
+		addChild(newLink);
+		return newLink;
+	}
+	public Link addLink(HTMLClass CLASS, String title, String content) {
+		Link newLink = new Link(CLASS, title, content);
+		addChild(newLink);
+		return newLink;
+	}
+	public Link addLink(String data) {
+		Link newLink = new Link(data);
+		addChild(newLink);
+		return newLink;
+	}
+	public Link addLink(String data, String content) {
+		Link newLink = new Link(data, content);
+		addChild(newLink);
+		return newLink;
+	}
+	public Link addLink(String data, HTMLClass CLASS, String content) {
+		Link newLink = new Link(data, CLASS, content);
+		addChild(newLink);
+		return newLink;
+	}
+	public Link addLink(String data, String title, String content) {
+		Link newLink = new Link(data, title, content);
+		addChild(newLink);
+		return newLink;
+	}
+	public Link addLink(String data, Link.linkTarget target,  String content) {
+		Link newLink = new Link(data, target, content);
+		addChild(newLink);
+		return newLink;
+	}
+	public Link addLink(String data, String title, HTMLClass CLASS, String content) {
+		Link newLink = new Link(data, title, CLASS, content);
+		addChild(newLink);
+		return newLink;
+	}
+
+	//methods for creating List children
+	public OutputList addList() {
+		OutputList newList = new OutputList();
+		addChild(newList);
+		return newList;
+	}
+	public OutputList addList(OutputList newList) {
+		addChild(newList);
+		return newList;
+	}
+	public OutputList addList(HTMLClass CLASS) {
+		OutputList newList = new OutputList(CLASS);
+		addChild(newList);
+		return newList;
+	}
+	public OutputList addList(HTMLID ID) {
+		OutputList newList = new OutputList(ID);
+		addChild(newList);
+		return newList;
+	}
+	public OutputList addList(OutputList.Type type, HTMLClass CLASS) {
+		OutputList newList = new OutputList(type, CLASS);
+		addChild(newList);
+		return newList;
+	}
+
+	//methods for creating Table children
+	public Table addTable() {
+		Table newTable = new Table();
+		addChild(newTable);
+		return newTable;
+	}
+	public Table addTable(Table newTable) {
+		addChild(newTable);
+		return newTable;
 	}
 	public Table addTable(HTMLClass CLASS) {
 		Table newTable = new Table(CLASS);
 		addChild(newTable);
 		return newTable;
 	}
-	public BlockText addBlockText(String content) {
-		BlockText newBlockText = new BlockText(content);
-		this.addChild(newBlockText);
-		return newBlockText;
-	}
 
-	@Deprecated
-	public I addI(String content) {
-		I newI = new I(content);
-		this.addChild(newI);
-		return newI;
+	//methods for creating Text children
+	public Text addText() {
+		Text newText = new Text();
+		addChild(newText);
+		return newText;
 	}
-	@Deprecated
-	public I addI() {
-		I newI = new I();
-		this.addChild(newI);
-		return newI;
+	public Text addText(String content) {
+		Text newText = new Text(content);
+		addChild(newText);
+		return newText;
 	}
-	@Deprecated
-	public B addB(String content) {
-		B newB = new B(content);
-		this.addChild(newB);
-		return newB;
-	}
-	@Deprecated
-	public B addB() {
-		B newB = new B();
-		this.addChild(newB);
-		return newB;
-	}
-	public LineBreak addLineBreak() {
-		LineBreak newLineBreak = new LineBreak();
-		this.addChild(newLineBreak);
-		return newLineBreak;
-	}
-
 }
