@@ -27,7 +27,6 @@ import freenet.l10n.NodeL10n;
 import freenet.node.FSParseException;
 import freenet.node.Node;
 import freenet.node.NodeClientCore;
-import freenet.support.HTMLNode;
 import freenet.support.SimpleFieldSet;
 import freenet.support.TimeUtil;
 import freenet.support.api.HTTPRequest;
@@ -53,150 +52,166 @@ public class ConnectivityToadlet extends Toadlet {
 		this.core = core;
 	}
 
-	public void handleMethodGET(URI uri, final HTTPRequest request, ToadletContext ctx) throws ToadletContextClosedException, IOException {
+	public void handleMethodGET(URI uri, final HTTPRequest request, ToadletContext ctx)
+		throws ToadletContextClosedException, IOException {
 		PageMaker pageMaker = ctx.getPageMaker();
-		
-		PageNode page = pageMaker.getPageNode(NodeL10n.getBase().getString("ConnectivityToadlet.title"), ctx);
-		HTMLNode pageNode = page.outer;
-		HTMLNode contentNode = page.content;
-
+		Page connectivityPage =
+			pageMaker.getPage(NodeL10n.getBase().getString("ConnectivityToadlet.title"), ctx);
 		/* add alert summary box */
-		if(ctx.isAllowedFullAccess())
-			contentNode.addChild(core.alerts.createSummary());
-
+		if (ctx.isAllowedFullAccess()) {
+			connectivityPage.content.addChild(core.alerts.createSummary());
+		}
 		// our ports
-		InfoboxWidget portInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10nConn("nodePortsTitle"));
-		contentNode.addChild(portInfobox);
+		InfoboxWidget portInfobox =
+			connectivityPage.content.addInfobox(InfoboxWidget.Type.NORMAL, l10nConn("nodePortsTitle"));
 		OutputList portInfoList = portInfobox.body.addList();
 		SimpleFieldSet fproxyConfig = node.config.get("fproxy").exportFieldSet(true);
 		SimpleFieldSet fcpConfig = node.config.get("fcp").exportFieldSet(true);
 		SimpleFieldSet tmciConfig = node.config.get("console").exportFieldSet(true);
-		portInfoList.addItem(NodeL10n.getBase().getString("DarknetConnectionsToadlet.darknetFnpPort", new String[]{"port"}, new String[]{Integer.toString(node.getFNPPort())}));
+		portInfoList.addItem(NodeL10n.getBase()
+			.getString("DarknetConnectionsToadlet.darknetFnpPort", new String[]{"port"},
+				new String[]{Integer.toString(node.getFNPPort())}));
 		int opennetPort = node.getOpennetFNPPort();
-		if(opennetPort > 0)
-			portInfoList.addItem(NodeL10n.getBase().getString("DarknetConnectionsToadlet.opennetFnpPort", new String[]{"port"}, new String[]{Integer.toString(opennetPort)}));
+		if (opennetPort > 0) {
+			portInfoList.addItem(NodeL10n.getBase()
+				.getString("DarknetConnectionsToadlet.opennetFnpPort", new String[]{"port"},
+					new String[]{Integer.toString(opennetPort)}));
+		}
 		try {
-			if(fproxyConfig.getBoolean("enabled", false)) {
-				portInfoList.addItem(NodeL10n.getBase().getString("DarknetConnectionsToadlet.fproxyPort", new String[]{"port"}, new String[]{Integer.toString(fproxyConfig.getInt("port"))}));
+			if (fproxyConfig.getBoolean("enabled", false)) {
+				portInfoList.addItem(NodeL10n.getBase()
+					.getString("DarknetConnectionsToadlet.fproxyPort", new String[]{"port"},
+						new String[]{Integer.toString(fproxyConfig.getInt("port"))}));
 			} else {
 				portInfoList.addItem(l10nConn("fproxyDisabled"));
 			}
-			if(fcpConfig.getBoolean("enabled", false)) {
-				portInfoList.addItem(NodeL10n.getBase().getString("DarknetConnectionsToadlet.fcpPort", new String[]{"port"}, new String[]{Integer.toString(fcpConfig.getInt("port"))}));
+			if (fcpConfig.getBoolean("enabled", false)) {
+				portInfoList.addItem(NodeL10n.getBase()
+					.getString("DarknetConnectionsToadlet.fcpPort", new String[]{"port"},
+						new String[]{Integer.toString(fcpConfig.getInt("port"))}));
 			} else {
 				portInfoList.addItem(l10nConn("fcpDisabled"));
 			}
-			if(tmciConfig.getBoolean("enabled", false)) {
-				portInfoList.addItem(NodeL10n.getBase().getString("DarknetConnectionsToadlet.tmciPort", new String[]{"port"}, new String[]{Integer.toString(tmciConfig.getInt("port"))}));
+			if (tmciConfig.getBoolean("enabled", false)) {
+				portInfoList.addItem(NodeL10n.getBase()
+					.getString("DarknetConnectionsToadlet.tmciPort", new String[]{"port"},
+						new String[]{Integer.toString(tmciConfig.getInt("port"))}));
 			} else {
 				portInfoList.addItem(l10nConn("tmciDisabled"));
 			}
 		} catch (FSParseException e) {
 			// ignore
 		}
-		
 		// Add connection type box.
-		
-		node.ipDetector.addConnectionTypeBox(contentNode);
-		
+		node.ipDetector.addConnectionTypeBox(connectivityPage.content);
 		UdpSocketHandler[] handlers = node.getPacketSocketHandlers();
-
-		InfoboxWidget ConnectivitySummary = new InfoboxWidget(InfoboxWidget.Type.WTF, Identifier.CONNECTIVITYSUMMARY, NodeL10n.getBase().getString("ConnectivityToadlet.summaryTitle"));
-		contentNode.addInfobox(ConnectivitySummary);
+		InfoboxWidget ConnectivitySummary = connectivityPage.content
+			.addInfobox(InfoboxWidget.Type.WTF, Identifier.CONNECTIVITYSUMMARY,
+				NodeL10n.getBase().getString("ConnectivityToadlet.summaryTitle"));
 		Table SummaryTable = ConnectivitySummary.body.addTable();
-		
-		for (int i=0;i<handlers.length;i++) {
+		for (int i = 0; i < handlers.length; i++) {
 			UdpSocketHandler handler = handlers[i];
 			AddressTracker tracker = handlers[i].getAddressTracker();
 			Row row = SummaryTable.addRow();
 			row.addCell(handler.getTitle());
 			row.addCell(AddressTracker.statusString(tracker.getPortForwardStatus()));
 		}
-		
-		if(ctx.getContainer().isAdvancedModeEnabled()) {
-		
-		// One box per port
-		
-		String noreply = l10n("noreply");
-		String local = l10n("local");
-		String remote = l10n("remote");
-		long now = System.currentTimeMillis();
-		
-		for(int i=0;i<handlers.length;i++) {
-			// Peers
-			AddressTracker tracker = handlers[i].getAddressTracker();
-			InfoboxWidget byPorts = new InfoboxWidget(InfoboxWidget.Type.WTF, Category.CONNECTIVITYPORT, NodeL10n.getBase().getString("ConnectivityToadlet.byPortTitle", new String[] { "port", "status", "tunnelLength" }, new String[] { handlers[i].getTitle(), AddressTracker.statusString(tracker.getPortForwardStatus()), TimeUtil.formatTime(tracker.getLongestSendReceiveGap()) }));
-			contentNode.addInfobox(byPorts);
-			SummaryTable = new Table();
-			byPorts.body.addTable(SummaryTable);
-			Row row = SummaryTable.addRow();
-			row.addHeader(l10n("addressTitle"));
-			row.addHeader(l10n("sentReceivedTitle"));
-			row.addHeader(l10n("localRemoteTitle"));
-			row.addHeader(l10n("firstSendLeadTime"));
-			row.addHeader(l10n("firstReceiveLeadTime"));
-			for(int j=0;j<AddressTrackerItem.TRACK_GAPS;j++) {
-				row.addHeader();
-			}
-			PeerAddressTrackerItem[] items = tracker.getPeerAddressTrackerItems();
-			for(int j=0;j<items.length;j++) {
-				row = SummaryTable.addRow();
-				PeerAddressTrackerItem item = items[j];
-				// Address
-				row.addCell(item.peer.toString());
-				// Sent/received packets
-				row.addCell(item.packetsSent() + "/ " + item.packetsReceived());
-				// Initiator: local/remote FIXME something more graphical e.g. colored cells
-				row.addCell(item.packetsReceived() == 0 ? noreply : (item.weSentFirst() ? local : remote));
-				// Lead in time to first packet sent
-				row.addCell(TimeUtil.formatTime(item.timeFromStartupToFirstSentPacket()));
-				// Lead in time to first packet received
-				row.addCell(TimeUtil.formatTime(item.timeFromStartupToFirstReceivedPacket()));
-				Gap[] gaps = item.getGaps();
-				for(int k=0;k<AddressTrackerItem.TRACK_GAPS;k++) {
-					row.addCell(gaps[k].receivedPacketAt == 0 ? "" :
-						(TimeUtil.formatTime(gaps[k].gapLength)+" @ "+TimeUtil.formatTime(now - gaps[k].receivedPacketAt)+" ago" /* fixme l10n */));
+		if (ctx.getContainer().isAdvancedModeEnabled()) {
+			// One box per port
+			String noreply = l10n("noreply");
+			String local = l10n("local");
+			String remote = l10n("remote");
+			long now = System.currentTimeMillis();
+			for (int i = 0; i < handlers.length; i++) {
+				// Peers
+				AddressTracker tracker = handlers[i].getAddressTracker();
+				SummaryTable = connectivityPage.content
+					.addInfobox(InfoboxWidget.Type.WTF, Category.CONNECTIVITYPORT,
+						NodeL10n.getBase().getString("ConnectivityToadlet.byPortTitle",
+							new String[]{"port", "status", "tunnelLength"},
+							new String[]{handlers[i].getTitle(), AddressTracker
+								.statusString(tracker.getPortForwardStatus()),
+								TimeUtil.formatTime(
+									tracker.getLongestSendReceiveGap())})).body
+					.addTable();
+				Row row = SummaryTable.addRow();
+				row.addHeader(l10n("addressTitle"));
+				row.addHeader(l10n("sentReceivedTitle"));
+				row.addHeader(l10n("localRemoteTitle"));
+				row.addHeader(l10n("firstSendLeadTime"));
+				row.addHeader(l10n("firstReceiveLeadTime"));
+				for (int j = 0; j < AddressTrackerItem.TRACK_GAPS; j++) {
+					row.addHeader();
 				}
-			}
-
-			// IPs
-			InfoboxWidget byIP = new InfoboxWidget(InfoboxWidget.Type.WTF, Category.CONNECTIVITYIP, NodeL10n.getBase().getString("ConnectivityToadlet.byIPTitle", new String[] { "ip", "status", "tunnelLength" }, new String[] { handlers[i].getTitle(), AddressTracker.statusString(tracker.getPortForwardStatus()), TimeUtil.formatTime(tracker.getLongestSendReceiveGap()) }));
-			contentNode.addInfobox(byIP);
-			SummaryTable = new Table();
-			byIP.body.addChild(SummaryTable);
-			row = SummaryTable.addRow();
-			row.addHeader(l10n("addressTitle"));
-			row.addHeader(l10n("sentReceivedTitle"));
-			row.addHeader(l10n("localRemoteTitle"));
-			row.addHeader(l10n("firstSendLeadTime"));
-			row.addHeader(l10n("firstReceiveLeadTime"));
-			InetAddressAddressTrackerItem[] ipItems = tracker.getInetAddressTrackerItems();
-			for (int j=0;j<AddressTrackerItem.TRACK_GAPS;j++) {
-				row.addHeader();
-			}
-			for (int j=0;j<ipItems.length;j++) {
-				row = SummaryTable.addRow();
-				InetAddressAddressTrackerItem item = ipItems[j];
-				// Address
-				row.addCell(item.addr.toString());
-				// Sent/received packets
-				row.addCell(item.packetsSent() + "/ " + item.packetsReceived());
-				// Initiator: local/remote FIXME something more graphical e.g. colored cells
-				row.addCell(item.packetsReceived() == 0 ? noreply :
+				PeerAddressTrackerItem[] items = tracker.getPeerAddressTrackerItems();
+				for (int j = 0; j < items.length; j++) {
+					row = SummaryTable.addRow();
+					PeerAddressTrackerItem item = items[j];
+					// Address
+					row.addCell(item.peer.toString());
+					// Sent/received packets
+					row.addCell(item.packetsSent() + "/ " + item.packetsReceived());
+					// Initiator: local/remote FIXME something more graphical e.g. colored cells
+					row.addCell(item.packetsReceived() == 0 ? noreply :
 						(item.weSentFirst() ? local : remote));
-				// Lead in time to first packet sent
-				row.addCell(TimeUtil.formatTime(item.timeFromStartupToFirstSentPacket()));
-				// Lead in time to first packet received
-				row.addCell(TimeUtil.formatTime(item.timeFromStartupToFirstReceivedPacket()));
-				Gap[] gaps = item.getGaps();
-				for (int k=0;k<AddressTrackerItem.TRACK_GAPS;k++) {
-					row.addCell(gaps[k].receivedPacketAt == 0 ? "" :
-						(TimeUtil.formatTime(gaps[k].gapLength)+" @ "+TimeUtil.formatTime(now - gaps[k].receivedPacketAt)+" ago" /* fixme l10n */));
+					// Lead in time to first packet sent
+					row.addCell(TimeUtil.formatTime(item.timeFromStartupToFirstSentPacket()));
+					// Lead in time to first packet received
+					row.addCell(TimeUtil.formatTime(item.timeFromStartupToFirstReceivedPacket()));
+					Gap[] gaps = item.getGaps();
+					for (int k = 0; k < AddressTrackerItem.TRACK_GAPS; k++) {
+						row.addCell(gaps[k].receivedPacketAt == 0 ? "" :
+							(TimeUtil.formatTime(gaps[k].gapLength) + " @ " +
+								TimeUtil.formatTime(now - gaps[k].receivedPacketAt) +
+								" ago" /* fixme l10n */));
+					}
+				}
+				// IPs
+				SummaryTable = connectivityPage.content
+					.addInfobox(InfoboxWidget.Type.WTF, Category.CONNECTIVITYIP,
+						NodeL10n.getBase()
+						.getString("ConnectivityToadlet.byIPTitle",
+							new String[]{"ip", "status", "tunnelLength"},
+							new String[]{handlers[i].getTitle(), AddressTracker
+								.statusString(tracker.getPortForwardStatus()),
+								TimeUtil.formatTime(
+									tracker.getLongestSendReceiveGap())})).body
+					.addTable();
+				row = SummaryTable.addRow();
+				row.addHeader(l10n("addressTitle"));
+				row.addHeader(l10n("sentReceivedTitle"));
+				row.addHeader(l10n("localRemoteTitle"));
+				row.addHeader(l10n("firstSendLeadTime"));
+				row.addHeader(l10n("firstReceiveLeadTime"));
+				InetAddressAddressTrackerItem[] ipItems = tracker.getInetAddressTrackerItems();
+				for (int j = 0; j < AddressTrackerItem.TRACK_GAPS; j++) {
+					row.addHeader();
+				}
+				for (int j = 0; j < ipItems.length; j++) {
+					row = SummaryTable.addRow();
+					InetAddressAddressTrackerItem item = ipItems[j];
+					// Address
+					row.addCell(item.addr.toString());
+					// Sent/received packets
+					row.addCell(item.packetsSent() + "/ " + item.packetsReceived());
+					// Initiator: local/remote FIXME something more graphical e.g. colored cells
+					row.addCell(item.packetsReceived() == 0 ? noreply :
+						(item.weSentFirst() ? local : remote));
+					// Lead in time to first packet sent
+					row.addCell(TimeUtil.formatTime(item.timeFromStartupToFirstSentPacket()));
+					// Lead in time to first packet received
+					row.addCell(TimeUtil.formatTime(item.timeFromStartupToFirstReceivedPacket()));
+					Gap[] gaps = item.getGaps();
+					for (int k = 0; k < AddressTrackerItem.TRACK_GAPS; k++) {
+						row.addCell(gaps[k].receivedPacketAt == 0 ? "" :
+							(TimeUtil.formatTime(gaps[k].gapLength) + " @ " +
+								TimeUtil.formatTime(now - gaps[k].receivedPacketAt) +
+								" ago" /* fixme l10n */));
+					}
 				}
 			}
 		}
-		}
-		writeHTMLReply(ctx, 200, "OK", pageNode.generate());
+		writeHTMLReply(ctx, 200, "OK", connectivityPage.generate());
 	}
 
 	private String l10nConn(String string) {
