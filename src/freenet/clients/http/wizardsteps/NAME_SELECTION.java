@@ -2,6 +2,7 @@ package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
 import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.InfoboxWidget;
 import freenet.config.Config;
 import freenet.config.ConfigException;
 import freenet.l10n.NodeL10n;
@@ -23,11 +24,11 @@ public class NAME_SELECTION implements Step {
 	@Override
 	public void getStep(HTTPRequest request, PageHelper helper) {
 		HTMLNode contentNode = helper.getPageContent(WizardL10n.l10n("step2Title"));
-		HTMLNode nnameInfoboxContent = helper.getInfobox("infobox-normal", WizardL10n.l10n("chooseNodeName"),
-		        contentNode, null, false);
+		InfoboxWidget nnameInfoboxContent = contentNode.addInfobox(InfoboxWidget.Type.NORMAL,
+			WizardL10n.l10n("chooseNodeName"));
 
-		nnameInfoboxContent.addText(WizardL10n.l10n("chooseNodeNameLong"));
-		HTMLNode nnameForm = helper.addFormChild(nnameInfoboxContent, ".", "nnameForm");
+		nnameInfoboxContent.body.addText(WizardL10n.l10n("chooseNodeNameLong"));
+		HTMLNode nnameForm = helper.addFormChild(nnameInfoboxContent.body, ".", "nnameForm");
 		nnameForm.addChild("input", "name", "nname");
 
 		HTMLNode lineBelow = nnameForm.addChild(new Box());

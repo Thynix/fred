@@ -642,6 +642,11 @@ public class HTMLNode implements XMLCharacterClasses {
 		addChild(newInfobox);
 		return newInfobox;
 	}
+	public InfoboxWidget addInfobox(String Title) {
+		InfoboxWidget newInfobox = new InfoboxWidget(Title);
+		addChild(newInfobox);
+		return newInfobox;
+	}
 	public InfoboxWidget addInfobox(InfoboxWidget.Type type, String title) {
 		InfoboxWidget newInfobox = new InfoboxWidget(type, title);
 		addChild(newInfobox);

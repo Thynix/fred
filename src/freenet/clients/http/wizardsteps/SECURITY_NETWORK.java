@@ -1,16 +1,13 @@
 package freenet.clients.http.wizardsteps;
 
-import freenet.clients.http.*;
-import freenet.clients.http.uielements.BlockText;
-import freenet.clients.http.uielements.Box;
-import freenet.clients.http.uielements.Text;
+import freenet.clients.http.FirstTimeWizardToadlet;
+import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
 import freenet.node.SecurityLevels;
 import freenet.support.Fields;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
-import freenet.clients.http.uielements.HTMLClass;
 
 /**
  * This step allows the user to choose between security levels. If opennet is disabled, only high and maximum are shown.
@@ -34,10 +31,10 @@ public class SECURITY_NETWORK implements Step {
 			String networkThreatLevel = request.getParam("security-levels.networkThreatLevel");
 			SecurityLevels.NETWORK_THREAT_LEVEL newThreatLevel = SecurityLevels.parseNetworkThreatLevel(networkThreatLevel);
 
-			HTMLNode infoboxContent = helper.getInfobox("infobox-information",
-			        WizardL10n.l10n("networkThreatLevelConfirmTitle."+newThreatLevel), contentNode, null, false);
+			InfoboxWidget networkThreadLevel = contentNode.addInfobox(InfoboxWidget.Type.INFORMATION,
+			        WizardL10n.l10n("networkThreatLevelConfirmTitle."+newThreatLevel));
 
-			HTMLNode formNode = helper.addFormChild(infoboxContent, ".", "configFormSecLevels");
+			HTMLNode formNode = helper.addFormChild(networkThreadLevel.body, ".", "configFormSecLevels");
 			formNode.addChild("input",
 			        new String[] { "type", "name", "value" },
 			        new String[] { "hidden", "security-levels.networkThreatLevel", networkThreatLevel });
@@ -85,21 +82,21 @@ public class SECURITY_NETWORK implements Step {
 		//Add choices and description depending on whether opennet was selected.
 		HTMLNode form;
 		if(opennet) {
-			HTMLNode infoboxContent = helper.getInfobox("infobox-normal",
-			        WizardL10n.l10n("networkThreatLevelHeaderOpennet"), contentNode, null, false);
-			infoboxContent.addChild(new BlockText(WizardL10n.l10n("networkThreatLevelIntroOpennet")));
+			InfoboxWidget Opennet = contentNode.addInfobox(InfoboxWidget.Type.NORMAL,
+			        WizardL10n.l10n("networkThreatLevelHeaderOpennet"));
+			Opennet.body.addChild(new BlockText(WizardL10n.l10n("networkThreatLevelIntroOpennet")));
 
-			form = helper.addFormChild(infoboxContent, ".", "networkSecurityForm");
+			form = helper.addFormChild(Opennet.body, ".", "networkSecurityForm");
 			HTMLNode div = form.addChild(new Box(HTMLClass.OPENNETDIV));
 			for(SecurityLevels.NETWORK_THREAT_LEVEL level : SecurityLevels.NETWORK_THREAT_LEVEL.OPENNET_VALUES) {
 				securityLevelChoice(div, level);
 			}
 		} else {
-			HTMLNode infoboxContent = helper.getInfobox("infobox-normal",
-			        WizardL10n.l10n("networkThreatLevelHeaderDarknet"), contentNode, null, false);
-			infoboxContent.addChild(new BlockText(WizardL10n.l10n("networkThreatLevelIntroDarknet")));
+			InfoboxWidget Darknet = contentNode.addInfobox(InfoboxWidget.Type.NORMAL,
+			        WizardL10n.l10n("networkThreatLevelHeaderDarknet"));
+			Darknet.body.addChild(new BlockText(WizardL10n.l10n("networkThreatLevelIntroDarknet")));
 
-			form = helper.addFormChild(infoboxContent, ".", "networkSecurityForm");
+			form = helper.addFormChild(Darknet.body, ".", "networkSecurityForm");
 			HTMLNode div = form.addChild(new Box(HTMLClass.DARKNETDIV));
 			for(SecurityLevels.NETWORK_THREAT_LEVEL level : SecurityLevels.NETWORK_THREAT_LEVEL.DARKNET_VALUES) {
 				securityLevelChoice(div, level);
@@ -123,7 +120,7 @@ public class SECURITY_NETWORK implements Step {
 		HTMLNode input = parent.addChild(new BlockText()).addChild("input",
 			new String[]{"type", "name", "value"},
 			new String[]{"radio", "security-levels.networkThreatLevel", level.name()});
-		input.addB(WizardL10n.l10nSec("networkThreatLevel.name."+level));
+		input.addB(WizardL10n.l10nSec("networkThreatLevel.name." + level));
 		input.addText(": ");
 		NodeL10n.getBase().addL10nSubstitution(input, "SecurityLevels.networkThreatLevel.choice."+level,
 		        new String[] { "bold" },

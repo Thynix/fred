@@ -3,10 +3,7 @@ package freenet.clients.http.wizardsteps;
 import freenet.clients.http.ExternalLinkToadlet;
 import freenet.clients.http.FirstTimeWizardToadlet;
 import freenet.clients.http.SecurityLevelsToadlet;
-import freenet.clients.http.uielements.BlockText;
-import freenet.clients.http.uielements.Box;
-import freenet.clients.http.uielements.HTMLClass;
-import freenet.clients.http.uielements.Link;
+import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.*;
 import freenet.support.HTMLNode;
@@ -50,12 +47,13 @@ public class SECURITY_PHYSICAL implements Step {
 		}
 
 		HTMLNode contentNode = helper.getPageContent(WizardL10n.l10n("physicalSecurityPageTitle"));
-		HTMLNode infoboxContent = helper.getInfobox("infobox-normal",
-		        WizardL10n.l10nSec("physicalThreatLevelShort"), contentNode, null, false);
-		infoboxContent.addChild(new BlockText(WizardL10n.l10nSec("physicalThreatLevel")));
+		InfoboxWidget PhysicalThreatLevel = contentNode.addInfobox(InfoboxWidget.Type.NORMAL,
+		        WizardL10n.l10nSec("physicalThreatLevelShort"));
+		Box infoboxContent = PhysicalThreatLevel.body;
+		infoboxContent.addBlockText(WizardL10n.l10nSec("physicalThreatLevel"));
 
 		HTMLNode form = helper.addFormChild(infoboxContent, ".", "physicalSecurityForm");
-		HTMLNode div = form.addChild(new Box(HTMLClass.OPENNETDIV));
+		HTMLNode div = form.addBox(HTMLClass.OPENNETDIV);
 		String controlName = "security-levels.physicalThreatLevel";
 		HTMLNode swapWarning = div.addChild(new BlockText()).addI();
 		NodeL10n.getBase().addL10nSubstitution(swapWarning, "SecurityLevels.physicalThreatLevelTruecrypt",
@@ -147,11 +145,12 @@ public class SECURITY_PHYSICAL implements Step {
 
 			HTMLNode contentNode = helper.getPageContent(WizardL10n.l10nSec(pageTitleKey));
 
-			HTMLNode content = helper.getInfobox("infobox-error", WizardL10n.l10nSec(infoboxTitleKey),
-			        contentNode, null, true);
+			InfoboxWidget ErrorBox = contentNode.addInfobox(InfoboxWidget.Type.ERROR,
+				WizardL10n.l10nSec(infoboxTitleKey));
+			Box content = ErrorBox.body;
 
 			if (type == PASSWORD_PROMPT.SET_BLANK || type == PASSWORD_PROMPT.DECRYPT_BLANK) {
-				content.addChild(new BlockText(WizardL10n.l10nSec("passwordNotZeroLength")));
+				content.addBlockText(WizardL10n.l10nSec("passwordNotZeroLength"));
 			}
 
 			HTMLNode form = helper.addFormChild(content, ".", "masterPasswordForm");

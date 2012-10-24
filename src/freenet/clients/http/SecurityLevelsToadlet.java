@@ -171,7 +171,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 								System.err.println("Wrong password!");
 								PageNode page = ctx.getPageMaker()
 									.getPageNode(l10nSec("passwordPageTitle"),
-										ctx);
+											ctx);
 								pageNode = page.outer;
 								HTMLNode contentNode = page.content;
 								InfoboxWidget WrongPassword = new InfoboxWidget(
@@ -180,8 +180,8 @@ public class SecurityLevelsToadlet extends Toadlet {
 									l10nSec("passwordWrongTitle"));
 								contentNode.addInfobox(WrongPassword);
 								SecurityLevelsToadlet.generatePasswordFormPage(true,
-									ctx.getContainer(), WrongPassword.body, false,
-									false, true, newPhysicalLevel.name(), null);
+										ctx.getContainer(), WrongPassword.body, false,
+										false, true, newPhysicalLevel.name(), null);
 								addBackToSeclevelsLink(WrongPassword.body);
 								writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 								if (changedAnything) {
@@ -238,8 +238,8 @@ public class SecurityLevelsToadlet extends Toadlet {
 								System.err.println("Wrong password!");
 								PageNode page = ctx.getPageMaker()
 									.getPageNode(l10nSec
-										("passwordForDecryptTitle"),
-										ctx);
+											("passwordForDecryptTitle"),
+											ctx);
 								pageNode = page.outer;
 								HTMLNode contentNode = page.content;
 								InfoboxWidget WrongPassword = new InfoboxWidget(
@@ -248,8 +248,8 @@ public class SecurityLevelsToadlet extends Toadlet {
 									("passwordWrongTitle"));
 								contentNode.addInfobox(WrongPassword);
 								SecurityLevelsToadlet.generatePasswordFormPage(true,
-									ctx.getContainer(), WrongPassword.body, false,
-									true, false, newPhysicalLevel.name(), null);
+										ctx.getContainer(), WrongPassword.body, false,
+										true, false, newPhysicalLevel.name(), null);
 								addBackToSeclevelsLink(WrongPassword.body);
 								writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 								if (changedAnything) {
@@ -283,8 +283,8 @@ public class SecurityLevelsToadlet extends Toadlet {
 							}
 							SecurityLevelsToadlet
 								.generatePasswordFormPage(false, ctx.getContainer(),
-									PasswordPrompt.body, false, true, false,
-									newPhysicalLevel.name(), null);
+										PasswordPrompt.body, false, true, false,
+										newPhysicalLevel.name(), null);
 							addBackToSeclevelsLink(PasswordPrompt.body);
 							writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 							if (changedAnything) {
@@ -379,11 +379,10 @@ public class SecurityLevelsToadlet extends Toadlet {
 
 	public static void sendCantDeleteMasterKeysFileInner(PageHelper helper, String filename, String physicalSecurityLevel) {
 		HTMLNode contentNode = helper.getPageContent(l10nSec("cantDeletePasswordFileTitle"));
-		HTMLNode content = helper.getInfobox("infobox-error",
-		        l10nSec("cantDeletePasswordFileTitle"), contentNode, "password-error", true).
-		        addChild(new Box(HTMLClass.INFOBOXCONTENT));
-		HTMLNode form = helper.addFormChild(content, "/wizard/", "masterPasswordForm");
-		sendCantDeleteMasterKeysFileInner(content, form, filename, physicalSecurityLevel);
+		InfoboxWidget content = contentNode.addInfobox(InfoboxWidget.Type.ERROR, HTMLID.PASSWORDERROR,
+				l10nSec("cantDeletePasswordFileTitle"));
+		HTMLNode form = helper.addFormChild(content.body, "/wizard/", "masterPasswordForm");
+		sendCantDeleteMasterKeysFileInner(content.body, form, filename, physicalSecurityLevel);
 	}
 
 	public static HTMLNode sendCantDeleteMasterKeysFileInner(ToadletContext ctx, String filename,
@@ -458,13 +457,13 @@ public class SecurityLevelsToadlet extends Toadlet {
 		HTMLNode pageNode = page.outer;
 		HTMLNode contentNode = page.content;
 		InfoboxWidget PasswordPrompt = contentNode.addInfobox(InfoboxWidget.Type.ERROR, HTMLID.PASSWORDERROR,
-			l10nSec("setPasswordTitle"));
+				l10nSec("setPasswordTitle"));
 		if (emptyPassword) {
 			PasswordPrompt.body.addBlockText(l10nSec("passwordNotZeroLength"));
 		}
 		SecurityLevelsToadlet
 			.generatePasswordFormPage(false, ctx.getContainer(), PasswordPrompt.body, false, false, true,
-				threatlevel, null);
+					threatlevel, null);
 		addBackToSeclevelsLink(PasswordPrompt.body);
 		writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 	}
@@ -563,8 +562,8 @@ public class SecurityLevelsToadlet extends Toadlet {
 		OutputNode swapWarning = seclevelGroup.addBlockText().addI();
 		OperatingSystem os = FileUtil.detectedOS;
 		swapWarning.addText(NodeL10n.getBase().getString("SecurityLevels.physicalThreatLevelSwapfile",
-			"operatingSystem",
-			NodeL10n.getBase().getString("OperatingSystemName." + os.name())));
+				"operatingSystem",
+				NodeL10n.getBase().getString("OperatingSystemName." + os.name())));
 		if(os == FileUtil.OperatingSystem.Windows) {
 			swapWarning.addText(" " + WizardL10n.l10nSec("physicalThreatLevelSwapfileWindows"));
 		}
@@ -662,10 +661,9 @@ public class SecurityLevelsToadlet extends Toadlet {
 
 	public static void sendPasswordFileCorruptedPageInner(PageHelper helper, String masterPasswordFile) {
 		HTMLNode contentNode = helper.getPageContent(l10nSec("passwordFileCorruptedTitle"));
-		HTMLNode infoBox = helper.getInfobox("infobox-error",
-		        l10nSec("passwordFileCorruptedTitle"), contentNode, "password-error", false).
-		        addChild(new Box(HTMLClass.INFOBOXCONTENT));
-		sendPasswordFileCorruptedPageInner(infoBox, masterPasswordFile);
+		InfoboxWidget infoBox = contentNode.addInfobox(InfoboxWidget.Type.ERROR, HTMLID.PASSWORDERROR,
+		        l10nSec("passwordFileCorruptedTitle"));
+		sendPasswordFileCorruptedPageInner(infoBox.body, masterPasswordFile);
 	}
 
 	public static HTMLNode sendPasswordFileCorruptedPageInner(boolean tooBig, ToadletContext ctx,
@@ -707,7 +705,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 		HTMLNode pageNode = page.outer;
 		HTMLNode contentNode = page.content;
 		InfoboxWidget PasswordForm = contentNode.addInfobox(InfoboxWidget.Type.ERROR, HTMLID.PASSWORDERROR,
-			wasWrong ? l10nSec("passwordWrongTitle") : l10nSec("enterPasswordTitle"));
+				wasWrong ? l10nSec("passwordWrongTitle") : l10nSec("enterPasswordTitle"));
 		generatePasswordFormPage(wasWrong, ctx.getContainer(), PasswordForm.body, false, false, false, null,
 			null);
 		addHomepageLink(PasswordForm.body);

@@ -1,7 +1,7 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
-import freenet.clients.http.uielements.BlockText;
+import freenet.clients.http.uielements.InfoboxWidget;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
@@ -63,10 +63,9 @@ public class BROWSER_WARNING implements Step {
 			infoBoxHeader = WizardL10n.l10n("browserWarningShort");
 		}
 		
-		HTMLNode infoboxContent = helper.getInfobox("infobox-normal", infoBoxHeader, contentNode, null, false);
-
+		InfoboxWidget infoboxContent = contentNode.addInfobox(InfoboxWidget.Type.NORMAL, infoBoxHeader);
 		if(isOldFirefox) {
-			HTMLNode p = infoboxContent.addChild(new BlockText());
+			HTMLNode p = infoboxContent.body.addBlockText();
 			p.addText(WizardL10n.l10n("browserWarningOldFirefox"));
 			if (showTabWarning) {
 				p.addText(" " + WizardL10n.l10n("browserWarningFirefoxMightHaveClobberedTabs"));
@@ -76,11 +75,11 @@ public class BROWSER_WARNING implements Step {
 		}
 
 		if(isRelativelySafe) {
-			infoboxContent.addChild(new BlockText(incognito ?
+			infoboxContent.body.addBlockText(incognito ?
 			        WizardL10n.l10n("browserWarningIncognitoMaybeSafe") :
-			        WizardL10n.l10n("browserWarningMaybeSafe")));
+			        WizardL10n.l10n("browserWarningMaybeSafe"));
 		} else {
-			NodeL10n.getBase().addL10nSubstitution(infoboxContent, incognito ?
+			NodeL10n.getBase().addL10nSubstitution(infoboxContent.body, incognito ?
 			        "FirstTimeWizardToadlet.browserWarningIncognito" :
 			        "FirstTimeWizardToadlet.browserWarning",
 			        new String[] { "bold" },
@@ -88,12 +87,12 @@ public class BROWSER_WARNING implements Step {
 		}
 
 		if(incognito) {
-			infoboxContent.addChild(new BlockText(WizardL10n.l10n("browserWarningIncognitoSuggestion")));
+			infoboxContent.body.addBlockText(WizardL10n.l10n("browserWarningIncognitoSuggestion"));
 		} else {
-			infoboxContent.addChild(new BlockText(WizardL10n.l10n("browserWarningSuggestion")));
+			infoboxContent.body.addBlockText(WizardL10n.l10n("browserWarningSuggestion"));
 		}
 
-		HTMLNode form = helper.addFormChild(infoboxContent.addChild(new BlockText()), ".", "continueForm");
+		HTMLNode form = helper.addFormChild(infoboxContent.body.addBlockText(), ".", "continueForm");
 		form.addChild("input",
 		        new String[] { "type", "name", "value" },
 		        new String[] { "submit", "back", NodeL10n.getBase().getString("Toadlet.back")});

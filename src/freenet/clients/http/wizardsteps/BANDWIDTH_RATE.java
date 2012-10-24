@@ -1,12 +1,7 @@
 package freenet.clients.http.wizardsteps;
 
-import java.text.DecimalFormat;
-
 import freenet.clients.http.FirstTimeWizardToadlet;
-import freenet.clients.http.uielements.Cell;
-import freenet.clients.http.uielements.Row;
-import freenet.clients.http.uielements.Table;
-import freenet.clients.http.uielements.Text;
+import freenet.clients.http.uielements.*;
 import freenet.config.Config;
 import freenet.config.InvalidConfigValueException;
 import freenet.l10n.NodeL10n;
@@ -16,6 +11,8 @@ import freenet.support.Logger;
 import freenet.support.SizeUtil;
 import freenet.support.URLEncoder;
 import freenet.support.api.HTTPRequest;
+
+import java.text.DecimalFormat;
 
 /**
  * Allows the user to set bandwidth limits with an emphasis on limiting to certain download and upload rates.
@@ -70,15 +67,14 @@ public class BANDWIDTH_RATE extends BandwidthManipulator implements Step {
 			parseErrorBox(contentNode, helper, request.getParam("parseTarget"));
 		}
 
-		HTMLNode infoBox = helper.getInfobox("infobox-normal", WizardL10n.l10n("bandwidthLimitRateTitle"),
-		        formNode, null, false);
-		NodeL10n.getBase().addL10nSubstitution(infoBox, "FirstTimeWizardToadlet.bandwidthLimitRate",
+		InfoboxWidget infoBox = formNode.addInfobox(InfoboxWidget.Type.NORMAL,
+			WizardL10n.l10n("bandwidthLimitRateTitle"));
+		NodeL10n.getBase().addL10nSubstitution(infoBox.body, "FirstTimeWizardToadlet.bandwidthLimitRate",
 		        new String[] { "bold", "coreSettings" }, new HTMLNode[] { HTMLNode.STRONG, 
 		                new Text(NodeL10n.getBase().getString("ConfigToadlet.node"))});
 
 		//Table header
-		Table table = new Table();
-		infoBox.addChild(table);
+		Table table = infoBox.body.addTable();
 		Row headerRow = table.addRow();
 		headerRow.addHeader(WizardL10n.l10n("bandwidthConnectionHeader"));
 		headerRow.addHeader(WizardL10n.l10n("bandwidthDownloadHeader"));

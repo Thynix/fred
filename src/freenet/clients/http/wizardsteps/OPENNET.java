@@ -1,10 +1,7 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
-import freenet.clients.http.uielements.BlockText;
-import freenet.clients.http.uielements.Box;
-import freenet.clients.http.uielements.HTMLClass;
-import freenet.clients.http.uielements.OutputList;
+import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
@@ -17,12 +14,12 @@ public class OPENNET implements Step {
 	@Override
 	public void getStep(HTTPRequest request, PageHelper helper) {
 		HTMLNode contentNode = helper.getPageContent(WizardL10n.l10n("opennetChoicePageTitle"));
-		HTMLNode infoboxContent = helper.getInfobox("infobox-normal", WizardL10n.l10n("opennetChoiceTitle"),
-		        contentNode, null, false);
+		InfoboxWidget infoboxContent = contentNode.addInfobox(InfoboxWidget.Type.NORMAL,
+			WizardL10n.l10n("opennetChoiceTitle"));
 
-		infoboxContent.addChild(new BlockText(WizardL10n.l10n("opennetChoiceIntroduction")));
+		infoboxContent.body.addChild(new BlockText(WizardL10n.l10n("opennetChoiceIntroduction")));
 
-		HTMLNode form = helper.addFormChild(infoboxContent, ".", "opennetForm", false);
+		HTMLNode form = helper.addFormChild(infoboxContent.body, ".", "opennetForm", false);
 
 		HTMLNode p = form.addChild(new BlockText());
 		HTMLNode input = p.addChild("input",

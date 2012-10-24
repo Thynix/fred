@@ -46,6 +46,7 @@ public class PageHelper {
 		return pageNode.outer;
 	}
 
+	@Deprecated
 	public HTMLNode getInfobox(String category, String header, HTMLNode parent, String title, boolean isUnique) {
 		return toadletContext.getPageMaker().getInfobox(category, header, parent, title, isUnique);
 	}

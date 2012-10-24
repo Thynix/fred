@@ -1,6 +1,7 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
+import freenet.clients.http.uielements.InfoboxWidget;
 import freenet.clients.http.uielements.Row;
 import freenet.clients.http.uielements.Table;
 import freenet.clients.http.uielements.Text;
@@ -8,7 +9,9 @@ import freenet.config.Config;
 import freenet.config.InvalidConfigValueException;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
-import freenet.support.*;
+import freenet.support.Fields;
+import freenet.support.HTMLNode;
+import freenet.support.URLEncoder;
 import freenet.support.api.HTTPRequest;
 
 /**
@@ -33,9 +36,9 @@ public class BANDWIDTH_MONTHLY extends BandwidthManipulator implements Step {
 		}
 
 		//Box for prettiness and explanation of function.
-		HTMLNode infoBox = helper.getInfobox("infobox-normal", WizardL10n.l10n("bandwidthLimitMonthlyTitle"),
-		        contentNode, null, false);
-		NodeL10n.getBase().addL10nSubstitution(infoBox, "FirstTimeWizardToadlet.bandwidthLimitMonthly",
+		InfoboxWidget infoBox = contentNode.addInfobox(InfoboxWidget.Type.NORMAL,
+			WizardL10n.l10n("bandwidthLimitMonthlyTitle"));
+		NodeL10n.getBase().addL10nSubstitution(infoBox.body, "FirstTimeWizardToadlet.bandwidthLimitMonthly",
 		        new String[] { "bold", "coreSettings" }, new HTMLNode[] { HTMLNode.STRONG, 
 		                new Text(NodeL10n.getBase().getString("ConfigToadlet.node"))});
 

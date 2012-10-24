@@ -1,6 +1,8 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
+import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.InfoboxWidget;
 import freenet.config.Config;
 import freenet.config.ConfigException;
 import freenet.config.Option;
@@ -12,7 +14,6 @@ import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.SizeUtil;
 import freenet.support.api.HTTPRequest;
-import freenet.clients.http.uielements.Box;
 import freenet.support.io.FileUtil;
 
 /**
@@ -31,11 +32,10 @@ public class DATASTORE_SIZE implements Step {
 	@Override
 	public void getStep(HTTPRequest request, PageHelper helper) {
 		HTMLNode contentNode = helper.getPageContent(WizardL10n.l10n("step4Title"));
-		HTMLNode bandwidthInfoboxContent = helper.getInfobox("infobox-header", WizardL10n.l10n("datastoreSize"),
-		        contentNode, null, false);
+		InfoboxWidget bandwidthInfoboxContent = contentNode.addInfobox(WizardL10n.l10n("datastoreSize"));
 
-		bandwidthInfoboxContent.addText(WizardL10n.l10n("datastoreSizeLong"));
-		HTMLNode bandwidthForm = helper.addFormChild(bandwidthInfoboxContent, ".", "dsForm");
+		bandwidthInfoboxContent.body.addText(WizardL10n.l10n("datastoreSizeLong"));
+		HTMLNode bandwidthForm = helper.addFormChild(bandwidthInfoboxContent.body, ".", "dsForm");
 		HTMLNode result = bandwidthForm.addChild("select", "name", "ds");
 
 		long maxSize = maxDatastoreSize();
