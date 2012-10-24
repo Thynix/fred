@@ -54,6 +54,7 @@ public enum HTMLClass {
 	FIRST("first"),
 	FREENETEXTVERSION("freenet-ext-version"),
 	FREENETFULLVERSION("freenet-full-version"),
+	FPROXYPAGE("fproxy-page"),
 	HIDDEN("hidden"),
 	HISTOGRAMLABEL("histogramLabel"),
 	HISTOGRAMDISCONNECTED("histogramDisconnected"),

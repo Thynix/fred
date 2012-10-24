@@ -455,8 +455,6 @@ public class HTMLNode implements XMLCharacterClasses {
 		content=newContent;
 	}
 
-
-
 	/**
 	 * Special HTML node for the DOCTYPE declaration. This node differs from a
 	 * normal HTML node in that it's child (and it should only have exactly one
@@ -534,6 +532,10 @@ public class HTMLNode implements XMLCharacterClasses {
 	//methods for creating Box children
 	public Box addBox() {
 		Box newBox = new Box();
+		addChild(newBox);
+		return newBox;
+	}
+	public Box addBox(Box newBox) {
 		addChild(newBox);
 		return newBox;
 	}
@@ -707,6 +709,10 @@ public class HTMLNode implements XMLCharacterClasses {
 	//methods for creating Link children
 	public Link addLink() {
 		Link newLink = new Link();
+		addChild(newLink);
+		return newLink;
+	}
+	public Link addLink(Link newLink) {
 		addChild(newLink);
 		return newLink;
 	}

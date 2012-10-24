@@ -1,12 +1,7 @@
 package freenet.clients.http;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import freenet.client.filter.PushingTagReplacerCallback;
+import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.DarknetPeerNode;
 import freenet.node.Node;
@@ -15,7 +10,12 @@ import freenet.pluginmanager.FredPluginL10n;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.api.HTTPRequest;
-import freenet.clients.http.uielements.*;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** Simple class to output standard heads and tail for web interface pages. 
 */
@@ -326,7 +326,7 @@ public final class PageMaker {
 	 * @return A template PageNode.
 	 */
 	public PageNode getPageNode(String title, ToadletContext ctx, RenderParameters renderParameters) {
-		boolean fullAccess = ctx == null ? false : ctx.isAllowedFullAccess();
+		boolean fullAccess = ctx != null && ctx.isAllowedFullAccess();
 		HTMLNode pageNode = new HTMLNode.HTMLDoctype("html", "-//W3C//DTD XHTML 1.1//EN");
 		HTMLNode htmlNode = pageNode.addChild("html", "xml:lang", NodeL10n.getBase().getSelectedLanguage().isoCode);
 		HTMLNode headNode = htmlNode.addChild("head");
@@ -610,7 +610,6 @@ public final class PageMaker {
 	 */
 	public static String filterCSSIdentifier(String input) {
 		while (input.length() < 2) input = input.concat("_");
-
 		return input.replaceFirst("^-[^_a-zA-Z]", "-_").replaceAll("[^-_a-zA-Z0-9]", "_");
 	}
 

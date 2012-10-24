@@ -8,12 +8,28 @@ public class OutputNode extends HTMLNode {
 		super(Name);
 	}
 
+	public OutputNode(String Name, HTMLClass Class) {
+		super(Name);
+		this.addClass(Class);
+	}
+
+	public OutputNode(String Name, String Attribute, String Value) {
+		super(Name, Attribute, Value);
+	}
+
 	public OutputNode(String Name, String Content) {
 		super(Name, Content);
 	}
 
 	public OutputNode addChild(String name, String attribute, String value, String content) {
 		OutputNode childNode = new OutputNode(name, content);
+		childNode.addAttribute(attribute, value);
+		this.addChild(childNode);
+		return childNode;
+	}
+
+	public OutputNode addChild(String name, String attribute, String value) {
+		OutputNode childNode = new OutputNode(name);
 		childNode.addAttribute(attribute, value);
 		this.addChild(childNode);
 		return childNode;
