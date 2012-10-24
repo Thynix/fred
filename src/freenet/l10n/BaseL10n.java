@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.MissingResourceException;
 
 import freenet.clients.http.TranslationToadlet;
+import freenet.clients.http.uielements.Text;
 import freenet.support.HTMLEncoder;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
@@ -416,10 +417,10 @@ public class BaseL10n {
 	public HTMLNode getHTMLNode(String key) {
 		String value = this.getString(key, true);
 		if (value != null) {
-			return new HTMLNode("#", value);
+			return new Text(value);
 		}
 		HTMLNode translationField = new HTMLNode("span", "class", "translate_it");
-		translationField.addChild("#", getDefaultString(key));
+		translationField.addText(getDefaultString(key));
 		translationField.addChild("a", "href", TranslationToadlet.TOADLET_URL + "?translate=" + key).addChild("small", " (translate it in your native language!)");
 
 		return translationField;
@@ -538,7 +539,7 @@ public class BaseL10n {
 	 * Example:
 	 * 
 	 * addL10nSubstitution(html, "TranslationLookup.string", new String[] { "link", "text" },
-	 *   new HTMLNode[] { HTMLNode.link("/KSK@gpl.txt"), HTMLNode.text("blah") })
+	 *   new HTMLNode[] { new Link("/KSK@gpl.txt"), new Text("blah") })
 	 * 
 	 * TranslationLookup.string=This is a ${link}link${/link} about ${text}.
 	 */
@@ -547,7 +548,7 @@ public class BaseL10n {
 		while(!value.equals("") && (x = value.indexOf("${")) != -1) {
 			String before = value.substring(0, x);
 			if(before.length() > 0)
-				node.addChild("#", before);
+				node.addText(before);
 			value = value.substring(x);
 			int y = value.indexOf('}');
 			if(y == -1) {
@@ -592,7 +593,7 @@ public class BaseL10n {
 			}
 		}
 		if(!value.equals(""))
-			node.addChild("#", value);
+			node.addText(value);
 	}
 	
 	public String[] getAllNamesWithPrefix(String prefix){

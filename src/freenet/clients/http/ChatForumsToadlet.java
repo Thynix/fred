@@ -1,7 +1,7 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
-import freenet.clients.http.uielements.BlockText;
+import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
 import freenet.node.useralerts.UserAlertManager;
@@ -9,8 +9,6 @@ import freenet.pluginmanager.PluginManager;
 import freenet.support.HTMLNode;
 import freenet.support.MultiValueTable;
 import freenet.support.api.HTTPRequest;
-import freenet.clients.http.uielements.Item;
-import freenet.clients.http.uielements.OutputList;
 
 import java.io.IOException;
 import java.net.URI;
@@ -35,33 +33,34 @@ public class ChatForumsToadlet extends Toadlet implements LinkEnabledCallback {
 		
 		contentNode.addChild(alerts.createSummary());
 		
-		HTMLNode contentBox = ctx.getPageMaker().getInfobox("infobox-information", l10n("title"), contentNode, "chat-list", true);
+		InfoboxWidget chatList = new InfoboxWidget(InfoboxWidget.Type.INFORMATION, HTMLID.CHATLIST, l10n("title"));
+		contentNode.addInfobox(chatList);
 		
-		contentBox.addChild(new BlockText(l10n("freetalkRecommended")));
-		contentBox.addChild(new BlockText(l10n("freetalkCaveat")));
-		ctx.addFormChild(contentBox, path(), "loadFreetalkButton").addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "loadFreetalk", l10n("freetalkButton") });
-		contentBox.addChild(new BlockText(l10n("othersIntro")));
+		chatList.body.addChild(new BlockText(l10n("freetalkRecommended")));
+		chatList.body.addChild(new BlockText(l10n("freetalkCaveat")));
+		ctx.addFormChild(chatList.body, path(), "loadFreetalkButton").addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "loadFreetalk", l10n("freetalkButton") });
+		chatList.body.addChild(new BlockText(l10n("othersIntro")));
 		
 		OutputList chatPluginList = new OutputList();
-		contentBox.addChild(chatPluginList);
+		chatList.body.addChild(chatPluginList);
 		Item chatPlugin = chatPluginList.addItem();
 		NodeL10n.getBase().addL10nSubstitution(chatPlugin, "ChatForumsToadlet.fms",
 		        new String[] { "fms", "fms-help" },
-		        new HTMLNode[] { HTMLNode.link("/USK@0npnMrqZNKRCRoGojZV93UNHCMN-6UU3rRSAmP6jNLE,~BG-edFtdCC1cSH4O3BWdeIYa8Sw5DfyrSV-TKdO5ec,AQACAAE/fms/127/"),
-		                HTMLNode.link("/SSK@ugb~uuscsidMI-Ze8laZe~o3BUIb3S50i25RIwDH99M,9T20t3xoG-dQfMO94LGOl9AxRTkaz~TykFY-voqaTQI,AQACAAE/FAFS-49/files/fms.htm")});
+		        new HTMLNode[] { new Link("/USK@0npnMrqZNKRCRoGojZV93UNHCMN-6UU3rRSAmP6jNLE,~BG-edFtdCC1cSH4O3BWdeIYa8Sw5DfyrSV-TKdO5ec,AQACAAE/fms/127/"),
+		                new Link("/SSK@ugb~uuscsidMI-Ze8laZe~o3BUIb3S50i25RIwDH99M,9T20t3xoG-dQfMO94LGOl9AxRTkaz~TykFY-voqaTQI,AQACAAE/FAFS-49/files/fms.htm")});
 		chatPlugin = chatPluginList.addItem();
 		NodeL10n.getBase().addL10nSubstitution(chatPlugin, "ChatForumsToadlet.frost",
 			new String[]{"frost-freenet", "frost-web", "frost-help"},
 			new HTMLNode[]{
-				HTMLNode.link("/freenet:USK@QRZAI1nSm~dAY2hTdzVWXmEhkaI~dso0OadnppBR7kE,wq5rHGBI7kpChBe4yRmgBChIGDug7Xa5SG9vYGXdxR0,AQACAAE/frost/14/"),
-				HTMLNode.link(ExternalLinkToadlet.escape("http://jtcfrost.sourceforge.net/")),
-				HTMLNode.link("/SSK@ugb~uuscsidMI-Ze8laZe~o3BUIb3S50i25RIwDH99M,9T20t3xoG-dQfMO94LGOl9AxRTkaz~TykFY-voqaTQI,AQACAAE/FAFS-49/files/frost.htm")});
+				new Link("/freenet:USK@QRZAI1nSm~dAY2hTdzVWXmEhkaI~dso0OadnppBR7kE,wq5rHGBI7kpChBe4yRmgBChIGDug7Xa5SG9vYGXdxR0,AQACAAE/frost/14/"),
+				new Link(ExternalLinkToadlet.escape("http://jtcfrost.sourceforge.net/")),
+				new Link("/SSK@ugb~uuscsidMI-Ze8laZe~o3BUIb3S50i25RIwDH99M,9T20t3xoG-dQfMO94LGOl9AxRTkaz~TykFY-voqaTQI,AQACAAE/FAFS-49/files/frost.htm")});
 		chatPlugin = chatPluginList.addItem();
 		NodeL10n.getBase().addL10nSubstitution(chatPlugin, "ChatForumsToadlet.sone",
 		       new String[] { "sone"},
 			       new HTMLNode[] {
-				   HTMLNode.link("/USK@nwa8lHa271k2QvJ8aa0Ov7IHAV-DFOCFgmDt3X6BpCI,DuQSUZiI~agF8c-6tjsFFGuZ8eICrzWCILB60nT8KKo,AQACAAE/sone/43/")});
-		contentBox.addChild(new BlockText(l10n("content2")));
+				   new Link("/USK@nwa8lHa271k2QvJ8aa0Ov7IHAV-DFOCFgmDt3X6BpCI,DuQSUZiI~agF8c-6tjsFFGuZ8eICrzWCILB60nT8KKo,AQACAAE/sone/43/")});
+		chatList.body.addChild(new BlockText(l10n("content2")));
 		
 		this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 	}

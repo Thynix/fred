@@ -63,7 +63,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 		@Override
 		public HTMLNode getHTMLText() {
 			HTMLNode alertNode = new Box();
-			alertNode.addChild("#", l10n("needRestart"));
+			alertNode.addText(l10n("needRestart"));
 
 			if (node.isUsingWrapper()) {
 				alertNode.addLineBreak();
@@ -195,12 +195,11 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 			HTMLNode pageNode = page.outer;
 			HTMLNode contentNode = page.content;
 
-			HTMLNode content = ctx.getPageMaker().getInfobox("infobox-warning",
-					l10n("confirmResetTitle"), contentNode, "reset-confirm",
-					true);
-			content.addChild("#", l10n("confirmReset"));
+			InfoboxWidget ResetWarning = new InfoboxWidget(InfoboxWidget.Type.WARNING, HTMLID.RESETCONFIRM, l10n("confirmResetTitle"));
+			contentNode.addInfobox(ResetWarning);
+			ResetWarning.body.addText(l10n("confirmReset"));
 
-			HTMLNode formNode = ctx.addFormChild(content, path(), "yes-button");
+			HTMLNode formNode = ctx.addFormChild(ResetWarning.body, path(), "yes-button");
 			String subconfig = request.getPartAsStringFailsafe("subconfig",
 					MAX_PARAM_VALUE_SIZE);
 			formNode.addChild("input",
@@ -364,18 +363,17 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 		HTMLNode contentNode = page.content;
 
 		if (errbuf.length() == 0) {
-			HTMLNode content = ctx.getPageMaker().getInfobox("infobox-success",
-					l10n("appliedTitle"), contentNode, "configuration-applied",
-					true);
-			content.addChild("#", l10n("appliedSuccess"));
+			InfoboxWidget ConfigurationApplied = new InfoboxWidget(InfoboxWidget.Type.SUCCESS, HTMLID.CONFIGURATIONAPPLIED, l10n("appliedTitle"));
+			contentNode.addInfobox(ConfigurationApplied);
+			ConfigurationApplied.body.addText(l10n("appliedSuccess"));
 
 			if (needRestart) {
-				content.addLineBreak();
-				content.addChild("#", l10n("needRestart"));
+				ConfigurationApplied.body.addLineBreak();
+				ConfigurationApplied.body.addText(l10n("needRestart"));
 
 				if (node.isUsingWrapper()) {
-					content.addLineBreak();
-					HTMLNode restartForm = ctx.addFormChild(content, "/",
+					ConfigurationApplied.body.addLineBreak();
+					HTMLNode restartForm = ctx.addFormChild(ConfigurationApplied.body, "/",
 							"restartForm");
 					restartForm.addChild("input",//
 							new String[] { "type", "name" },//
@@ -392,25 +390,18 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 				}
 			}
 		} else {
-			HTMLNode content = ctx
-					.getPageMaker()
-					.getInfobox("infobox-error", l10n("appliedFailureTitle"),
-							contentNode, "configuration-error", true)
-					.addChild(new Box(HTMLClass.INFOBOXCONTENT));
-			content.addChild("#", l10n("appliedFailureExceptions"));
-			content.addLineBreak();
-			content.addChild("#", errbuf.toString());
+			InfoboxWidget ConfigurationFailed = new InfoboxWidget(InfoboxWidget.Type.ERROR, HTMLID.CONFIGURATIONERROR, l10n("appliedFailureTitle"));
+			contentNode.addInfobox(ConfigurationFailed);
+			ConfigurationFailed.body.addText(l10n("appliedFailureExceptions"));
+			ConfigurationFailed.body.addLineBreak();
+			ConfigurationFailed.body.addText(errbuf.toString());
 		}
-
-		HTMLNode content = ctx.getPageMaker().getInfobox("infobox-normal",
-				l10n("possibilitiesTitle"), contentNode,
-				"configuration-possibilities", false);
-		content.addChild(new Link(path(), l10n("shortTitle"), l10n("returnToNodeConfig")));
-		content.addLineBreak();
-		addHomepageLink(content);
-
+		InfoboxWidget ConfigurationPossibilities = new InfoboxWidget(InfoboxWidget.Type.NORMAL, HTMLClass.CONFIGURATIONPOSSIBILITIES, l10n("possibilitiesTitle"));
+		contentNode.addInfobox(ConfigurationPossibilities);
+		ConfigurationPossibilities.body.addChild(new Link(path(), l10n("shortTitle"), l10n("returnToNodeConfig")));
+		ConfigurationPossibilities.body.addLineBreak();
+		addHomepageLink(ConfigurationPossibilities.body);
 		writeHTMLReply(ctx, 200, "OK", pageNode.generate());
-
 	}
 
 	private static String l10n(String string) {
@@ -542,10 +533,10 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 				// instance like
 				// normal.
 				HTMLNode shortDesc = (plugin == null) ? NodeL10n.getBase()
-						.getHTMLNode(o.getShortDesc()) : new HTMLNode("#",
+						.getHTMLNode(o.getShortDesc()) : new Text(
 						plugin.getString(o.getShortDesc()));
 				HTMLNode longDesc = (plugin == null) ? NodeL10n.getBase()
-						.getHTMLNode(o.getLongDesc()) : new HTMLNode("#",
+						.getHTMLNode(o.getLongDesc()) : new Text(
 						plugin.getString(o.getLongDesc()));
 
 				Item configItemNode = configGroupUlNode.addItem();

@@ -16,20 +16,20 @@ public class Link extends OutputNode {
 		}
 	}
 
-	public enum target {
-		BLAMK("_blank"),
+	public enum linkTarget {
+		BLANK("_blank"),
 		NEW("_new");
 
 		public final String name;
 
-		private target(String type) {
+		private linkTarget(String type) {
 			this.name = type;
 		}
 	}
 
 	public linkType type;
 	public String data;
-	public target target;
+	public linkTarget target;
 	public String title;
 
 	public Link(HTMLClass CLASS) {
@@ -47,8 +47,13 @@ public class Link extends OutputNode {
 		this.setTitle(title);
 	}
 
-	public Link(String data, target target, String content) {
+	public Link(String data, linkTarget target, String content) {
 		this(data, content);
+		this.setTarget(target);
+	}
+
+	public Link(String data, linkTarget target) {
+		this(data);
 		this.setTarget(target);
 	}
 
@@ -99,7 +104,7 @@ public class Link extends OutputNode {
 		this.addAttribute("title", title);
 	}
 
-	public void setTarget(target target) {
+	public void setTarget(linkTarget target) {
 		this.target = target;
 		this.addAttribute("target", target.name);
 	}

@@ -3289,7 +3289,7 @@ public class Node implements TimeSkewDetectorCallback {
 				@Override
 				public HTMLNode getHTMLText() {
 					Box box_ = new Box();
-					box_.addChild("#", NodeL10n.getBase().getString("Node.storeSaltHashMigrated"));
+					box_.addText(NodeL10n.getBase().getString("Node.storeSaltHashMigrated"));
 					OutputList keyList = box_.addList();
 
 					for (String type : new String[] { "chk", "pubkey", "ssk" })

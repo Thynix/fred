@@ -155,9 +155,9 @@ public class PluginJarUpdater extends NodeUpdater {
 					synchronized(this) {
 					
 						if(deployOnNoRevocation || deployOnNextNoRevocation) {
-							box_.addChild("#", l10n("willDeployAfterRevocationCheck", "name", pluginName));
+							box_.addText(l10n("willDeployAfterRevocationCheck", "name", pluginName));
 						} else {
-							box_.addChild("#", l10n("pluginUpdatedText", new String[]{"name", "newVersion"}, new String[]{pluginName, Long.toString(fetchedVersion)}));
+							box_.addText(l10n("pluginUpdatedText", new String[]{"name", "newVersion"}, new String[]{pluginName, Long.toString(fetchedVersion)}));
 							
 							// Form to deploy the updated version.
 							// This is not the same as reloading because we haven't written it yet.

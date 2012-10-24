@@ -3,6 +3,28 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node;
 
+import freenet.clients.http.ExternalLinkToadlet;
+import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Link;
+import freenet.clients.http.uielements.OutputList;
+import freenet.clients.http.uielements.Text;
+import freenet.crypt.*;
+import freenet.crypt.ciphers.Rijndael;
+import freenet.io.AddressTracker;
+import freenet.io.AddressTracker.Status;
+import freenet.io.comm.*;
+import freenet.io.comm.IncomingPacketFilter.DECODED;
+import freenet.io.comm.Peer.LocalAddressException;
+import freenet.l10n.NodeL10n;
+import freenet.node.OpennetManager.ConnectionType;
+import freenet.node.useralerts.AbstractUserAlert;
+import freenet.node.useralerts.UserAlert;
+import freenet.support.*;
+import freenet.support.Logger.LogLevel;
+import freenet.support.io.InetAddressComparator;
+import freenet.support.io.NativeThread;
+import net.i2p.util.NativeBigInteger;
+
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.InetAddress;
@@ -11,50 +33,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-
-import freenet.clients.http.uielements.Box;
-import freenet.clients.http.uielements.OutputList;
-import net.i2p.util.NativeBigInteger;
-import freenet.clients.http.ExternalLinkToadlet;
-import freenet.crypt.BlockCipher;
-import freenet.crypt.DSA;
-import freenet.crypt.DSAGroup;
-import freenet.crypt.DSASignature;
-import freenet.crypt.DiffieHellman;
-import freenet.crypt.DiffieHellmanLightContext;
-import freenet.crypt.Global;
-import freenet.crypt.HMAC;
-import freenet.crypt.PCFBMode;
-import freenet.crypt.SHA256;
-import freenet.crypt.UnsupportedCipherException;
-import freenet.crypt.ciphers.Rijndael;
-import freenet.io.AddressTracker;
-import freenet.io.AddressTracker.Status;
-import freenet.io.comm.FreenetInetAddress;
-import freenet.io.comm.IncomingPacketFilter.DECODED;
-import freenet.io.comm.PacketSocketHandler;
-import freenet.io.comm.Peer;
-import freenet.io.comm.Peer.LocalAddressException;
-import freenet.io.comm.PeerContext;
-import freenet.io.comm.PeerParseException;
-import freenet.io.comm.ReferenceSignatureVerificationException;
-import freenet.io.comm.SocketHandler;
-import freenet.l10n.NodeL10n;
-import freenet.node.OpennetManager.ConnectionType;
-import freenet.node.useralerts.AbstractUserAlert;
-import freenet.node.useralerts.UserAlert;
-import freenet.support.ByteArrayWrapper;
-import freenet.support.Fields;
-import freenet.support.HTMLNode;
-import freenet.support.HexUtil;
-import freenet.support.LRUMap;
-import freenet.support.LogThresholdCallback;
-import freenet.support.Logger;
-import freenet.support.Logger.LogLevel;
-import freenet.support.SimpleFieldSet;
-import freenet.support.TimeUtil;
-import freenet.support.io.InetAddressComparator;
-import freenet.support.io.NativeThread;
 
 /**
  * @author amphibian
@@ -2059,8 +2037,8 @@ public class FNPPacketMangler implements OutgoingPacketMangler {
 			NodeL10n.getBase().addL10nSubstitution(box_,
 			        "FNPPacketMangler.somePeersDisconnectedStillNotAckedDetail",
 			        new String[] { "count", "link" },
-			        new HTMLNode[] { HTMLNode.text(peers.length),
-			                HTMLNode.link(ExternalLinkToadlet.escape("https://bugs.freenetproject.org/view.php?id=2692")) });
+			        new HTMLNode[] { new Text(peers.length),
+			                new Link(ExternalLinkToadlet.escape("https://bugs.freenetproject.org/view.php?id=2692")) });
 			OutputList list = box_.addList();
 			for(Peer peer : peers) {
 				list.addItem(peer.toString());

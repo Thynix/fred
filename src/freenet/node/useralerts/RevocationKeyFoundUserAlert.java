@@ -3,6 +3,7 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node.useralerts;
 
+import freenet.clients.http.uielements.Text;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 
@@ -12,7 +13,7 @@ public class RevocationKeyFoundUserAlert extends AbstractUserAlert {
 				getTitle(disabledNotBlown),
 				getText(disabledNotBlown, msg),
 				getText(disabledNotBlown, msg), 
-				new HTMLNode("#", getText(disabledNotBlown, msg)), 
+				new Text(getText(disabledNotBlown, msg)),
 				UserAlert.CRITICAL_ERROR, true, null, false, null);
 	}
 	

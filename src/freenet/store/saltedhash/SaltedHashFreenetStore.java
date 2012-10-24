@@ -26,6 +26,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import freenet.clients.http.uielements.Text;
 import org.tanukisoftware.wrapper.WrapperManager;
 
 import freenet.crypt.BlockCipher;
@@ -1844,7 +1845,7 @@ public class SaltedHashFreenetStore<T extends StorableBlock> implements FreenetS
 
 		@Override
 		public HTMLNode getHTMLText() {
-			return new HTMLNode("#", getText());
+			return new Text(getText());
 		}
 
 		@Override

@@ -1,38 +1,16 @@
 package freenet.clients.http;
 
-import java.io.IOException;
-import java.net.URI;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import freenet.client.async.ClientRequester;
 import freenet.client.HighLevelSimpleClient;
+import freenet.client.async.ClientRequester;
 import freenet.clients.http.uielements.*;
 import freenet.config.SubConfig;
 import freenet.crypt.ciphers.Rijndael;
 import freenet.io.comm.IncomingPacketFilterImpl;
 import freenet.io.xfer.BlockReceiver;
 import freenet.io.xfer.BlockTransmitter;
-import freenet.l10n.NodeL10n;
 import freenet.keys.FreenetURI;
-import freenet.node.Location;
-import freenet.node.Node;
-import freenet.node.NodeClientCore;
-import freenet.node.NodeStarter;
-import freenet.node.NodeStats;
-import freenet.node.OpennetManager;
-import freenet.node.PeerManager;
-import freenet.node.PeerNodeStatus;
-import freenet.node.RequestClient;
-import freenet.node.RequestStarterGroup;
-import freenet.node.RequestTracker;
-import freenet.node.Version;
+import freenet.l10n.NodeL10n;
+import freenet.node.*;
 import freenet.node.stats.DataStoreInstanceType;
 import freenet.node.stats.DataStoreStats;
 import freenet.node.stats.StatsNotAvailableException;
@@ -43,6 +21,13 @@ import freenet.support.SizeUtil;
 import freenet.support.TimeUtil;
 import freenet.support.api.HTTPRequest;
 import freenet.support.io.NativeThread;
+
+import java.io.IOException;
+import java.net.URI;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.*;
 
 public class StatisticsToadlet extends Toadlet {
 
@@ -200,20 +185,21 @@ public class StatisticsToadlet extends Toadlet {
 		drawJVMStatsBox(jvmStatsInfobox, advancedMode);
 		
 		// Statistic gathering box
-		HTMLNode statGatheringContent = ctx.getPageMaker().getInfobox("#", l10n("statisticGatheringTitle"), nextTableCell, "statistics-generating", true);
+		InfoboxWidget StatisticsGenerating = new InfoboxWidget(InfoboxWidget.Type.WTF, HTMLID.STATISTICSGENERATING, l10n("statisticGatheringTitle"));
+		nextTableCell.addInfobox(StatisticsGenerating);
 		// Generate a Thread-Dump
 		if(node.isUsingWrapper()){
-			HTMLNode threadDumpForm = ctx.addFormChild(statGatheringContent, "/", "threadDumpForm");
+			HTMLNode threadDumpForm = ctx.addFormChild(StatisticsGenerating.body, "/", "threadDumpForm");
 			threadDumpForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "getThreadDump", l10n("threadDumpButton")});
 		}
 		// Get logs
 		OutputList logsList = new OutputList();
-		statGatheringContent.addChild(logsList);
+		StatisticsGenerating.body.addList(logsList);
 		if(nodeConfig.config.get("logger").getBoolean("enabled")) {
 			logsList.addItem().addLink("/?latestlog", "_blank", l10n("getLogs"));
 		}
-		logsList.addItem().addLink(TranslationToadlet.TOADLET_URL+"?getOverrideTranlationFile").addChild("#", NodeL10n.getBase().getString("TranslationToadlet.downloadTranslationsFile"));
-		logsList.addItem().addLink(DiagnosticToadlet.TOADLET_URL).addChild("#", NodeL10n.getBase().getString("FProxyToadlet.diagnostic"));
+		logsList.addItem().addLink(TranslationToadlet.TOADLET_URL+"?getOverrideTranlationFile").addText(NodeL10n.getBase().getString("TranslationToadlet.downloadTranslationsFile"));
+		logsList.addItem().addLink(DiagnosticToadlet.TOADLET_URL).addText(NodeL10n.getBase().getString("FProxyToadlet.diagnostic"));
 		
 		if(advancedMode) {
 			// store size box
@@ -281,7 +267,7 @@ public class StatisticsToadlet extends Toadlet {
 
 			String [] routingBackoffReasons = peers.getPeerNodeRoutingBackoffReasons(false);
 			if(routingBackoffReasons.length == 0) {
-				curBackoffReasonInfobox.body.addChild("#", l10n("notBackedOff"));
+				curBackoffReasonInfobox.body.addText(l10n("notBackedOff"));
 			} else {
 				OutputList reasonList = new OutputList();
 				curBackoffReasonInfobox.body.addChild(reasonList);
@@ -296,7 +282,7 @@ public class StatisticsToadlet extends Toadlet {
 			backoffReasonInfobox.body.addChild(curBackoffReasonInfobox);
 			routingBackoffReasons = peers.getPeerNodeRoutingBackoffReasons(true);
 			if(routingBackoffReasons.length == 0) {
-				curBackoffReasonInfobox.body.addChild("#", l10n("notBackedOff"));
+				curBackoffReasonInfobox.body.addText(l10n("notBackedOff"));
 			} else {
 				OutputList reasonList = new OutputList();
 				curBackoffReasonInfobox.body.addChild(reasonList);
@@ -1176,7 +1162,7 @@ public class StatisticsToadlet extends Toadlet {
 				(numCHKInserts == 0) && (numSSKInserts == 0) &&
 				(numTransferringRequestHandlers == 0) && 
 				(numCHKOfferReplys == 0) && (numSSKOfferReplys == 0)) {
-			activityInfoboxContent.addChild("#", l10n("noRequests"));
+			activityInfoboxContent.addText(l10n("noRequests"));
 			
 			return null;
 		} else {
@@ -1353,7 +1339,7 @@ public class StatisticsToadlet extends Toadlet {
 		Cell nodeCircleTableCell = nodeCircleTableRow.addCell(10, HTMLClass.FIRST);
 		Cell nodeHistogramLegendCell;
 		Cell nodeHistogramGraphCell;
-		Box nodeCircleInfoboxContent = nodeCircleTableCell.addDiv(HTMLClass.PEERCIRCLE);
+		Box nodeCircleInfoboxContent = nodeCircleTableCell.addBox(HTMLClass.PEERCIRCLE);
 		nodeCircleInfoboxContent.addAttribute("style", "position: relative; height: " + ((PEER_CIRCLE_RADIUS + PEER_CIRCLE_ADDITIONAL_FREE_SPACE) * 2) + "px; width: " + ((PEER_CIRCLE_RADIUS + PEER_CIRCLE_ADDITIONAL_FREE_SPACE) * 2) + "px");
 		nodeCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0, false, 1.0), HTMLClass.MARK, "|");
 		nodeCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0.125, false, 1.0), HTMLClass.MARK, "+");
@@ -1395,7 +1381,7 @@ public class StatisticsToadlet extends Toadlet {
 			nodeHistogramLegendCell = nodeHistogramLegendTableRow.addCell();
 			nodeHistogramGraphCell = nodeHistogramGraphTableRow.addCell();
 			nodeHistogramGraphCell.addAttribute("style", "height: 100px;");
-			nodeHistogramLegendCell.addDiv(HTMLClass.HISTOGRAMLABEL).addChild("#", fix1p1.format(((double) i) / HISTOGRAM_LENGTH));
+			nodeHistogramLegendCell.addBox(HTMLClass.HISTOGRAMLABEL).addText(fix1p1.format(((double) i) / HISTOGRAM_LENGTH));
 			histogramPercent = nodeCount==0 ? 0 : ((double)histogram[ i ] / nodeCount);
 			
 			// Don't use HTMLNode here to speed things up
@@ -1411,11 +1397,11 @@ public class StatisticsToadlet extends Toadlet {
 			Cell nodeHistogramLegendCell = nodeHistogramLegendTableRow.addCell();
 			Cell nodeHistogramGraphCell = nodeHistogramGraphTableRow.addCell();
 			nodeHistogramGraphCell.addAttribute("style", "height: 100px;");
-			OutputNode nodeHistogramGraphCell2 = nodeHistogramLegendCell.addDiv(HTMLClass.HISTOGRAMLABEL);
+			OutputNode nodeHistogramGraphCell2 = nodeHistogramLegendCell.addBox(HTMLClass.HISTOGRAMLABEL);
 			if(i == myIndex) {
 				 nodeHistogramGraphCell2 = nodeHistogramGraphCell2.addInlineBox(HTMLClass.ME);
 			}
-			nodeHistogramGraphCell2.addChild("#", fix1p1.format(((double) i) / incomingRequestLocation.length ));
+			nodeHistogramGraphCell2.addText(fix1p1.format(((double) i) / incomingRequestLocation.length));
 			Box graphCell = new Box(HTMLClass.HISTOGRAMCONNECTED, "\u00a0");
 			graphCell.addAttribute("style", "height: " + fix3pctUS.format(((double)incomingRequestLocation[i]) / incomingRequestsCount) + "; width: 100%;");
 			nodeHistogramGraphCell.addChild(graphCell);
@@ -1431,11 +1417,11 @@ public class StatisticsToadlet extends Toadlet {
 			Cell nodeHistogramLegendCell = nodeHistogramLegendTableRow.addCell();
 			Cell nodeHistogramGraphCell = nodeHistogramGraphTableRow.addCell();
 			nodeHistogramGraphTableRow.addAttribute("style", "height: 100px;");
-			OutputNode nodeHistogramGraphCell2 = nodeHistogramLegendCell.addDiv(HTMLClass.HISTOGRAMLABEL);
+			OutputNode nodeHistogramGraphCell2 = nodeHistogramLegendCell.addBox(HTMLClass.HISTOGRAMLABEL);
 			if(i == myIndex) {
 				 nodeHistogramGraphCell2 = nodeHistogramGraphCell2.addInlineBox(HTMLClass.ME);
 			}
-			nodeHistogramGraphCell2.addChild("#", fix1p1.format(((double) i) / locallyOriginatingRequests.length ));
+			nodeHistogramGraphCell2.addText(fix1p1.format(((double) i) / locallyOriginatingRequests.length));
 			Box graphCell = new Box(HTMLClass.HISTOGRAMCONNECTED, "\u00a0");
 			graphCell.addAttribute("style", "height: " + fix3pctUS.format(((double)locallyOriginatingRequests[i]) / locallyOriginatingRequestsCount) + "; width: 100%;");
 			nodeHistogramGraphCell.addChild(graphCell);
@@ -1458,7 +1444,7 @@ public class StatisticsToadlet extends Toadlet {
 		Cell peerCircleTableCell = peerCircleTableRow.addCell(10, HTMLClass.FIRST);
 		Cell peerHistogramLegendCell;
 		Cell peerHistogramGraphCell;
-		Box peerCircleInfoboxContent = peerCircleTableCell.addDiv(HTMLClass.PEERCIRCLE);
+		Box peerCircleInfoboxContent = peerCircleTableCell.addBox(HTMLClass.PEERCIRCLE);
 		peerCircleInfoboxContent.addAttribute("style", "position: relative; height: " + ((PEER_CIRCLE_RADIUS + PEER_CIRCLE_ADDITIONAL_FREE_SPACE) * 2) + "px; width: " + ((PEER_CIRCLE_RADIUS + PEER_CIRCLE_ADDITIONAL_FREE_SPACE) * 2) + "px");
 		peerCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0, false, 1.0), HTMLClass.MARK, "|");
 		peerCircleInfoboxContent.addInlineBox(generatePeerCircleStyleString(0.125, false, 1.0), HTMLClass.MARK, "+");
@@ -1505,7 +1491,7 @@ public class StatisticsToadlet extends Toadlet {
 			peerHistogramLegendCell = peerHistogramLegendTableRow.addCell();
 			peerHistogramGraphCell = peerHistogramGraphTableRow.addCell();
 			peerHistogramGraphCell.addAttribute("style", "height: 100px;");
-			peerHistogramLegendCell.addChild(new Box(HTMLClass.HISTOGRAMLABEL)).addChild("#", fix1p2.format(((double) i) / ( HISTOGRAM_LENGTH * 2 )));
+			peerHistogramLegendCell.addChild(new Box(HTMLClass.HISTOGRAMLABEL)).addText(fix1p2.format(((double) i) / (HISTOGRAM_LENGTH * 2)));
 			//
 			histogramPercent = ((double) histogramConnected[ i ] ) / newPeerCount;
 			Box graphCell = new Box(HTMLClass.HISTOGRAMCONNECTED, "\u00a0");

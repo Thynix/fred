@@ -3,15 +3,12 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node.useralerts;
 
-import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.*;
 import freenet.config.Option;
 import freenet.config.SubConfig;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
 import freenet.support.HTMLNode;
-import freenet.clients.http.uielements.HTMLClass;
-import freenet.clients.http.uielements.Item;
-import freenet.clients.http.uielements.OutputList;
 
 public class IPUndetectedUserAlert extends AbstractUserAlert {
 	
@@ -66,7 +63,7 @@ public class IPUndetectedUserAlert extends AbstractUserAlert {
 		
 		NodeL10n.getBase().addL10nSubstitution(textNode, "IPUndetectedUserAlert."+(node.ipDetector.isDetecting() ? "detectingWithConfigLink" : "unknownAddressWithConfigLink"), 
 				new String[] { "link" },
-				new HTMLNode[] { HTMLNode.link("/config/"+sc.getPrefix()) });
+				new HTMLNode[] { new Link("/config/"+sc.getPrefix()) });
 		
 		int peers = node.peers.getDarknetPeers().length;
 		if(peers > 0)
@@ -75,11 +72,11 @@ public class IPUndetectedUserAlert extends AbstractUserAlert {
 		if(node.ipDetector.noDetectPlugins()) {
 			HTMLNode p = textNode.addBlockText();
 			NodeL10n.getBase().addL10nSubstitution(p, "IPUndetectedUserAlert.loadDetectPlugins", new String[] { "plugins", "config", },
-					new HTMLNode[] { HTMLNode.link("/plugins/"), HTMLNode.link("/config/node") });
+					new HTMLNode[] { new Link("/plugins/"), new Link("/config/node") });
 		} else if(!node.ipDetector.hasJSTUN() && !node.ipDetector.isDetecting()) {
 			HTMLNode p = textNode.addBlockText();
 			NodeL10n.getBase().addL10nSubstitution(p, "IPUndetectedUserAlert.loadJSTUN", new String[] { "plugins" },
-					new HTMLNode[] { HTMLNode.link("/plugins/") });
+					new HTMLNode[] { new Link("/plugins/") });
 		}
 		
 		addPortForwardSuggestion(textNode);
@@ -103,10 +100,10 @@ public class IPUndetectedUserAlert extends AbstractUserAlert {
 		int darknetPort = node.getDarknetPortNumber();
 		int opennetPort = node.getOpennetFNPPort();
 		if(opennetPort <= 0) {
-			textNode.addChild("#", " "+l10n("suggestForwardPort", "port", Integer.toString(darknetPort)));
+			textNode.addText(" " + l10n("suggestForwardPort", "port", Integer.toString(darknetPort)));
 		} else {
-			textNode.addChild("#", " "+l10n("suggestForwardTwoPorts", new String[] { "port1", "port2" }, 
-					new String[] { Integer.toString(darknetPort), Integer.toString(opennetPort) }));
+			textNode.addText(" " + l10n("suggestForwardTwoPorts", new String[]{"port1", "port2"},
+				new String[]{Integer.toString(darknetPort), Integer.toString(opennetPort)}));
 		}
 	}
 

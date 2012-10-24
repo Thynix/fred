@@ -165,7 +165,7 @@ public class HTMLNode implements XMLCharacterClasses {
 		addAttributes(attributeNames, attributeValues);
 		this.name = name.toLowerCase(Locale.ENGLISH);
 		if (content != null && !("#").equals(name)&& !("%").equals(name)) {
-			addChild(new HTMLNode("#", content));
+			addChild(new Text(content));
 			this.content = null;
 		} else {
 			this.content = content;
@@ -445,6 +445,8 @@ public class HTMLNode implements XMLCharacterClasses {
 		content=newContent;
 	}
 
+
+
 	/**
 	 * Special HTML node for the DOCTYPE declaration. This node differs from a
 	 * normal HTML node in that it's child (and it should only have exactly one
@@ -465,10 +467,6 @@ public class HTMLNode implements XMLCharacterClasses {
 			this.systemUri = systemUri;
 		}
 
-		/**
-		 * @see freenet.support.HTMLNode#generate(java.lang.StringBuilder)
-		 */
-		@Override
 		public StringBuilder generate(StringBuilder tagBuffer) {
 			tagBuffer.append("<!DOCTYPE ").append(name).append(" PUBLIC \"").append(systemUri).append("\">\n");
 			//TODO A meaningful exception should be raised
@@ -479,58 +477,135 @@ public class HTMLNode implements XMLCharacterClasses {
 
 	}
 
+	@Deprecated
 	public static HTMLNode link(String path) {
 		return new HTMLNode("a", "href", path);
 	}
 
+	@Deprecated
 	public static HTMLNode linkInNewWindow(String path) {
 		return new HTMLNode("a", new String[] { "href", "target" }, new String[] { path, "_blank" });
 	}
 
+	@Deprecated
 	public static HTMLNode text(String text) {
 		return new HTMLNode("#", text);
 	}
 
+	@Deprecated
 	public static HTMLNode text(int count) {
 		return new HTMLNode("#", Integer.toString(count));
 	}
 
+	@Deprecated
 	public static HTMLNode text(long count) {
 		return new HTMLNode("#", Long.toString(count));
 	}
 
+	@Deprecated
 	public static HTMLNode text(short count) {
 		return new HTMLNode("#", Short.toString(count));
 	}
+	public Table addTable() {
+		Table newTable = new Table();
+		addChild(newTable);
+		return newTable;
+	}
+	public Table addTable(Table newTable) {
+		addChild(newTable);
+		return newTable;
+	}
+	public OutputList addList(OutputList newList) {
+		addChild(newList);
+		return newList;
+	}
+	public OutputList addList() {
+		OutputList newList = new OutputList();
+		addChild(newList);
+		return newList;
+	}
+	public InfoboxWidget addInfobox(InfoboxWidget newInfobox) {
+		addChild(newInfobox);
+		return newInfobox;
+	}
+	public InfoboxWidget addInfobox(InfoboxWidget.Type type, String title) {
+		InfoboxWidget newInfobox = new InfoboxWidget(type, title);
+		addChild(newInfobox);
+		return newInfobox;
+	}
+	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLClass Class, String title) {
+		InfoboxWidget newInfobox = new InfoboxWidget(type, Class, title);
+		addChild(newInfobox);
+		return newInfobox;
+	}
+	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLClass Class, String title, OutputNode Content) {
+		InfoboxWidget newInfobox = new InfoboxWidget(type, Class, title, Content);
+		addChild(newInfobox);
+		return newInfobox;
+	}
+	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLID ID, String title, OutputNode Content) {
+		InfoboxWidget newInfobox = new InfoboxWidget(type, ID, title, Content);
+		addChild(newInfobox);
+		return newInfobox;
+	}
+	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLClass Class, String title, String Content) {
+		InfoboxWidget newInfobox = new InfoboxWidget(type, Class, title, Content);
+		addChild(newInfobox);
+		return newInfobox;
+	}
+	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLID ID, String title, String Content) {
+		InfoboxWidget newInfobox = new InfoboxWidget(type, ID, title, Content);
+		addChild(newInfobox);
+		return newInfobox;
+	}
+	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLID ID, String title) {
+		InfoboxWidget newInfobox = new InfoboxWidget(type, ID, title);
+		addChild(newInfobox);
+		return newInfobox;
+	}
+	public Text addText(String content) {
+		Text newText = new Text(content);
+		this.addChild(newText);
+		return newText;
+	}
+	public Table addTable(HTMLClass CLASS) {
+		Table newTable = new Table(CLASS);
+		addChild(newTable);
+		return newTable;
+	}
+	public BlockText addBlockText(String content) {
+		BlockText newBlockText = new BlockText(content);
+		this.addChild(newBlockText);
+		return newBlockText;
+	}
 
 	@Deprecated
-	public HTMLNode addI(String content) {
+	public I addI(String content) {
 		I newI = new I(content);
 		this.addChild(newI);
 		return newI;
 	}
 	@Deprecated
-	public HTMLNode addI() {
+	public I addI() {
 		I newI = new I();
 		this.addChild(newI);
 		return newI;
 	}
 	@Deprecated
-	public HTMLNode addB(String content) {
+	public B addB(String content) {
 		B newB = new B(content);
 		this.addChild(newB);
 		return newB;
 	}
 	@Deprecated
-	public HTMLNode addB() {
+	public B addB() {
 		B newB = new B();
 		this.addChild(newB);
 		return newB;
 	}
-	@Deprecated
-	public HTMLNode addLineBreak() {
+	public LineBreak addLineBreak() {
 		LineBreak newLineBreak = new LineBreak();
-		addChild(newLineBreak);
+		this.addChild(newLineBreak);
 		return newLineBreak;
 	}
 

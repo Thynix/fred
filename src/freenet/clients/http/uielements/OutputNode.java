@@ -49,27 +49,27 @@ public class OutputNode extends HTMLNode {
 	}
 
 	//methods for creating Box children
-	public Box addDiv() {
+	public Box addBox() {
 		Box newBox = new Box();
 		addChild(newBox);
 		return newBox;
 	}
-	public Box addDiv(HTMLID ID) {
+	public Box addBox(HTMLID ID) {
 		Box newBox = new Box(ID);
 		addChild(newBox);
 		return newBox;
 	}
-	public Box addDiv(HTMLID ID, String content) {
+	public Box addBox(HTMLID ID, String content) {
 		Box newBox = new Box(ID, content);
 		addChild(newBox);
 		return newBox;
 	}
-	public Box addDiv(HTMLClass CLASS) {
+	public Box addBox(HTMLClass CLASS) {
 		Box newBox = new Box(CLASS);
 		addChild(newBox);
 		return newBox;
 	}
-	public Box addDiv(HTMLClass CLASS, String content) {
+	public Box addBox(HTMLClass CLASS, String content) {
 		Box newBox = new Box(CLASS, content);
 		addChild(newBox);
 		return newBox;
@@ -155,8 +155,42 @@ public class OutputNode extends HTMLNode {
 	}
 
 	//methods for creating Infobox children
+	public InfoboxWidget addInfobox(InfoboxWidget newInfobox) {
+		addChild(newInfobox);
+		return newInfobox;
+	}
 	public InfoboxWidget addInfobox(InfoboxWidget.Type type, String title) {
 		InfoboxWidget newInfobox = new InfoboxWidget(type, title);
+		addChild(newInfobox);
+		return newInfobox;
+	}
+	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLID ID, String title) {
+		InfoboxWidget newInfobox = new InfoboxWidget(type, ID, title);
+		addChild(newInfobox);
+		return newInfobox;
+	}
+	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLID ID, String title, OutputNode Content) {
+		InfoboxWidget newInfobox = new InfoboxWidget(type, ID, title, Content);
+		addChild(newInfobox);
+		return newInfobox;
+	}
+	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLID ID, String title, String Content) {
+		InfoboxWidget newInfobox = new InfoboxWidget(type, ID, title, Content);
+		addChild(newInfobox);
+		return newInfobox;
+	}
+	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLClass Class, String title) {
+		InfoboxWidget newInfobox = new InfoboxWidget(type, Class, title);
+		addChild(newInfobox);
+		return newInfobox;
+	}
+	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLClass Class, String title, OutputNode Content) {
+		InfoboxWidget newInfobox = new InfoboxWidget(type, Class, title, Content);
+		addChild(newInfobox);
+		return newInfobox;
+	}
+	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLClass Class, String title, String Content) {
+		InfoboxWidget newInfobox = new InfoboxWidget(type, Class, title, Content);
 		addChild(newInfobox);
 		return newInfobox;
 	}
@@ -168,6 +202,7 @@ public class OutputNode extends HTMLNode {
 		addChild(newI);
 		return newI;
 	}
+	@Deprecated
 	public I addI(String content) {
 		I newI = new I(content);
 		addChild(newI);
@@ -227,7 +262,7 @@ public class OutputNode extends HTMLNode {
 		addChild(newLink);
 		return newLink;
 	}
-	public Link addLink(String data, Link.target target,  String content) {
+	public Link addLink(String data, Link.linkTarget target,  String content) {
 		Link newLink = new Link(data, target, content);
 		addChild(newLink);
 		return newLink;
@@ -241,6 +276,10 @@ public class OutputNode extends HTMLNode {
 	//methods for creating List children
 	public OutputList addList() {
 		OutputList newList = new OutputList();
+		addChild(newList);
+		return newList;
+	}
+	public OutputList addList(OutputList newList) {
 		addChild(newList);
 		return newList;
 	}
@@ -266,9 +305,25 @@ public class OutputNode extends HTMLNode {
 		addChild(newTable);
 		return newTable;
 	}
+	public Table addTable(Table newTable) {
+		addChild(newTable);
+		return newTable;
+	}
 	public Table addTable(HTMLClass CLASS) {
 		Table newTable = new Table(CLASS);
 		addChild(newTable);
 		return newTable;
+	}
+
+	//methods for creating Text children
+	public Text addText() {
+		Text newText = new Text();
+		addChild(newText);
+		return newText;
+	}
+	public Text addText(String content) {
+		Text newText = new Text(content);
+		addChild(newText);
+		return newText;
 	}
 }

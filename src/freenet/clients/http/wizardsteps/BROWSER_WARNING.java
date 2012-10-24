@@ -67,11 +67,11 @@ public class BROWSER_WARNING implements Step {
 
 		if(isOldFirefox) {
 			HTMLNode p = infoboxContent.addChild(new BlockText());
-			p.addChild("#", WizardL10n.l10n("browserWarningOldFirefox"));
+			p.addText(WizardL10n.l10n("browserWarningOldFirefox"));
 			if (showTabWarning) {
-				p.addChild("#", " " + WizardL10n.l10n("browserWarningFirefoxMightHaveClobberedTabs"));
+				p.addText(" " + WizardL10n.l10n("browserWarningFirefoxMightHaveClobberedTabs"));
 			} else if(!incognito) {
-				p.addChild("#", " " + WizardL10n.l10n("browserWarningOldFirefoxNewerHasPrivacyMode"));
+				p.addText(" " + WizardL10n.l10n("browserWarningOldFirefoxNewerHasPrivacyMode"));
 			}
 		}
 

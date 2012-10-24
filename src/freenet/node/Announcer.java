@@ -3,20 +3,9 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Vector;
-
 import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Link;
+import freenet.clients.http.uielements.Text;
 import freenet.io.comm.PeerParseException;
 import freenet.io.comm.ReferenceSignatureVerificationException;
 import freenet.l10n.NodeL10n;
@@ -24,15 +13,14 @@ import freenet.node.useralerts.AbstractUserEvent;
 import freenet.node.useralerts.SimpleUserAlert;
 import freenet.node.useralerts.UserAlert;
 import freenet.node.useralerts.UserEvent;
-import freenet.support.ByteArrayWrapper;
-import freenet.support.HTMLNode;
-import freenet.support.Logger;
-import freenet.support.SimpleFieldSet;
-import freenet.support.TimeUtil;
+import freenet.support.*;
 import freenet.support.Logger.LogLevel;
 import freenet.support.io.Closer;
 import freenet.support.transport.ip.IPUtil;
-import java.util.Arrays;
+
+import java.io.*;
+import java.net.InetAddress;
+import java.util.*;
 
 /**
  * Decide whether to announce, and announce if necessary to a node in the
@@ -288,10 +276,10 @@ public class Announcer {
 		@Override
 		public HTMLNode getHTMLText() {
 			Box box_ = new Box();
-			box_.addChild("#", l10n("announceDisabledTooOld"));
+			box_.addText(l10n("announceDisabledTooOld"));
 			if(!node.nodeUpdater.isEnabled()) {
-				box_.addChild("#", " ");
-				NodeL10n.getBase().addL10nSubstitution(box_, "Announcer.announceDisabledTooOldUpdateDisabled", new String[] { "config" }, new HTMLNode[] { HTMLNode.link("/config/node.updater") });
+				box_.addText(" ");
+				NodeL10n.getBase().addL10nSubstitution(box_, "Announcer.announceDisabledTooOldUpdateDisabled", new String[] { "config" }, new HTMLNode[] { new Link("/config/node.updater") });
 			}
 			// No point with !armed() or blown() because they have their own messages.
 			return box_;
@@ -674,7 +662,7 @@ public class Announcer {
 
 		@Override
 		public HTMLNode getHTMLText() {
-			return new HTMLNode("#", getText());
+			return new Text(getText());
 		}
 
 		@Override

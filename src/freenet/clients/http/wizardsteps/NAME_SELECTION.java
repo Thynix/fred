@@ -26,7 +26,7 @@ public class NAME_SELECTION implements Step {
 		HTMLNode nnameInfoboxContent = helper.getInfobox("infobox-normal", WizardL10n.l10n("chooseNodeName"),
 		        contentNode, null, false);
 
-		nnameInfoboxContent.addChild("#", WizardL10n.l10n("chooseNodeNameLong"));
+		nnameInfoboxContent.addText(WizardL10n.l10n("chooseNodeNameLong"));
 		HTMLNode nnameForm = helper.addFormChild(nnameInfoboxContent, ".", "nnameForm");
 		nnameForm.addChild("input", "name", "nname");
 

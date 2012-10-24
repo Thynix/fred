@@ -1,12 +1,7 @@
 package freenet.clients.http;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.net.URI;
-
 import freenet.client.HighLevelSimpleClient;
-import freenet.clients.http.uielements.BlockText;
+import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
 import freenet.node.NodeClientCore;
@@ -16,6 +11,11 @@ import freenet.support.MultiValueTable;
 import freenet.support.SimpleFieldSet;
 import freenet.support.api.HTTPRequest;
 import freenet.support.io.FileBucket;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.net.URI;
 
 public class DarknetAddRefToadlet extends Toadlet {
 
@@ -79,40 +79,32 @@ public class DarknetAddRefToadlet extends Toadlet {
 		HTMLNode contentNode = page.content;
 		
 		contentNode.addChild(core.alerts.createSummary());
-		
-		HTMLNode boxContent = pageMaker.getInfobox("infobox-information", l10n("explainBoxTitle"), contentNode, "darknet-explanations", true);
-		boxContent.addChild(new BlockText(l10n("explainBox1")));
-		boxContent.addChild(new BlockText(l10n("explainBox2")));
-				
+
+		InfoboxWidget darknetExplainations = new InfoboxWidget(InfoboxWidget.Type.INFORMATION, HTMLID.DARKNETEXPLAINATIONS, l10n("explainBoxTitle"));
+		contentNode.addInfobox(darknetExplainations);
+		darknetExplainations.body.addText(l10n("explainBox1"));
+		darknetExplainations.body.addText(l10n("explainBox2"));
 		File installer = node.nodeUpdater.getInstallerWindows();
 		String shortFilename = NodeUpdateManager.WINDOWS_FILENAME;
-		
-		HTMLNode p = boxContent.addChild(new BlockText());
-		
-		if(installer != null)
+		BlockText p = darknetExplainations.body.addBlockText();
+		if (installer != null) {
 			NodeL10n.getBase().addL10nSubstitution(p, "DarknetAddRefToadlet.explainInstallerWindows", new String[] { "filename", "get-windows" },
-					new HTMLNode[] { HTMLNode.text(installer.getCanonicalPath()), HTMLNode.link(path()+shortFilename) });
-		else
-			NodeL10n.getBase().addL10nSubstitution(p, "DarknetAddRefToadlet.explainInstallerWindowsNotYet", new String[] { "link" }, new HTMLNode[] { HTMLNode.link("/"+node.nodeUpdater.getInstallerWindowsURI().toString()) });
-		
+					new HTMLNode[] { new Text(installer.getCanonicalPath()), new Link(path()+shortFilename) });
+		} else {
+			NodeL10n.getBase().addL10nSubstitution(p, "DarknetAddRefToadlet.explainInstallerWindowsNotYet", new String[] { "link" }, new HTMLNode[] { new Link("/"+node.nodeUpdater.getInstallerWindowsURI().toString()) });
+		}
 		installer = node.nodeUpdater.getInstallerNonWindows();
 		shortFilename = NodeUpdateManager.NON_WINDOWS_FILENAME;
-		
-		boxContent.addChild("#", " ");
-		
-		p = boxContent.addChild(new BlockText());
-		
-		if(installer != null)
+		darknetExplainations.body.addText(" ");
+		p = darknetExplainations.body.addBlockText();
+		if (installer != null) {
 			NodeL10n.getBase().addL10nSubstitution(p, "DarknetAddRefToadlet.explainInstallerNonWindows", new String[] { "filename", "get-nonwindows", "shortfilename" },
-					new HTMLNode[] { HTMLNode.text(installer.getCanonicalPath()), HTMLNode.link(path()+shortFilename), HTMLNode.text(shortFilename) });
-		else
-			NodeL10n.getBase().addL10nSubstitution(p, "DarknetAddRefToadlet.explainInstallerNonWindowsNotYet", new String[] { "link", "shortfilename" }, new HTMLNode[] { HTMLNode.link("/"+node.nodeUpdater.getInstallerNonWindowsURI().toString()), HTMLNode.text(shortFilename) });
-			
-		
+					new HTMLNode[] { new Text(installer.getCanonicalPath()), new Link(path()+shortFilename), new Text(shortFilename) });
+		} else {
+			NodeL10n.getBase().addL10nSubstitution(p, "DarknetAddRefToadlet.explainInstallerNonWindowsNotYet", new String[] { "link", "shortfilename" }, new HTMLNode[] { new Link("/"+node.nodeUpdater.getInstallerNonWindowsURI().toString()), new Text(shortFilename) });
+		}
 		ConnectionsToadlet.drawAddPeerBox(contentNode, ctx, false, "/friends/");
-		
 		ConnectionsToadlet.drawNoderefBox(contentNode, getNoderef(), pageMaker.advancedMode(request, this.container));
-		
 		this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 	}
 

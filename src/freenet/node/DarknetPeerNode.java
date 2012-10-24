@@ -1248,7 +1248,7 @@ public class DarknetPeerNode extends PeerNode {
 		protected void addComment(HTMLNode node) {
 			String[] lines = comment.split("\n");
 			for (int i = 0, c = lines.length; i < c; i++) {
-				node.addChild("#", lines[i]);
+				node.addText(lines[i]);
 				if(i != lines.length - 1)
 					node.addLineBreak();
 			}
@@ -1296,25 +1296,25 @@ public class DarknetPeerNode extends PeerNode {
 			Table table = new Table();
 			div.addChild(table);
 			Row row = table.addRow();
-			row.addCell().addChild("#", l10n("fileLabel"));
-			row.addCell().addChild("#", filename);
+			row.addCell().addText(l10n("fileLabel"));
+			row.addCell().addText(filename);
 			if(destination != null) {
 				row = table.addRow();
-				row.addCell().addChild("#", l10n("fileSavedToLabel"));
-				row.addCell().addChild("#", destination.getPath());
+				row.addCell().addText(l10n("fileSavedToLabel"));
+				row.addCell().addText(destination.getPath());
 			}
 			row = table.addRow();
-			row.addCell().addChild("#", l10n("sizeLabel"));
-			row.addCell().addChild("#", SizeUtil.formatSize(size));
+			row.addCell().addText(l10n("sizeLabel"));
+			row.addCell().addText(SizeUtil.formatSize(size));
 			row = table.addRow();
-			row.addCell().addChild("#", l10n("mimeLabel"));
-			row.addCell().addChild("#", mimeType);
+			row.addCell().addText(l10n("mimeLabel"));
+			row.addCell().addText(mimeType);
 			row = table.addRow();
-			row.addCell().addChild("#", l10n("senderLabel"));
-			row.addCell().addChild("#", getName());
+			row.addCell().addText(l10n("senderLabel"));
+			row.addCell().addText(getName());
 			row = table.addRow();
 			if(comment != null && comment.length() > 0) {
-				row.addCell().addChild("#", l10n("commentLabel"));
+				row.addCell().addText(l10n("commentLabel"));
 				addComment(row.addCell());
 			}
 		}

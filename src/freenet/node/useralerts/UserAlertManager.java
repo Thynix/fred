@@ -194,7 +194,7 @@ public class UserAlertManager implements Comparator<UserAlert> {
 			alertsNode.addChild(renderAlert(alert));
 		}
 		if (totalNumber == 0) {
-			return new HTMLNode("#", "");
+			return new Text("");
 		}
 		return alertsNode;
 	}
@@ -275,7 +275,7 @@ public class UserAlertManager implements Comparator<UserAlert> {
 			return null;
 
 		if (totalNumber == 0)
-			return new OutputNode("#", "");
+			return new Text("");
 
 		boolean separatorNeeded = false;
 		String separator = oneLine?", ":" | ";
@@ -332,7 +332,7 @@ public class UserAlertManager implements Comparator<UserAlert> {
 		}
 		summaryBox.setTitle(l10n("alertsTitle"));
 		if(!oneLine) {
-			summaryBox.body.addChild("#", alertSummaryString.toString() + separator + " ");
+			summaryBox.body.addText(alertSummaryString.toString() + separator + " ");
 			NodeL10n.getBase().addL10nSubstitution(summaryBox.body, "UserAlertManager.alertsOnAlertsPage",
 				new String[] { "link" }, new HTMLNode[] { ALERTS_LINK });
 		} else {

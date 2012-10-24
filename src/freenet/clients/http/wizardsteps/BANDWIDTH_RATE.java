@@ -6,6 +6,7 @@ import freenet.clients.http.FirstTimeWizardToadlet;
 import freenet.clients.http.uielements.Cell;
 import freenet.clients.http.uielements.Row;
 import freenet.clients.http.uielements.Table;
+import freenet.clients.http.uielements.Text;
 import freenet.config.Config;
 import freenet.config.InvalidConfigValueException;
 import freenet.l10n.NodeL10n;
@@ -73,7 +74,7 @@ public class BANDWIDTH_RATE extends BandwidthManipulator implements Step {
 		        formNode, null, false);
 		NodeL10n.getBase().addL10nSubstitution(infoBox, "FirstTimeWizardToadlet.bandwidthLimitRate",
 		        new String[] { "bold", "coreSettings" }, new HTMLNode[] { HTMLNode.STRONG, 
-		                new HTMLNode("#", NodeL10n.getBase().getString("ConfigToadlet.node"))});
+		                new Text(NodeL10n.getBase().getString("ConfigToadlet.node"))});
 
 		//Table header
 		Table table = new Table();
@@ -253,7 +254,7 @@ public class BANDWIDTH_RATE extends BandwidthManipulator implements Step {
 		if(recommended || (useMaybeDefault && limit.maybeDefault))
 			radio.addAttribute("checked", "checked");
 		if (recommended) {
-			buttonCell.addChild("#", WizardL10n.l10n("autodetectedSuggestedLimit"));
+			buttonCell.addText(WizardL10n.l10n("autodetectedSuggestedLimit"));
 		}
 	}
 }

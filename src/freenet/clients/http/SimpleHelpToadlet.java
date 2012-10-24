@@ -4,8 +4,7 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
-import freenet.clients.http.uielements.Cell;
-import freenet.clients.http.uielements.Table;
+import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
 import freenet.support.HTMLNode;
@@ -27,39 +26,34 @@ public class SimpleHelpToadlet extends Toadlet {
 	
 	final NodeClientCore core;
 
-	public void handleMethodGET(URI uri, HTTPRequest request, ToadletContext ctx) throws ToadletContextClosedException, IOException {
-
-		
-		PageNode page = ctx.getPageMaker().getPageNode("Freenet " + NodeL10n.getBase().getString("FProxyToadlet.help"), ctx);
+	public void handleMethodGET(URI uri, HTTPRequest request, ToadletContext ctx)
+		throws ToadletContextClosedException, IOException {
+		PageNode page = ctx.getPageMaker()
+			.getPageNode("Freenet " + NodeL10n.getBase().getString("FProxyToadlet.help"), ctx);
 		HTMLNode pageNode = page.outer;
 		HTMLNode contentNode = page.content;
-		
-		if(ctx.isAllowedFullAccess())
+		if (ctx.isAllowedFullAccess()) {
 			contentNode.addChild(core.alerts.createSummary());
-		
+		}
 		// Description infobox
-		HTMLNode helpScreenContent1 = ctx.getPageMaker().getInfobox("infobox-content", NodeL10n.getBase().getString("SimpleHelpToadlet.descriptionTitle"), contentNode, "freenet-description", true);
-		helpScreenContent1.addChild("#", NodeL10n.getBase().getString("SimpleHelpToadlet.descriptionText"));
-		
+		Text Description = new Text(NodeL10n.getBase().getString("SimpleHelpToadlet.descriptionText"));
+		contentNode.addInfobox(InfoboxWidget.Type.INFORMATION, HTMLID.FREENETDESCRIPTION,
+			NodeL10n.getBase().getString("SimpleHelpToadlet.descriptionTitle"), Description);
 		// Definitions infobox
-		HTMLNode helpScreenContent2 = ctx.getPageMaker().getInfobox("infobox-content", NodeL10n.getBase().getString("SimpleHelpToadlet.definitionsTitle"), contentNode, "freenet-definitions", true);
-		
-		Table table = new Table();
-		helpScreenContent2.addChild(table);
-		Cell row = table.addRow().addCell();
-		row.addChild("#", NodeL10n.getBase().getString("SimpleHelpToadlet.CHK"));
+		Table Definitions = new Table();
+		Cell row = Definitions.addRow().addCell();
+		row.addText(NodeL10n.getBase().getString("SimpleHelpToadlet.CHK"));
 		row.addLineBreak();
-		row.addChild("#", NodeL10n.getBase().getString("SimpleHelpToadlet.SSK"));
+		row.addText(NodeL10n.getBase().getString("SimpleHelpToadlet.SSK"));
 		row.addLineBreak();
-		row.addChild("#", NodeL10n.getBase().getString("SimpleHelpToadlet.USK"));
-
+		row.addText(NodeL10n.getBase().getString("SimpleHelpToadlet.USK"));
+		contentNode.addInfobox(InfoboxWidget.Type.INFORMATION, HTMLID.FREENETDESCRIPTION,
+			NodeL10n.getBase().getString("SimpleHelpToadlet.definitionsTitle"), Definitions);
 		// Port forwarding, etc.
-		HTMLNode helpScreenContent3 = ctx.getPageMaker().getInfobox("infobox-content", NodeL10n.getBase().getString("SimpleHelpToadlet.connectivityTitle"), contentNode, "freenet-connectivity", true);
-		helpScreenContent3.addChild("#", NodeL10n.getBase().getString("SimpleHelpToadlet.connectivityText"));
-		
-		
+		Text Connectivity = new Text(NodeL10n.getBase().getString("SimpleHelpToadlet.connectivityText"));
+		contentNode.addInfobox(InfoboxWidget.Type.INFORMATION, HTMLID.FREENETDESCRIPTION,
+			NodeL10n.getBase().getString("SimpleHelpToadlet.connectivityTitle"), Connectivity);
 		this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
-		
 	}
 
 	@Override

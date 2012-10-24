@@ -303,7 +303,7 @@ ul.alert-summary {
 /* these two input boxes go crazy if you don't bring their width
  * under control */
 #searchform input[type=text],
-#keyfetchbox input[type=text] {
+#fetch-key input[type=text] {
 	width: 100%;
 }
 

@@ -379,16 +379,16 @@ public final class PageMaker {
 		bodyNode.addChild(pageBox);
 		//generate the statusbar
 		if (renderParameters.isRenderStatus() && fullAccess) {
-			Box statusbarcontainer = pageBox.addDiv(HTMLID.STATUSBARCONTAINER);
-			Box statusbar = statusbarcontainer.addDiv(HTMLID.STATUSBAR);
+			Box statusbarcontainer = pageBox.addBox(HTMLID.STATUSBARCONTAINER);
+			Box statusbar = statusbarcontainer.addBox(HTMLID.STATUSBAR);
 			if (node != null && node.clientCore != null) {
 				OutputNode alerts = node.clientCore.alerts.createSummary(true);
 				if (alerts != null) {
 					statusbar.addChild(alerts).setID(HTMLID.STATUSBARALERTS);
-					statusbar.addDiv(HTMLClass.SEPERATOR, "\u00a0");
+					statusbar.addBox(HTMLClass.SEPERATOR, "\u00a0");
 				}
 			}
-			statusbar.addDiv(HTMLID.STATUSBARLANGUAGE).addLink("/config/node#l10n", NodeL10n.getBase().getSelectedLanguage().fullName);
+			statusbar.addBox(HTMLID.STATUSBARLANGUAGE).addLink("/config/node#l10n", NodeL10n.getBase().getSelectedLanguage().fullName);
 			if (node.clientCore != null && ctx != null && renderParameters.isRenderModeSwitch()) {
 				parseMode(ctx);
 				boolean isAdvancedMode = ctx.activeToadlet().container.isAdvancedModeEnabled();
@@ -398,22 +398,22 @@ public final class PageMaker {
 				newModeSwitchValues.add(String.valueOf(isAdvancedMode ? MODE_SIMPLE : MODE_ADVANCED));
 				/* overwrite any previously existing parameter value. */
 				parameters.put(MODE_SWITCH_PARAMETER, newModeSwitchValues);
-				statusbar.addDiv(HTMLClass.SEPERATOR, "\u00a0");
-				Box switchmode = statusbar.addDiv(HTMLID.STATUSBARSWITCHMODE);
+				statusbar.addBox(HTMLClass.SEPERATOR, "\u00a0");
+				Box switchmode = statusbar.addBox(HTMLID.STATUSBARSWITCHMODE);
 				switchmode.addClass(isAdvancedMode ? HTMLClass.SIMPLE : HTMLClass.ADVANCED);
 				switchmode.addLink("?" + HTTPRequestImpl.createQueryString(parameters, false), isAdvancedMode ? NodeL10n.getBase().getString("StatusBar.switchToSimpleMode") : NodeL10n.getBase().getString("StatusBar.switchToAdvancedMode"));
 			}
 			if (node != null && node.clientCore != null) {
-				statusbar.addDiv(HTMLClass.SEPERATOR, "\u00a0");
-				Box secLevels = statusbar.addDiv(HTMLID.STATUSBARSECLEVELS);
-				secLevels.addChild("#", NodeL10n.getBase().getString("SecurityLevels.statusBarPrefix"));
+				statusbar.addBox(HTMLClass.SEPERATOR, "\u00a0");
+				Box secLevels = statusbar.addBox(HTMLID.STATUSBARSECLEVELS);
+				secLevels.addText(NodeL10n.getBase().getString("SecurityLevels.statusBarPrefix"));
 				final HTMLNode network = secLevels.addLink("/seclevels/", SecurityLevels.localisedName(node.securityLevels.getNetworkThreatLevel()) + "\u00a0");
 				network.addAttribute("title", NodeL10n.getBase().getString("SecurityLevels.networkThreatLevelShort"));
 				network.addAttribute("class", node.securityLevels.getNetworkThreatLevel().toString().toLowerCase());
 				final HTMLNode physical = secLevels.addLink("/seclevels/", SecurityLevels.localisedName(node.securityLevels.getPhysicalThreatLevel()));
 				physical.addAttribute("title", NodeL10n.getBase().getString("SecurityLevels.physicalThreatLevelShort"));
 				physical.addAttribute("class", node.securityLevels.getPhysicalThreatLevel().toString().toLowerCase());
-				statusbar.addDiv(HTMLClass.SEPERATOR, "\u00a0");
+				statusbar.addBox(HTMLClass.SEPERATOR, "\u00a0");
 				final int connectedPeers = node.peers.countConnectedPeers();
 				int darknetTotal = 0;
 				for(DarknetPeerNode n : node.peers.getDarknetPeers()) {
@@ -448,17 +448,17 @@ public final class PageMaker {
 						additionalClass = HTMLClass.PEERSFULL;
 					}
 				}
-				Box progressBar = statusbar.addDiv(HTMLClass.PROGRESSBAR);
-				Box peers = progressBar.addDiv(HTMLClass.PROGRESSBARDONE);
+				Box progressBar = statusbar.addBox(HTMLClass.PROGRESSBAR);
+				Box peers = progressBar.addBox(HTMLClass.PROGRESSBARDONE);
 				peers.addClass(HTMLClass.PROGRESSBARPEERS);
 				peers.addClass(additionalClass);
 				peers.addAttribute("style", "width: " + Math.min(100, Math.floor(100 * connectedRatio)) + "%;");
-				Box connectedpeers = progressBar.addDiv(HTMLClass.PROGRESSBARFINAL, Integer.toString(connectedPeers) + ((totalPeers != Integer.MAX_VALUE) ? " / " + Integer.toString(totalPeers) : ""));
+				Box connectedpeers = progressBar.addBox(HTMLClass.PROGRESSBARFINAL, Integer.toString(connectedPeers) + ((totalPeers != Integer.MAX_VALUE) ? " / " + Integer.toString(totalPeers) : ""));
 				connectedpeers.addAttribute("title", NodeL10n.getBase().getString("StatusBar.connectedPeers", new String[]{"X", "Y"}, new String[]{Integer.toString(node.peers.countConnectedDarknetPeers()), Integer.toString(node.peers.countConnectedOpennetPeers())}));
 			}
 		}
 		//Generate the page header area
-		Box topbar = pageBox.addDiv(HTMLID.TOPBAR);
+		Box topbar = pageBox.addBox(HTMLID.TOPBAR);
 		topbar.addChild("h1", title);
 		if (renderParameters.isRenderNavigationLinks()) {
 			SubMenu selected = null;
@@ -560,7 +560,7 @@ public final class PageMaker {
 			}
 			// Some themes want the selected submenu separately.
 			if(selected != null) {
-				OutputList subnavlist = pageBox.addDiv(HTMLID.SELECTEDSUBNAVBAR).addList(HTMLID.SELECTEDSUBNAVBARLIST);
+				OutputList subnavlist = pageBox.addBox(HTMLID.SELECTEDSUBNAVBAR).addList(HTMLID.SELECTEDSUBNAVBARLIST);
 				for (String navigationLink :  fullAccess ? selected.navigationLinkTexts : selected.navigationLinkTextsNonFull) {
 					//Empty
 					LinkEnabledCallback cb = selected.navigationLinkCallbacks.get(navigationLink);
@@ -592,7 +592,7 @@ public final class PageMaker {
 				}
 			}
 		}
-		Box contentBox = pageBox.addDiv(HTMLID.CONTENT);
+		Box contentBox = pageBox.addBox(HTMLID.CONTENT);
 		return new PageNode(pageNode, headNode, contentBox);
 	}
 
@@ -640,7 +640,7 @@ public final class PageMaker {
 
 	public InfoboxNode getInfobox(String header, String title, boolean isUnique) {
 		if (header == null) throw new NullPointerException();
-		return getInfobox(new HTMLNode("#", header), title, isUnique);
+		return getInfobox(new Text(header), title, isUnique);
 	}
 	
 	public InfoboxNode getInfobox(HTMLNode header, String title, boolean isUnique) {
@@ -650,7 +650,7 @@ public final class PageMaker {
 
 	public InfoboxNode getInfobox(String category, String header, String title, boolean isUnique) {
 		if (header == null) throw new NullPointerException();
-		return getInfobox(category, new HTMLNode("#", header), title, isUnique);
+		return getInfobox(category, new Text(header), title, isUnique);
 	}
 
 	/** Create an infobox, attach it to the given parent, and return the content node. */

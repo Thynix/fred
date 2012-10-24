@@ -31,10 +31,10 @@ public class OPENNET implements Step {
 		input.addB(WizardL10n.l10n("opennetChoiceConnectFriends") + ":");
 		p.addLineBreak();
 		p.addI(WizardL10n.l10n("opennetChoicePro"));
-		p.addChild("#", ": "+WizardL10n.l10n("opennetChoiceConnectFriendsPRO") + "¹");
+		p.addText(": " + WizardL10n.l10n("opennetChoiceConnectFriendsPRO") + "¹");
 		p.addLineBreak();
 		p.addI(WizardL10n.l10n("opennetChoiceCon"));
-		p.addChild("#", ": "+WizardL10n.l10n("opennetChoiceConnectFriendsCON", "minfriends", "5"));
+		p.addText(": " + WizardL10n.l10n("opennetChoiceConnectFriendsCON", "minfriends", "5"));
 
 		p = form.addChild(new BlockText());
 		input = p.addChild("input",
@@ -43,10 +43,10 @@ public class OPENNET implements Step {
 		input.addB(WizardL10n.l10n("opennetChoiceConnectStrangers") + ":");
 		p.addLineBreak();
 		p.addI(WizardL10n.l10n("opennetChoicePro"));
-		p.addChild("#", ": "+WizardL10n.l10n("opennetChoiceConnectStrangersPRO"));
+		p.addText(": " + WizardL10n.l10n("opennetChoiceConnectStrangersPRO"));
 		p.addLineBreak();
 		p.addI(WizardL10n.l10n("opennetChoiceCon"));
-		p.addChild("#", ": "+WizardL10n.l10n("opennetChoiceConnectStrangersCON"));
+		p.addText(": " + WizardL10n.l10n("opennetChoiceConnectStrangersCON"));
 
 		form.addChild("input",
 		        new String[] { "type", "name", "value" },
@@ -58,7 +58,7 @@ public class OPENNET implements Step {
 		Box foot = new Box(HTMLClass.TOGGLEABLE);
 		infoboxContent.addChild(foot);
 		foot.addI("¹: " + WizardL10n.l10n("opennetChoiceHowSafeIsFreenetToggle"));
-		Box footHidden = foot.addDiv(HTMLClass.HIDDEN);
+		Box footHidden = foot.addBox(HTMLClass.HIDDEN);
 		OutputList footList = footHidden.addList(OutputList.Type.ORDERED, HTMLClass.NULL);
 		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetStupid"));
 		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetFriends") + "²");
@@ -71,7 +71,7 @@ public class OPENNET implements Step {
 		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetDistant"));
 		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetBugs"));
 		HTMLNode foot2 = footHidden.addBlockText();
-		foot2.addChild("#", "²: " + WizardL10n.l10n("opennetChoiceHowSafeIsFreenetFoot2"));
+		foot2.addText("²: " + WizardL10n.l10n("opennetChoiceHowSafeIsFreenetFoot2"));
 	}
 
 	/**

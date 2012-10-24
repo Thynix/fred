@@ -3,24 +3,22 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
 import freenet.clients.http.ExternalLinkToadlet;
 import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Link;
+import freenet.clients.http.uielements.OutputList;
+import freenet.clients.http.uielements.Text;
 import freenet.io.comm.Peer;
 import freenet.l10n.NodeL10n;
 import freenet.node.useralerts.AbstractUserAlert;
 import freenet.node.useralerts.UserAlert;
-import freenet.support.HTMLNode;
-import freenet.support.LogThresholdCallback;
-import freenet.support.Logger;
+import freenet.support.*;
 import freenet.support.Logger.LogLevel;
-import freenet.support.OOMHandler;
-import freenet.support.TimeUtil;
-import freenet.clients.http.uielements.OutputList;
 import freenet.support.io.NativeThread;
 import freenet.support.math.MersenneTwister;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * @author amphibian
@@ -548,8 +546,8 @@ public class PacketSender implements Runnable {
 			NodeL10n.getBase().addL10nSubstitution(box_,
 			        "PacketSender.somePeersDisconnectedBlockedTooLongDetail",
 			        new String[] { "count", "link" },
-			        new HTMLNode[] { HTMLNode.text(peers.length),
-			                HTMLNode.link(ExternalLinkToadlet.escape("https://bugs.freenetproject.org/"))});
+			        new HTMLNode[] { new Text(peers.length),
+			                new Link(ExternalLinkToadlet.escape("https://bugs.freenetproject.org/"))});
 			OutputList list = box_.addList();
 			for(Peer peer : peers) {
 				list.addItem(peer.toString());

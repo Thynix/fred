@@ -3,6 +3,7 @@ package freenet.clients.http.wizardsteps;
 import freenet.clients.http.FirstTimeWizardToadlet;
 import freenet.clients.http.uielements.Row;
 import freenet.clients.http.uielements.Table;
+import freenet.clients.http.uielements.Text;
 import freenet.config.Config;
 import freenet.config.InvalidConfigValueException;
 import freenet.l10n.NodeL10n;
@@ -36,7 +37,7 @@ public class BANDWIDTH_MONTHLY extends BandwidthManipulator implements Step {
 		        contentNode, null, false);
 		NodeL10n.getBase().addL10nSubstitution(infoBox, "FirstTimeWizardToadlet.bandwidthLimitMonthly",
 		        new String[] { "bold", "coreSettings" }, new HTMLNode[] { HTMLNode.STRONG, 
-		                new HTMLNode("#", NodeL10n.getBase().getString("ConfigToadlet.node"))});
+		                new Text(NodeL10n.getBase().getString("ConfigToadlet.node"))});
 
 		//TODO: Might want to detect bandwidth limit and hide those too high to reach.
 		//TODO: The user can always set a custom limit. At least one limit should be displayed in order to

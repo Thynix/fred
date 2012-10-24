@@ -44,7 +44,7 @@ public class ProgressInfoElement extends BaseUpdateableElement {
 			addChild( new Box(HTMLClass.NONE, "No fetcher found"));
 		}
 		
-		addChild("#", FProxyToadlet.l10n("filenameLabel")+ " ");
+		addText(FProxyToadlet.l10n("filenameLabel")+ " ");
 		addChild("a", "href", "/"+key.toString(false, false), key.getPreferredFilename());
 		if(fr.mimeType != null) addChild("br", FProxyToadlet.l10n("contentTypeLabel")+" "+fr.mimeType);
 		if(fr.size > 0) addChild("br", "Size: "+SizeUtil.formatSize(fr.size));

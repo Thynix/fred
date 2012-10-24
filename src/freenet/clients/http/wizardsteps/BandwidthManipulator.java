@@ -1,5 +1,6 @@
 package freenet.clients.http.wizardsteps;
 
+import freenet.clients.http.uielements.Text;
 import freenet.config.Config;
 import freenet.config.ConfigException;
 import freenet.config.InvalidConfigValueException;
@@ -48,7 +49,7 @@ public abstract class BandwidthManipulator {
 		        parent, null, false);
 
 		NodeL10n.getBase().addL10nSubstitution(infoBox, "FirstTimeWizardToadlet.bandwidthCouldNotParse",
-		        new String[] { "limit" }, new HTMLNode[] { new HTMLNode("#", parsingFailedOn) });
+		        new String[] { "limit" }, new HTMLNode[] { new Text(parsingFailedOn) });
 	}
 
 	protected BandwidthLimit getCurrentBandwidthLimitsOrNull() {

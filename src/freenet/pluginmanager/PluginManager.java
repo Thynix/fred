@@ -567,7 +567,7 @@ public class PluginManager {
 		public HTMLNode getHTMLText() {
 			Box box_ = new Box();
 			HTMLNode p = box_.addBlockText();
-			p.addChild("#", l10n("pluginLoadingFailedWithMessage", new String[] { "name", "message" }, new String[] { filename, message }));
+			p.addText(l10n("pluginLoadingFailedWithMessage", new String[] { "name", "message" }, new String[] { filename, message }));
 			if(stillTryingOverFreenet) {
 				box_.addBlockText( l10n("pluginLoadingFailedStillTryingOverFreenet"));
 			}
@@ -575,9 +575,9 @@ public class PluginManager {
 			if(official) {
 				p = box_.addBlockText();
 				if(officialFromFreenet)
-					p.addChild("#", l10n("officialPluginLoadFailedSuggestTryAgainFreenet"));
+					p.addText(l10n("officialPluginLoadFailedSuggestTryAgainFreenet"));
 				else
-					p.addChild("#", l10n("officialPluginLoadFailedSuggestTryAgainHTTPS"));
+					p.addText(l10n("officialPluginLoadFailedSuggestTryAgainHTTPS"));
 
 				HTMLNode reloadForm = box_.addChild("form", new String[] { "action", "method" }, new String[] { "/plugins/", "post" });
 				reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", node.clientCore.formPassword });

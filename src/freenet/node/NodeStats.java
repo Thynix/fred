@@ -3607,7 +3607,7 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 
 	public void drawNewLoadManagementDelayTimes(HTMLNode content) {
 		WaitingForSlots waitingSlots = node.tracker.countRequestsWaitingForSlots();
-		content.addChild(new BlockText()).addChild("#", l10n("slotsWaiting", new String[]{"local", "remote"}, new String[]{Integer.toString(waitingSlots.local), Integer.toString(waitingSlots.remote)}));
+		content.addChild(new BlockText()).addText(l10n("slotsWaiting", new String[]{"local", "remote"}, new String[]{Integer.toString(waitingSlots.local), Integer.toString(waitingSlots.remote)}));
 		Table table = new Table();
 		content.addChild(table);
 		Row header = table.addRow();

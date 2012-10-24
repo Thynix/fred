@@ -7,6 +7,7 @@ import freenet.client.*;
 import freenet.client.async.ClientGetter;
 import freenet.clients.http.uielements.InfoboxWidget;
 import freenet.clients.http.uielements.Link;
+import freenet.clients.http.uielements.Text;
 import freenet.keys.FreenetURI;
 import freenet.l10n.NodeL10n;
 import freenet.node.RequestClient;
@@ -285,55 +286,56 @@ public abstract class Toadlet {
 	 * Send a simple error page.
 	 */
 	protected void sendErrorPage(ToadletContext ctx, int code, String desc, String message) throws ToadletContextClosedException, IOException {
-		sendErrorPage(ctx, code, desc, new HTMLNode("#", message));
+		sendErrorPage(ctx, code, desc, new Text(message));
 	}
 
 	/**
 	 * Send a slightly more complex error page.
 	 */
-	protected void sendErrorPage(ToadletContext ctx, int code, String desc, HTMLNode message) throws ToadletContextClosedException, IOException {
+	protected void sendErrorPage(ToadletContext ctx, int code, String desc, HTMLNode message)
+		throws ToadletContextClosedException, IOException {
 		PageNode page = ctx.getPageMaker().getPageNode(desc, ctx);
 		HTMLNode pageNode = page.outer;
 		HTMLNode contentNode = page.content;
-		
-		HTMLNode infoboxContent = ctx.getPageMaker().getInfobox("infobox-error", desc, contentNode, null, true);
-		infoboxContent.addChild(message);
-		infoboxContent.addLineBreak();
-		infoboxContent.addChild(new Link(".", l10n("returnToPrevPage")));
-		infoboxContent.addLineBreak();
-		addHomepageLink(infoboxContent);
-		
+		InfoboxWidget ErrorMessage = new InfoboxWidget(InfoboxWidget.Type.ERROR, desc);
+		contentNode.addInfobox(ErrorMessage);
+		ErrorMessage.body.addChild(message);
+		ErrorMessage.body.addLineBreak();
+		ErrorMessage.body.addLink(".", l10n("returnToPrevPage"));
+		ErrorMessage.body.addLineBreak();
+		addHomepageLink(ErrorMessage.body);
 		writeHTMLReply(ctx, code, desc, pageNode.generate());
 	}
 
 	/**
 	 * Send an error page from an exception.
-	 * @param ctx The context object for this request.
-	 * @param desc The title of the error page
+	 *
+	 * @param ctx     The context object for this request.
+	 * @param desc    The title of the error page
 	 * @param message The message to be sent to the user. The stack trace will follow.
-	 * @param t The Throwable which caused the error.
-	 * @throws IOException If there is an error writing the reply.
+	 * @param t       The Throwable which caused the error.
+	 * @throws IOException                   If there is an error writing the reply.
 	 * @throws ToadletContextClosedException If the context has already been closed.
 	 */
-	protected void sendErrorPage(ToadletContext ctx, String desc, String message, Throwable t) throws ToadletContextClosedException, IOException {
+	protected void sendErrorPage(ToadletContext ctx, String desc, String message, Throwable t)
+		throws ToadletContextClosedException, IOException {
 		PageNode page = ctx.getPageMaker().getPageNode(desc, ctx);
 		HTMLNode pageNode = page.outer;
 		HTMLNode contentNode = page.content;
-		
-		HTMLNode infoboxContent = ctx.getPageMaker().getInfobox("infobox-error", desc, contentNode, null, true);
-		infoboxContent.addChild("#", message);
-		infoboxContent.addLineBreak();
+		InfoboxWidget ErrorMessage = new InfoboxWidget(InfoboxWidget.Type.ERROR, desc);
+		contentNode.addInfobox(ErrorMessage);
+		ErrorMessage.body.addText(message);
+		ErrorMessage.body.addLineBreak();
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		pw.println(t);
 		t.printStackTrace(pw);
 		pw.close();
 		// FIXME what is the modern (CSS/XHTML) equivalent of <pre>?
-		infoboxContent.addChild("pre", sw.toString());
-		infoboxContent.addLineBreak();
-		infoboxContent.addChild(new Link(".", l10n("returnToPrevPage")));
-		addHomepageLink(infoboxContent);
-		
+		ErrorMessage.body.addChild("pre", sw.toString());
+		ErrorMessage.body.addLineBreak();
+		ErrorMessage.body.addLink(".", l10n("returnToPrevPage"));
+		addHomepageLink(ErrorMessage.body);
 		writeHTMLReply(ctx, 500, desc, pageNode.generate());
 	}
 

@@ -286,20 +286,16 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 		File currentPath = new File(path).getCanonicalFile();
 		//For use in error messages.
 		String attemptedPath = currentPath == null ? "null" : currentPath.getAbsolutePath();
-
 		PageMaker pageMaker = ctx.getPageMaker();
-
 		if (currentPath != null && !allowedDir(currentPath)) {
 			PageNode page = pageMaker.getPageNode(l10n("listingTitle", "path", attemptedPath), ctx);
-			pageMaker.getInfobox("infobox-error",  "Forbidden", page.content, "access-denied", true).
-			        addChild("#", l10n("dirAccessDenied"));
-
+			page.content.addInfobox(InfoboxWidget.Type.ERROR, HTMLID.ACCESSDENIED, "Forbidden").
+				addText(l10n("dirAccessDenied"));
 			sendErrorPage(ctx, 403, "Forbidden", l10n("dirAccessDenied"));
 			return;
 		}
-		
-		HTMLNode pageNode;
 
+		HTMLNode pageNode;
 		if (currentPath != null && currentPath.exists() && currentPath.isDirectory() && currentPath.canRead()) {
 			PageNode page = pageMaker.getPageNode(l10n("listingTitle", "path",
 			        currentPath.getAbsolutePath()), ctx);
@@ -414,7 +410,7 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 			
 			InfoboxWidget filelist = new InfoboxWidget(InfoboxWidget.Type.NONE, l10n("listing", "path", attemptedPath));
 			contentNode.addChild(filelist);
-			filelist.body.addChild("#", l10n("dirCannotBeRead", "path", attemptedPath));
+			filelist.body.addText(l10n("dirCannotBeRead", "path", attemptedPath));
 			OutputList ulNode = filelist.body.addList();
 			ulNode.addItem(l10n("checkPathExist"));
 			ulNode.addItem(l10n("checkPathIsDir"));

@@ -1,13 +1,16 @@
 package freenet.clients.http;
 
-import java.io.IOException;
-import java.net.URI;
-
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.HTMLClass;
+import freenet.clients.http.uielements.HTMLID;
+import freenet.clients.http.uielements.InfoboxWidget;
 import freenet.node.NodeClientCore;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
-import freenet.clients.http.uielements.Box;
+
+import java.io.IOException;
+import java.net.URI;
 
 /**
  * Browser Test Toadlet. Accessible from <code>http://.../test/</code>.
@@ -194,21 +197,22 @@ public class BrowserTestToadlet extends Toadlet {
 			contentNode.addChild(core.alerts.createSummary());
 		
 		// #### Test MIME inline
-		ctx.getPageMaker().getInfobox("infobox-warning", "MIME Inline", contentNode, "mime-inline-test", true).
-			//addChild("img", new String[]{"src", "alt"}, new String[]{"data:image/gif;base64,"+imgWarningMime, "Your browser is probably safe."});
+		contentNode.addInfobox(InfoboxWidget.Type.WARNING, HTMLClass.MIMEINLINETEST, "MIME Inline").
 			addChild("img", new String[]{"src", "alt"}, new String[]{"?mimeTest", "Your browser is probably safe."});
 		
 		// #### Test whether we can have more than 10 simultaneous connections to fproxy
 		
-		HTMLNode maxConnectionsPerServerContent = ctx.getPageMaker().getInfobox("infobox-warning", "Number of connections", contentNode, "browser-connections", true);
-		maxConnectionsPerServerContent.addChild("#", "If you do not see a green picture below, your browser is probably missconfigured! Ensure it allows more than 10 connections per server.");
+		InfoboxWidget maxConnectionsPerServer = new InfoboxWidget(InfoboxWidget.Type.WARNING, HTMLClass.BROWSERECONNECTIONS, "Number of connections");
+		contentNode.addInfobox(maxConnectionsPerServer);
+		maxConnectionsPerServer.body.addText("If you do not see a green picture below, your browser is probably missconfigured! Ensure it allows more than 10 connections per server.");
 		for(int i = 0; i < 10 ; i++)
-			maxConnectionsPerServerContent.addChild("img", "src", ".?wontload");
-		maxConnectionsPerServerContent.addChild("img", new String[]{"src", "alt"}, new String[]{"/static/themes/clean/success.gif", "fail!"});
+			maxConnectionsPerServer.body.addChild("img", "src", ".?wontload");
+		maxConnectionsPerServer.body.addChild("img", new String[]{"src", "alt"}, new String[]{"/static/themes/clean/success.gif", "fail!"});
 
 		// #### Test whether JS is available. : should do the test with pictures instead!
-		HTMLNode jsTestContent= ctx.getPageMaker().getInfobox("infobox-warning", "Javascript", contentNode, "javascript-test", true);
-		HTMLNode jsTest = jsTestContent.addChild(new Box());
+		InfoboxWidget jsTestContent = new InfoboxWidget(InfoboxWidget.Type.WARNING, HTMLID.JAVASCRIPTTEST, "Javascript");
+		contentNode.addInfobox(jsTestContent);
+		Box jsTest = jsTestContent.addBox();
 		jsTest.addChild("img", new String[]{"id", "src", "alt"}, new String[]{"JSTEST", "/static/themes/clean/success.gif", "fail!"});
 		jsTest.addChild("script", "type", "text/javascript").addChild("%", "document.getElementById('JSTEST').src = '/static/themes/clean/warning.gif';");
 		

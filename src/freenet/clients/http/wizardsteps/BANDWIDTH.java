@@ -18,7 +18,7 @@ public class BANDWIDTH implements Step {
 		HTMLNode bandwidthInfoboxContent = helper.getInfobox("infobox-normal", WizardL10n.l10n("bandwidthLimit"),
 		        contentNode, null, false);
 
-		bandwidthInfoboxContent.addChild("#", WizardL10n.l10n("bandwidthCapPrompt"));
+		bandwidthInfoboxContent.addText(WizardL10n.l10n("bandwidthCapPrompt"));
 		HTMLNode bandwidthForm = helper.addFormChild(bandwidthInfoboxContent, ".", "bwForm");
 		bandwidthForm.addChild("input",
 		        new String[] { "type", "name", "value" },

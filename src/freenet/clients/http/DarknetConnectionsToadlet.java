@@ -1,10 +1,7 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
-import freenet.clients.http.uielements.BlockText;
-import freenet.clients.http.uielements.Cell;
-import freenet.clients.http.uielements.HTMLClass;
-import freenet.clients.http.uielements.Row;
+import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.*;
 import freenet.node.DarknetPeerNode.FRIEND_TRUST;
@@ -77,9 +74,9 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 		Cell cell = peerRow.addCell(HTMLClass.PEERNAME);
 		cell.addLink("/send_n2ntm/?peernode_hashcode=" + peerNodeStatus.hashCode(), ((DarknetPeerNodeStatus) peerNodeStatus).getName());
 		if (advanced && peerNodeStatus.hasFullNoderef) {
-			cell.addChild("#", " (");
+			cell.addText(" (");
 			cell.addLink( path()+"friend-"+peerNodeStatus.hashCode()+".fref", l10n("noderefLink"));
-			cell.addChild("#", ")");
+			cell.addText(")");
 		}
 	}
 	
@@ -90,7 +87,7 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 
 	@Override
 	protected void drawTrustColumn(Row peerRow, PeerNodeStatus peerNodeStatus) {
-		peerRow.addCell(HTMLClass.PEERTRUST).addChild("#", ((DarknetPeerNodeStatus)peerNodeStatus).getTrustLevel().name());
+		peerRow.addCell(HTMLClass.PEERTRUST).addText(((DarknetPeerNodeStatus) peerNodeStatus).getTrustLevel().name());
 	}
 
 	@Override
@@ -103,7 +100,7 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 		String content = ((DarknetPeerNodeStatus)peerNodeStatus).getOurVisibility().name();
 		if(advancedModeEnabled)
 			content += " ("+((DarknetPeerNodeStatus)peerNodeStatus).getTheirVisibility().name()+")";
-		peerRow.addCell(HTMLClass.PEERTRUST).addChild("#", content);
+		peerRow.addCell(HTMLClass.PEERTRUST).addText(content);
 	}
 
 	@Override
@@ -401,18 +398,17 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 						PageNode page = ctx.getPageMaker().getPageNode(l10n("confirmRemoveNodeTitle"), ctx);
 						HTMLNode pageNode = page.outer;
 						HTMLNode contentNode = page.content;
-						HTMLNode content =ctx.getPageMaker().getInfobox("infobox-warning", l10n("confirmRemoveNodeWarningTitle"), contentNode, "darknet-remove-node", true);
-						content.addChild(new BlockText()).addChild("#",
-							NodeL10n.getBase().getString("DarknetConnectionsToadlet.confirmRemoveNode", new String[]{"name"}, new String[]{peerNodes[i].getName()}));
-						HTMLNode removeForm = ctx.addFormChild(content, "/friends/", "removeConfirmForm");
+						InfoboxWidget RemoveDarknetNode = new InfoboxWidget(InfoboxWidget.Type.WARNING, HTMLID.DARKNETREMOVENODE, l10n("confirmRemoveNodeWarningTitle"));
+						contentNode.addInfobox(RemoveDarknetNode);
+						RemoveDarknetNode.body.addBlockText((NodeL10n.getBase().getString("DarknetConnectionsToadlet.confirmRemoveNode", new String[]{"name"}, new String[]{peerNodes[i].getName()})));
+						HTMLNode removeForm = ctx.addFormChild(RemoveDarknetNode.body, "/friends/", "removeConfirmForm");
 						removeForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "node_"+peerNodes[i].hashCode(), "remove" });
 						removeForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "cancel", NodeL10n.getBase().getString("Toadlet.cancel") });
 						removeForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "remove", l10n("remove") });
 						removeForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "forceit", l10n("forceRemove") });
-
 						writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 						return; // FIXME: maybe it breaks multi-node removing
-					}				
+					}
 				} else {
 					if(logMINOR) Logger.minor(this, "Part not set: node_"+peerNodes[i].hashCode());
 				}

@@ -3,15 +3,12 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node.useralerts;
 
+import freenet.clients.http.uielements.*;
 import freenet.config.Option;
 import freenet.config.SubConfig;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
 import freenet.support.HTMLNode;
-import freenet.clients.http.uielements.Box;
-import freenet.clients.http.uielements.HTMLClass;
-import freenet.clients.http.uielements.Item;
-import freenet.clients.http.uielements.OutputList;
 
 public class InvalidAddressOverrideUserAlert extends AbstractUserAlert {
 	
@@ -44,7 +41,7 @@ public class InvalidAddressOverrideUserAlert extends AbstractUserAlert {
 		Box textNode = new Box();
 		NodeL10n.getBase().addL10nSubstitution(textNode, "InvalidAddressOverrideUserAlert.unknownAddressWithConfigLink", 
 				new String[] { "link" }, 
-				new HTMLNode[] { HTMLNode.link("/config/node")});
+				new HTMLNode[] { new Link("/config/node")});
 		HTMLNode formNode = textNode.addChild("form", new String[] { "action", "method" }, new String[] { "/config/node", "post" });
 		formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", node.clientCore.formPassword });
 		formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "subconfig", sc.getPrefix() });

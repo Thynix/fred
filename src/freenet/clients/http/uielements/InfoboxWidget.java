@@ -12,11 +12,13 @@ public class InfoboxWidget extends Box {
 		ERROR(HTMLClass.INFOBOXERROR),
 		INFORMATION(HTMLClass.INFOBOXINFORMATION),
 		MINOR(HTMLClass.INFOBOXMINOR),
+		NAVBAR(HTMLClass.NAVBAR),
 		NORMAL(HTMLClass.INFOBOXNORMAL),
 		NONE(HTMLClass.NONE),
 		QUERY(HTMLClass.INFOBOXQUERY),
 		SUCCESS(HTMLClass.INFOBOXSUCCESS),
-		WARNING(HTMLClass.INFOBOXWARNING);
+		WARNING(HTMLClass.INFOBOXWARNING),
+		WTF(HTMLClass.WTF);
 
 		public final HTMLClass htmlclass;
 
@@ -25,8 +27,46 @@ public class InfoboxWidget extends Box {
 		}
 	}
 
+	public InfoboxWidget(Type type, HTMLClass Class, String title, String content) {
+		this(type, Class, title);
+		this.body.setContent(content);
+	}
+
+	public InfoboxWidget(Type type, HTMLClass Class, String title, OutputNode content) {
+		this(type, Class, title);
+		this.body.addChild(content);
+	}
+
+	public InfoboxWidget(Type type, HTMLClass Class, String title) {
+		this(type, title);
+		this.addClass(Class);
+	}
+
+	public InfoboxWidget(HTMLID ID, String title) {
+		this (Type.NONE, ID, title);
+	}
+
+	public InfoboxWidget(Type type, HTMLID ID, String title, String Content) {
+		this(type, ID, title);
+		this.body.setContent(Content);
+	}
+
+	public InfoboxWidget(Type type, HTMLID ID, String title, OutputNode Content) {
+		this(type, ID, title);
+		this.body.addChild(Content);
+	}
+
+	public InfoboxWidget(Type type, HTMLID ID, String title) {
+		this(type, title);
+		this.setID(ID);
+	}
+
 	public InfoboxWidget(Type type, String title) {
 		this(type.htmlclass, title);
+	}
+
+	public InfoboxWidget(String title) {
+		this(Type.NONE, title);
 	}
 
 	protected InfoboxWidget(HTMLClass type, String title) {

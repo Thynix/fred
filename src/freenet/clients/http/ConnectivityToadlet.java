@@ -15,17 +15,13 @@
  */
 package freenet.clients.http;
 
-import java.io.IOException;
-import java.net.URI;
-
 import freenet.client.HighLevelSimpleClient;
-import freenet.clients.http.uielements.Row;
-import freenet.clients.http.uielements.Table;
+import freenet.clients.http.uielements.*;
 import freenet.io.AddressTracker;
 import freenet.io.AddressTrackerItem;
+import freenet.io.AddressTrackerItem.Gap;
 import freenet.io.InetAddressAddressTrackerItem;
 import freenet.io.PeerAddressTrackerItem;
-import freenet.io.AddressTrackerItem.Gap;
 import freenet.io.comm.UdpSocketHandler;
 import freenet.l10n.NodeL10n;
 import freenet.node.FSParseException;
@@ -35,8 +31,9 @@ import freenet.support.HTMLNode;
 import freenet.support.SimpleFieldSet;
 import freenet.support.TimeUtil;
 import freenet.support.api.HTTPRequest;
-import freenet.clients.http.uielements.OutputList;
-import freenet.clients.http.uielements.InfoboxWidget;
+
+import java.io.IOException;
+import java.net.URI;
 
 /**
  * Toadlet displaying information on the node's connectivity status.
@@ -103,16 +100,15 @@ public class ConnectivityToadlet extends Toadlet {
 		node.ipDetector.addConnectionTypeBox(contentNode);
 		
 		UdpSocketHandler[] handlers = node.getPacketSocketHandlers();
-		
-		HTMLNode summaryContent = pageMaker.getInfobox("#", NodeL10n.getBase().getString("ConnectivityToadlet.summaryTitle"), contentNode, "connectivity-summary", true);
-		
-		Table table = new Table();
-		summaryContent.addChild(table);
+
+		InfoboxWidget ConnectivitySummary = new InfoboxWidget(InfoboxWidget.Type.WTF, HTMLID.CONNECTIVITYSUMMARY, NodeL10n.getBase().getString("ConnectivityToadlet.summaryTitle"));
+		contentNode.addInfobox(ConnectivitySummary);
+		Table SummaryTable = ConnectivitySummary.body.addTable();
 		
 		for (int i=0;i<handlers.length;i++) {
 			UdpSocketHandler handler = handlers[i];
 			AddressTracker tracker = handlers[i].getAddressTracker();
-			Row row = table.addRow();
+			Row row = SummaryTable.addRow();
 			row.addCell(handler.getTitle());
 			row.addCell(AddressTracker.statusString(tracker.getPortForwardStatus()));
 		}
@@ -129,11 +125,11 @@ public class ConnectivityToadlet extends Toadlet {
 		for(int i=0;i<handlers.length;i++) {
 			// Peers
 			AddressTracker tracker = handlers[i].getAddressTracker();
-			HTMLNode portsContent = pageMaker.getInfobox("#", NodeL10n.getBase().getString("ConnectivityToadlet.byPortTitle", new String[] { "port", "status", "tunnelLength" }, new String[] { handlers[i].getTitle(), AddressTracker.statusString(tracker.getPortForwardStatus()), TimeUtil.formatTime(tracker.getLongestSendReceiveGap()) }), contentNode, "connectivity-port", false);
-			PeerAddressTrackerItem[] items = tracker.getPeerAddressTrackerItems();
-			table = new Table();
-			portsContent.addChild(table);
-			Row row = table.addRow();
+			InfoboxWidget byPorts = new InfoboxWidget(InfoboxWidget.Type.WTF, HTMLClass.CONNECTIVITYPORT, NodeL10n.getBase().getString("ConnectivityToadlet.byPortTitle", new String[] { "port", "status", "tunnelLength" }, new String[] { handlers[i].getTitle(), AddressTracker.statusString(tracker.getPortForwardStatus()), TimeUtil.formatTime(tracker.getLongestSendReceiveGap()) }));
+			contentNode.addInfobox(byPorts);
+			SummaryTable = new Table();
+			byPorts.body.addTable(SummaryTable);
+			Row row = SummaryTable.addRow();
 			row.addHeader(l10n("addressTitle"));
 			row.addHeader(l10n("sentReceivedTitle"));
 			row.addHeader(l10n("localRemoteTitle"));
@@ -142,8 +138,9 @@ public class ConnectivityToadlet extends Toadlet {
 			for(int j=0;j<AddressTrackerItem.TRACK_GAPS;j++) {
 				row.addHeader();
 			}
+			PeerAddressTrackerItem[] items = tracker.getPeerAddressTrackerItems();
 			for(int j=0;j<items.length;j++) {
-				row = table.addRow();
+				row = SummaryTable.addRow();
 				PeerAddressTrackerItem item = items[j];
 				// Address
 				row.addCell(item.peer.toString());
@@ -163,21 +160,22 @@ public class ConnectivityToadlet extends Toadlet {
 			}
 
 			// IPs
-			portsContent = pageMaker.getInfobox("#", NodeL10n.getBase().getString("ConnectivityToadlet.byIPTitle", new String[] { "ip", "status", "tunnelLength" }, new String[] { handlers[i].getTitle(), AddressTracker.statusString(tracker.getPortForwardStatus()), TimeUtil.formatTime(tracker.getLongestSendReceiveGap()) }), contentNode, "connectivity-ip", false);
-			InetAddressAddressTrackerItem[] ipItems = tracker.getInetAddressTrackerItems();
-			table = new Table();
-			portsContent.addChild(table);
-			row = table.addRow();
+			InfoboxWidget byIP = new InfoboxWidget(InfoboxWidget.Type.WTF, HTMLClass.CONNECTIVITYIP, NodeL10n.getBase().getString("ConnectivityToadlet.byIPTitle", new String[] { "ip", "status", "tunnelLength" }, new String[] { handlers[i].getTitle(), AddressTracker.statusString(tracker.getPortForwardStatus()), TimeUtil.formatTime(tracker.getLongestSendReceiveGap()) }));
+			contentNode.addInfobox(byIP);
+			SummaryTable = new Table();
+			byIP.body.addChild(SummaryTable);
+			row = SummaryTable.addRow();
 			row.addHeader(l10n("addressTitle"));
 			row.addHeader(l10n("sentReceivedTitle"));
 			row.addHeader(l10n("localRemoteTitle"));
 			row.addHeader(l10n("firstSendLeadTime"));
 			row.addHeader(l10n("firstReceiveLeadTime"));
+			InetAddressAddressTrackerItem[] ipItems = tracker.getInetAddressTrackerItems();
 			for (int j=0;j<AddressTrackerItem.TRACK_GAPS;j++) {
 				row.addHeader();
 			}
 			for (int j=0;j<ipItems.length;j++) {
-				row = table.addRow();
+				row = SummaryTable.addRow();
 				InetAddressAddressTrackerItem item = ipItems[j];
 				// Address
 				row.addCell(item.addr.toString());

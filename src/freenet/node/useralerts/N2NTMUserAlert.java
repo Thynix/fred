@@ -74,7 +74,7 @@ public class N2NTMUserAlert extends AbstractUserAlert {
 				DateFormat.getInstance().format(new Date(receivedTime)) }));
 		String[] lines = messageText.split("\n");
 		for (int i = 0, c = lines.length; i < c; i++) {
-			alertNode.addChild("#", lines[i]);
+			alertNode.addText(lines[i]);
 			if (i != lines.length - 1)
 				alertNode.addLineBreak();
 		}

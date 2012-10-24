@@ -3,9 +3,10 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.clients.http.bookmark;
 
-import java.net.MalformedURLException;
-
 import freenet.client.async.ClientGetter;
+import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Link;
+import freenet.clients.http.uielements.Text;
 import freenet.keys.FreenetURI;
 import freenet.keys.USK;
 import freenet.l10n.NodeL10n;
@@ -18,7 +19,8 @@ import freenet.support.Fields;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.SimpleFieldSet;
-import freenet.clients.http.uielements.Box;
+
+import java.net.MalformedURLException;
 
 public class BookmarkItem extends Bookmark {
     public static final String NAME = "Bookmark";
@@ -96,7 +98,7 @@ public class BookmarkItem extends Bookmark {
 		public HTMLNode getHTMLText() {
             Box n = new Box();
             NodeL10n.getBase().addL10nSubstitution(n, "BookmarkItem.bookmarkUpdatedWithLink", new String[]{"link", "name", "edition"},
-            		new HTMLNode[] { HTMLNode.link("/"+key), HTMLNode.text(name), HTMLNode.text(key.getSuggestedEdition()) });
+            		new HTMLNode[] { new Link("/"+key), new Text(name), new Text(key.getSuggestedEdition()) });
             return n;
         }
 

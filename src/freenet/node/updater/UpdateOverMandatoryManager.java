@@ -611,7 +611,7 @@ public class UpdateOverMandatoryManager implements RequestClient {
 		public HTMLNode getHTMLText() {
 			Box box_ = new Box();
 
-			box_.addBlockText().addChild("#", l10n("intro"));
+			box_.addBlockText().addText(l10n("intro"));
 
 			PeerNode[][] nodes = getNodesSayBlown();
 			PeerNode[] nodesSayBlownConnected = nodes[0];
@@ -619,12 +619,12 @@ public class UpdateOverMandatoryManager implements RequestClient {
 			PeerNode[] nodesSayBlownFailedTransfer = nodes[2];
 
 			if(nodesSayBlownConnected.length > 0)
-				box_.addBlockText().addChild("#", l10n("fetching"));
+				box_.addBlockText().addText(l10n("fetching"));
 			else
-				box_.addBlockText().addChild("#", l10n("failedFetch"));
+				box_.addBlockText().addText(l10n("failedFetch"));
 
 			if(nodesSayBlownConnected.length > 0) {
-				box_.addBlockText().addChild("#", l10n("connectedSayBlownLabel"));
+				box_.addBlockText().addText(l10n("connectedSayBlownLabel"));
 				OutputList list = box_.addList();
 				for(int i = 0; i < nodesSayBlownConnected.length; i++) {
 					list.addItem(nodesSayBlownConnected[i].userToString() + " (" + nodesSayBlownConnected[i].getPeer() + ")");
@@ -632,7 +632,7 @@ public class UpdateOverMandatoryManager implements RequestClient {
 			}
 
 			if(nodesSayBlownDisconnected.length > 0) {
-				box_.addBlockText().addChild("#", l10n("disconnectedSayBlownLabel"));
+				box_.addBlockText().addText(l10n("disconnectedSayBlownLabel"));
 				OutputList list = box_.addList();
 				for(int i = 0; i < nodesSayBlownDisconnected.length; i++) {
 					list.addItem(nodesSayBlownDisconnected[i].userToString() + " (" + nodesSayBlownDisconnected[i].getPeer() + ")");
@@ -640,7 +640,7 @@ public class UpdateOverMandatoryManager implements RequestClient {
 			}
 
 			if(nodesSayBlownFailedTransfer.length > 0) {
-				box_.addBlockText().addChild("#", l10n("failedTransferSayBlownLabel"));
+				box_.addBlockText().addText(l10n("failedTransferSayBlownLabel"));
 				OutputList list = box_.addList();
 				for(int i = 0; i < nodesSayBlownFailedTransfer.length; i++) {
 					list.addItem(nodesSayBlownFailedTransfer[i].userToString() + " (" + nodesSayBlownFailedTransfer[i].getPeer() + ")");

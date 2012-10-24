@@ -34,7 +34,7 @@ public class DATASTORE_SIZE implements Step {
 		HTMLNode bandwidthInfoboxContent = helper.getInfobox("infobox-header", WizardL10n.l10n("datastoreSize"),
 		        contentNode, null, false);
 
-		bandwidthInfoboxContent.addChild("#", WizardL10n.l10n("datastoreSizeLong"));
+		bandwidthInfoboxContent.addText(WizardL10n.l10n("datastoreSizeLong"));
 		HTMLNode bandwidthForm = helper.addFormChild(bandwidthInfoboxContent, ".", "dsForm");
 		HTMLNode result = bandwidthForm.addChild("select", "name", "ds");
 

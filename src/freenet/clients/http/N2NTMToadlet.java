@@ -114,7 +114,7 @@ public class N2NTMToadlet extends Toadlet {
 
 	private static InfoboxWidget createPeerInfobox(InfoboxWidget.Type infoboxType, String header, String message) {
 		InfoboxWidget peerInfobox = new InfoboxWidget(infoboxType, header);
-		peerInfobox.body.addChild("#", message);
+		peerInfobox.body.addText(message);
 		OutputList peerList = peerInfobox.body.addList();
 		Toadlet.addHomepageLink(peerList);
 		peerList.addItem().addLink("/friends/", l10n("returnToFriends"), l10n("friends"));
@@ -167,7 +167,7 @@ public class N2NTMToadlet extends Toadlet {
 				if(fnam != null && fnam.length() > 0) {
 					filename = new File(fnam);
 					if(!(filename.exists() && filename.canRead())) {
-						peerTableInfobox.body.addChild("#", l10n("noSuchFileOrCannotRead"));
+						peerTableInfobox.body.addText(l10n("noSuchFileOrCannotRead"));
 						Toadlet.addHomepageLink(peerTableInfobox.body);
 						this.writeHTMLReply(ctx, 400, "OK", pageNode.generate());
 						return;
@@ -189,7 +189,7 @@ public class N2NTMToadlet extends Toadlet {
 						try {
 							status = pn.sendFileOffer(filename, message);
 						} catch (IOException e) {
-							peerTableInfobox.body.addChild("#", l10n("noSuchFileOrCannotRead"));
+							peerTableInfobox.body.addText(l10n("noSuchFileOrCannotRead"));
 							Toadlet.addHomepageLink(peerTableInfobox.body);
 							this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 							return;
@@ -202,7 +202,7 @@ public class N2NTMToadlet extends Toadlet {
 								if(size > 0) {
 									long limit = maxSize();
 									if(size > limit){
-										peerTableInfobox.body.addChild("#", l10n("tooLarge", new String[]{"attempt", "limit"},
+										peerTableInfobox.body.addText(l10n("tooLarge", new String[]{"attempt", "limit"},
 											new String[]{SizeUtil.formatSize(size, true), SizeUtil.formatSize(limit, true)}));
 										OutputList friendList = peerTableInfobox.body.addList();
 										Toadlet.addHomepageLink(friendList);
@@ -214,7 +214,7 @@ public class N2NTMToadlet extends Toadlet {
 								}
 							}
 						} catch (IOException e) {
-							peerTableInfobox.body.addChild("#", l10n("uploadFailed"));
+							peerTableInfobox.body.addText(l10n("uploadFailed"));
 							Toadlet.addHomepageLink(peerTableInfobox.body);
 							this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 							return;
@@ -245,12 +245,12 @@ public class N2NTMToadlet extends Toadlet {
 								+ pn.getName() + "': " + message);
 					}
 					Row peerRow = peerTable.addRow();
-					peerRow.addCell("peer-name").addChild("#", pn.getName());
+					peerRow.addCell("peer-name").addText(pn.getName());
 					peerRow.addCell(sendStatusClass).addInlineBox(HTMLClass.N2NTMSENDSTATUS, sendStatusLong, sendStatusShort);
 				}
 			}
-			HTMLNode infoboxContent = peerTableInfobox.body.addDiv(HTMLClass.N2NTMMESSAGETEXT);
-			infoboxContent.addChild("#", message);
+			HTMLNode infoboxContent = peerTableInfobox.body.addBox(HTMLClass.N2NTMMESSAGETEXT);
+			infoboxContent.addText(message);
 			OutputList list = peerTableInfobox.body.addList();
 			Toadlet.addHomepageLink(list);
 			list.addItem().addLink("/friends/", l10n("returnToFriends"), l10n("friends"));
@@ -285,17 +285,17 @@ public class N2NTMToadlet extends Toadlet {
 		messageForm.addChild("textarea", new String[] { "id", "name", "rows",
 				"cols" }, new String[] { "n2ntmtext", "message", "8", "74" });
 		messageForm.addLineBreak();
-		messageForm.addChild("#", NodeL10n.getBase().getString("N2NTMToadlet.mayAttachFile"));
+		messageForm.addText(NodeL10n.getBase().getString("N2NTMToadlet.mayAttachFile"));
 		if(ctx.isAllowedFullAccess()) {
 			messageForm.addLineBreak();
-			messageForm.addChild("#", NodeL10n.getBase().getString("QueueToadlet.insertFileBrowseLabel")+": ");
+			messageForm.addText(NodeL10n.getBase().getString("QueueToadlet.insertFileBrowseLabel") + ": ");
 			messageForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "n2nm-browse", NodeL10n.getBase().getString("QueueToadlet.insertFileBrowseButton") + "..." });
 			messageForm.addLineBreak();
 		}
 		if(advancedMode){
-			messageForm.addChild("#", NodeL10n.getBase().getString("N2NTMToadlet.sizeWarning", "limit", SizeUtil.formatSize(maxSize(), true)));
+			messageForm.addText(NodeL10n.getBase().getString("N2NTMToadlet.sizeWarning", "limit", SizeUtil.formatSize(maxSize(), true)));
 			messageForm.addLineBreak();
-			messageForm.addChild("#", NodeL10n.getBase().getString("QueueToadlet.insertFileLabel") + ": ");
+			messageForm.addText(NodeL10n.getBase().getString("QueueToadlet.insertFileLabel") + ": ");
 			messageForm.addChild("input", new String[] {"type", "name", "value" }, new String[] { "file", "n2nm-upload", "" });
 			messageForm.addLineBreak();
 		}

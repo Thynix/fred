@@ -3,6 +3,7 @@ package freenet.clients.http.wizardsteps;
 import freenet.clients.http.*;
 import freenet.clients.http.uielements.BlockText;
 import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Text;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
 import freenet.node.SecurityLevels;
@@ -45,7 +46,7 @@ public class SECURITY_NETWORK implements Step {
 				NodeL10n.getBase().addL10nSubstitution(p, "SecurityLevels.maximumNetworkThreatLevelWarning",
 				        new String[] { "bold" },
 				        new HTMLNode[] { HTMLNode.STRONG });
-				p.addChild("#", " ");
+				p.addText(" ");
 				NodeL10n.getBase().addL10nSubstitution(p, "SecurityLevels.maxSecurityYouNeedFriends",
 				        new String[] { "bold" },
 				        new HTMLNode[] { HTMLNode.STRONG });
@@ -58,8 +59,8 @@ public class SECURITY_NETWORK implements Step {
 				NodeL10n.getBase().addL10nSubstitution(p, "FirstTimeWizardToadlet.highNetworkThreatLevelWarning",
 				        new String[] { "bold", "addAFriend", "friends" },
 				        new HTMLNode[] { HTMLNode.STRONG,
-				                new HTMLNode("#", NodeL10n.getBase().getString("FProxyToadlet.addFriendTitle")),
-				                new HTMLNode("#", NodeL10n.getBase().getString("FProxyToadlet.categoryFriends"))});
+				                new Text(NodeL10n.getBase().getString("FProxyToadlet.addFriendTitle")),
+				                new Text(NodeL10n.getBase().getString("FProxyToadlet.categoryFriends"))});
 				HTMLNode checkbox = formNode.addChild(new BlockText()).addChild("input",
 					new String[]{"type", "name", "value"},
 					new String[]{"checkbox", "security-levels.networkThreatLevel.confirm", "off"});
@@ -67,7 +68,7 @@ public class SECURITY_NETWORK implements Step {
 				        "FirstTimeWizardToadlet.highNetworkThreatLevelCheckbox",
 				        new String[] { "bold", "addAFriend" },
 				        new HTMLNode[] { HTMLNode.STRONG,
-				                new HTMLNode("#", NodeL10n.getBase().getString("FProxyToadlet.addFriendTitle")),});
+				                new Text(NodeL10n.getBase().getString("FProxyToadlet.addFriendTitle")),});
 			}
 			formNode.addChild("input",
 			        new String[] { "type", "name", "value" },
@@ -123,7 +124,7 @@ public class SECURITY_NETWORK implements Step {
 			new String[]{"type", "name", "value"},
 			new String[]{"radio", "security-levels.networkThreatLevel", level.name()});
 		input.addB(WizardL10n.l10nSec("networkThreatLevel.name."+level));
-		input.addChild("#", ": ");
+		input.addText(": ");
 		NodeL10n.getBase().addL10nSubstitution(input, "SecurityLevels.networkThreatLevel.choice."+level,
 		        new String[] { "bold" },
 		        new HTMLNode[] { HTMLNode.STRONG });

@@ -56,15 +56,15 @@ public class DownloadFeedUserAlert extends AbstractUserAlert {
 	@Override
 	public HTMLNode getHTMLText() {
 		Box alertNode = new Box();
-		alertNode.addLink("/" + uri).addChild("#", uri.toShortString());
+		alertNode.addLink("/" + uri).addText(uri.toShortString());
 		if (description != null && description.length() != 0) {
 			String[] lines = description.split("\n");
 			alertNode.addLineBreak();
 			alertNode.addLineBreak();
-			alertNode.addChild("#", l10n("fileDescription"));
+			alertNode.addText(l10n("fileDescription"));
 			alertNode.addLineBreak();
 			for (int i = 0; i < lines.length; i++) {
-				alertNode.addChild("#", lines[i]);
+				alertNode.addText(lines[i]);
 				if (i != lines.length - 1)
 					alertNode.addLineBreak();
 			}
