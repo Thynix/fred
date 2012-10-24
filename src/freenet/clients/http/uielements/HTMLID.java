@@ -40,6 +40,7 @@ public enum HTMLID {
 	PASSWORDCHANGE("password-change"),
 	PASSWORDERROR("password-error"),
 	QUEUEEMPTY("queue-empty"),
+	QUEUELEGEND("queue-legend"),
 	PLUGINRELOAD("plugin-reload"),
 	RECOMMENDFILE("recommend-file"),
 	RESETCONFIRM("reset-confirm"),

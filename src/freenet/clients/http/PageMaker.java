@@ -618,42 +618,51 @@ public final class PageMaker {
 		return this.theme;
 	}
 
+	@Deprecated
 	public InfoboxNode getInfobox(String header) {
 		return getInfobox(header, null, false);
 	}
 
+	@Deprecated
 	public InfoboxNode getInfobox(HTMLNode header) {
 		return getInfobox(header, null, false);
 	}
 
+	@Deprecated
 	public InfoboxNode getInfobox(String category, String header) {
 		return getInfobox(category, header, null, false);
 	}
 
+	@Deprecated
 	public HTMLNode getInfobox(String category, String header, HTMLNode parent) {
 		return getInfobox(category, header, parent, null, false);
 	}
 
+	@Deprecated
 	public InfoboxNode getInfobox(String category, HTMLNode header) {
 		return getInfobox(category, header, null, false);
 	}
 
+	@Deprecated
 	public InfoboxNode getInfobox(String header, String title, boolean isUnique) {
 		if (header == null) throw new NullPointerException();
 		return getInfobox(new Text(header), title, isUnique);
 	}
-	
+
+	@Deprecated
 	public InfoboxNode getInfobox(HTMLNode header, String title, boolean isUnique) {
 		if (header == null) throw new NullPointerException();
 		return getInfobox(null, header, title, isUnique);
 	}
 
+	@Deprecated
 	public InfoboxNode getInfobox(String category, String header, String title, boolean isUnique) {
 		if (header == null) throw new NullPointerException();
 		return getInfobox(category, new Text(header), title, isUnique);
 	}
 
 	/** Create an infobox, attach it to the given parent, and return the content node. */
+	@Deprecated
 	public HTMLNode getInfobox(String category, String header, HTMLNode parent, String title, boolean isUnique) {
 		InfoboxNode node = getInfobox(category, header, title, isUnique);
 		parent.addChild(node.outer);

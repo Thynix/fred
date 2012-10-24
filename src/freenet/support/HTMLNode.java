@@ -346,7 +346,17 @@ public class HTMLNode implements XMLCharacterClasses {
 			attributes.put(CLASS, bookended);
 		}
 	}
-
+	@Deprecated
+	public void addClass(final String className) {
+		final String bookended = ' ' + className + ' ';
+		if (this.hasAttribute(CLASS)) {
+			final String classes = attributes.get(CLASS);
+			if (classes.contains(bookended)) return;
+			attributes.put(CLASS, bookended.concat(classes));
+		} else {
+			attributes.put(CLASS, bookended);
+		}
+	}
 	/**
 	 * Set the html "id" attribute
 	 * @param tagID ID attribute to be set

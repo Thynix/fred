@@ -10,12 +10,16 @@ public class InfoboxWidget extends Box {
 	public enum Type {
 		ALERT(HTMLClass.INFOBOXALERT),
 		ERROR(HTMLClass.INFOBOXERROR),
+		FAILEDREQUESTS(HTMLClass.FAILEDREQUESTS),
 		INFORMATION(HTMLClass.INFOBOXINFORMATION),
+		LEGEND(HTMLClass.LEGEND),
 		MINOR(HTMLClass.INFOBOXMINOR),
 		NAVBAR(HTMLClass.NAVBAR),
 		NORMAL(HTMLClass.INFOBOXNORMAL),
 		NONE(HTMLClass.NONE),
+		PROGRESSING(HTMLClass.REQUESTSINPROGRESS),
 		QUERY(HTMLClass.INFOBOXQUERY),
+		REQUESTCOMPLETE(HTMLClass.REQUESTCOMPLETED),
 		SUCCESS(HTMLClass.INFOBOXSUCCESS),
 		WARNING(HTMLClass.INFOBOXWARNING),
 		WTF(HTMLClass.WTF);
@@ -43,7 +47,7 @@ public class InfoboxWidget extends Box {
 	}
 
 	public InfoboxWidget(HTMLID ID, String title) {
-		this (Type.NONE, ID, title);
+		this(Type.NONE, ID, title);
 	}
 
 	public InfoboxWidget(Type type, HTMLID ID, String title, String Content) {

@@ -1474,15 +1474,15 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		};
 
 		boolean advancedModeEnabled = pageMaker.advancedMode(request, this.container);
-
-		if(advancedModeEnabled) {
-			HTMLNode legendContent = pageMaker.getInfobox("legend", l10n("legend"), contentNode, "queue-legend", true);
-			Table legendTable = new Table(HTMLClass.QUEUE);
-			legendContent.addChild(legendTable);
+		if (advancedModeEnabled) {
+			Table legendTable =
+				contentNode.addInfobox(InfoboxWidget.Type.LEGEND, HTMLID.QUEUELEGEND, l10n("legend"))
+					.addTable(HTMLClass.QUEUE);
 			Row legendRow = legendTable.addRow();
 			Cell cell;
-			for (int i=0; i<7; i++) {
-				if (i > RequestStarter.INTERACTIVE_PRIORITY_CLASS || advancedModeEnabled || i <= lowestQueuedPrio) {
+			for (int i = 0; i < 7; i++) {
+				if (i > RequestStarter.INTERACTIVE_PRIORITY_CLASS || advancedModeEnabled ||
+					i <= lowestQueuedPrio) {
 					cell = legendRow.addCell(priorityClasses[i]);
 					cell.addAttribute("class", "priority" + i);
 				}
@@ -1510,153 +1510,296 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		        QueueColumn.REASON,
 		        QueueColumn.KEY };
 
-		if (!completedDownloadToTemp.isEmpty()) {
-			contentNode.addChild(new Link(Link.linkType.ANCHOR, HTMLID.COMPLETEDDOWNLOADTOTEMP));
-			HTMLNode completedDownloadsToTempContent = pageMaker.getInfobox("completed_requests", l10n("completedDinTempDirectory", new String[]{ "size" }, new String[]{ String.valueOf(completedDownloadToTemp.size()) }), contentNode, "request-completed", false);
+		if (! completedDownloadToTemp.isEmpty()) {
+			contentNode.addLink(Link.linkType.ANCHOR, HTMLID.COMPLETEDDOWNLOADTOTEMP);
+			InfoboxWidget completedDownloadsToTemp = contentNode
+				.addInfobox(InfoboxWidget.Type.REQUESTCOMPLETE, HTMLClass.REQUESTCOMPLETED,
+					l10n("completedDinTempDirectory", new String[]{"size"},
+						new String[]{String.valueOf(completedDownloadToTemp.size())}));
 			if (advancedModeEnabled) {
-				completedDownloadsToTempContent.addChild(createRequestTable(pageMaker, ctx, completedDownloadToTemp, new QueueColumn[] { QueueColumn.IDENTIFIER, QueueColumn.SIZE, QueueColumn.MIME_TYPE, QueueColumn.PERSISTENCE, QueueColumn.KEY, QueueColumn.COMPAT_MODE }, priorityClasses, advancedModeEnabled, false, "completed-temp", true, true));
+				completedDownloadsToTemp.body.addChild(
+					createRequestTable(pageMaker, ctx, completedDownloadToTemp,
+						new QueueColumn[]{QueueColumn.IDENTIFIER, QueueColumn.SIZE,
+							QueueColumn.MIME_TYPE, QueueColumn.PERSISTENCE,
+							QueueColumn.KEY,
+							QueueColumn.COMPAT_MODE}, priorityClasses,
+						advancedModeEnabled,
+						false, "completed-temp", true, true));
 			} else {
-				completedDownloadsToTempContent.addChild(createRequestTable(pageMaker, ctx, completedDownloadToTemp, new QueueColumn[] { QueueColumn.SIZE, QueueColumn.KEY }, priorityClasses, advancedModeEnabled, false, "completed-temp", true, true));
+				completedDownloadsToTemp.body.addChild(
+					createRequestTable(pageMaker, ctx, completedDownloadToTemp,
+						new QueueColumn[]{QueueColumn.SIZE, QueueColumn.KEY}, priorityClasses,
+						advancedModeEnabled, false, "completed-temp", true, true));
 			}
 		}
 
-		if (!completedDownloadToDisk.isEmpty()) {
-			contentNode.addChild(new Link(Link.linkType.ANCHOR, HTMLID.COMPLETEDDOWNLOADTODISK));
-			HTMLNode completedToDiskInfoboxContent = pageMaker.getInfobox("completed_requests", l10n("completedDinDownloadDirectory", new String[]{ "size" }, new String[]{ String.valueOf(completedDownloadToDisk.size()) }), contentNode, "request-completed", false);
+		if (! completedDownloadToDisk.isEmpty()) {
+			contentNode.addLink(Link.linkType.ANCHOR, HTMLID.COMPLETEDDOWNLOADTODISK);
+			InfoboxWidget completedToDiskInfoboxContent = contentNode
+				.addInfobox(InfoboxWidget.Type.REQUESTCOMPLETE, HTMLClass.REQUESTCOMPLETED,
+					l10n("completedDinDownloadDirectory", new String[]{"size"},
+						new String[]{String.valueOf(completedDownloadToDisk.size())}));
 			if (advancedModeEnabled) {
-				completedToDiskInfoboxContent.addChild(createRequestTable(pageMaker, ctx, completedDownloadToDisk, new QueueColumn[] { QueueColumn.IDENTIFIER, QueueColumn.FILENAME, QueueColumn.SIZE, QueueColumn.MIME_TYPE, QueueColumn.PERSISTENCE, QueueColumn.KEY, QueueColumn.COMPAT_MODE }, priorityClasses, advancedModeEnabled, false, "completed-disk", false, true));
+				completedToDiskInfoboxContent.body.addChild(
+					createRequestTable(pageMaker, ctx, completedDownloadToDisk,
+						new QueueColumn[]{QueueColumn.IDENTIFIER, QueueColumn.FILENAME,
+							QueueColumn.SIZE, QueueColumn.MIME_TYPE,
+							QueueColumn.PERSISTENCE, QueueColumn.KEY,
+							QueueColumn.COMPAT_MODE}, priorityClasses,
+						advancedModeEnabled,
+						false, "completed-disk", false, true));
 			} else {
-				completedToDiskInfoboxContent.addChild(createRequestTable(pageMaker, ctx, completedDownloadToDisk, new QueueColumn[] { QueueColumn.FILENAME, QueueColumn.SIZE, QueueColumn.KEY }, priorityClasses, advancedModeEnabled, false, "completed-disk", false, true));
+				completedToDiskInfoboxContent.body.addChild(
+					createRequestTable(pageMaker, ctx, completedDownloadToDisk,
+						new QueueColumn[]{QueueColumn.FILENAME, QueueColumn.SIZE,
+							QueueColumn.KEY}, priorityClasses, advancedModeEnabled, false,
+						"completed-disk", false, true));
 			}
 		}
 
-		if (!completedUpload.isEmpty()) {
-			contentNode.addChild(new Link(Link.linkType.ANCHOR, HTMLID.COMPLETEDUPLOAD));
-			HTMLNode completedUploadInfoboxContent = pageMaker.getInfobox("completed_requests", l10n("completedU", new String[]{ "size" }, new String[]{ String.valueOf(completedUpload.size()) }), contentNode, "download-completed", false);
+		if (! completedUpload.isEmpty()) {
+			contentNode.addLink(Link.linkType.ANCHOR, HTMLID.COMPLETEDUPLOAD);
+			InfoboxWidget completedUploadInfobox = contentNode
+				.addInfobox(InfoboxWidget.Type.REQUESTCOMPLETE, HTMLClass.DOWNLOADCOMPLETE,
+					l10n("completedU", new String[]{"size"},
+						new String[]{String.valueOf(completedUpload.size())}));
 			if (advancedModeEnabled) {
-				completedUploadInfoboxContent.addChild(createRequestTable(pageMaker, ctx, completedUpload, new QueueColumn[] { QueueColumn.IDENTIFIER, QueueColumn.FILENAME, QueueColumn.SIZE, QueueColumn.MIME_TYPE, QueueColumn.PERSISTENCE, QueueColumn.KEY }, priorityClasses, advancedModeEnabled, true, "completed-upload-file", false, true));
-			} else  {
-				completedUploadInfoboxContent.addChild(createRequestTable(pageMaker, ctx, completedUpload, new QueueColumn[] { QueueColumn.FILENAME, QueueColumn.SIZE, QueueColumn.KEY }, priorityClasses, advancedModeEnabled, true, "completed-upload-file", false, true));
-			}
-		}
-
-		if (!completedDirUpload.isEmpty()) {
-			contentNode.addChild(new Link(Link.linkType.ANCHOR, HTMLID.COMPLETEDDIRUPLOAD));
-			HTMLNode completedUploadDirContent = pageMaker.getInfobox("completed_requests", l10n("completedUDirectory", new String[]{ "size" }, new String[]{ String.valueOf(completedDirUpload.size()) }), contentNode, "download-completed", false);
-			if (advancedModeEnabled) {
-				completedUploadDirContent.addChild(createRequestTable(pageMaker, ctx, completedDirUpload, new QueueColumn[] { QueueColumn.IDENTIFIER, QueueColumn.FILES, QueueColumn.TOTAL_SIZE, QueueColumn.PERSISTENCE, QueueColumn.KEY }, priorityClasses, advancedModeEnabled, true, "completed-upload-dir", false, true));
+				completedUploadInfobox.body.addChild(createRequestTable(pageMaker, ctx,
+					completedUpload,
+					new QueueColumn[]{QueueColumn.IDENTIFIER, QueueColumn.FILENAME,
+						QueueColumn.SIZE, QueueColumn.MIME_TYPE, QueueColumn.PERSISTENCE,
+						QueueColumn.KEY}, priorityClasses, advancedModeEnabled, true,
+					"completed-upload-file", false, true));
 			} else {
-				completedUploadDirContent.addChild(createRequestTable(pageMaker, ctx, completedDirUpload, new QueueColumn[] { QueueColumn.FILES, QueueColumn.TOTAL_SIZE, QueueColumn.KEY }, priorityClasses, advancedModeEnabled, true, "completed-upload-dir", false, true));
+				completedUploadInfobox.body.addChild(createRequestTable(pageMaker, ctx,
+					completedUpload,
+					new QueueColumn[]{QueueColumn.FILENAME, QueueColumn.SIZE, QueueColumn.KEY},
+					priorityClasses, advancedModeEnabled, true, "completed-upload-file", false,
+					true));
 			}
 		}
 
-		if (!failedDownload.isEmpty()) {
-			contentNode.addChild(new Link(Link.linkType.ANCHOR, HTMLID.FAILEDDOWNLOAD));
-			HTMLNode failedContent = pageMaker.getInfobox("failed_requests", l10n("failedD", new String[]{ "size" }, new String[]{ String.valueOf(failedDownload.size()) }), contentNode, "download-failed", false);
+		if (! completedDirUpload.isEmpty()) {
+			contentNode.addLink(Link.linkType.ANCHOR, HTMLID.COMPLETEDDIRUPLOAD);
+			InfoboxWidget completedUploadDir = contentNode
+				.addInfobox(InfoboxWidget.Type.REQUESTCOMPLETE, HTMLClass.DOWNLOADCOMPLETE,
+					l10n("completedUDirectory", new String[]{"size"},
+						new String[]{String.valueOf(completedDirUpload.size())}));
 			if (advancedModeEnabled) {
-				failedContent.addChild(createRequestTable(pageMaker, ctx, failedDownload, advancedModeFailure, priorityClasses, advancedModeEnabled, false, "failed-download", false, true, false, false, null));
+				completedUploadDir.body.addChild(
+					createRequestTable(pageMaker, ctx, completedDirUpload,
+						new QueueColumn[]{QueueColumn.IDENTIFIER, QueueColumn.FILES,
+							QueueColumn.TOTAL_SIZE, QueueColumn.PERSISTENCE,
+							QueueColumn.KEY}, priorityClasses, advancedModeEnabled, true,
+						"completed-upload-dir", false, true));
 			} else {
-				failedContent.addChild(createRequestTable(pageMaker, ctx, failedDownload, simpleModeFailure, priorityClasses, advancedModeEnabled, false, "failed-download", false, true, false, false, null));
+				completedUploadDir.body.addChild(
+					createRequestTable(pageMaker, ctx, completedDirUpload,
+						new QueueColumn[]{QueueColumn.FILES, QueueColumn.TOTAL_SIZE,
+							QueueColumn.KEY}, priorityClasses, advancedModeEnabled, true,
+						"completed-upload-dir", false, true));
 			}
 		}
 
-		if (!failedUpload.isEmpty()) {
-			contentNode.addChild(new Link(Link.linkType.ANCHOR, HTMLID.FAILEDUPLOAD));
-			HTMLNode failedContent = pageMaker.getInfobox("failed_requests", l10n("failedU", new String[]{ "size" }, new String[]{ String.valueOf(failedUpload.size()) }), contentNode, "upload-failed", false);
+		if (! failedDownload.isEmpty()) {
+			contentNode.addLink(Link.linkType.ANCHOR, HTMLID.FAILEDDOWNLOAD);
+			InfoboxWidget failedContent = contentNode.addInfobox(InfoboxWidget.Type.FAILEDREQUESTS,
+				HTMLClass.DOWNLOADFAILED, l10n("failedD", new String[]{"size"},
+				new String[]{String.valueOf(failedDownload.size())}));
 			if (advancedModeEnabled) {
-				failedContent.addChild(createRequestTable(pageMaker, ctx, failedUpload, advancedModeFailure, priorityClasses, advancedModeEnabled, true, "failed-upload-file", false, true, false, false, null));
+				failedContent.body.addChild(
+					createRequestTable(pageMaker, ctx, failedDownload, advancedModeFailure,
+						priorityClasses, advancedModeEnabled, false, "failed-download", false,
+						true, false, false, null));
 			} else {
-				failedContent.addChild(createRequestTable(pageMaker, ctx, failedUpload, simpleModeFailure, priorityClasses, advancedModeEnabled, true, "failed-upload-file", false, true, false, false, null));
+				failedContent.body.addChild(
+					createRequestTable(pageMaker, ctx, failedDownload, simpleModeFailure,
+						priorityClasses, advancedModeEnabled, false, "failed-download", false,
+						true, false, false, null));
 			}
 		}
 
-		if (!failedDirUpload.isEmpty()) {
-			contentNode.addChild(new Link(Link.linkType.ANCHOR, HTMLID.FAILEDDIRUPLOAD));
-			HTMLNode failedContent = pageMaker.getInfobox("failed_requests", l10n("failedU", new String[]{ "size" }, new String[]{ String.valueOf(failedDirUpload.size()) }), contentNode, "upload-failed", false);
+		if (! failedUpload.isEmpty()) {
+			contentNode.addLink(Link.linkType.ANCHOR, HTMLID.FAILEDUPLOAD);
+			InfoboxWidget failedContent = contentNode.addInfobox(InfoboxWidget.Type.FAILEDREQUESTS,
+				HTMLClass.UPLOADFAILED, l10n("failedU", new String[]{"size"},
+				new String[]{String.valueOf(failedUpload.size())}));
 			if (advancedModeEnabled) {
-				failedContent.addChild(createRequestTable(pageMaker, ctx, failedDirUpload, new QueueColumn[] { QueueColumn.IDENTIFIER, QueueColumn.FILES, QueueColumn.TOTAL_SIZE, QueueColumn.PROGRESS, QueueColumn.REASON, QueueColumn.PERSISTENCE, QueueColumn.KEY }, priorityClasses, advancedModeEnabled, true, "failed-upload-dir", false, true, false, false, null));
+				failedContent.body.addChild(
+					createRequestTable(pageMaker, ctx, failedUpload, advancedModeFailure,
+						priorityClasses, advancedModeEnabled, true, "failed-upload-file",
+						false, true, false, false, null));
 			} else {
-				failedContent.addChild(createRequestTable(pageMaker, ctx, failedDirUpload, new QueueColumn[] { QueueColumn.FILES, QueueColumn.TOTAL_SIZE, QueueColumn.PROGRESS, QueueColumn.REASON, QueueColumn.KEY }, priorityClasses, advancedModeEnabled, true, "failed-upload-dir", false, true, false, false, null));
+				failedContent.body.addChild(
+					createRequestTable(pageMaker, ctx, failedUpload, simpleModeFailure,
+						priorityClasses, advancedModeEnabled, true, "failed-upload-file",
+						false, true, false, false, null));
 			}
 		}
 
-		if(!failedBadMIMEType.isEmpty()) {
+		if (! failedDirUpload.isEmpty()) {
+			contentNode.addLink(Link.linkType.ANCHOR, HTMLID.FAILEDDIRUPLOAD);
+			InfoboxWidget failedContent = contentNode.addInfobox(InfoboxWidget.Type.FAILEDREQUESTS,
+				HTMLClass.UPLOADFAILED, l10n("failedU", new String[]{"size"},
+				new String[]{String.valueOf(failedDirUpload.size())}));
+			if (advancedModeEnabled) {
+				failedContent.body.addChild(createRequestTable(pageMaker, ctx, failedDirUpload,
+					new QueueColumn[]{QueueColumn.IDENTIFIER, QueueColumn.FILES,
+						QueueColumn.TOTAL_SIZE, QueueColumn.PROGRESS, QueueColumn.REASON,
+						QueueColumn.PERSISTENCE, QueueColumn.KEY}, priorityClasses,
+					advancedModeEnabled, true, "failed-upload-dir", false, true, false, false,
+					null));
+			} else {
+				failedContent.body.addChild(createRequestTable(pageMaker, ctx, failedDirUpload,
+					new QueueColumn[]{QueueColumn.FILES, QueueColumn.TOTAL_SIZE,
+						QueueColumn.PROGRESS, QueueColumn.REASON, QueueColumn.KEY},
+					priorityClasses, advancedModeEnabled, true, "failed-upload-dir", false, true,
+					false, false, null));
+			}
+		}
+
+		if (! failedBadMIMEType.isEmpty()) {
 			String[] types = failedBadMIMEType.keySet().toArray(new String[failedBadMIMEType.size()]);
 			Arrays.sort(types);
-			for(String type : types) {
+			for (String type : types) {
 				LinkedList<DownloadRequestStatus> getters = failedBadMIMEType.get(type);
 				String atype = type.replace("-", "--").replace('/', '-');
-				contentNode.addChild(new Link(Link.linkType.ANCHOR, "failedDownload-badtype-"+atype));
+				contentNode.addLink(Link.linkType.ANCHOR, "failedDownload-badtype-" + atype);
 				MIMEType typeHandler = ContentFilter.getMIMEType(type);
-				HTMLNode failedContent = pageMaker.getInfobox("failed_requests", l10n("failedDBadMIME", new String[]{ "size", "type" }, new String[]{ String.valueOf(getters.size()), type }), contentNode, "download-failed-"+atype, false);
+				InfoboxWidget failedContent = contentNode.addInfobox(InfoboxWidget.Type
+					.FAILEDREQUESTS,
+					l10n("failedDBadMIME", new String[]{"size", "type"},
+						new String[]{String.valueOf(getters.size()), type}));
+				failedContent.addClass("download-failed-" + atype);
 				// FIXME add a class for easier styling.
 				KnownUnsafeContentTypeException e = new KnownUnsafeContentTypeException(typeHandler);
-				failedContent.addChild(new BlockText(l10n("badMIMETypeIntro", "type", type)));
+				failedContent.body.addChild(new BlockText(l10n("badMIMETypeIntro", "type", type)));
 				List<String> detail = e.details();
-				if(detail != null && !detail.isEmpty()) {
+				if (detail != null && ! detail.isEmpty()) {
 					OutputList list = new OutputList();
-					failedContent.addChild(list);
-					for(String s : detail)
+					failedContent.body.addChild(list);
+					for (String s : detail) {
 						list.addItem(s);
+					}
 				}
-				failedContent.addChild(new BlockText(l10n("mimeProblemFetchAnyway")));
+				failedContent.body.addChild(new BlockText(l10n("mimeProblemFetchAnyway")));
 				Collections.sort(getters, jobComparator);
 				if (advancedModeEnabled) {
-					failedContent.addChild(createRequestTable(pageMaker, ctx, getters, new QueueColumn[] { QueueColumn.IDENTIFIER, QueueColumn.FILENAME, QueueColumn.SIZE, QueueColumn.PERSISTENCE, QueueColumn.KEY }, priorityClasses, advancedModeEnabled, false, "failed-download-file-badmime", false, true, true, false, type));
+					failedContent.body.addChild(createRequestTable(pageMaker, ctx, getters,
+						new QueueColumn[]{QueueColumn.IDENTIFIER, QueueColumn.FILENAME,
+							QueueColumn.SIZE, QueueColumn.PERSISTENCE, QueueColumn.KEY},
+						priorityClasses, advancedModeEnabled, false,
+						"failed-download-file-badmime", false, true, true, false, type));
 				} else {
-					failedContent.addChild(createRequestTable(pageMaker, ctx, getters, new QueueColumn[] { QueueColumn.FILENAME, QueueColumn.SIZE, QueueColumn.KEY }, priorityClasses, advancedModeEnabled, false, "failed-download-file-badmime", false, true, true, false, type));
+					failedContent.body.addChild(createRequestTable(pageMaker, ctx, getters,
+						new QueueColumn[]{QueueColumn.FILENAME, QueueColumn.SIZE,
+							QueueColumn.KEY}, priorityClasses, advancedModeEnabled, false,
+						"failed-download-file-badmime", false, true, true, false, type));
 				}
 			}
 		}
 
-		if(!failedUnknownMIMEType.isEmpty()) {
-			String[] types = failedUnknownMIMEType.keySet().toArray(new String[failedUnknownMIMEType.size()]);
+		if (! failedUnknownMIMEType.isEmpty()) {
+			String[] types =
+				failedUnknownMIMEType.keySet().toArray(new String[failedUnknownMIMEType.size()]);
 			Arrays.sort(types);
-			for(String type : types) {
+			for (String type : types) {
 				LinkedList<DownloadRequestStatus> getters = failedUnknownMIMEType.get(type);
 				String atype = type.replace("-", "--").replace('/', '-');
-				contentNode.addChild(new Link(Link.linkType.ANCHOR, "failedDownload-unknowntype-"+atype));
-				HTMLNode failedContent = pageMaker.getInfobox("failed_requests", l10n("failedDUnknownMIME", new String[]{ "size", "type" }, new String[]{ String.valueOf(getters.size()), type }), contentNode, "download-failed-"+atype, false);
+				contentNode.addLink(Link.linkType.ANCHOR, "failedDownload-unknowntype-" + atype);
+				InfoboxWidget failedContent = contentNode.addInfobox(InfoboxWidget.Type
+					.FAILEDREQUESTS,
+					l10n("failedDUnknownMIME", new String[]{"size", "type"},
+						new String[]{String.valueOf(getters.size()), type}));
+				failedContent.addClass("failedDownload-unknowntype-" + atype);
 				// FIXME add a class for easier styling.
-				failedContent.addChild(new BlockText(NodeL10n.getBase().getString("UnknownContentTypeException.explanation", "type", type)));
-				failedContent.addChild(new BlockText(l10n("mimeProblemFetchAnyway")));
+				failedContent.body.addChild(new BlockText(NodeL10n.getBase()
+					.getString("UnknownContentTypeException.explanation", "type", type)));
+				failedContent.body.addChild(new BlockText(l10n("mimeProblemFetchAnyway")));
 				Collections.sort(getters, jobComparator);
 				if (advancedModeEnabled) {
-					failedContent.addChild(createRequestTable(pageMaker, ctx, getters, new QueueColumn[] { QueueColumn.IDENTIFIER, QueueColumn.FILENAME, QueueColumn.SIZE, QueueColumn.PERSISTENCE, QueueColumn.KEY }, priorityClasses, advancedModeEnabled, false, "failed-download-file-unknownmime", false, true, true, false, type));
+					failedContent.body.addChild(createRequestTable(pageMaker, ctx, getters,
+						new QueueColumn[]{QueueColumn.IDENTIFIER, QueueColumn.FILENAME,
+							QueueColumn.SIZE, QueueColumn.PERSISTENCE, QueueColumn.KEY},
+						priorityClasses, advancedModeEnabled, false,
+						"failed-download-file-unknownmime", false, true, true, false, type));
 				} else {
-					failedContent.addChild(createRequestTable(pageMaker, ctx, getters, new QueueColumn[] { QueueColumn.FILENAME, QueueColumn.SIZE, QueueColumn.KEY }, priorityClasses, advancedModeEnabled, false, "failed-download-file-unknownmime", false, true, true, false, type));
+					failedContent.body.addChild(createRequestTable(pageMaker, ctx, getters,
+						new QueueColumn[]{QueueColumn.FILENAME, QueueColumn.SIZE,
+							QueueColumn.KEY}, priorityClasses, advancedModeEnabled, false,
+						"failed-download-file-unknownmime", false, true, true, false, type));
 				}
 			}
-
 		}
 
-		if (!uncompletedDownload.isEmpty()) {
-			contentNode.addChild(new Link(Link.linkType.ANCHOR, HTMLID.UNCOMPLETEDDOWNLOAD));
-			HTMLNode uncompletedContent = pageMaker.getInfobox("requests_in_progress", l10n("wipD", new String[]{ "size" }, new String[]{ String.valueOf(uncompletedDownload.size()) }), contentNode, "download-progressing", false);
+		if (! uncompletedDownload.isEmpty()) {
+			contentNode.addLink(Link.linkType.ANCHOR, HTMLID.UNCOMPLETEDDOWNLOAD);
+			InfoboxWidget uncompletedContent =
+				contentNode.addInfobox(InfoboxWidget.Type.PROGRESSING, HTMLClass.DOWNLOADPROGRESSING,
+					l10n("wipD", new String[]{"size"},
+						new String[]{String.valueOf(uncompletedDownload.size())}));
 			if (advancedModeEnabled) {
-				uncompletedContent.addChild(createRequestTable(pageMaker, ctx, uncompletedDownload, new QueueColumn[] { QueueColumn.IDENTIFIER, QueueColumn.PRIORITY, QueueColumn.SIZE, QueueColumn.MIME_TYPE, QueueColumn.PROGRESS, QueueColumn.LAST_ACTIVITY, QueueColumn.PERSISTENCE, QueueColumn.FILENAME, QueueColumn.KEY, QueueColumn.COMPAT_MODE }, priorityClasses, advancedModeEnabled, false, "uncompleted-download", false, false));
+				uncompletedContent.body.addChild(createRequestTable(pageMaker, ctx,
+					uncompletedDownload,
+					new QueueColumn[]{QueueColumn.IDENTIFIER, QueueColumn.PRIORITY,
+						QueueColumn.SIZE, QueueColumn.MIME_TYPE, QueueColumn.PROGRESS,
+						QueueColumn.LAST_ACTIVITY, QueueColumn.PERSISTENCE,
+						QueueColumn.FILENAME, QueueColumn.KEY, QueueColumn.COMPAT_MODE},
+					priorityClasses, advancedModeEnabled, false, "uncompleted-download", false,
+					false));
 			} else {
-				uncompletedContent.addChild(createRequestTable(pageMaker, ctx, uncompletedDownload, new QueueColumn[] { QueueColumn.SIZE, QueueColumn.PROGRESS, QueueColumn.LAST_ACTIVITY, QueueColumn.KEY }, priorityClasses, advancedModeEnabled, false, "uncompleted-download", false, false));
+				uncompletedContent.body.addChild(createRequestTable(pageMaker, ctx,
+					uncompletedDownload,
+					new QueueColumn[]{QueueColumn.SIZE, QueueColumn.PROGRESS,
+						QueueColumn.LAST_ACTIVITY, QueueColumn.KEY}, priorityClasses,
+					advancedModeEnabled, false, "uncompleted-download", false, false));
 			}
 		}
 
-		if (!uncompletedUpload.isEmpty()) {
-			contentNode.addChild(new Link(Link.linkType.ANCHOR, HTMLID.UNCOMPLETEDUPLOAD));
-			HTMLNode uncompletedContent = pageMaker.getInfobox("requests_in_progress", l10n("wipU", new String[]{ "size" }, new String[]{ String.valueOf(uncompletedUpload.size()) }), contentNode, "upload-progressing", false);
+		if (! uncompletedUpload.isEmpty()) {
+			contentNode.addLink(Link.linkType.ANCHOR, HTMLID.UNCOMPLETEDUPLOAD);
+			InfoboxWidget uncompletedContent =
+				contentNode.addInfobox(InfoboxWidget.Type.PROGRESSING, HTMLClass.UPLOADPROGRESSING,
+					l10n("wipU", new String[]{"size"},
+						new String[]{String.valueOf(uncompletedUpload.size())}));
+			uncompletedContent.addClass(HTMLClass.DOWNLOADPROGRESSING);
 			if (advancedModeEnabled) {
-				uncompletedContent.addChild(createRequestTable(pageMaker, ctx, uncompletedUpload, new QueueColumn[] { QueueColumn.IDENTIFIER, QueueColumn.PRIORITY, QueueColumn.SIZE, QueueColumn.MIME_TYPE, QueueColumn.PROGRESS, QueueColumn.LAST_ACTIVITY, QueueColumn.PERSISTENCE, QueueColumn.FILENAME, QueueColumn.KEY }, priorityClasses, advancedModeEnabled, true, "uncompleted-upload-file", false, false));
+				uncompletedContent.body.addChild(createRequestTable(pageMaker, ctx, uncompletedUpload,
+					new QueueColumn[]{QueueColumn.IDENTIFIER, QueueColumn.PRIORITY,
+						QueueColumn.SIZE, QueueColumn.MIME_TYPE, QueueColumn.PROGRESS,
+						QueueColumn.LAST_ACTIVITY, QueueColumn.PERSISTENCE,
+						QueueColumn.FILENAME, QueueColumn.KEY}, priorityClasses,
+					advancedModeEnabled, true, "uncompleted-upload-file", false, false));
 			} else {
-				uncompletedContent.addChild(createRequestTable(pageMaker, ctx, uncompletedUpload, new QueueColumn[] { QueueColumn.FILENAME, QueueColumn.SIZE, QueueColumn.PROGRESS, QueueColumn.LAST_ACTIVITY, QueueColumn.KEY }, priorityClasses, advancedModeEnabled, true, "uncompleted-upload-file", false, false));
+				uncompletedContent.body.addChild(createRequestTable(pageMaker, ctx, uncompletedUpload,
+					new QueueColumn[]{QueueColumn.FILENAME, QueueColumn.SIZE,
+						QueueColumn.PROGRESS,
+						QueueColumn.LAST_ACTIVITY, QueueColumn.KEY}, priorityClasses,
+					advancedModeEnabled, true, "uncompleted-upload-file", false, false));
 			}
 		}
 
-		if (!uncompletedDirUpload.isEmpty()) {
-			contentNode.addChild(new Link(Link.linkType.ANCHOR, HTMLID.UNCOMPLETEDDIRUPLOAD));
-			HTMLNode uncompletedContent = pageMaker.getInfobox("requests_in_progress", l10n("wipDU", new String[]{ "size" }, new String[]{ String.valueOf(uncompletedDirUpload.size()) }), contentNode, "download-progressing upload-progressing", false);
+		if (! uncompletedDirUpload.isEmpty()) {
+			contentNode.addLink(Link.linkType.ANCHOR, HTMLID.UNCOMPLETEDDIRUPLOAD);
+			InfoboxWidget uncompletedContent =
+				contentNode.addInfobox(InfoboxWidget.Type.PROGRESSING, HTMLClass.DOWNLOADPROGRESSING,
+					l10n("wipDU", new String[]{"size"},
+						new String[]{String.valueOf(uncompletedDirUpload.size())}));
 			if (advancedModeEnabled) {
-				uncompletedContent.addChild(createRequestTable(pageMaker, ctx, uncompletedDirUpload, new QueueColumn[] { QueueColumn.IDENTIFIER, QueueColumn.FILES, QueueColumn.PRIORITY, QueueColumn.TOTAL_SIZE, QueueColumn.PROGRESS, QueueColumn.LAST_ACTIVITY, QueueColumn.PERSISTENCE, QueueColumn.KEY }, priorityClasses, advancedModeEnabled, true, "uncompleted-upload-dir", false, false));
+				uncompletedContent.body.addChild(
+					createRequestTable(pageMaker, ctx, uncompletedDirUpload,
+						new QueueColumn[]{QueueColumn.IDENTIFIER, QueueColumn.FILES,
+							QueueColumn.PRIORITY, QueueColumn.TOTAL_SIZE,
+							QueueColumn.PROGRESS, QueueColumn.LAST_ACTIVITY,
+							QueueColumn.PERSISTENCE, QueueColumn.KEY}, priorityClasses,
+						advancedModeEnabled, true, "uncompleted-upload-dir", false, false));
 			} else {
-				uncompletedContent.addChild(createRequestTable(pageMaker, ctx, uncompletedDirUpload, new QueueColumn[] { QueueColumn.FILES, QueueColumn.TOTAL_SIZE, QueueColumn.PROGRESS, QueueColumn.LAST_ACTIVITY, QueueColumn.KEY }, priorityClasses, advancedModeEnabled, true, "uncompleted-upload-dir", false, false));
+				uncompletedContent.body.addChild(
+					createRequestTable(pageMaker, ctx, uncompletedDirUpload,
+						new QueueColumn[]{QueueColumn.FILES, QueueColumn.TOTAL_SIZE,
+							QueueColumn.PROGRESS, QueueColumn.LAST_ACTIVITY,
+							QueueColumn.KEY}, priorityClasses, advancedModeEnabled, true,
+						"uncompleted-upload-dir", false, false));
 			}
 		}
 
