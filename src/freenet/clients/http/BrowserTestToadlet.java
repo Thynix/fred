@@ -1,12 +1,8 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
-import freenet.clients.http.uielements.Box;
-import freenet.clients.http.uielements.Category;
-import freenet.clients.http.uielements.Identifier;
-import freenet.clients.http.uielements.InfoboxWidget;
+import freenet.clients.http.uielements.*;
 import freenet.node.NodeClientCore;
-import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
 
 import java.io.IOException;
@@ -26,7 +22,7 @@ public class BrowserTestToadlet extends Toadlet {
 		super(client);
 		this.core=c;
 	}
-	
+
 	final NodeClientCore core;
 	final static String imgWarningMime = 
 		"R0lGODdh1AE8AOf9AAABAAcAAAkBAAoDARAAAQcECRYAAxoCAB4BACIBARMK" +
@@ -180,43 +176,47 @@ public class BrowserTestToadlet extends Toadlet {
 		"lLzEM0899+SzTz9pdCRQQQclNNBIInGEEUYSVURRRxVRJFFEC6VU0EH+xDRT" +
 		"TTfltFP4CgA1VFFFraqAAAIANUIAYJzwRFRHhRVWT2eltVZbb8U1V1135bVX" +
 		"X38FNlhhhyW2WGOPRTZZZbEMCAA7====";
-	
-	public void handleMethodGET(URI uri, HTTPRequest request, ToadletContext ctx) throws ToadletContextClosedException, IOException {
-		// Yes, we need that in order to test the browser (number of connections per server)
-		if (request.isParameterSet("wontload")) return;
-		else if (request.isParameterSet("mimeTest")){
-			this.writeHTMLReply(ctx, 200, "OK", imgWarningMime);
-			return;		
-		}
-		
-		PageNode page = ctx.getPageMaker().getPageNode("Freenet browser testing tool", ctx);
-		HTMLNode pageNode = page.outer;
-		HTMLNode contentNode = page.content;
-		
-		if(ctx.isAllowedFullAccess())
-			contentNode.addChild(core.alerts.createSummary());
-		
-		// #### Test MIME inline
-		contentNode.addInfobox(InfoboxWidget.Type.WARNING, Category.MIMEINLINETEST, "MIME Inline").
-			addChild("img", new String[]{"src", "alt"}, new String[]{"?mimeTest", "Your browser is probably safe."});
-		
-		// #### Test whether we can have more than 10 simultaneous connections to fproxy
-		
-		InfoboxWidget maxConnectionsPerServer = new InfoboxWidget(InfoboxWidget.Type.WARNING, Category.BROWSERECONNECTIONS, "Number of connections");
-		contentNode.addInfobox(maxConnectionsPerServer);
-		maxConnectionsPerServer.body.addText("If you do not see a green picture below, your browser is probably missconfigured! Ensure it allows more than 10 connections per server.");
-		for(int i = 0; i < 10 ; i++)
-			maxConnectionsPerServer.body.addChild("img", "src", ".?wontload");
-		maxConnectionsPerServer.body.addChild("img", new String[]{"src", "alt"}, new String[]{"/static/themes/clean/success.gif", "fail!"});
 
+	public void handleMethodGET(URI uri, HTTPRequest request, ToadletContext ctx)
+		throws ToadletContextClosedException, IOException {
+		// Yes, we need that in order to test the browser (number of connections per server)
+		if (request.isParameterSet("wontload")) {
+			return;
+		} else if (request.isParameterSet("mimeTest")) {
+			this.writeHTMLReply(ctx, 200, "OK", imgWarningMime);
+			return;
+		}
+		Page testPage = ctx.getPageMaker().getPage("Freenet browser testing tool", ctx);
+		if (ctx.isAllowedFullAccess()) {
+			testPage.content.addChild(core.alerts.createSummary());
+		}
+		// #### Test MIME inline
+		testPage.content.addInfobox(InfoboxWidget.Type.WARNING, Category.MIMEINLINETEST, "MIME Inline").
+			addChild("img", new String[]{"src", "alt"},
+				new String[]{"?mimeTest", "Your browser is probably safe."});
+		// #### Test whether we can have more than 10 simultaneous connections to fproxy
+		InfoboxWidget maxConnectionsPerServer =
+			new InfoboxWidget(InfoboxWidget.Type.WARNING, Category.BROWSERECONNECTIONS,
+				"Number of connections");
+		testPage.content.addInfobox(maxConnectionsPerServer);
+		maxConnectionsPerServer.body.addText(
+			"If you do not see a green picture below, your browser is probably missconfigured! Ensure " +
+				"it allows more than 10 connections per server.");
+		for (int i = 0; i < 10; i++) {
+			maxConnectionsPerServer.body.addChild("img", "src", ".?wontload");
+		}
+		maxConnectionsPerServer.body.addChild("img", new String[]{"src", "alt"},
+			new String[]{"/static/themes/clean/success.gif", "fail!"});
 		// #### Test whether JS is available. : should do the test with pictures instead!
-		InfoboxWidget jsTestContent = new InfoboxWidget(InfoboxWidget.Type.WARNING, Identifier.JAVASCRIPTTEST, "Javascript");
-		contentNode.addInfobox(jsTestContent);
+		InfoboxWidget jsTestContent =
+			new InfoboxWidget(InfoboxWidget.Type.WARNING, Identifier.JAVASCRIPTTEST, "Javascript");
+		testPage.content.addInfobox(jsTestContent);
 		Box jsTest = jsTestContent.addBox();
-		jsTest.addChild("img", new String[]{"id", "src", "alt"}, new String[]{"JSTEST", "/static/themes/clean/success.gif", "fail!"});
-		jsTest.addChild("script", "type", "text/javascript").addChild("%", "document.getElementById('JSTEST').src = '/static/themes/clean/warning.gif';");
-		
-		this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
+		jsTest.addChild("img", new String[]{"id", "src", "alt"},
+			new String[]{"JSTEST", "/static/themes/clean/success.gif", "fail!"});
+		jsTest.addChild("script", "type", "text/javascript")
+			.addChild("%", "document.getElementById('JSTEST').src = '/static/themes/clean/warning.gif';");
+		this.writeHTMLReply(ctx, 200, "OK", testPage.generate());
 	}
 
 	@Override

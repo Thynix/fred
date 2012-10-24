@@ -190,47 +190,40 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 
 		// User requested reset to defaults, so present confirmation page.
 		if (request.isPartSet("confirm-reset-to-defaults")) {
-			PageNode page = ctx.getPageMaker().getPageNode(
-					l10n("confirmResetTitle"), ctx);
-			HTMLNode pageNode = page.outer;
-			HTMLNode contentNode = page.content;
-
-			InfoboxWidget ResetWarning = new InfoboxWidget(InfoboxWidget.Type.WARNING, Identifier.RESETCONFIRM, l10n("confirmResetTitle"));
-			contentNode.addInfobox(ResetWarning);
+			Page confirmDefaults = ctx.getPageMaker().getPage(l10n("confirmResetTitle"), ctx);
+			InfoboxWidget ResetWarning = confirmDefaults
+				.addInfobox(InfoboxWidget.Type.WARNING, Identifier.RESETCONFIRM,
+					l10n("confirmResetTitle"));
 			ResetWarning.body.addText(l10n("confirmReset"));
-
 			HTMLNode formNode = ctx.addFormChild(ResetWarning.body, path(), "yes-button");
 			String subconfig = request.getPartAsStringFailsafe("subconfig",
-					MAX_PARAM_VALUE_SIZE);
+				MAX_PARAM_VALUE_SIZE);
 			formNode.addChild("input",
-					new String[] { "type", "name", "value" }, new String[] {
-							"hidden", "subconfig", subconfig });
-
+				new String[]{"type", "name", "value"}, new String[]{
+				"hidden", "subconfig", subconfig});
 			// Persist visible fields so that they are reset to default or
 			// unsaved changes are persisted.
 			for (String part : request.getParts()) {
 				if (part.startsWith(subconfig)) {
 					formNode.addChild(
-							"input",
-							new String[] { "type", "name", "value" },
-							new String[] {
-									"hidden",
-									part,
-									request.getPartAsStringFailsafe(part,
-											MAX_PARAM_VALUE_SIZE) });
+						"input",
+						new String[]{"type", "name", "value"},
+						new String[]{
+							"hidden",
+							part,
+							request.getPartAsStringFailsafe(part,
+								MAX_PARAM_VALUE_SIZE)});
 				}
 			}
-
 			formNode.addChild("input",
-					new String[] { "type", "name", "value" }, new String[] {
-							"submit", "reset-to-defaults",
-							NodeL10n.getBase().getString("Toadlet.yes") });
-
+				new String[]{"type", "name", "value"}, new String[]{
+				"submit", "reset-to-defaults",
+				NodeL10n.getBase().getString("Toadlet.yes")});
 			formNode.addChild("input",
-					new String[] { "type", "name", "value" }, new String[] {
-							"submit", "decline-default-reset",
-							NodeL10n.getBase().getString("Toadlet.no") });
-			writeHTMLReply(ctx, 200, "OK", pageNode.generate());
+				new String[]{"type", "name", "value"}, new String[]{
+				"submit", "decline-default-reset",
+				NodeL10n.getBase().getString("Toadlet.no")});
+			writeHTMLReply(ctx, 200, "OK", confirmDefaults.generate());
 			return;
 		}
 
@@ -354,54 +347,48 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 				WrapperConfig.setWrapperProperty(wrapperConfigName, value);
 			}
 		}
-
-		config.store();
-
-		PageNode page = ctx.getPageMaker().getPageNode(l10n("appliedTitle"),
-				ctx);
-		HTMLNode pageNode = page.outer;
-		HTMLNode contentNode = page.content;
-
+ 		config.store();
+		Page configAppliedPage = ctx.getPageMaker().getPage(l10n("appliedTitle"), ctx);
 		if (errbuf.length() == 0) {
-			InfoboxWidget ConfigurationApplied = new InfoboxWidget(InfoboxWidget.Type.SUCCESS, Identifier.CONFIGURATIONAPPLIED, l10n("appliedTitle"));
-			contentNode.addInfobox(ConfigurationApplied);
-			ConfigurationApplied.body.addText(l10n("appliedSuccess"));
-
+			InfoboxWidget successMessage = configAppliedPage.content
+				.addInfobox(InfoboxWidget.Type.SUCCESS, Identifier.CONFIGURATIONAPPLIED,
+					l10n("appliedTitle"));
+			successMessage.body.addText(l10n("appliedSuccess"));
 			if (needRestart) {
-				ConfigurationApplied.body.addLineBreak();
-				ConfigurationApplied.body.addText(l10n("needRestart"));
-
+				successMessage.body.addLineBreak();
+				successMessage.body.addText(l10n("needRestart"));
 				if (node.isUsingWrapper()) {
-					ConfigurationApplied.body.addLineBreak();
-					HTMLNode restartForm = ctx.addFormChild(ConfigurationApplied.body, "/",
-							"restartForm");
+					successMessage.body.addLineBreak();
+					HTMLNode restartForm = ctx.addFormChild(successMessage.body, "/",
+						"restartForm");
 					restartForm.addChild("input",//
-							new String[] { "type", "name" },//
-							new String[] { "hidden", "restart" });
+						new String[]{"type", "name"},//
+						new String[]{"hidden", "restart"});
 					restartForm.addChild("input", //
-							new String[] { "type", "name", "value" },//
-							new String[] { "submit", "restart2",//
-									l10n("restartNode") });
+						new String[]{"type", "name", "value"},//
+						new String[]{"submit", "restart2",//
+							l10n("restartNode")});
 				}
-
 				if (needRestartUserAlert == null) {
 					needRestartUserAlert = new NeedRestartUserAlert();
 					node.clientCore.alerts.register(needRestartUserAlert);
 				}
 			}
 		} else {
-			InfoboxWidget ConfigurationFailed = new InfoboxWidget(InfoboxWidget.Type.ERROR, Identifier.CONFIGURATIONERROR, l10n("appliedFailureTitle"));
-			contentNode.addInfobox(ConfigurationFailed);
-			ConfigurationFailed.body.addText(l10n("appliedFailureExceptions"));
-			ConfigurationFailed.body.addLineBreak();
-			ConfigurationFailed.body.addText(errbuf.toString());
+			InfoboxWidget failedMessage = configAppliedPage.content
+				.addInfobox(InfoboxWidget.Type.ERROR, Identifier.CONFIGURATIONERROR,
+					l10n("appliedFailureTitle"));
+			failedMessage.body.addText(l10n("appliedFailureExceptions"));
+			failedMessage.body.addLineBreak();
+			failedMessage.body.addText(errbuf.toString());
 		}
-		InfoboxWidget ConfigurationPossibilities = new InfoboxWidget(InfoboxWidget.Type.NORMAL, Category.CONFIGURATIONPOSSIBILITIES, l10n("possibilitiesTitle"));
-		contentNode.addInfobox(ConfigurationPossibilities);
-		ConfigurationPossibilities.body.addChild(new Link(path(), l10n("shortTitle"), l10n("returnToNodeConfig")));
-		ConfigurationPossibilities.body.addLineBreak();
-		addHomepageLink(ConfigurationPossibilities.body);
-		writeHTMLReply(ctx, 200, "OK", pageNode.generate());
+		InfoboxWidget destinationMessage = configAppliedPage.content
+			.addInfobox(InfoboxWidget.Type.NORMAL, Category.CONFIGURATIONPOSSIBILITIES,
+				l10n("possibilitiesTitle"));
+		destinationMessage.body.addLink(path(), l10n("shortTitle"), l10n("returnToNodeConfig"));
+		destinationMessage.body.addLineBreak();
+		addHomepageLink(destinationMessage.body);
+		writeHTMLReply(ctx, 200, "OK", configAppliedPage.generate());
 	}
 
 	private static String l10n(String string) {
@@ -409,49 +396,40 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 	}
 
 	public void handleMethodGET(URI uri, HTTPRequest req, ToadletContext ctx)
-			throws ToadletContextClosedException, IOException {
-
-		if (!ctx.isAllowedFullAccess()) {
+		throws ToadletContextClosedException, IOException {
+		if (! ctx.isAllowedFullAccess()) {
 			super.sendErrorPage(ctx, 403,
-					NodeL10n.getBase().getString("Toadlet.unauthorizedTitle"),
-					NodeL10n.getBase().getString("Toadlet.unauthorized"));
+				NodeL10n.getBase().getString("Toadlet.unauthorizedTitle"),
+				NodeL10n.getBase().getString("Toadlet.unauthorized"));
 			return;
 		}
-
 		boolean advancedModeEnabled = ctx.getContainer()
-				.isAdvancedModeEnabled();
-
-		PageNode page = ctx.getPageMaker().getPageNode(
-				NodeL10n.getBase().getString("ConfigToadlet.fullTitle"), ctx);
-		HTMLNode pageNode = page.outer;
-		HTMLNode contentNode = page.content;
-
-		contentNode.addChild(core.alerts.createSummary());
-
+			.isAdvancedModeEnabled();
+		Page configPage = ctx.getPageMaker().getPage(NodeL10n.getBase().getString("ConfigToadlet.fullTitle"),
+			ctx);
+		configPage.content.addChild(core.alerts.createSummary());
 		InfoboxWidget configformcontainer = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10n("title"));
-		contentNode.addChild(configformcontainer);
+		configPage.content.addChild(configformcontainer);
 		HTMLNode formNode = ctx.addFormChild(configformcontainer.body, path(), "configForm");
-
 		// Invisible apply button at the top so that an enter keypress will
 		// apply settings instead of
 		// going to a directory browser if present.
-		formNode.addChild("input", new String[] { "type", "value", "class" },
-				new String[] { "submit", l10n("apply"), "invisible" });
-
+		formNode.addChild("input", new String[]{"type", "value", "class"},
+			new String[]{"submit", l10n("apply"), "invisible"});
 		/*
 		 * Special case: present an option for the wrapper's maximum memory
 		 * under Core configuration, provided the maximum memory property is
 		 * defined. (the wrapper is being used)
 		 */
 		if (subConfig.getPrefix().equals("node")
-				&& WrapperConfig.canChangeProperties()) {
+			&& WrapperConfig.canChangeProperties()) {
 			String configName = "wrapper.java.maxmemory";
 			String curValue = WrapperConfig.getWrapperProperty(configName);
 			// If persisted from directory browser, override. This is a POST
 			// HTTPRequest.
 			if (req.isPartSet(configName)) {
 				curValue = req.getPartAsStringFailsafe(configName,
-						MAX_PARAM_VALUE_SIZE);
+					MAX_PARAM_VALUE_SIZE);
 			}
 			if (curValue != null) {
 				formNode.addChild(new Box(Category.CONFIGPREFIX, l10n("wrapper")));
@@ -464,176 +442,164 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 				String defaultValue = "256";
 				configOption.addInlineBox(Category.CONFIGSHORTDESC,
 					NodeL10n.getBase().getString("ConfigToadlet.defaultIs",
-						new String[] { "default" },
-						new String[] { defaultValue })).addChild(
-							NodeL10n.getBase().getHTMLNode(
-								"WrapperConfig." + configName + ".short"));
-								configOption.addInlineBox(Category.CONFIG)
-							.addChild(
-								"input",
-								new String[] { "type", "class", "name", "value" },
-								new String[] { "text", "config", configName,
-										curValue });
+						new String[]{"default"},
+						new String[]{defaultValue})).addChild(
+					NodeL10n.getBase().getHTMLNode(
+						"WrapperConfig." + configName + ".short"));
+				configOption.addInlineBox(Category.CONFIG)
+					.addChild(
+						"input",
+						new String[]{"type", "class", "name", "value"},
+						new String[]{"text", "config", configName,
+							curValue});
 				configOption.addInlineBox(Category.CONFIGLONGDESC).addChild(
-						NodeL10n.getBase().getHTMLNode(
-								"WrapperConfig." + configName + ".long"));
+					NodeL10n.getBase().getHTMLNode(
+						"WrapperConfig." + configName + ".long"));
 			}
 		}
-
 		short displayedConfigElements = 0;
 		OutputList configGroupUlNode = new OutputList(Category.CONFIG);
-
 		String overriddenOption = null;
 		String overriddenValue = null;
-
 		// A value changed by the directory selector takes precedence.
 		if (req.isPartSet("select-for")
-				&& req.isPartSet(LocalFileBrowserToadlet.selectDir)) {
+			&& req.isPartSet(LocalFileBrowserToadlet.selectDir)) {
 			overriddenOption = req.getPartAsStringFailsafe("select-for",
-					MAX_PARAM_VALUE_SIZE);
+				MAX_PARAM_VALUE_SIZE);
 			overriddenValue = req.getPartAsStringFailsafe("filename",
-					MAX_PARAM_VALUE_SIZE);
+				MAX_PARAM_VALUE_SIZE);
 		}
-
 		/*
 		 * Present all other options for this subconfig.
 		 */
 		for (Option<?> o : subConfig.getOptions()) {
-			if (!((!advancedModeEnabled) && o.isExpert())) {
+			if (! ((! advancedModeEnabled) && o.isExpert())) {
 				displayedConfigElements++;
 				String configName = o.getName();
 				String fullName = subConfig.getPrefix() + '.' + configName;
 				String value = o.getValueString();
-
 				if (value == null) {
 					Logger.error(this, fullName
-							+ "has returned null from config!);");
+						+ "has returned null from config!);");
 					continue;
 				}
-
 				ConfigCallback<?> callback = o.getCallback();
-
 				final OptionType optionType;
 				if (callback instanceof EnumerableOptionCallback) {
 					optionType = OptionType.DROP_DOWN;
 				} else if (callback instanceof BooleanCallback) {
 					optionType = OptionType.BOOLEAN;
 				} else if (callback instanceof ProgramDirectory.DirectoryCallback
-						&& !callback.isReadOnly()) {
+					&& ! callback.isReadOnly()) {
 					optionType = OptionType.DIRECTORY;
-				} else if (!callback.isReadOnly()) {
+				} else if (! callback.isReadOnly()) {
 					optionType = OptionType.TEXT;
-				} else /* if (callback.isReadOnly()) */{
+				} else /* if (callback.isReadOnly()) */ {
 					optionType = OptionType.TEXT_READ_ONLY;
 				}
-
 				// If ConfigToadlet is serving a plugin, ask the plugin to
 				// translate the
 				// config descriptions, otherwise use the node's BaseL10n
 				// instance like
 				// normal.
 				HTMLNode shortDesc = (plugin == null) ? NodeL10n.getBase()
-						.getHTMLNode(o.getShortDesc()) : new Text(
-						plugin.getString(o.getShortDesc()));
+					.getHTMLNode(o.getShortDesc()) : new Text(
+					plugin.getString(o.getShortDesc()));
 				HTMLNode longDesc = (plugin == null) ? NodeL10n.getBase()
-						.getHTMLNode(o.getLongDesc()) : new Text(
-						plugin.getString(o.getLongDesc()));
-
+					.getHTMLNode(o.getLongDesc()) : new Text(
+					plugin.getString(o.getLongDesc()));
 				Item configItemNode = configGroupUlNode.addItem();
 				String defaultValue;
 				if (callback instanceof BooleanCallback) {
 					// Only case where values are localised.
 					defaultValue = l10n(Boolean
-							.toString(Boolean.valueOf(value)));
+						.toString(Boolean.valueOf(value)));
 				} else {
 					defaultValue = o.getDefault();
 				}
-
 				configItemNode.addAttribute("class", optionType.cssClass);
 				configItemNode
-						.addChild(new Link(Link.Type.ANCHOR, configName, configName ))
-						.addChild(new InlineBox(Category.CONFIGSHORTDESC,
-							NodeL10n.getBase().getString(
-								"ConfigToadlet.defaultIs",
-								new String[]{"default"},
-								new String[]{defaultValue})
-								+ (advancedModeEnabled ? " ["
-								+ fullName + ']' : "")))
-							.addChild(shortDesc);
+					.addChild(new Link(Link.Type.ANCHOR, configName, configName))
+					.addChild(new InlineBox(Category.CONFIGSHORTDESC,
+						NodeL10n.getBase().getString(
+							"ConfigToadlet.defaultIs",
+							new String[]{"default"},
+							new String[]{defaultValue})
+							+ (advancedModeEnabled ? " ["
+							+ fullName + ']' : "")))
+					.addChild(shortDesc);
 				InlineBox configItemValueNode = configItemNode.addInlineBox(Category.CONFIG);
-
 				// Values persisted through browser or backing down from
 				// resetting to defaults
 				// override the currently applied ones.
 				if (req.isPartSet(fullName)) {
 					value = req.getPartAsStringFailsafe(fullName,
-							MAX_PARAM_VALUE_SIZE);
+						MAX_PARAM_VALUE_SIZE);
 				}
 				if (overriddenOption != null
-						&& overriddenOption.equals(fullName))
+					&& overriddenOption.equals(fullName)) {
 					value = overriddenValue;
+				}
 				switch (optionType) {
-				case DROP_DOWN:
-					configItemValueNode.addChild(addComboBox(value,
+					case DROP_DOWN:
+						configItemValueNode.addChild(addComboBox(value,
 							(EnumerableOptionCallback) callback, fullName,
 							callback.isReadOnly()));
-					break;
-				case BOOLEAN:
-					configItemValueNode.addChild(addBooleanComboBox(
+						break;
+					case BOOLEAN:
+						configItemValueNode.addChild(addBooleanComboBox(
 							Boolean.valueOf(value), fullName,
 							callback.isReadOnly()));
-					break;
-				case DIRECTORY:
-					configItemValueNode.addChild(addTextBox(value, fullName, o,
+						break;
+					case DIRECTORY:
+						configItemValueNode.addChild(addTextBox(value, fullName, o,
 							false));
-					configItemValueNode.addChild(
+						configItemValueNode.addChild(
 							"input",
-							new String[] { "type", "name", "value" },
-							new String[] {
-									"submit",
-									"select-directory." + fullName,
-									NodeL10n.getBase().getString(
-											"QueueToadlet.browseToChange") });
-					break;
-				case TEXT_READ_ONLY:
-					configItemValueNode.addChild(addTextBox(value, fullName, o,
+							new String[]{"type", "name", "value"},
+							new String[]{
+								"submit",
+								"select-directory." + fullName,
+								NodeL10n.getBase().getString(
+									"QueueToadlet.browseToChange")});
+						break;
+					case TEXT_READ_ONLY:
+						configItemValueNode.addChild(addTextBox(value, fullName, o,
 							true));
-					break;
-				case TEXT:
-					configItemValueNode.addChild(addTextBox(value, fullName, o,
+						break;
+					case TEXT:
+						configItemValueNode.addChild(addTextBox(value, fullName, o,
 							false));
-					break;
+						break;
 				}
 				configItemNode.addInlineBox(Category.CONFIGLONGDESC).addChild(longDesc);
 			}
 		}
-
 		if (displayedConfigElements > 0) {
-			formNode.addChild(new Box(Category.CONFIGPREFIX, (plugin == null) ? l10n(subConfig.getPrefix())
+			formNode.addChild(new Box(Category.CONFIGPREFIX, (plugin == null) ? l10n(subConfig
+				.getPrefix())
 				: plugin.getString(subConfig.getPrefix())));
 			formNode.addChild("a", "id", subConfig.getPrefix());
 			formNode.addChild(configGroupUlNode);
 		}
-
-		formNode.addChild("input", new String[] { "type", "value" },
-				new String[] { "submit", l10n("apply") });
-		formNode.addChild("input", new String[] { "type", "value" },
-				new String[] { "reset", l10n("undo") });
-		formNode.addChild("input", new String[] { "type", "name", "value" },
-				new String[] { "hidden", "subconfig", subConfig.getPrefix() });
+		formNode.addChild("input", new String[]{"type", "value"},
+			new String[]{"submit", l10n("apply")});
+		formNode.addChild("input", new String[]{"type", "value"},
+			new String[]{"reset", l10n("undo")});
+		formNode.addChild("input", new String[]{"type", "name", "value"},
+			new String[]{"hidden", "subconfig", subConfig.getPrefix()});
 		// 'Node' prefix options should not be reset to defaults as it is a,
 		// quoting Toad, "very bad idea".
 		// Options whose defaults are not wise to apply include the location of
 		// the master keys file,
 		// the Darknet port number, and the datastore size.
-		if (!subConfig.getPrefix().equals("node")) {
+		if (! subConfig.getPrefix().equals("node")) {
 			formNode.addChild("input",
-					new String[] { "type", "name", "value" }, new String[] {
-							"submit", "confirm-reset-to-defaults",
-							l10n("resetToDefaults") });
+				new String[]{"type", "name", "value"}, new String[]{
+				"submit", "confirm-reset-to-defaults",
+				l10n("resetToDefaults")});
 		}
-
-		this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
+		this.writeHTMLReply(ctx, 200, "OK", configPage.generate());
 	}
 
 	/**
