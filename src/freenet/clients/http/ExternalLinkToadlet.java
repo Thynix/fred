@@ -4,6 +4,7 @@ import freenet.client.HighLevelSimpleClient;
 import freenet.clients.http.PageMaker.RenderParameters;
 import freenet.clients.http.uielements.Identifier;
 import freenet.clients.http.uielements.InfoboxWidget;
+import freenet.clients.http.uielements.Page;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
 import freenet.node.NodeClientCore;
@@ -58,8 +59,8 @@ public class ExternalLinkToadlet extends Toadlet {
 		ctx.sendReplyHeaders(302, "Found", headers, null, 0);
 	}
 
-	public void handleMethodGET(URI uri, HTTPRequest request, ToadletContext ctx) throws ToadletContextClosedException, IOException {
-
+	public void handleMethodGET(URI uri, HTTPRequest request, ToadletContext ctx)
+		throws ToadletContextClosedException, IOException {
 		//Unexpected: a URL should have been specified.
 		if (request.getParam(magicHTTPEscapeString).isEmpty()) {
 			MultiValueTable<String, String> headers = new MultiValueTable<String, String>();
@@ -67,16 +68,16 @@ public class ExternalLinkToadlet extends Toadlet {
 			ctx.sendReplyHeaders(302, "Found", headers, null, 0);
 			return;
 		}
-
 		//Confirm whether the user really means to access an HTTP link.
 		//Only render status and navigation bars if the user has completed the wizard.
 		boolean renderBars = node.clientCore.getToadletContainer().fproxyHasCompletedWizard();
-		PageNode page = ctx.getPageMaker().getPageNode(l10n("confirmExternalLinkTitle"), ctx, new RenderParameters().renderNavigationLinks(renderBars).renderStatus(renderBars));
-		HTMLNode pageNode = page.outer;
-		HTMLNode contentNode = page.content;
-		InfoboxWidget ExternalLinkWarning = new InfoboxWidget(InfoboxWidget.Type.WARNING, Identifier.CONFIRMEXTERNALLINK, l10n("confirmExternalLinkSubTitle"));
-		contentNode.addInfobox(ExternalLinkWarning);
-		HTMLNode externalLinkForm = ctx.addFormChild(ExternalLinkWarning.body, PATH, "confirmExternalLinkForm");
+		Page externalLinkPage = ctx.getPageMaker().getPage(l10n("confirmExternalLinkTitle"), ctx,
+			new RenderParameters().renderNavigationLinks(renderBars).renderStatus(renderBars));
+		InfoboxWidget ExternalLinkWarning = externalLinkPage.content
+			.addInfobox(InfoboxWidget.Type.WARNING, Identifier.CONFIRMEXTERNALLINK,
+				l10n("confirmExternalLinkSubTitle"));
+		HTMLNode externalLinkForm = ctx.addFormChild(ExternalLinkWarning.body, PATH,
+			"confirmExternalLinkForm");
 		final String target = request.getParam(magicHTTPEscapeString);
 		externalLinkForm.addText(l10n("confirmExternalLinkWithURL", "url", target));
 		externalLinkForm.addLineBreak();
@@ -89,7 +90,7 @@ public class ExternalLinkToadlet extends Toadlet {
 		externalLinkForm.addChild("input",
 			new String[]{"type", "name", "value"},
 			new String[]{"submit", "Go", l10n("goToExternalLink")});
-		this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
+		this.writeHTMLReply(ctx, 200, "OK", externalLinkPage.generate());
 	}
 
 	/**
