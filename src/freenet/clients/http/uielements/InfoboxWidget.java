@@ -1,7 +1,5 @@
 package freenet.clients.http.uielements;
 
-import freenet.support.HTMLNode;
-
 public class InfoboxWidget extends Box {
 
 	public Box header;
@@ -85,8 +83,10 @@ public class InfoboxWidget extends Box {
 		header.setContent(title);
 	}
 
-	public HTMLNode addContentNode() {
-		return this.addChild(new Box(Category.INFOBOXCONTENT));
+	public Box addContentNode() {
+		Box newContentNode = new Box(Category.INFOBOXCONTENT);
+		this.addChild(newContentNode);
+		return newContentNode;
 	}
 
 	public void setTitle(String newtitle) {
