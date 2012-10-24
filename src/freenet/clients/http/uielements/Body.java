@@ -13,4 +13,10 @@ public class Body extends OutputNode {
 	public Body() {
 		super("body");
 	}
+
+	@Deprecated
+	public void setID(String ID) {
+		addAttribute("id", ID);
+	}
+
 }

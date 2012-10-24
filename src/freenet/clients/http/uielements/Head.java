@@ -7,8 +7,10 @@ public class Head extends OutputNode {
 
 	public Title Title;
 
-	public Head(String Title) {
-		super("head", Title);
+	public Head(String title) {
+		super("head");
+		Title = new Title(title);
+		this.addChild(Title);
 	}
 
 	public void setTitle(String Title) {
