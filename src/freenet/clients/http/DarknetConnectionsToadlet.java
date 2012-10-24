@@ -199,29 +199,30 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 
 	/**
 	 * Implement other post actions than adding nodes.
-	 * @throws IOException 
-	 * @throws ToadletContextClosedException 
-	 * @throws RedirectException 
+	 * @throws java.io.IOException
+	 * @throws ToadletContextClosedException
+	 * @throws RedirectException
 	 */
 	@Override
-	protected void handleAltPost(URI uri, HTTPRequest request, ToadletContext ctx, boolean logMINOR) throws ToadletContextClosedException, IOException, RedirectException {
-		if (request.isPartSet("doAction") && request.getPartAsStringFailsafe("action",25).equals("send_n2ntm")) {
-			PageNode page = ctx.getPageMaker().getPageNode(l10n("sendMessageTitle"), ctx);
-			HTMLNode pageNode = page.outer;
-			HTMLNode contentNode = page.content;
+	protected void handleAltPost(URI uri, HTTPRequest request, ToadletContext ctx, boolean logMINOR)
+		throws ToadletContextClosedException, IOException, RedirectException {
+		if (request.isPartSet("doAction") &&
+			request.getPartAsStringFailsafe("action", 25).equals("send_n2ntm")) {
+			Page altPostPage = ctx.getPageMaker().getPage(l10n("sendMessageTitle"), ctx);
 			DarknetPeerNode[] peerNodes = node.getDarknetConnections();
 			HashMap<String, String> peers = new HashMap<String, String>();
-			for(DarknetPeerNode pn : peerNodes) {
-				if (request.isPartSet("node_"+pn.hashCode())) {
+			for (DarknetPeerNode pn : peerNodes) {
+				if (request.isPartSet("node_" + pn.hashCode())) {
 					String peer_name = pn.getName();
 					String peer_hash = "" + pn.hashCode();
-					if(!peers.containsKey(peer_hash)) {
+					if (! peers.containsKey(peer_hash)) {
 						peers.put(peer_hash, peer_name);
 					}
 				}
 			}
-			N2NTMToadlet.createN2NTMSendForm( pageNode, ctx.getContainer().isAdvancedModeEnabled(), contentNode, ctx, peers);
-			writeHTMLReply(ctx, 200, "OK", pageNode.generate());
+			N2NTMToadlet.createN2NTMSendForm(altPostPage, ctx.getContainer().isAdvancedModeEnabled(),
+				altPostPage.content, ctx, peers);
+			writeHTMLReply(ctx, 200, "OK", altPostPage.generate());
 			return;
 		} else if (request.isPartSet("doAction") && request.getPartAsStringFailsafe("action",25).equals("update_notes")) {
 			//int hashcode = Integer.decode(request.getParam("node")).intValue();
@@ -384,36 +385,63 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 			}
 			redirectHere(ctx);
 			return;
-		} else if (request.isPartSet("remove") || (request.isPartSet("doAction") && request.getPartAsStringFailsafe("action",25).equals("remove"))) {			
-			if(logMINOR) Logger.minor(this, "Remove node");
-			
+		} else if (request.isPartSet("remove") || (request.isPartSet("doAction") &&
+			request.getPartAsStringFailsafe("action", 25).equals("remove"))) {
+			if (logMINOR) {
+				Logger.minor(this, "Remove node");
+			}
 			DarknetPeerNode[] peerNodes = node.getDarknetConnections();
-			for(int i = 0; i < peerNodes.length; i++) {
-				if (request.isPartSet("node_"+peerNodes[i].hashCode())) {	
-					if((peerNodes[i].timeLastConnectionCompleted() < (System.currentTimeMillis() - 1000*60*60*24*7) /* one week */) ||  (peerNodes[i].peerNodeStatus == PeerManager.PEER_NODE_STATUS_NEVER_CONNECTED) || request.isPartSet("forceit")){
+			for (int i = 0; i < peerNodes.length; i++) {
+				if (request.isPartSet("node_" + peerNodes[i].hashCode())) {
+					if ((peerNodes[i].timeLastConnectionCompleted() < (System.currentTimeMillis
+						() -
+						1000 * 60 * 60 * 24 * 7) /* one week */) ||
+						(peerNodes[i].peerNodeStatus ==
+							PeerManager.PEER_NODE_STATUS_NEVER_CONNECTED) ||
+						request.isPartSet("forceit")) {
 						this.node.removePeerConnection(peerNodes[i]);
-						if(logMINOR) Logger.minor(this, "Removed node: node_"+peerNodes[i].hashCode());
-					}else{
-						if(logMINOR) Logger.minor(this, "Refusing to remove : node_"+peerNodes[i].hashCode()+" (trying to prevent network churn) : let's display the warning message.");
-						PageNode page = ctx.getPageMaker().getPageNode(l10n("confirmRemoveNodeTitle"), ctx);
-						HTMLNode pageNode = page.outer;
-						HTMLNode contentNode = page.content;
-						InfoboxWidget RemoveDarknetNode = new InfoboxWidget(InfoboxWidget.Type.WARNING, Identifier.DARKNETREMOVENODE, l10n("confirmRemoveNodeWarningTitle"));
-						contentNode.addInfobox(RemoveDarknetNode);
+						if (logMINOR) {
+							Logger.minor(this,
+								"Removed node: node_" + peerNodes[i].hashCode());
+						}
+					} else {
+						if (logMINOR) {
+							Logger.minor(this,
+								"Refusing to remove : node_" + peerNodes[i]
+									.hashCode() +
+									" (trying to prevent network churn) : let's" +
+									" display the warning message.");
+						}
+						Page confirmPage =
+							ctx.getPageMaker().getPage(l10n("confirmRemoveNodeTitle"),
+								ctx);
+						InfoboxWidget RemoveDarknetNode = confirmPage.content.addInfobox(
+							InfoboxWidget.Type.WARNING, Identifier.DARKNETREMOVENODE,
+							l10n("confirmRemoveNodeWarningTitle"));
 						RemoveDarknetNode.body.addBlockText((NodeL10n.getBase()
 							.getString("DarknetConnectionsToadlet.confirmRemoveNode",
 								new String[]{"name"},
 								new String[]{peerNodes[i].getName()})));
-						HTMLNode removeForm = ctx.addFormChild(RemoveDarknetNode.body, "/friends/", "removeConfirmForm");
-						removeForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "node_"+peerNodes[i].hashCode(), "remove" });
-						removeForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "cancel", NodeL10n.getBase().getString("Toadlet.cancel") });
-						removeForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "remove", l10n("remove") });
-						removeForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "forceit", l10n("forceRemove") });
-						writeHTMLReply(ctx, 200, "OK", pageNode.generate());
+						HTMLNode removeForm =
+							ctx.addFormChild(RemoveDarknetNode.body, "/friends/",
+								"removeConfirmForm");
+						removeForm.addChild("input", new String[]{"type", "name", "value"},
+							new String[]{"hidden", "node_" + peerNodes[i].hashCode(),
+								"remove"});
+						removeForm.addChild("input", new String[]{"type", "name", "value"},
+							new String[]{"submit", "cancel",
+								NodeL10n.getBase().getString("Toadlet.cancel")});
+						removeForm.addChild("input", new String[]{"type", "name", "value"},
+							new String[]{"submit", "remove", l10n("remove")});
+						removeForm.addChild("input", new String[]{"type", "name", "value"},
+							new String[]{"hidden", "forceit", l10n("forceRemove")});
+						writeHTMLReply(ctx, 200, "OK", confirmPage.generate());
 						return; // FIXME: maybe it breaks multi-node removing
 					}
 				} else {
-					if(logMINOR) Logger.minor(this, "Part not set: node_"+peerNodes[i].hashCode());
+					if (logMINOR) {
+						Logger.minor(this, "Part not set: node_" + peerNodes[i].hashCode());
+					}
 				}
 			}
 			redirectHere(ctx);
