@@ -87,7 +87,7 @@ public class SECURITY_NETWORK implements Step {
 			Opennet.body.addChild(new BlockText(WizardL10n.l10n("networkThreatLevelIntroOpennet")));
 
 			form = helper.addFormChild(Opennet.body, ".", "networkSecurityForm");
-			HTMLNode div = form.addChild(new Box(HTMLClass.OPENNETDIV));
+			HTMLNode div = form.addChild(new Box(Category.OPENNETDIV));
 			for(SecurityLevels.NETWORK_THREAT_LEVEL level : SecurityLevels.NETWORK_THREAT_LEVEL.OPENNET_VALUES) {
 				securityLevelChoice(div, level);
 			}
@@ -97,7 +97,7 @@ public class SECURITY_NETWORK implements Step {
 			Darknet.body.addChild(new BlockText(WizardL10n.l10n("networkThreatLevelIntroDarknet")));
 
 			form = helper.addFormChild(Darknet.body, ".", "networkSecurityForm");
-			HTMLNode div = form.addChild(new Box(HTMLClass.DARKNETDIV));
+			HTMLNode div = form.addChild(new Box(Category.DARKNETDIV));
 			for(SecurityLevels.NETWORK_THREAT_LEVEL level : SecurityLevels.NETWORK_THREAT_LEVEL.DARKNET_VALUES) {
 				securityLevelChoice(div, level);
 			}

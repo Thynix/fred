@@ -71,7 +71,7 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 	@Override
 	protected void drawNameColumn(Row peerRow, PeerNodeStatus peerNodeStatus, boolean advanced) {
 		// name column
-		Cell cell = peerRow.addCell(HTMLClass.PEERNAME);
+		Cell cell = peerRow.addCell(Category.PEERNAME);
 		cell.addLink("/send_n2ntm/?peernode_hashcode=" + peerNodeStatus.hashCode(), ((DarknetPeerNodeStatus) peerNodeStatus).getName());
 		if (advanced && peerNodeStatus.hasFullNoderef) {
 			cell.addText(" (");
@@ -87,7 +87,7 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 
 	@Override
 	protected void drawTrustColumn(Row peerRow, PeerNodeStatus peerNodeStatus) {
-		peerRow.addCell(HTMLClass.PEERTRUST).addText(((DarknetPeerNodeStatus) peerNodeStatus).getTrustLevel().name());
+		peerRow.addCell(Category.PEERTRUST).addText(((DarknetPeerNodeStatus) peerNodeStatus).getTrustLevel().name());
 	}
 
 	@Override
@@ -100,7 +100,7 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 		String content = ((DarknetPeerNodeStatus)peerNodeStatus).getOurVisibility().name();
 		if(advancedModeEnabled)
 			content += " ("+((DarknetPeerNodeStatus)peerNodeStatus).getTheirVisibility().name()+")";
-		peerRow.addCell(HTMLClass.PEERTRUST).addText(content);
+		peerRow.addCell(Category.PEERTRUST).addText(content);
 	}
 
 	@Override
@@ -113,9 +113,9 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 		// private darknet node comment note column
 		DarknetPeerNodeStatus status = (DarknetPeerNodeStatus) peerNodeStatus;
 		if(fProxyJavascriptEnabled) {
-			peerRow.addCell(HTMLClass.PEERPRIVATEDARKNETCOMMENTNOTE).addChild("input", new String[]{"type", "name", "size", "maxlength", "onBlur", "onChange", "value"}, new String[]{"text", "peerPrivateNote_" + peerNodeStatus.hashCode(), "16", "250", "peerNoteBlur();", "peerNoteChange();", status.getPrivateDarknetCommentNote()});
+			peerRow.addCell(Category.PEERPRIVATEDARKNETCOMMENTNOTE).addChild("input", new String[]{"type", "name", "size", "maxlength", "onBlur", "onChange", "value"}, new String[]{"text", "peerPrivateNote_" + peerNodeStatus.hashCode(), "16", "250", "peerNoteBlur();", "peerNoteChange();", status.getPrivateDarknetCommentNote()});
 		} else {
-			peerRow.addCell(HTMLClass.PEERPRIVATEDARKNETCOMMENTNOTE).addChild("input", new String[] { "type", "name", "size", "maxlength", "value" }, new String[] { "text", "peerPrivateNote_" + peerNodeStatus.hashCode(), "16", "250", status.getPrivateDarknetCommentNote() });
+			peerRow.addCell(Category.PEERPRIVATEDARKNETCOMMENTNOTE).addChild("input", new String[] { "type", "name", "size", "maxlength", "value" }, new String[] { "text", "peerPrivateNote_" + peerNodeStatus.hashCode(), "16", "250", status.getPrivateDarknetCommentNote() });
 		}
 	}
 
@@ -398,9 +398,12 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 						PageNode page = ctx.getPageMaker().getPageNode(l10n("confirmRemoveNodeTitle"), ctx);
 						HTMLNode pageNode = page.outer;
 						HTMLNode contentNode = page.content;
-						InfoboxWidget RemoveDarknetNode = new InfoboxWidget(InfoboxWidget.Type.WARNING, HTMLID.DARKNETREMOVENODE, l10n("confirmRemoveNodeWarningTitle"));
+						InfoboxWidget RemoveDarknetNode = new InfoboxWidget(InfoboxWidget.Type.WARNING, Identifier.DARKNETREMOVENODE, l10n("confirmRemoveNodeWarningTitle"));
 						contentNode.addInfobox(RemoveDarknetNode);
-						RemoveDarknetNode.body.addBlockText((NodeL10n.getBase().getString("DarknetConnectionsToadlet.confirmRemoveNode", new String[]{"name"}, new String[]{peerNodes[i].getName()})));
+						RemoveDarknetNode.body.addBlockText((NodeL10n.getBase()
+							.getString("DarknetConnectionsToadlet.confirmRemoveNode",
+								new String[]{"name"},
+								new String[]{peerNodes[i].getName()})));
 						HTMLNode removeForm = ctx.addFormChild(RemoveDarknetNode.body, "/friends/", "removeConfirmForm");
 						removeForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "node_"+peerNodes[i].hashCode(), "remove" });
 						removeForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "cancel", NodeL10n.getBase().getString("Toadlet.cancel") });

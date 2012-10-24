@@ -5,11 +5,11 @@ package freenet.clients.http.uielements;
  */
 public class Cell extends OutputNode {
 
-	public int Colspan;
-	public String Width;
+	public int colspan;
+	public String width;
 
-	public Cell(HTMLClass CLASS, String content) {
-		this(CLASS);
+	public Cell(Category category, String content) {
+		this(category);
 		this.setContent(content);
 	}
 
@@ -18,8 +18,8 @@ public class Cell extends OutputNode {
 		setColspan(colspan);
 	}
 
-	public Cell(int colspan, HTMLClass CLASS) {
-		this(CLASS);
+	public Cell(int colspan, Category category) {
+		this(category);
 		setColspan(colspan);
 	}
 
@@ -39,9 +39,9 @@ public class Cell extends OutputNode {
 		this.setContent(content);
 	}
 
-	public Cell(HTMLClass CLASS) {
+	public Cell(Category category) {
 		this();
-		addClass(CLASS);
+		addClass(category);
 	}
 
 	public Cell() {
@@ -49,11 +49,11 @@ public class Cell extends OutputNode {
 	}
 
 	public void setColspan(int colspan) {
-		this.Colspan = colspan;
+		this.colspan = colspan;
 		this.addAttribute("colspan", Integer.toString(colspan));
 	}
 	public void setWidth(String width) {
-		this.Width = width;
+		this.width = width;
 		this.addAttribute("width", width);
 	}
 }

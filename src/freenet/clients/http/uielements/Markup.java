@@ -7,18 +7,18 @@ public class Markup extends OutputNode {
 
 	public Head head;
 	public Body body;
-	public String Lang;
+	public String lang;
 
-	public Markup(String Title, String Lang) {
+	public Markup(String title, String lang) {
 		super("html");
-		setLang(Lang);
-		addHead(Title);
+		setLang(lang);
+		addHead(title);
 		addBody();
 	}
 
-	private void setLang(String Lang) {
-		this.Lang = Lang;
-		this.addAttribute("xml:lang", Lang);
+	private void setLang(String lang) {
+		this.lang = lang;
+		this.addAttribute("xml:lang", lang);
 	}
 
 	private void addBody() {
@@ -26,8 +26,8 @@ public class Markup extends OutputNode {
 		this.addChild(body);
 	}
 
-	private void addHead(String Title) {
-		head = new Head(Title);
+	private void addHead(String title) {
+		head = new Head(title);
 		this.addChild(head);
 	}
 }

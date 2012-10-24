@@ -6,9 +6,9 @@ package freenet.clients.http.uielements;
 public class Row extends OutputNode {
 
 	//Constructors
-	public Row(HTMLClass CLASS) {
+	public Row(Category category) {
 		this();
-		addClass(CLASS);
+		addClass(category);
 	}
 
 	public Row() {
@@ -26,13 +26,13 @@ public class Row extends OutputNode {
 		this.addChild(newCell);
 		return newCell;
 	}
-	public Cell addCell(HTMLClass CLASS) {
-		Cell newCell = new Cell(CLASS);
+	public Cell addCell(Category category) {
+		Cell newCell = new Cell(category);
 		this.addChild(newCell);
 		return newCell;
 	}
-	public Cell addCell(int colspan, HTMLClass CLASS) {
-		Cell newCell = new Cell(colspan, CLASS);
+	public Cell addCell(int colspan, Category category) {
+		Cell newCell = new Cell(colspan, category);
 		this.addChild(newCell);
 		return newCell;
 	}
@@ -46,8 +46,8 @@ public class Row extends OutputNode {
 		this.addChild(newCell);
 		return newCell;
 	}
-	public Cell addCell(HTMLClass CLASS, String content) {
-		Cell newCell = new Cell(CLASS, content);
+	public Cell addCell(Category category, String content) {
+		Cell newCell = new Cell(category, content);
 		this.addChild(newCell);
 		return newCell;
 	}
@@ -57,8 +57,8 @@ public class Row extends OutputNode {
 		this.addChild(newCell);
 		return newCell;
 	}
-	public Header addHeader(HTMLClass CLASS) {
-		Header newCell = new Header(CLASS);
+	public Header addHeader(Category category) {
+		Header newCell = new Header(category);
 		this.addChild(newCell);
 		return newCell;
 	}
@@ -77,8 +77,8 @@ public class Row extends OutputNode {
 		this.addChild(newCell);
 		return newCell;
 	}
-	public Header addHeader(HTMLClass CLASS, String content) {
-		Header newCell = new Header(CLASS, content);
+	public Header addHeader(Category category, String content) {
+		Header newCell = new Header(category, content);
 		this.addChild(newCell);
 		return newCell;
 	}

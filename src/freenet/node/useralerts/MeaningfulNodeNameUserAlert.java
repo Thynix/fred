@@ -4,12 +4,12 @@
 package freenet.node.useralerts;
 
 import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Category;
 import freenet.config.Option;
 import freenet.config.SubConfig;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
 import freenet.support.HTMLNode;
-import freenet.clients.http.uielements.HTMLClass;
 import freenet.clients.http.uielements.Item;
 import freenet.clients.http.uielements.OutputList;
 
@@ -51,12 +51,12 @@ public class MeaningfulNodeNameUserAlert extends AbstractUserAlert {
 		HTMLNode formNode = alertNode.addChild("form", new String[] { "action", "method" }, new String[] { "/config/"+sc.getPrefix(), "post" });
 		formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", node.clientCore.formPassword });
 		formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "subconfig", sc.getPrefix() });
-		OutputList listNode = new OutputList(HTMLClass.CONFIG);
+		OutputList listNode = new OutputList(Category.CONFIG);
 		formNode.addChild(listNode);
 		Item itemNode = listNode.addItem();
-		itemNode.addInlineBox(NodeL10n.getBase().getString("ConfigToadlet.defaultIs"), HTMLClass.CONFIGSHORTDESC).addChild(NodeL10n.getBase().getHTMLNode(o.getShortDesc()));
+		itemNode.addInlineBox(NodeL10n.getBase().getString("ConfigToadlet.defaultIs"), Category.CONFIGSHORTDESC).addChild(NodeL10n.getBase().getHTMLNode(o.getShortDesc()));
 		itemNode.addChild("input", new String[] { "type", "class", "alt", "name", "value" }, new String[] { "text", "config", o.getShortDesc(), "node.name", o.getValueString() });
-		itemNode.addInlineBox(HTMLClass.CONFIGLONGDESC).addChild(NodeL10n.getBase().getHTMLNode(o.getLongDesc()));
+		itemNode.addInlineBox(Category.CONFIGLONGDESC).addChild(NodeL10n.getBase().getHTMLNode(o.getLongDesc()));
 		formNode.addChild("input", new String[] { "type", "value" }, new String[] { "submit", NodeL10n.getBase().getString("UserAlert.apply") });
 		formNode.addChild("input", new String[] { "type", "value" }, new String[] { "reset", NodeL10n.getBase().getString("UserAlert.reset") });
 

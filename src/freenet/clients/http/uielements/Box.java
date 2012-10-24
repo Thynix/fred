@@ -5,24 +5,24 @@ package freenet.clients.http.uielements;
  */
 public class Box extends OutputNode {
 
-	public Box(HTMLID ID, String content) {
-		this(ID);
+	public Box(Identifier id, String content) {
+		this(id);
 		this.setContent(content);
 	}
 
-	public Box(HTMLID ID) {
+	public Box(Identifier id) {
 		this();
-		setID(ID);
+		setID(id);
 	}
 
-	public Box(HTMLClass CLASS, String content) {
-		this(CLASS);
+	public Box(Category category, String content) {
+		this(category);
 		this.setContent(content);
 	}
 
-	public Box(HTMLClass CLASS) {
+	public Box(Category category) {
 		this();
-		addClass(CLASS);
+		addClass(category);
 	}
 
 	public Box() {

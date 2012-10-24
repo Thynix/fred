@@ -195,7 +195,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 			HTMLNode pageNode = page.outer;
 			HTMLNode contentNode = page.content;
 
-			InfoboxWidget ResetWarning = new InfoboxWidget(InfoboxWidget.Type.WARNING, HTMLID.RESETCONFIRM, l10n("confirmResetTitle"));
+			InfoboxWidget ResetWarning = new InfoboxWidget(InfoboxWidget.Type.WARNING, Identifier.RESETCONFIRM, l10n("confirmResetTitle"));
 			contentNode.addInfobox(ResetWarning);
 			ResetWarning.body.addText(l10n("confirmReset"));
 
@@ -363,7 +363,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 		HTMLNode contentNode = page.content;
 
 		if (errbuf.length() == 0) {
-			InfoboxWidget ConfigurationApplied = new InfoboxWidget(InfoboxWidget.Type.SUCCESS, HTMLID.CONFIGURATIONAPPLIED, l10n("appliedTitle"));
+			InfoboxWidget ConfigurationApplied = new InfoboxWidget(InfoboxWidget.Type.SUCCESS, Identifier.CONFIGURATIONAPPLIED, l10n("appliedTitle"));
 			contentNode.addInfobox(ConfigurationApplied);
 			ConfigurationApplied.body.addText(l10n("appliedSuccess"));
 
@@ -390,13 +390,13 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 				}
 			}
 		} else {
-			InfoboxWidget ConfigurationFailed = new InfoboxWidget(InfoboxWidget.Type.ERROR, HTMLID.CONFIGURATIONERROR, l10n("appliedFailureTitle"));
+			InfoboxWidget ConfigurationFailed = new InfoboxWidget(InfoboxWidget.Type.ERROR, Identifier.CONFIGURATIONERROR, l10n("appliedFailureTitle"));
 			contentNode.addInfobox(ConfigurationFailed);
 			ConfigurationFailed.body.addText(l10n("appliedFailureExceptions"));
 			ConfigurationFailed.body.addLineBreak();
 			ConfigurationFailed.body.addText(errbuf.toString());
 		}
-		InfoboxWidget ConfigurationPossibilities = new InfoboxWidget(InfoboxWidget.Type.NORMAL, HTMLClass.CONFIGURATIONPOSSIBILITIES, l10n("possibilitiesTitle"));
+		InfoboxWidget ConfigurationPossibilities = new InfoboxWidget(InfoboxWidget.Type.NORMAL, Category.CONFIGURATIONPOSSIBILITIES, l10n("possibilitiesTitle"));
 		contentNode.addInfobox(ConfigurationPossibilities);
 		ConfigurationPossibilities.body.addChild(new Link(path(), l10n("shortTitle"), l10n("returnToNodeConfig")));
 		ConfigurationPossibilities.body.addLineBreak();
@@ -454,34 +454,34 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 						MAX_PARAM_VALUE_SIZE);
 			}
 			if (curValue != null) {
-				formNode.addChild(new Box(HTMLClass.CONFIGPREFIX, l10n("wrapper")));
-				OutputList configOptionList = new OutputList(HTMLClass.CONFIG);
+				formNode.addChild(new Box(Category.CONFIGPREFIX, l10n("wrapper")));
+				OutputList configOptionList = new OutputList(Category.CONFIG);
 				formNode.addChild(configOptionList);
 				Item configOption = configOptionList.addItem();
 				//FIME can't use enum here
 				configOption.addAttribute("class", OptionType.TEXT.cssClass);
 				// FIXME how to get the real default???
 				String defaultValue = "256";
-				configOption.addInlineBox(HTMLClass.CONFIGSHORTDESC,
+				configOption.addInlineBox(Category.CONFIGSHORTDESC,
 					NodeL10n.getBase().getString("ConfigToadlet.defaultIs",
 						new String[] { "default" },
 						new String[] { defaultValue })).addChild(
 							NodeL10n.getBase().getHTMLNode(
 								"WrapperConfig." + configName + ".short"));
-								configOption.addInlineBox(HTMLClass.CONFIG)
+								configOption.addInlineBox(Category.CONFIG)
 							.addChild(
 								"input",
 								new String[] { "type", "class", "name", "value" },
 								new String[] { "text", "config", configName,
 										curValue });
-				configOption.addInlineBox(HTMLClass.CONFIGLONGDESC).addChild(
+				configOption.addInlineBox(Category.CONFIGLONGDESC).addChild(
 						NodeL10n.getBase().getHTMLNode(
 								"WrapperConfig." + configName + ".long"));
 			}
 		}
 
 		short displayedConfigElements = 0;
-		OutputList configGroupUlNode = new OutputList(HTMLClass.CONFIG);
+		OutputList configGroupUlNode = new OutputList(Category.CONFIG);
 
 		String overriddenOption = null;
 		String overriddenValue = null;
@@ -551,8 +551,8 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 
 				configItemNode.addAttribute("class", optionType.cssClass);
 				configItemNode
-						.addChild(new Link(Link.linkType.ANCHOR, configName, configName ))
-						.addChild(new InlineBox(HTMLClass.CONFIGSHORTDESC,
+						.addChild(new Link(Link.Type.ANCHOR, configName, configName ))
+						.addChild(new InlineBox(Category.CONFIGSHORTDESC,
 							NodeL10n.getBase().getString(
 								"ConfigToadlet.defaultIs",
 								new String[]{"default"},
@@ -560,7 +560,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 								+ (advancedModeEnabled ? " ["
 								+ fullName + ']' : "")))
 							.addChild(shortDesc);
-				InlineBox configItemValueNode = configItemNode.addInlineBox(HTMLClass.CONFIG);
+				InlineBox configItemValueNode = configItemNode.addInlineBox(Category.CONFIG);
 
 				// Values persisted through browser or backing down from
 				// resetting to defaults
@@ -604,12 +604,12 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 							false));
 					break;
 				}
-				configItemNode.addInlineBox(HTMLClass.CONFIGLONGDESC).addChild(longDesc);
+				configItemNode.addInlineBox(Category.CONFIGLONGDESC).addChild(longDesc);
 			}
 		}
 
 		if (displayedConfigElements > 0) {
-			formNode.addChild(new Box(HTMLClass.CONFIGPREFIX, (plugin == null) ? l10n(subConfig.getPrefix())
+			formNode.addChild(new Box(Category.CONFIGPREFIX, (plugin == null) ? l10n(subConfig.getPrefix())
 				: plugin.getString(subConfig.getPrefix())));
 			formNode.addChild("a", "id", subConfig.getPrefix());
 			formNode.addChild(configGroupUlNode);

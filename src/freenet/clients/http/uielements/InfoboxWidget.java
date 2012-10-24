@@ -8,61 +8,61 @@ public class InfoboxWidget extends Box {
 	public Box body;
 
 	public enum Type {
-		ALERT(HTMLClass.INFOBOXALERT),
-		ERROR(HTMLClass.INFOBOXERROR),
-		FAILEDREQUESTS(HTMLClass.FAILEDREQUESTS),
-		INFORMATION(HTMLClass.INFOBOXINFORMATION),
-		LEGEND(HTMLClass.LEGEND),
-		MINOR(HTMLClass.INFOBOXMINOR),
-		NAVBAR(HTMLClass.NAVBAR),
-		NORMAL(HTMLClass.INFOBOXNORMAL),
-		NONE(HTMLClass.NONE),
-		PROGRESSING(HTMLClass.REQUESTSINPROGRESS),
-		QUERY(HTMLClass.INFOBOXQUERY),
-		REQUESTCOMPLETE(HTMLClass.REQUESTCOMPLETED),
-		SUCCESS(HTMLClass.INFOBOXSUCCESS),
-		WARNING(HTMLClass.INFOBOXWARNING),
-		WTF(HTMLClass.WTF);
+		ALERT(Category.INFOBOXALERT),
+		ERROR(Category.INFOBOXERROR),
+		FAILEDREQUESTS(Category.FAILEDREQUESTS),
+		INFORMATION(Category.INFOBOXINFORMATION),
+		LEGEND(Category.LEGEND),
+		MINOR(Category.INFOBOXMINOR),
+		NAVBAR(Category.NAVBAR),
+		NORMAL(Category.INFOBOXNORMAL),
+		NONE(Category.NONE),
+		PROGRESSING(Category.REQUESTSINPROGRESS),
+		QUERY(Category.INFOBOXQUERY),
+		REQUESTCOMPLETE(Category.REQUESTCOMPLETED),
+		SUCCESS(Category.INFOBOXSUCCESS),
+		WARNING(Category.INFOBOXWARNING),
+		WTF(Category.WTF);
 
-		public final HTMLClass htmlclass;
+		public final Category htmlclass;
 
-		private Type(HTMLClass ID) {
-			this.htmlclass = ID;
+		private Type(Category id) {
+			this.htmlclass = id;
 		}
 	}
 
-	public InfoboxWidget(Type type, HTMLClass Class, String title, String content) {
-		this(type, Class, title);
+	public InfoboxWidget(Type type, Category category, String title, String content) {
+		this(type, category, title);
 		this.body.setContent(content);
 	}
 
-	public InfoboxWidget(Type type, HTMLClass Class, String title, OutputNode content) {
-		this(type, Class, title);
+	public InfoboxWidget(Type type, Category category, String title, OutputNode content) {
+		this(type, category, title);
 		this.body.addChild(content);
 	}
 
-	public InfoboxWidget(Type type, HTMLClass Class, String title) {
+	public InfoboxWidget(Type type, Category category, String title) {
 		this(type, title);
-		this.addClass(Class);
+		this.addClass(category);
 	}
 
-	public InfoboxWidget(HTMLID ID, String title) {
-		this(Type.NONE, ID, title);
+	public InfoboxWidget(Identifier id, String title) {
+		this(Type.NONE, id, title);
 	}
 
-	public InfoboxWidget(Type type, HTMLID ID, String title, String Content) {
-		this(type, ID, title);
-		this.body.setContent(Content);
+	public InfoboxWidget(Type type, Identifier id, String title, String content) {
+		this(type, id, title);
+		this.body.setContent(content);
 	}
 
-	public InfoboxWidget(Type type, HTMLID ID, String title, OutputNode Content) {
-		this(type, ID, title);
-		this.body.addChild(Content);
+	public InfoboxWidget(Type type, Identifier id, String title, OutputNode content) {
+		this(type, id, title);
+		this.body.addChild(content);
 	}
 
-	public InfoboxWidget(Type type, HTMLID ID, String title) {
+	public InfoboxWidget(Type type, Identifier id, String title) {
 		this(type, title);
-		this.setID(ID);
+		this.setID(id);
 	}
 
 	public InfoboxWidget(Type type, String title) {
@@ -73,20 +73,20 @@ public class InfoboxWidget extends Box {
 		this(Type.NONE, title);
 	}
 
-	protected InfoboxWidget(HTMLClass type, String title) {
-		super(HTMLClass.INFOBOX);
-		if (type != HTMLClass.NONE) {
+	protected InfoboxWidget(Category type, String title) {
+		super(Category.INFOBOX);
+		if (type != Category.NONE) {
 			this.addClass(type);
 		}
-		this.header = new Box(HTMLClass.INFOBOXHEADER);
+		this.header = new Box(Category.INFOBOXHEADER);
 		this.addChild(header);
-		this.body = new Box(HTMLClass.INFOBOXCONTENT);
+		this.body = new Box(Category.INFOBOXCONTENT);
 		this.addChild(body);
 		header.setContent(title);
 	}
 
 	public HTMLNode addContentNode() {
-		return this.addChild(new Box(HTMLClass.INFOBOXCONTENT));
+		return this.addChild(new Box(Category.INFOBOXCONTENT));
 	}
 
 	public void setTitle(String newtitle) {

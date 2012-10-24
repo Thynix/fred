@@ -190,7 +190,7 @@ public class UserAlertManager implements Comparator<UserAlert> {
 			if (!alert.isValid())
 				continue;
 			totalNumber++;
-			alertsNode.addLink(Link.linkType.ANCHOR, alert.anchor());
+			alertsNode.addLink(Link.Type.ANCHOR, alert.anchor());
 			alertsNode.addChild(renderAlert(alert));
 		}
 		if (totalNumber == 0) {
@@ -338,7 +338,7 @@ public class UserAlertManager implements Comparator<UserAlert> {
 		} else {
 			summaryBox.body.addLink("/alerts/", NodeL10n.getBase().getString("StatusBar.alerts") + " " + alertSummaryString.toString());
 		}
-		summaryBox.setID(HTMLID.MESSAGESUMMARYBOX);
+		summaryBox.setID(Identifier.MESSAGESUMMARYBOX);
 		return summaryBox;
 	}
 

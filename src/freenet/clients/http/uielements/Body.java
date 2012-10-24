@@ -5,9 +5,9 @@ package freenet.clients.http.uielements;
  */
 public class Body extends OutputNode {
 
-	public Body(HTMLClass CLASS) {
+	public Body(Category category) {
 		this();
-		addClass(CLASS);
+		addClass(category);
 	}
 
 	public Body() {
@@ -15,8 +15,8 @@ public class Body extends OutputNode {
 	}
 
 	@Deprecated
-	public void setID(String ID) {
-		addAttribute("id", ID);
+	public void setID(String id) {
+		addAttribute("id", id);
 	}
 
 }

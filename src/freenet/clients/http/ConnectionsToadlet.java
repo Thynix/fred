@@ -253,10 +253,10 @@ public abstract class ConnectionsToadlet extends Toadlet {
 				String nodeUptimeString = TimeUtil.formatTime(nodeUptimeSeconds * 1000);  // *1000 to convert to milliseconds
 				
 				// BEGIN OVERVIEW TABLE
-				Table overviewTable = new Table(HTMLClass.COLUMN);
+				Table overviewTable = new Table(Category.COLUMN);
 				contentNode.addChild(overviewTable);
 				Row overviewTableRow = overviewTable.addRow();
-				Cell nextTableCell = overviewTableRow.addCell(HTMLClass.FIRST);
+				Cell nextTableCell = overviewTableRow.addCell(Category.FIRST);
 				
 				OutputList overviewList = nextTableCell
 					.addInfobox(InfoboxWidget.Type.NONE, "Node status overview").body.addList();
@@ -288,7 +288,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 				}
 				
 				// Peer statistics box
-				nextTableCell = overviewTableRow.addCell(HTMLClass.LAST);
+				nextTableCell = overviewTableRow.addCell(Category.LAST);
 				InfoboxWidget peerStatsInfobox = nextTableCell.addInfobox(InfoboxWidget.Type.NONE, null);
 				StatisticsToadlet.drawPeerStatsBox(peerStatsInfobox, advancedMode, numberOfConnected, numberOfRoutingBackedOff, numberOfTooNew, numberOfTooOld, numberOfDisconnected, numberOfNeverConnected, numberOfDisabled, numberOfBursting, numberOfListening, numberOfListenOnly, 0, 0, numberOfRoutingDisabled, numberOfClockProblem, numberOfConnError, numberOfDisconnecting, numberOfNoLoadStats, node);
 				
@@ -401,10 +401,10 @@ public abstract class ConnectionsToadlet extends Toadlet {
 				Table peerTable;
 				if (enablePeerActions) {
 					peerForm = ctx.addFormChild(peerTableInfobox.body, ".", "peersForm");
-					peerTable = new Table(HTMLClass.DARKNETCONNECTIONS);
+					peerTable = new Table(Category.DARKNETCONNECTIONS);
 					peerForm.addChild(peerTable);
 				} else {
-					peerTable = new Table(HTMLClass.DARKNETCONNECTIONS);
+					peerTable = new Table(Category.DARKNETCONNECTIONS);
 					peerTableInfobox.body.addChild(peerTable);
 				}
 				Row peerTableHeaderRow = peerTable.addRow();
@@ -413,27 +413,36 @@ public abstract class ConnectionsToadlet extends Toadlet {
 				}
 				peerTableHeaderRow.addHeader().addLink(sortString(isReversed, "status")).addText(l10n("statusTitle"));
 				if (hasNameColumn()) {
-					peerTableHeaderRow.addHeader().addLink(sortString(isReversed, "name")).addInlineBox(HTMLClass.CONNECTIONHELP, l10n("nameClickToMessage"), l10n("nameTitle"));
+					peerTableHeaderRow.addHeader().addLink(sortString(isReversed, "name")).addInlineBox(
+						Category.CONNECTIONHELP, l10n("nameClickToMessage"), l10n("nameTitle"));
 				}
 				if (hasTrustColumn()) {
-					peerTableHeaderRow.addHeader().addLink(sortString(isReversed, "trust")).addInlineBox(HTMLClass.CONNECTIONHELP, l10n("trustMessage"), l10n("trustTitle"));
+					peerTableHeaderRow.addHeader().addLink(sortString(isReversed, "trust")).addInlineBox(
+						Category.CONNECTIONHELP, l10n("trustMessage"), l10n("trustTitle"));
 				}
 				if(hasVisibilityColumn()) {
-					peerTableHeaderRow.addHeader().addLink(sortString(isReversed, "trust")).addInlineBox(HTMLClass.CONNECTIONHELP, l10n("visibilityMessage"+(advancedMode?"Advanced":"Simple")), l10n("visibilityTitle"));
+					peerTableHeaderRow.addHeader().addLink(sortString(isReversed, "trust")).addInlineBox(
+						Category.CONNECTIONHELP, l10n("visibilityMessage"+(advancedMode?"Advanced":"Simple")), l10n("visibilityTitle"));
 				}
 				if (advancedMode) {
-					peerTableHeaderRow.addHeader().addLink(sortString(isReversed, "address")).addInlineBox(HTMLClass.CONNECTIONHELP, l10n("ipAddress"), l10n("ipAddressTitle"));
+					peerTableHeaderRow.addHeader().addLink(sortString(isReversed, "address")).addInlineBox(
+						Category.CONNECTIONHELP, l10n("ipAddress"), l10n("ipAddressTitle"));
 				}
 				peerTableHeaderRow.addHeader().addLink(sortString(isReversed, "version")).addText(l10n("versionTitle"));
 				if (advancedMode) {
 					peerTableHeaderRow.addHeader().addLink(sortString(isReversed, "location")).addText("Location");
-					peerTableHeaderRow.addHeader().addLink(sortString(isReversed, "backoffRT")).addInlineBox(HTMLClass.CONNECTIONHELP, "Other node busy (realtime)? Display: Percentage of time the node is overloaded, Current wait time remaining (0=not overloaded)/total/last overload reason", "Backoff (realtime)");
-					peerTableHeaderRow.addHeader().addLink(sortString(isReversed, "backoffBulk")).addInlineBox(HTMLClass.CONNECTIONHELP, "Other node busy (bulk)? Display: Percentage of time the node is overloaded, Current wait time remaining (0=not overloaded)/total/last overload reason", "Backoff (bulk)");
-					peerTableHeaderRow.addHeader().addLink(sortString(isReversed, "overload_p")).addInlineBox(HTMLClass.CONNECTIONHELP, "Probability of the node rejecting a request due to overload or causing a timeout.", "Overload Probability");
+					peerTableHeaderRow.addHeader().addLink(sortString(isReversed, "backoffRT")).addInlineBox(
+						Category.CONNECTIONHELP, "Other node busy (realtime)? Display: Percentage of time the node is overloaded, Current wait time remaining (0=not overloaded)/total/last overload reason", "Backoff (realtime)");
+					peerTableHeaderRow.addHeader().addLink(sortString(isReversed, "backoffBulk")).addInlineBox(
+						Category.CONNECTIONHELP, "Other node busy (bulk)? Display: Percentage of time the node is overloaded, Current wait time remaining (0=not overloaded)/total/last overload reason", "Backoff (bulk)");
+					peerTableHeaderRow.addHeader().addLink(sortString(isReversed, "overload_p")).addInlineBox(
+						Category.CONNECTIONHELP, "Probability of the node rejecting a request due to overload or causing a timeout.", "Overload Probability");
 				}
-				peerTableHeaderRow.addHeader().addLink(sortString(isReversed, "idle")).addInlineBox(HTMLClass.CONNECTIONHELP, l10n("idleTime"), l10n("idleTimeTitle"));
+				peerTableHeaderRow.addHeader().addLink(sortString(isReversed, "idle")).addInlineBox(
+					Category.CONNECTIONHELP, l10n("idleTime"), l10n("idleTimeTitle"));
 				if(hasPrivateNoteColumn()) {
-					peerTableHeaderRow.addHeader().addLink(sortString(isReversed, "privnote")).addInlineBox(HTMLClass.CONNECTIONHELP, l10n("privateNote"), l10n("privateNoteTitle"));
+					peerTableHeaderRow.addHeader().addLink(sortString(isReversed, "privnote")).addInlineBox(
+						Category.CONNECTIONHELP, l10n("privateNote"), l10n("privateNoteTitle"));
 				}
 				if(advancedMode) {
 					peerTableHeaderRow.addHeader().addLink(sortString(isReversed, "time_routable")).addText("%\u00a0Time Routable");
@@ -453,7 +462,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 						SimpleColumn col = endCols[i];
 						OutputNode header = peerTableHeaderRow.addHeader();
 						String sortString = col.getSortString();
-						InlineBox span = new InlineBox(HTMLClass.CONNECTIONHELP, NodeL10n.getBase().getString(col.getExplanationKey()), NodeL10n.getBase().getString(col.getTitleKey()));
+						InlineBox span = new InlineBox(Category.CONNECTIONHELP, NodeL10n.getBase().getString(col.getExplanationKey()), NodeL10n.getBase().getString(col.getTitleKey()));
 						if (sortString != null) {
 							header.addLink(sortString(isReversed, sortString)).addChild(span);
 						} else {
@@ -653,7 +662,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 					StatusRow.addCell(results.get(returnCode).toString());
 				}
 			}
-			InfoboxWidget nodeAdded = new InfoboxWidget(HTMLID.NODEADDED, l10n("reportOfNodeAddition"));
+			InfoboxWidget nodeAdded = new InfoboxWidget(Identifier.NODEADDED, l10n("reportOfNodeAddition"));
 			contentNode.addInfobox(nodeAdded);
 			nodeAdded.body.addChild(detailedStatusBox);
 			if (!isOpennet()) {
@@ -847,11 +856,11 @@ public abstract class ConnectionsToadlet extends Toadlet {
 		if(totalSelectionRate > 0) {
 			peerSelectionPercentage = (int) (selectionRate * 100 / totalSelectionRate);
 		}
-		Row peerRow = peerTable.addRow((peerSelectionPercentage > PeerNode.SELECTION_PERCENTAGE_WARNING ? HTMLClass.DARKNETCONNECTIONSWARNING: HTMLClass.DARKNETCONNECTIONSNORMAL));
+		Row peerRow = peerTable.addRow((peerSelectionPercentage > PeerNode.SELECTION_PERCENTAGE_WARNING ? Category.DARKNETCONNECTIONSWARNING: Category.DARKNETCONNECTIONSNORMAL));
 		
 		if(enablePeerActions) {
 			// check box column
-			peerRow.addCell(HTMLClass.PEERMARKER).addChild("input", new String[]{"type", "name"}, new String[]{"checkbox", "node_" + peerNodeStatus.hashCode()});
+			peerRow.addCell(Category.PEERMARKER).addChild("input", new String[]{"type", "name"}, new String[]{"checkbox", "node_" + peerNodeStatus.hashCode()});
 		}
 
 		// status column
@@ -859,7 +868,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 		if (!advancedModeEnabled && (peerNodeStatus.getStatusValue() == PeerManager.PEER_NODE_STATUS_ROUTING_BACKED_OFF)) {
 			statusString = "BUSY";
 		}
-		InlineBox statusBox = peerRow.addCell(HTMLClass.PEERSTATUS).addInlineBox(NodeL10n.getBase().getString("ConnectionsToadlet.nodeStatus." + statusString) + (peerNodeStatus.isFetchingARK() ? "*" : ""));
+		InlineBox statusBox = peerRow.addCell(Category.PEERSTATUS).addInlineBox(NodeL10n.getBase().getString("ConnectionsToadlet.nodeStatus." + statusString) + (peerNodeStatus.isFetchingARK() ? "*" : ""));
 		statusBox.addAttribute("class", peerNodeStatus.getStatusCSSName());
 
 		drawNameColumn(peerRow, peerNodeStatus, advancedModeEnabled);
@@ -875,7 +884,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 				pingTime = " (" + (int) peerNodeStatus.getAveragePingTime() + "ms / " +
 				(int) peerNodeStatus.getAveragePingTimeCorrected()+"ms)";
 			}
-			Cell addressRow = peerRow.addCell(HTMLClass.PEERADDRESS);
+			Cell addressRow = peerRow.addCell(Category.PEERADDRESS);
 			// Ip to country + Flags
 			IPConverter ipc = IPConverter.getInstance(node.runDir().file(NodeUpdateManager.IPV4_TO_COUNTRY_FILENAME));
 			// Only IPv4 at the time
@@ -891,14 +900,14 @@ public abstract class ConnectionsToadlet extends Toadlet {
 
 		// version column
 		if (peerNodeStatus.getStatusValue() != PeerManager.PEER_NODE_STATUS_NEVER_CONNECTED && (peerNodeStatus.isPublicInvalidVersion() || peerNodeStatus.isPublicReverseInvalidVersion())) {  // Don't draw attention to a version problem if NEVER CONNECTED
-			peerRow.addCell(HTMLClass.PEERVERSION).addInlineBox(HTMLClass.PEERVERSIONPROBLEM, Integer.toString(peerNodeStatus.getSimpleVersion()));
+			peerRow.addCell(Category.PEERVERSION).addInlineBox(Category.PEERVERSIONPROBLEM, Integer.toString(peerNodeStatus.getSimpleVersion()));
 		} else {
-			peerRow.addCell(HTMLClass.PEERVERSION).addText(Integer.toString(peerNodeStatus.getSimpleVersion()));
+			peerRow.addCell(Category.PEERVERSION).addText(Integer.toString(peerNodeStatus.getSimpleVersion()));
 		}
 
 		// location column
 		if (advancedModeEnabled) {
-			Cell locationNode = peerRow.addCell(HTMLClass.PEERLOCATION);
+			Cell locationNode = peerRow.addCell(Category.PEERLOCATION);
 			locationNode.addB(String.valueOf(peerNodeStatus.getLocation()));
 			locationNode.addLineBreak();
 			double[] peersLoc = peerNodeStatus.getPeersLocation();
@@ -910,7 +919,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 
 		if (advancedModeEnabled) {
 			// backoff column
-			Cell backoffCell = peerRow.addCell(HTMLClass.PEERBACKOFF);
+			Cell backoffCell = peerRow.addCell(Category.PEERBACKOFF);
 			backoffCell.addText(fix1.format(peerNodeStatus.getBackedOffPercent(true)));
 			int backoff = (int) (Math.max(peerNodeStatus.getRoutingBackedOffUntil(true) - now, 0));
 			// Don't list the backoff as zero before it's actually zero
@@ -921,7 +930,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 			backoffCell.addText((peerNodeStatus.getLastBackoffReason(true) == null) ? "" : ('/' + (peerNodeStatus.getLastBackoffReason(true))));
 
 			// backoff column
-			backoffCell = peerRow.addCell(HTMLClass.PEERBACKOFF);
+			backoffCell = peerRow.addCell(Category.PEERBACKOFF);
 			backoffCell.addText(fix1.format(peerNodeStatus.getBackedOffPercent(false)));
 			backoff = (int) (Math.max(peerNodeStatus.getRoutingBackedOffUntil(false) - now, 0));
 			// Don't list the backoff as zero before it's actually zero
@@ -932,7 +941,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 			backoffCell.addText((peerNodeStatus.getLastBackoffReason(false) == null) ? "" : ('/' + (peerNodeStatus.getLastBackoffReason(false))));
 
 			// overload probability column
-			Cell pRejectCell = peerRow.addCell(HTMLClass.PEERBACKOFF); // FIXME
+			Cell pRejectCell = peerRow.addCell(Category.PEERBACKOFF); // FIXME
 			pRejectCell.addText(fix1.format(peerNodeStatus.getPReject()));
 		}
 
@@ -944,9 +953,9 @@ public abstract class ConnectionsToadlet extends Toadlet {
 			idle = peerNodeStatus.getPeerAddedTime();
 		}
 		if(!peerNodeStatus.isConnected() && (now - idle) > (2 * 7 * 24 * 60 * 60 * (long) 1000)) { // 2 weeks
-			peerRow.addCell(HTMLClass.PEERIDLE).addInlineBox(HTMLClass.PEERIDLEOLD, idleToString(now, idle));
+			peerRow.addCell(Category.PEERIDLE).addInlineBox(Category.PEERIDLEOLD, idleToString(now, idle));
 		} else {
-			peerRow.addCell(HTMLClass.PEERIDLE, idleToString(now, idle));
+			peerRow.addCell(Category.PEERIDLE, idleToString(now, idle));
 		}
 
 		if(hasPrivateNoteColumn())
@@ -954,16 +963,16 @@ public abstract class ConnectionsToadlet extends Toadlet {
 
 		if(advancedModeEnabled) {
 			// percent of time connected column
-			peerRow.addCell(HTMLClass.PEERIDLE /* FIXME */).addText(fix1.format(peerNodeStatus.getPercentTimeRoutableConnection()));
+			peerRow.addCell(Category.PEERIDLE /* FIXME */).addText(fix1.format(peerNodeStatus.getPercentTimeRoutableConnection()));
 			// selection stats
-			peerRow.addCell(HTMLClass.PEERIDLE /* FIXME */).addText((totalSelectionRate > 0 ? (peerSelectionPercentage + "%") : "N/A"));
+			peerRow.addCell(Category.PEERIDLE /* FIXME */).addText((totalSelectionRate > 0 ? (peerSelectionPercentage + "%") : "N/A"));
 			// total traffic column
 			long sent = peerNodeStatus.getTotalOutputBytes();
 			long resent = peerNodeStatus.getResendBytesSent();
 			long received = peerNodeStatus.getTotalInputBytes();
-			peerRow.addCell(HTMLClass.PEERIDLE /* FIXME */).addText(SizeUtil.formatSize(received) + " / " + SizeUtil.formatSize(sent) + "/" + SizeUtil.formatSize(resent) + " (" + fix1.format(((double) resent) / ((double) sent)) + ")");
+			peerRow.addCell(Category.PEERIDLE /* FIXME */).addText(SizeUtil.formatSize(received) + " / " + SizeUtil.formatSize(sent) + "/" + SizeUtil.formatSize(resent) + " (" + fix1.format(((double) resent) / ((double) sent)) + ")");
 			// total traffic column startup
-			peerRow.addCell(HTMLClass.PEERIDLE /* FIXME */).addText(SizeUtil.formatSize(peerNodeStatus.getTotalInputSinceStartup()) + " / " + SizeUtil.formatSize(peerNodeStatus.getTotalOutputSinceStartup()));
+			peerRow.addCell(Category.PEERIDLE /* FIXME */).addText(SizeUtil.formatSize(peerNodeStatus.getTotalInputSinceStartup()) + " / " + SizeUtil.formatSize(peerNodeStatus.getTotalOutputSinceStartup()));
 			// congestion control
 			PacketThrottle t = peerNodeStatus.getThrottle();
 			String val;
@@ -972,21 +981,21 @@ public abstract class ConnectionsToadlet extends Toadlet {
 			else
 				val = (int)t.getBandwidth()+"B/sec delay "+
 					t.getDelay()+"ms (RTT "+t.getRoundTripTime()+"ms window "+t.getWindowSize()+')';
-			peerRow.addCell(HTMLClass.PEERIDLE /* FIXME */).addText(val);
+			peerRow.addCell(Category.PEERIDLE /* FIXME */).addText(val);
 			// time delta
-			peerRow.addCell(HTMLClass.PEERIDLE /* FIXME */).addText(TimeUtil.formatTime(peerNodeStatus.getClockDelta()));
-			peerRow.addCell(HTMLClass.PEERIDLE /* FIXME */).addText(peerNodeStatus.getReportedUptimePercentage() + "%");
-			peerRow.addCell(HTMLClass.PEERIDLE /* FIXME */).addText(SizeUtil.formatSize(peerNodeStatus.getMessageQueueLengthBytes()) + ":" + TimeUtil.formatTime(peerNodeStatus.getMessageQueueLengthTime()));
+			peerRow.addCell(Category.PEERIDLE /* FIXME */).addText(TimeUtil.formatTime(peerNodeStatus.getClockDelta()));
+			peerRow.addCell(Category.PEERIDLE /* FIXME */).addText(peerNodeStatus.getReportedUptimePercentage() + "%");
+			peerRow.addCell(Category.PEERIDLE /* FIXME */).addText(SizeUtil.formatSize(peerNodeStatus.getMessageQueueLengthBytes()) + ":" + TimeUtil.formatTime(peerNodeStatus.getMessageQueueLengthTime()));
 			IncomingLoadSummaryStats loadStatsBulk = peerNodeStatus.incomingLoadStatsBulk;
 			if(loadStatsBulk == null)
-				peerRow.addCell(HTMLClass.PEERIDLE /* FIXME */);
+				peerRow.addCell(Category.PEERIDLE /* FIXME */);
 			else
-				peerRow.addCell(HTMLClass.PEERIDLE /* FIXME */).addText(loadStatsBulk.runningRequestsTotal + "reqs:out:" + SizeUtil.formatSize(loadStatsBulk.usedCapacityOutputBytes) + "/" + SizeUtil.formatSize(loadStatsBulk.othersUsedCapacityOutputBytes) + "/" + SizeUtil.formatSize(loadStatsBulk.peerCapacityOutputBytes) + "/" + SizeUtil.formatSize(loadStatsBulk.totalCapacityOutputBytes) + ":in:" + SizeUtil.formatSize(loadStatsBulk.usedCapacityInputBytes) + "/" + SizeUtil.formatSize(loadStatsBulk.othersUsedCapacityInputBytes) + "/" + SizeUtil.formatSize(loadStatsBulk.peerCapacityInputBytes) + "/" + SizeUtil.formatSize(loadStatsBulk.totalCapacityInputBytes));
+				peerRow.addCell(Category.PEERIDLE /* FIXME */).addText(loadStatsBulk.runningRequestsTotal + "reqs:out:" + SizeUtil.formatSize(loadStatsBulk.usedCapacityOutputBytes) + "/" + SizeUtil.formatSize(loadStatsBulk.othersUsedCapacityOutputBytes) + "/" + SizeUtil.formatSize(loadStatsBulk.peerCapacityOutputBytes) + "/" + SizeUtil.formatSize(loadStatsBulk.totalCapacityOutputBytes) + ":in:" + SizeUtil.formatSize(loadStatsBulk.usedCapacityInputBytes) + "/" + SizeUtil.formatSize(loadStatsBulk.othersUsedCapacityInputBytes) + "/" + SizeUtil.formatSize(loadStatsBulk.peerCapacityInputBytes) + "/" + SizeUtil.formatSize(loadStatsBulk.totalCapacityInputBytes));
 			IncomingLoadSummaryStats loadStatsRT = peerNodeStatus.incomingLoadStatsRealTime;
 			if(loadStatsRT == null)
-				peerRow.addCell(HTMLClass.PEERIDLE /* FIXME */);
+				peerRow.addCell(Category.PEERIDLE /* FIXME */);
 			else
-				peerRow.addCell(HTMLClass.PEERIDLE /* FIXME */).addText(loadStatsRT.runningRequestsTotal + "reqs:out:" + SizeUtil.formatSize(loadStatsRT.usedCapacityOutputBytes) + "/" + SizeUtil.formatSize(loadStatsRT.othersUsedCapacityOutputBytes) + "/" + SizeUtil.formatSize(loadStatsRT.peerCapacityOutputBytes) + "/" + SizeUtil.formatSize(loadStatsRT.totalCapacityOutputBytes) + ":in:" + SizeUtil.formatSize(loadStatsRT.usedCapacityInputBytes) + "/" + SizeUtil.formatSize(loadStatsRT.othersUsedCapacityInputBytes) + "/" + SizeUtil.formatSize(loadStatsRT.peerCapacityInputBytes) + "/" + SizeUtil.formatSize(loadStatsRT.totalCapacityInputBytes));
+				peerRow.addCell(Category.PEERIDLE /* FIXME */).addText(loadStatsRT.runningRequestsTotal + "reqs:out:" + SizeUtil.formatSize(loadStatsRT.usedCapacityOutputBytes) + "/" + SizeUtil.formatSize(loadStatsRT.othersUsedCapacityOutputBytes) + "/" + SizeUtil.formatSize(loadStatsRT.peerCapacityOutputBytes) + "/" + SizeUtil.formatSize(loadStatsRT.totalCapacityOutputBytes) + ":in:" + SizeUtil.formatSize(loadStatsRT.usedCapacityInputBytes) + "/" + SizeUtil.formatSize(loadStatsRT.othersUsedCapacityInputBytes) + "/" + SizeUtil.formatSize(loadStatsRT.peerCapacityInputBytes) + "/" + SizeUtil.formatSize(loadStatsRT.totalCapacityInputBytes));
 		}
 		
 		if(endCols != null) {
@@ -1035,10 +1044,10 @@ public abstract class ConnectionsToadlet extends Toadlet {
 	abstract protected void drawPrivateNoteColumn(Row peerRow, PeerNodeStatus peerNodeStatus, boolean fProxyJavascriptEnabled);
 	
 	private void drawMessageTypes(Table peerTable, PeerNodeStatus peerNodeStatus) {
-		Row messageCountRow = peerTable.addRow(HTMLClass.MESSAGESTATUS);
+		Row messageCountRow = peerTable.addRow(Category.MESSAGESTATUS);
 		messageCountRow.addCell(2);
 		Cell messageCountCell = messageCountRow.addCell(9);  // = total table row width - 2 from above colspan
-		Table messageCountTable = messageCountCell.addTable(HTMLClass.MESSAGECOUNT);
+		Table messageCountTable = messageCountCell.addTable(Category.MESSAGECOUNT);
 		Row countHeaderRow = messageCountTable.addRow();
 		countHeaderRow.addHeader("Message");
 		countHeaderRow.addHeader("Incoming");
@@ -1075,8 +1084,8 @@ public abstract class ConnectionsToadlet extends Toadlet {
 			Long[] messageCount = messageCounts.get(messageName);
 			Row messageRow = messageCountTable.addRow();
 			messageRow.addCell(messageName);
-			messageRow.addCell(HTMLClass.ALIGNRIGHT, String.valueOf(messageCount[0]));
-			messageRow.addCell(HTMLClass.ALIGNRIGHT, String.valueOf(messageCount[1]));
+			messageRow.addCell(Category.ALIGNRIGHT, String.valueOf(messageCount[0]));
+			messageRow.addCell(Category.ALIGNRIGHT, String.valueOf(messageCount[1]));
 		}
 	}
 

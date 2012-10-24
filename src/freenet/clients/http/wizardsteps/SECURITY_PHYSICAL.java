@@ -53,13 +53,13 @@ public class SECURITY_PHYSICAL implements Step {
 		infoboxContent.addBlockText(WizardL10n.l10nSec("physicalThreatLevel"));
 
 		HTMLNode form = helper.addFormChild(infoboxContent, ".", "physicalSecurityForm");
-		HTMLNode div = form.addBox(HTMLClass.OPENNETDIV);
+		HTMLNode div = form.addBox(Category.OPENNETDIV);
 		String controlName = "security-levels.physicalThreatLevel";
 		HTMLNode swapWarning = div.addChild(new BlockText()).addI();
 		NodeL10n.getBase().addL10nSubstitution(swapWarning, "SecurityLevels.physicalThreatLevelTruecrypt",
 		        new String[]{"bold", "truecrypt"},
 		        new HTMLNode[]{HTMLNode.STRONG,
-		                new Link(ExternalLinkToadlet.escape("http://www.truecrypt.org/"), Link.linkTarget.BLANK)});
+		                new Link(ExternalLinkToadlet.escape("http://www.truecrypt.org/"), Link.Target.BLANK)});
 		OperatingSystem os = FileUtil.detectedOS;
 		div.addChild(new BlockText(NodeL10n.getBase().getString("SecurityLevels.physicalThreatLevelSwapfile",
 			"operatingSystem",

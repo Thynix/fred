@@ -5,41 +5,41 @@ package freenet.clients.http.uielements;
  */
 public class Link extends OutputNode {
 
-	public enum linkType {
+	public enum Type {
 		HYPERLINK("href"),
 		ANCHOR("name");
 
-		public final String name;
+		public final String attribute;
 
-		private linkType(String type) {
-			this.name = type;
+		private Type(String type) {
+			this.attribute = type;
 		}
 	}
 
-	public enum linkTarget {
+	public enum Target {
 		BLANK("_blank"),
 		NEW("_new");
 
-		public final String name;
+		public final String value;
 
-		private linkTarget(String type) {
-			this.name = type;
+		private Target(String type) {
+			this.value = type;
 		}
 	}
 
-	public linkType type;
+	public Type type;
 	public String data;
-	public linkTarget target;
+	public Target target;
 	public String title;
 
-	public Link(HTMLClass CLASS) {
+	public Link(Category category) {
 		this();
-		addClass(CLASS);
+		addClass(category);
 	}
 
-	public Link(String data, String title, HTMLClass CLASS, String content) {
+	public Link(String data, String title, Category category, String content) {
 		this(data, title, content);
-		addClass(CLASS);
+		addClass(category);
 	}
 
 	public Link(String data, String title, String content) {
@@ -47,25 +47,25 @@ public class Link extends OutputNode {
 		this.setTitle(title);
 	}
 
-	public Link(String data, linkTarget target, String content) {
+	public Link(String data, Target target, String content) {
 		this(data, content);
 		this.setTarget(target);
 	}
 
-	public Link(String data, linkTarget target) {
+	public Link(String data, Target target) {
 		this(data);
 		this.setTarget(target);
 	}
 
-	public Link(String data, HTMLClass CLASS, String content) {
+	public Link(String data, Category category, String content) {
 		this(data, content);
-		addClass(CLASS);
+		addClass(category);
 	}
 
-	public Link(HTMLClass CLASS, String title, String content) {
+	public Link(Category category, String title, String content) {
 		this();
 		setTitle(title);
-		addClass(CLASS);
+		addClass(category);
 		setContent(content);
 	}
 
@@ -76,22 +76,22 @@ public class Link extends OutputNode {
 
 	public Link(String data) {
 		this();
-		this.addAttribute(linkType.HYPERLINK.name, data);
+		this.addAttribute(Type.HYPERLINK.attribute, data);
 	}
 
-	public Link(linkType type, String data) {
+	public Link(Type type, String data) {
 		this();
-		this.addAttribute(linkType.HYPERLINK.name, data);
+		this.addAttribute(Type.HYPERLINK.attribute, data);
 	}
 
-	public Link(linkType type, HTMLID data) {
+	public Link(Type type, Identifier data) {
 		this();
-		this.addAttribute(linkType.HYPERLINK.name, data.name);
+		this.addAttribute(Type.HYPERLINK.attribute, data.name);
 	}
 
-	public Link(linkType type, String data, String ID) {
+	public Link(Type type, String data, String ID) {
 		this();
-		this.addAttribute(linkType.HYPERLINK.name, data);
+		this.addAttribute(Type.HYPERLINK.attribute, data);
 		this.addAttribute("id", ID);
 	}
 
@@ -104,8 +104,8 @@ public class Link extends OutputNode {
 		this.addAttribute("title", title);
 	}
 
-	public void setTarget(linkTarget target) {
+	public void setTarget(Target target) {
 		this.target = target;
-		this.addAttribute("target", target.name);
+		this.addAttribute("target", target.value);
 	}
 }

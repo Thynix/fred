@@ -52,11 +52,11 @@ public class OPENNET implements Step {
 		        new String[] { "type", "name", "value" },
 		        new String[] { "submit", "next", NodeL10n.getBase().getString("Toadlet.next")});
 
-		Box foot = new Box(HTMLClass.TOGGLEABLE);
+		Box foot = new Box(Category.TOGGLEABLE);
 		infoboxContent.addChild(foot);
 		foot.addI("¹: " + WizardL10n.l10n("opennetChoiceHowSafeIsFreenetToggle"));
-		Box footHidden = foot.addBox(HTMLClass.HIDDEN);
-		OutputList footList = footHidden.addList(OutputList.Type.ORDERED, HTMLClass.NULL);
+		Box footHidden = foot.addBox(Category.HIDDEN);
+		OutputList footList = footHidden.addList(OutputList.Type.ORDERED, Category.NULL);
 		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetStupid"));
 		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetFriends") + "²");
 		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetTrustworthy"));

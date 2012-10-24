@@ -2,8 +2,8 @@ package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
 import freenet.clients.http.uielements.Box;
-import freenet.clients.http.uielements.HTMLClass;
-import freenet.clients.http.uielements.HTMLID;
+import freenet.clients.http.uielements.Category;
+import freenet.clients.http.uielements.Identifier;
 import freenet.clients.http.uielements.InfoboxWidget;
 import freenet.node.NodeClientCore;
 import freenet.support.HTMLNode;
@@ -197,12 +197,12 @@ public class BrowserTestToadlet extends Toadlet {
 			contentNode.addChild(core.alerts.createSummary());
 		
 		// #### Test MIME inline
-		contentNode.addInfobox(InfoboxWidget.Type.WARNING, HTMLClass.MIMEINLINETEST, "MIME Inline").
+		contentNode.addInfobox(InfoboxWidget.Type.WARNING, Category.MIMEINLINETEST, "MIME Inline").
 			addChild("img", new String[]{"src", "alt"}, new String[]{"?mimeTest", "Your browser is probably safe."});
 		
 		// #### Test whether we can have more than 10 simultaneous connections to fproxy
 		
-		InfoboxWidget maxConnectionsPerServer = new InfoboxWidget(InfoboxWidget.Type.WARNING, HTMLClass.BROWSERECONNECTIONS, "Number of connections");
+		InfoboxWidget maxConnectionsPerServer = new InfoboxWidget(InfoboxWidget.Type.WARNING, Category.BROWSERECONNECTIONS, "Number of connections");
 		contentNode.addInfobox(maxConnectionsPerServer);
 		maxConnectionsPerServer.body.addText("If you do not see a green picture below, your browser is probably missconfigured! Ensure it allows more than 10 connections per server.");
 		for(int i = 0; i < 10 ; i++)
@@ -210,7 +210,7 @@ public class BrowserTestToadlet extends Toadlet {
 		maxConnectionsPerServer.body.addChild("img", new String[]{"src", "alt"}, new String[]{"/static/themes/clean/success.gif", "fail!"});
 
 		// #### Test whether JS is available. : should do the test with pictures instead!
-		InfoboxWidget jsTestContent = new InfoboxWidget(InfoboxWidget.Type.WARNING, HTMLID.JAVASCRIPTTEST, "Javascript");
+		InfoboxWidget jsTestContent = new InfoboxWidget(InfoboxWidget.Type.WARNING, Identifier.JAVASCRIPTTEST, "Javascript");
 		contentNode.addInfobox(jsTestContent);
 		Box jsTest = jsTestContent.addBox();
 		jsTest.addChild("img", new String[]{"id", "src", "alt"}, new String[]{"JSTEST", "/static/themes/clean/success.gif", "fail!"});

@@ -25,7 +25,7 @@ public class InsertFreesiteToadlet extends Toadlet {
 		HTMLNode pageNode = page.outer;
 		HTMLNode contentNode = page.content;
 		contentNode.addChild(alerts.createSummary());
-		InfoboxWidget InsertFreesite = new InfoboxWidget(InfoboxWidget.Type.INFORMATION, HTMLID.FREESITEINSERT, l10n("title"));
+		InfoboxWidget InsertFreesite = new InfoboxWidget(InfoboxWidget.Type.INFORMATION, Identifier.FREESITEINSERT, l10n("title"));
 		contentNode.addInfobox(InsertFreesite);
 		InsertFreesite.body.addBlockText(l10n("content1"));
 		NodeL10n.getBase().addL10nSubstitution(InsertFreesite.body.addChild(new BlockText()), "InsertFreesiteToadlet.contentFlogHelper", new String[] { "plugins" }, new HTMLNode[] { new Link(PproxyToadlet.PATH) });

@@ -5,7 +5,7 @@ import java.net.URI;
 import java.util.Comparator;
 
 import freenet.client.HighLevelSimpleClient;
-import freenet.clients.http.uielements.HTMLClass;
+import freenet.clients.http.uielements.Category;
 import freenet.clients.http.uielements.Row;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
@@ -136,7 +136,7 @@ public class OpennetConnectionsToadlet extends ConnectionsToadlet implements Lin
 				protected void drawColumn(Row peerRow, PeerNodeStatus peerNodeStatus) {
 					OpennetPeerNodeStatus status = (OpennetPeerNodeStatus) peerNodeStatus;
 					long tLastSuccess = status.timeLastSuccess;
-					peerRow.addCell(HTMLClass.PEERLASTSUCCESS, tLastSuccess > 0 ? TimeUtil.formatTime(System.currentTimeMillis() - tLastSuccess) : "NEVER");
+					peerRow.addCell(Category.PEERLASTSUCCESS, tLastSuccess > 0 ? TimeUtil.formatTime(System.currentTimeMillis() - tLastSuccess) : "NEVER");
 				}
 				@Override
 				public String getExplanationKey() {

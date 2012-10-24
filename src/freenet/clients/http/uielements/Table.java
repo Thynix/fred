@@ -8,9 +8,9 @@ public class Table extends OutputNode {
 	public Tbody body;
 
 	//Constructors
-	public Table(HTMLClass CLASS) {
+	public Table(Category category) {
 		this();
-		addClass(CLASS);
+		addClass(category);
 	}
 
 	public Table() {
@@ -23,8 +23,8 @@ public class Table extends OutputNode {
 		this.addChild(newRow);
 		return newRow;
 	}
-	public Row addRow(HTMLClass CLASS) {
-		Row newRow = new Row(CLASS);
+	public Row addRow(Category category) {
+		Row newRow = new Row(category);
 		this.addChild(newRow);
 		return newRow;
 	}

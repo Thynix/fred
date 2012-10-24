@@ -1,6 +1,6 @@
 package freenet.clients.http.uielements;
 
-public enum HTMLClass {
+public enum Category {
 
 	ACTIONS("actions"),
 	ADVANCED("advanced"),
@@ -206,7 +206,7 @@ public enum HTMLClass {
 
 	public final String name;
 
-	private HTMLClass(String CLASSNAME) {
-		this.name = CLASSNAME;
+	private Category(String name) {
+		this.name = name;
 	}
 }

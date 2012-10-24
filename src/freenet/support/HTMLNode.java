@@ -333,7 +333,7 @@ public class HTMLNode implements XMLCharacterClasses {
 	 *
 	 * @param className class to add.
 	 */
-	public void addClass(final HTMLClass className) {
+	public void addClass(final Category className) {
 		/*
 		 * Each class is bookended with a space to avoid mistaking parts of existing classes as the new class.
 		 */
@@ -361,7 +361,7 @@ public class HTMLNode implements XMLCharacterClasses {
 	 * Set the html "id" attribute
 	 * @param tagID ID attribute to be set
 	 */
-	public void setID(final HTMLID tagID) {
+	public void setID(final Identifier tagID) {
 		attributes.put("id", tagID.name);
 	}
 
@@ -539,23 +539,23 @@ public class HTMLNode implements XMLCharacterClasses {
 		addChild(newBox);
 		return newBox;
 	}
-	public Box addBox(HTMLID ID) {
-		Box newBox = new Box(ID);
+	public Box addBox(Identifier id) {
+		Box newBox = new Box(id);
 		addChild(newBox);
 		return newBox;
 	}
-	public Box addBox(HTMLID ID, String content) {
-		Box newBox = new Box(ID, content);
+	public Box addBox(Identifier id, String content) {
+		Box newBox = new Box(id, content);
 		addChild(newBox);
 		return newBox;
 	}
-	public Box addBox(HTMLClass CLASS) {
-		Box newBox = new Box(CLASS);
+	public Box addBox(Category category) {
+		Box newBox = new Box(category);
 		addChild(newBox);
 		return newBox;
 	}
-	public Box addBox(HTMLClass CLASS, String content) {
-		Box newBox = new Box(CLASS, content);
+	public Box addBox(Category category, String content) {
+		Box newBox = new Box(category, content);
 		addChild(newBox);
 		return newBox;
 	}
@@ -571,23 +571,23 @@ public class HTMLNode implements XMLCharacterClasses {
 		addChild(newBlockText);
 		return newBlockText;
 	}
-	public BlockText addBlockText(HTMLID ID) {
-		BlockText newBlockText = new BlockText(ID);
+	public BlockText addBlockText(Identifier id) {
+		BlockText newBlockText = new BlockText(id);
 		addChild(newBlockText);
 		return newBlockText;
 	}
-	public BlockText addBlockText(HTMLID ID, String content) {
-		BlockText newBlockText = new BlockText(ID, content);
+	public BlockText addBlockText(Identifier id, String content) {
+		BlockText newBlockText = new BlockText(id, content);
 		addChild(newBlockText);
 		return newBlockText;
 	}
-	public BlockText addBlockText(HTMLClass CLASS) {
-		BlockText newBlockText = new BlockText(CLASS);
+	public BlockText addBlockText(Category category) {
+		BlockText newBlockText = new BlockText(category);
 		addChild(newBlockText);
 		return newBlockText;
 	}
-	public BlockText addBlockText(HTMLClass CLASS, String content) {
-		BlockText newBlockText = new BlockText(CLASS, content);
+	public BlockText addBlockText(Category category, String content) {
+		BlockText newBlockText = new BlockText(category, content);
 		addChild(newBlockText);
 		return newBlockText;
 	}
@@ -603,38 +603,38 @@ public class HTMLNode implements XMLCharacterClasses {
 		addChild(newInlineBox);
 		return newInlineBox;
 	}
-	public InlineBox addInlineBox(HTMLID ID) {
-		InlineBox newInlineBox = new InlineBox(ID);
+	public InlineBox addInlineBox(Identifier id) {
+		InlineBox newInlineBox = new InlineBox(id);
 		addChild(newInlineBox);
 		return newInlineBox;
 	}
-	public InlineBox addInlineBox(HTMLID ID, String content) {
-		InlineBox newInlineBox = new InlineBox(ID, content);
+	public InlineBox addInlineBox(Identifier id, String content) {
+		InlineBox newInlineBox = new InlineBox(id, content);
 		addChild(newInlineBox);
 		return newInlineBox;
 	}
-	public InlineBox addInlineBox(String title, HTMLClass CLASS) {
-		InlineBox newInlineBox = new InlineBox(title, CLASS);
+	public InlineBox addInlineBox(String title, Category category) {
+		InlineBox newInlineBox = new InlineBox(title, category);
 		addChild(newInlineBox);
 		return newInlineBox;
 	}
-	public InlineBox addInlineBox(HTMLClass CLASS) {
-		InlineBox newInlineBox = new InlineBox(CLASS);
+	public InlineBox addInlineBox(Category category) {
+		InlineBox newInlineBox = new InlineBox(category);
 		addChild(newInlineBox);
 		return newInlineBox;
 	}
-	public InlineBox addInlineBox(HTMLClass CLASS, String content) {
-		InlineBox newInlineBox = new InlineBox(CLASS, content);
+	public InlineBox addInlineBox(Category category, String content) {
+		InlineBox newInlineBox = new InlineBox(category, content);
 		addChild(newInlineBox);
 		return newInlineBox;
 	}
-	public InlineBox addInlineBox(HTMLClass CLASS, String title, String content) {
-		InlineBox newInlineBox = new InlineBox(CLASS, title, content);
+	public InlineBox addInlineBox(Category category, String title, String content) {
+		InlineBox newInlineBox = new InlineBox(category, title, content);
 		addChild(newInlineBox);
 		return newInlineBox;
 	}
-	public InlineBox addInlineBox(String style, HTMLClass CLASS, String content) {
-		InlineBox newInlineBox = new InlineBox(style, CLASS, content);
+	public InlineBox addInlineBox(String style, Category category, String content) {
+		InlineBox newInlineBox = new InlineBox(style, category, content);
 		addChild(newInlineBox);
 		return newInlineBox;
 	}
@@ -644,8 +644,8 @@ public class HTMLNode implements XMLCharacterClasses {
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public InfoboxWidget addInfobox(String Title) {
-		InfoboxWidget newInfobox = new InfoboxWidget(Title);
+	public InfoboxWidget addInfobox(String title) {
+		InfoboxWidget newInfobox = new InfoboxWidget(title);
 		addChild(newInfobox);
 		return newInfobox;
 	}
@@ -654,33 +654,33 @@ public class HTMLNode implements XMLCharacterClasses {
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLID ID, String title) {
-		InfoboxWidget newInfobox = new InfoboxWidget(type, ID, title);
+	public InfoboxWidget addInfobox(InfoboxWidget.Type type, Identifier id, String title) {
+		InfoboxWidget newInfobox = new InfoboxWidget(type, id, title);
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLID ID, String title, OutputNode Content) {
-		InfoboxWidget newInfobox = new InfoboxWidget(type, ID, title, Content);
+	public InfoboxWidget addInfobox(InfoboxWidget.Type type, Identifier id, String title, OutputNode content) {
+		InfoboxWidget newInfobox = new InfoboxWidget(type, id, title, content);
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLID ID, String title, String Content) {
-		InfoboxWidget newInfobox = new InfoboxWidget(type, ID, title, Content);
+	public InfoboxWidget addInfobox(InfoboxWidget.Type type, Identifier id, String title, String content) {
+		InfoboxWidget newInfobox = new InfoboxWidget(type, id, title, content);
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLClass Class, String title) {
-		InfoboxWidget newInfobox = new InfoboxWidget(type, Class, title);
+	public InfoboxWidget addInfobox(InfoboxWidget.Type type, Category category, String title) {
+		InfoboxWidget newInfobox = new InfoboxWidget(type, category, title);
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLClass Class, String title, OutputNode Content) {
-		InfoboxWidget newInfobox = new InfoboxWidget(type, Class, title, Content);
+	public InfoboxWidget addInfobox(InfoboxWidget.Type type, Category category, String title, OutputNode content) {
+		InfoboxWidget newInfobox = new InfoboxWidget(type, category, title, content);
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public InfoboxWidget addInfobox(InfoboxWidget.Type type, HTMLClass Class, String title, String Content) {
-		InfoboxWidget newInfobox = new InfoboxWidget(type, Class, title, Content);
+	public InfoboxWidget addInfobox(InfoboxWidget.Type type, Category category, String title, String content) {
+		InfoboxWidget newInfobox = new InfoboxWidget(type, category, title, content);
 		addChild(newInfobox);
 		return newInfobox;
 	}
@@ -716,23 +716,23 @@ public class HTMLNode implements XMLCharacterClasses {
 		addChild(newLink);
 		return newLink;
 	}
-	public Link addLink(Link.linkType type, HTMLID data) {
+	public Link addLink(Link.Type type, Identifier data) {
 		Link newLink = new Link(type, data);
 		addChild(newLink);
 		return newLink;
 	}
-	public Link addLink(Link.linkType type, String data) {
+	public Link addLink(Link.Type type, String data) {
 		Link newLink = new Link(type, data);
 		addChild(newLink);
 		return newLink;
 	}
-	public Link addLink(Link.linkType type, String data, String ID) {
-		Link newLink = new Link(type, data, ID);
+	public Link addLink(Link.Type type, String data, String id) {
+		Link newLink = new Link(type, data, id);
 		addChild(newLink);
 		return newLink;
 	}
-	public Link addLink(HTMLClass CLASS, String title, String content) {
-		Link newLink = new Link(CLASS, title, content);
+	public Link addLink(Category category, String title, String content) {
+		Link newLink = new Link(category, title, content);
 		addChild(newLink);
 		return newLink;
 	}
@@ -746,8 +746,8 @@ public class HTMLNode implements XMLCharacterClasses {
 		addChild(newLink);
 		return newLink;
 	}
-	public Link addLink(String data, HTMLClass CLASS, String content) {
-		Link newLink = new Link(data, CLASS, content);
+	public Link addLink(String data, Category category, String content) {
+		Link newLink = new Link(data, category, content);
 		addChild(newLink);
 		return newLink;
 	}
@@ -756,13 +756,13 @@ public class HTMLNode implements XMLCharacterClasses {
 		addChild(newLink);
 		return newLink;
 	}
-	public Link addLink(String data, Link.linkTarget target,  String content) {
+	public Link addLink(String data, Link.Target target,  String content) {
 		Link newLink = new Link(data, target, content);
 		addChild(newLink);
 		return newLink;
 	}
-	public Link addLink(String data, String title, HTMLClass CLASS, String content) {
-		Link newLink = new Link(data, title, CLASS, content);
+	public Link addLink(String data, String title, Category category, String content) {
+		Link newLink = new Link(data, title, category, content);
 		addChild(newLink);
 		return newLink;
 	}
@@ -777,18 +777,18 @@ public class HTMLNode implements XMLCharacterClasses {
 		addChild(newList);
 		return newList;
 	}
-	public OutputList addList(HTMLClass CLASS) {
-		OutputList newList = new OutputList(CLASS);
+	public OutputList addList(Category category) {
+		OutputList newList = new OutputList(category);
 		addChild(newList);
 		return newList;
 	}
-	public OutputList addList(HTMLID ID) {
-		OutputList newList = new OutputList(ID);
+	public OutputList addList(Identifier id) {
+		OutputList newList = new OutputList(id);
 		addChild(newList);
 		return newList;
 	}
-	public OutputList addList(OutputList.Type type, HTMLClass CLASS) {
-		OutputList newList = new OutputList(type, CLASS);
+	public OutputList addList(OutputList.Type type, Category category) {
+		OutputList newList = new OutputList(type, category);
 		addChild(newList);
 		return newList;
 	}
@@ -803,8 +803,8 @@ public class HTMLNode implements XMLCharacterClasses {
 		addChild(newTable);
 		return newTable;
 	}
-	public Table addTable(HTMLClass CLASS) {
-		Table newTable = new Table(CLASS);
+	public Table addTable(Category category) {
+		Table newTable = new Table(category);
 		addChild(newTable);
 		return newTable;
 	}

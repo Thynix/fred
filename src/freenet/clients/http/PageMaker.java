@@ -329,7 +329,7 @@ public final class PageMaker {
 	@Deprecated
 	public PageNode getPageNode(String title, ToadletContext ctx, RenderParameters renderParameters) {
 		Page Page = getPage(title, ctx, renderParameters);
-		return new PageNode(Page.Root, Page.Root.head, Page.Content);
+		return new PageNode(Page.root, Page.root.head, Page.content);
 	}
 
 	/**
@@ -356,14 +356,14 @@ public final class PageMaker {
 
 		boolean fullAccess = ctx != null && ctx.isAllowedFullAccess();
 
-		Page Page = new Page(title + " - Freenet");
-		Page.Root.head.addMeta("Content-Type", "text/html; charset=utf-8");
+		Page template = new Page(title + " - Freenet");
+		template.root.head.addMeta("Content-Type", "text/html; charset=utf-8");
 		//To make something only rendered when javascript is on, then add the jsonly class to it
-		Page.Root.head.addChild("noscript").addChild("style", " .jsonly {display:none;}");
+		template.root.head.addChild("noscript").addChild("style", " .jsonly {display:none;}");
 		if (override != null) {
-			Page.Root.head.addChild(getOverrideContent());
+			template.root.head.addChild(getOverrideContent());
 		} else {
-			Page.Root.head.addChild("link", new String[]{"rel", "href", "type", "title"},
+			template.root.head.addChild("link", new String[]{"rel", "href", "type", "title"},
 				new String[]{"stylesheet", "/static/themes/" + theme.code + "/theme.css", "text/css",
 					theme.code});
 		}
@@ -371,7 +371,7 @@ public final class PageMaker {
 		if (sendAllThemes) {
 			for (THEME t : THEME.values()) {
 				String themeName = t.code;
-				Page.Root.head.addChild("link", new String[]{"rel", "href", "type", "media", "title"},
+				template.root.head.addChild("link", new String[]{"rel", "href", "type", "media", "title"},
 					new String[]{"alternate stylesheet",
 						"/static/themes/" + themeName + "/theme.css", "text/css", "screen",
 						themeName});
@@ -382,7 +382,7 @@ public final class PageMaker {
 				ctx.getContainer().isFProxyWebPushingEnabled();
 		// Add the generated javascript, if it and pushing is enabled
 		if (webPushingEnabled) {
-			Page.Root.head.addChild("script", new String[]{"type", "language", "src"}, new String[]{
+			template.root.head.addChild("script", new String[]{"type", "language", "src"}, new String[]{
 				"text/javascript", "javascript", "/static/freenetjs/freenetjs.nocache.js"});
 		}
 		Toadlet t;
@@ -396,29 +396,29 @@ public final class PageMaker {
 		if (t != null) {
 			activePath = t.path();
 		}
-		Page.Root.body.setID(filterCSSIdentifier("page-" + activePath));
+		template.root.body.setID(filterCSSIdentifier("page-" + activePath));
 		//Add a hidden input that has the request's id
 		if (webPushingEnabled) {
-			Page.Root.body.addChild("input", new String[]{"type", "name", "value", "id"},
+			template.root.body.addChild("input", new String[]{"type", "name", "value", "id"},
 				new String[]{"hidden", "requestId", ctx.getUniqueId(), "requestId"});
 		}
 		// Add the client-side localization only when pushing is enabled
 		if (webPushingEnabled) {
-			Page.Root.body.addChild("script", new String[]{"type", "language"},
+			template.root.body.addChild("script", new String[]{"type", "language"},
 				new String[]{"text/javascript", "javascript"})
 				.addChild("%", PushingTagReplacerCallback.getClientSideLocalizationScript());
 		}
 		//generate the statusbar
 		if (renderParameters.isRenderStatus() && fullAccess) {
-			Box statusbar = Page.Content.addBox(HTMLID.STATUSBARCONTAINER).addBox(HTMLID.STATUSBAR);
+			Box statusbar = template.page.addBox(Identifier.STATUSBARCONTAINER).addBox(Identifier.STATUSBAR);
 			if (node != null && node.clientCore != null) {
 				OutputNode alerts = node.clientCore.alerts.createSummary(true);
 				if (alerts != null) {
-					statusbar.addChild(alerts).setID(HTMLID.STATUSBARALERTS);
-					statusbar.addBox(HTMLClass.SEPERATOR, "\u00a0");
+					statusbar.addChild(alerts).setID(Identifier.STATUSBARALERTS);
+					statusbar.addBox(Category.SEPERATOR, "\u00a0");
 				}
 			}
-			statusbar.addBox(HTMLID.STATUSBARLANGUAGE)
+			statusbar.addBox(Identifier.STATUSBARLANGUAGE)
 				.addLink("/config/node#l10n", NodeL10n.getBase().getSelectedLanguage().fullName);
 			if (node.clientCore != null && ctx != null && renderParameters.isRenderModeSwitch()) {
 				parseMode(ctx);
@@ -429,17 +429,17 @@ public final class PageMaker {
 				newModeSwitchValues.add(String.valueOf(isAdvancedMode ? MODE_SIMPLE : MODE_ADVANCED));
 				/* overwrite any previously existing parameter value. */
 				parameters.put(MODE_SWITCH_PARAMETER, newModeSwitchValues);
-				statusbar.addBox(HTMLClass.SEPERATOR, "\u00a0");
-				Box switchmode = statusbar.addBox(HTMLID.STATUSBARSWITCHMODE);
-				switchmode.addClass(isAdvancedMode ? HTMLClass.SIMPLE : HTMLClass.ADVANCED);
+				statusbar.addBox(Category.SEPERATOR, "\u00a0");
+				Box switchmode = statusbar.addBox(Identifier.STATUSBARSWITCHMODE);
+				switchmode.addClass(isAdvancedMode ? Category.SIMPLE : Category.ADVANCED);
 				switchmode.addLink("?" + HTTPRequestImpl.createQueryString(parameters, false),
 					isAdvancedMode ? NodeL10n.getBase().getString("StatusBar" +
 						".switchToSimpleMode") :
 						NodeL10n.getBase().getString("StatusBar.switchToAdvancedMode"));
 			}
 			if (node != null && node.clientCore != null) {
-				statusbar.addBox(HTMLClass.SEPERATOR, "\u00a0");
-				Box secLevels = statusbar.addBox(HTMLID.STATUSBARSECLEVELS);
+				statusbar.addBox(Category.SEPERATOR, "\u00a0");
+				Box secLevels = statusbar.addBox(Identifier.STATUSBARSECLEVELS);
 				secLevels.addText(NodeL10n.getBase().getString("SecurityLevels.statusBarPrefix"));
 				final HTMLNode network = secLevels.addLink("/seclevels/",
 					SecurityLevels.localisedName(node.securityLevels.getNetworkThreatLevel()) +
@@ -454,7 +454,7 @@ public final class PageMaker {
 					NodeL10n.getBase().getString("SecurityLevels.physicalThreatLevelShort"));
 				physical.addAttribute("class",
 					node.securityLevels.getPhysicalThreatLevel().toString().toLowerCase());
-				statusbar.addBox(HTMLClass.SEPERATOR, "\u00a0");
+				statusbar.addBox(Category.SEPERATOR, "\u00a0");
 				final int connectedPeers = node.peers.countConnectedPeers();
 				int darknetTotal = 0;
 				for (DarknetPeerNode n : node.peers.getDarknetPeers()) {
@@ -471,37 +471,37 @@ public final class PageMaker {
 					(darknetTotal > 0 ? darknetTotal : Integer.MAX_VALUE) :
 					node.getOpennet().getNumberOfConnectedPeersToAimIncludingDarknet();
 				final double connectedRatio = ((double) connectedPeers) / (double) totalPeers;
-				final HTMLClass additionalClass;
+				final Category additionalClass;
 				// If we use Opennet, we color the bar by the ratio of connected nodes
 				if (connectedPeers > connectedDarknetPeers) {
 					if (connectedRatio < 0.3D || connectedPeers < 3) {
-						additionalClass = HTMLClass.PEERSVERYFEW;
+						additionalClass = Category.PEERSVERYFEW;
 					} else if (connectedRatio < 0.5D) {
-						additionalClass = HTMLClass.PEERSFEW;
+						additionalClass = Category.PEERSFEW;
 					} else if (connectedRatio < 0.75D) {
-						additionalClass = HTMLClass.PEERSAVERAGE;
+						additionalClass = Category.PEERSAVERAGE;
 					} else {
-						additionalClass = HTMLClass.PEERSFULL;
+						additionalClass = Category.PEERSFULL;
 					}
 				} else {
 					// If we are darknet only, we color by absolute connected peers
 					if (connectedDarknetPeers < 3) {
-						additionalClass = HTMLClass.PEERSVERYFEW;
+						additionalClass = Category.PEERSVERYFEW;
 					} else if (connectedDarknetPeers < 5) {
-						additionalClass = HTMLClass.PEERSFEW;
+						additionalClass = Category.PEERSFEW;
 					} else if (connectedDarknetPeers < 10) {
-						additionalClass = HTMLClass.PEERSAVERAGE;
+						additionalClass = Category.PEERSAVERAGE;
 					} else {
-						additionalClass = HTMLClass.PEERSFULL;
+						additionalClass = Category.PEERSFULL;
 					}
 				}
-				Box progressBar = statusbar.addBox(HTMLClass.PROGRESSBAR);
-				Box peers = progressBar.addBox(HTMLClass.PROGRESSBARDONE);
-				peers.addClass(HTMLClass.PROGRESSBARPEERS);
+				Box progressBar = statusbar.addBox(Category.PROGRESSBAR);
+				Box peers = progressBar.addBox(Category.PROGRESSBARDONE);
+				peers.addClass(Category.PROGRESSBARPEERS);
 				peers.addClass(additionalClass);
 				peers.addAttribute("style",
 					"width: " + Math.min(100, Math.floor(100 * connectedRatio)) + "%;");
-				Box connectedpeers = progressBar.addBox(HTMLClass.PROGRESSBARFINAL,
+				Box connectedpeers = progressBar.addBox(Category.PROGRESSBARFINAL,
 					Integer.toString(connectedPeers) + ((totalPeers != Integer.MAX_VALUE) ?
 						" / " + Integer.toString(totalPeers) : ""));
 				connectedpeers.addAttribute("title", NodeL10n.getBase()
@@ -512,11 +512,11 @@ public final class PageMaker {
 			}
 		}
 		//Generate the page header area
-		Page.Content.addBox(HTMLID.TOPBAR).addChild("h1", title);
+		template.page.addBox(Identifier.TOPBAR).addChild("h1", title);
 		if (renderParameters.isRenderNavigationLinks()) {
 			SubMenu selected = null;
 			// Render the full menu.
-			OutputList navbarMainList = Page.Content.addBox(HTMLID.NAVBAR).addList(HTMLID.NAVLIST);
+			OutputList navbarMainList = template.page.addBox(Identifier.NAVBAR).addList(Identifier.NAVLIST);
 			synchronized (this) {
 				for (SubMenu menu : menuList) {
 					OutputList subnavlist = new OutputList();
@@ -535,10 +535,10 @@ public final class PageMaker {
 						String navigationPath = menu.navigationLinks.get(navigationLink);
 						Item sublistItem;
 						if (activePath.equals(navigationPath)) {
-							sublistItem = subnavlist.addItem(HTMLClass.SUBMENUSELECTED);
+							sublistItem = subnavlist.addItem(Category.SUBMENUSELECTED);
 							isSelected = true;
 						} else {
-							sublistItem = subnavlist.addItem(HTMLClass
+							sublistItem = subnavlist.addItem(Category
 								.SUBMENUNOTSELECTED);
 						}
 						FredPluginL10n l10n = menu.navigationLinkL10n.get(navigationLink);
@@ -589,11 +589,11 @@ public final class PageMaker {
 						Item listItem = navbarMainList.addItem();
 						if (isSelected) {
 							selected = menu;
-							subnavlist.addClass(HTMLClass.SUBNAVLISTSELECTED);
-							listItem.addClass(HTMLClass.NAVLISTSELECTED);
+							subnavlist.addClass(Category.SUBNAVLISTSELECTED);
+							listItem.addClass(Category.NAVLISTSELECTED);
 						} else {
-							subnavlist.addClass(HTMLClass.SUBNAVLIST);
-							listItem.addClass(HTMLClass.NAVLISTNOTSELECTED);
+							subnavlist.addClass(Category.SUBNAVLIST);
+							listItem.addClass(Category.NAVLISTNOTSELECTED);
 						}
 						String menuItemTitle = menu.defaultNavigationLinkTitle;
 						String text = menu.navigationLinkText;
@@ -635,8 +635,8 @@ public final class PageMaker {
 			}
 			// Some themes want the selected submenu separately.
 			if (selected != null) {
-				OutputList subnavlist = Page.Content.addBox(HTMLID.SELECTEDSUBNAVBAR)
-					.addList(HTMLID.SELECTEDSUBNAVBARLIST);
+				OutputList subnavlist = template.page.addBox(Identifier.SELECTEDSUBNAVBAR)
+					.addList(Identifier.SELECTEDSUBNAVBARLIST);
 				for (String navigationLink : fullAccess ? selected.navigationLinkTexts :
 					selected.navigationLinkTextsNonFull) {
 					//Empty
@@ -649,9 +649,9 @@ public final class PageMaker {
 					String navigationPath = selected.navigationLinks.get(navigationLink);
 					Item sublistItem;
 					if (activePath.equals(navigationPath)) {
-						sublistItem = subnavlist.addItem(HTMLClass.SUBMENUSELECTED);
+						sublistItem = subnavlist.addItem(Category.SUBMENUSELECTED);
 					} else {
-						sublistItem = subnavlist.addItem(HTMLClass.SUBMENUNOTSELECTED);
+						sublistItem = subnavlist.addItem(Category.SUBMENUNOTSELECTED);
 					}
 					FredPluginL10n l10n = selected.navigationLinkL10n.get(navigationLink);
 					if (l10n == null) {
@@ -681,7 +681,8 @@ public final class PageMaker {
 				}
 			}
 		}
-		return Page;
+		template.addContent();
+		return template;
 	}
 
 	/**
@@ -765,6 +766,7 @@ public final class PageMaker {
 	 *            The header HTML node
 	 * @return The infobox
 	 */
+	@Deprecated
 	public InfoboxNode getInfobox(String category, HTMLNode header, String title, boolean isUnique) {
 		if (header == null) throw new NullPointerException();
 
@@ -786,8 +788,8 @@ public final class PageMaker {
 			infobox.addAttribute("id", title);
 		}
 
-		infobox.addChild(new Box(HTMLClass.INFOBOXHEADER)).addChild(header);
-		return new InfoboxNode(infobox, infobox.addChild(new Box(HTMLClass.INFOBOXCONTENT)));
+		infobox.addChild(new Box(Category.INFOBOXHEADER)).addChild(header);
+		return new InfoboxNode(infobox, infobox.addChild(new Box(Category.INFOBOXCONTENT)));
 	}
 	
 	private HTMLNode getOverrideContent() {

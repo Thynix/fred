@@ -5,24 +5,24 @@ package freenet.clients.http.uielements;
  */
 public class BlockText extends OutputNode {
 
-	public BlockText(HTMLID ID, String content) {
-		this(ID);
+	public BlockText(Identifier id, String content) {
+		this(id);
 		this.setContent(content);
 	}
 
-	public BlockText(HTMLID ID) {
+	public BlockText(Identifier id) {
 		this();
-		setID(ID);
+		setID(id);
 	}
 
-	public BlockText(HTMLClass CLASS, String content) {
-		this(CLASS);
+	public BlockText(Category category, String content) {
+		this(category);
 		this.setContent(content);
 	}
 
-	public BlockText(HTMLClass CLASS) {
+	public BlockText(Category category) {
 		this();
-		addClass(CLASS);
+		addClass(category);
 	}
 
 	public BlockText(String content) {

@@ -5,24 +5,24 @@ package freenet.clients.http.uielements;
  */
 public class Meta extends OutputNode {
 
-	public String MetaEquiv;
-	public String MetaContent;
+	public String equiv;
+	public String equivContent;
 
-	public Meta(String Equiv, String Content) {
+	public Meta(String equiv, String content) {
 		this();
-		setMetaEquiv(Equiv);
-		setMetaContent(Content);
+		setEquiv(equiv);
+		setEquivContent(content);
 	}
 	public Meta() {
 		super("meta");
 	}
 
-	public void setMetaEquiv(String Equiv) {
-		this.MetaEquiv = Equiv;
-		this.addAttribute("http-equiv", Equiv);
+	public void setEquiv(String equiv) {
+		this.equiv = equiv;
+		this.addAttribute("http-equiv", equiv);
 	}
-	public void setMetaContent(String Content) {
-		this.MetaContent = Content;
-		this.addAttribute("content", Content);
+	public void setEquivContent(String content) {
+		this.equivContent = content;
+		this.addAttribute("content", content);
 	}
 }

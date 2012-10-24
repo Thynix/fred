@@ -320,12 +320,12 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 			        new String[] { "submit", "select-location",
 				        NodeL10n.getBase().getString("QueueToadlet.browseToChange")+"..."} );
 			if(!dontShowFilter) {
-				HTMLNode filterControl = optionForm.addChild(new Box(HTMLClass.NONE, l10n("filterData")));
+				HTMLNode filterControl = optionForm.addChild(new Box(Category.NONE, l10n("filterData")));
 				HTMLNode f = filterControl.addChild("input",
 				        new String[] { "type", "name", "value" },
 				        new String[] { "checkbox", "filterData", "filterData"});
 				if(filterChecked) f.addAttribute("checked", "checked");
-				filterControl.addChild(new Box(HTMLClass.NONE, l10n("filterDataMessage")));
+				filterControl.addChild(new Box(Category.NONE, l10n("filterDataMessage")));
 			}
 			if (threatLevel == PHYSICAL_THREAT_LEVEL.HIGH) {
 				optionForm.addLineBreak();
@@ -360,12 +360,12 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 			        "FProxyToadlet.downloadInBackgroundToTempSpace",
 			        new String[] { "page", "bold" }, new HTMLNode[] { DOWNLOADS_LINK, HTMLNode.STRONG });
 			if(!dontShowFilter) {
-				HTMLNode filterControl = optionForm.addChild(new Box(HTMLClass.NONE, l10n("filterData")));
+				HTMLNode filterControl = optionForm.addChild(new Box(Category.NONE, l10n("filterData")));
 				HTMLNode f = filterControl.addChild("input",
 						new String[] { "type", "name", "value" },
 						new String[] { "checkbox", "filterData", "filterData"});
 				if(filterChecked) f.addAttribute("checked", "checked");
-				filterControl.addChild(new Box(HTMLClass.NONE, l10n("filterDataMessage")));
+				filterControl.addChild(new Box(Category.NONE, l10n("filterDataMessage")));
 			}
 		}
 	}
@@ -701,7 +701,7 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 
 				Table table = new Table();
 				fetchingPage.body.addChild(table);
-				Cell progressCell = table.addRow().addCell(HTMLClass.REQUESTPROGRESS);
+				Cell progressCell = table.addRow().addCell(Category.REQUESTPROGRESS);
 				if(fr.totalBlocks <= 0)
 					progressCell.addText(NodeL10n.getBase().getString("QueueToadlet.unknown"));
 				else {

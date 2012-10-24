@@ -5,8 +5,8 @@ package freenet.clients.http.uielements;
  */
 public class Item extends OutputNode {
 
-	public Item(HTMLClass CLASS, String content) {
-		this(CLASS);
+	public Item(Category category, String content) {
+		this(category);
 		this.setContent(content);
 	}
 
@@ -15,9 +15,9 @@ public class Item extends OutputNode {
 		this.setContent(content);
 	}
 
-	public Item(HTMLClass CLASS) {
+	public Item(Category category) {
 		this();
-		addClass(CLASS);
+		addClass(category);
 	}
 
 	public Item() {

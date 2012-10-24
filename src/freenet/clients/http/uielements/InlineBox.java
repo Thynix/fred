@@ -6,39 +6,39 @@ package freenet.clients.http.uielements;
 public class InlineBox extends OutputNode {
 	public String title;
 
-	public InlineBox(HTMLID ID, String content) {
-		this(ID);
+	public InlineBox(Identifier id, String content) {
+		this(id);
 		this.setContent(content);
 	}
 
-	public InlineBox(HTMLID ID) {
+	public InlineBox(Identifier id) {
 		this();
-		setID(ID);
+		setID(id);
 	}
 
-	public InlineBox(String style, HTMLClass CLASS, String content) {
-		this(CLASS, content);
+	public InlineBox(String style, Category category, String content) {
+		this(category, content);
 		addAttribute("style", style);
 	}
 
-	public InlineBox(HTMLClass CLASS, String Title, String content) {
-		this(CLASS, content);
-		setTitle(Title);
-	}
-
-	public InlineBox(HTMLClass CLASS, String content) {
-		this(CLASS);
-		this.setContent(content);
-	}
-
-	public InlineBox(String title, HTMLClass CLASS) {
-		this(CLASS);
+	public InlineBox(Category category, String title, String content) {
+		this(category, content);
 		setTitle(title);
 	}
 
-	public InlineBox(HTMLClass CLASS) {
+	public InlineBox(Category category, String content) {
+		this(category);
+		this.setContent(content);
+	}
+
+	public InlineBox(String title, Category category) {
+		this(category);
+		setTitle(title);
+	}
+
+	public InlineBox(Category category) {
 		this();
-		addClass(CLASS);
+		addClass(category);
 	}
 
 	public InlineBox(String content) {

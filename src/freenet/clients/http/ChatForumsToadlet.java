@@ -33,7 +33,7 @@ public class ChatForumsToadlet extends Toadlet implements LinkEnabledCallback {
 		
 		contentNode.addChild(alerts.createSummary());
 		
-		InfoboxWidget chatList = new InfoboxWidget(InfoboxWidget.Type.INFORMATION, HTMLID.CHATLIST, l10n("title"));
+		InfoboxWidget chatList = new InfoboxWidget(InfoboxWidget.Type.INFORMATION, Identifier.CHATLIST, l10n("title"));
 		contentNode.addInfobox(chatList);
 		
 		chatList.body.addChild(new BlockText(l10n("freetalkRecommended")));

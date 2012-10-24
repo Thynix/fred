@@ -17,11 +17,11 @@ import freenet.clients.http.FProxyFetchWaiter;
 import freenet.clients.http.FProxyToadlet;
 import freenet.clients.http.SimpleToadletServer;
 import freenet.clients.http.ToadletContext;
+import freenet.clients.http.uielements.Category;
 import freenet.keys.FreenetURI;
 import freenet.support.Base64;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
-import freenet.clients.http.uielements.HTMLClass;
 import freenet.clients.http.uielements.Box;
 
 /** A pushed image, the progress is shown with the ImageCreatorToadlet */
@@ -179,10 +179,10 @@ public class ImageElement extends BaseUpdateableElement {
 					waiter = tracker.makeFetcher(key, maxSize, null, REFILTER_POLICY.RE_FILTER);
 					fr = waiter.getResultFast();
 				} catch (FetchException fe) {
-					whenJsEnabled.addChild(new Box(HTMLClass.NONE, "error"));
+					whenJsEnabled.addChild(new Box(Category.NONE, "error"));
 				}
 				if (fr == null) {
-					whenJsEnabled.addChild(new Box(HTMLClass.NONE, "No fetcher found"));
+					whenJsEnabled.addChild(new Box(Category.NONE, "No fetcher found"));
 				} else {
 
 					if (fr.isFinished() && fr.hasData()) {

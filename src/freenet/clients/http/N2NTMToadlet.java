@@ -175,7 +175,7 @@ public class N2NTMToadlet extends Toadlet {
 				}
 			}
 
-			Table peerTable = peerTableInfobox.body.addTable(HTMLClass.N2NTMSENDSTATUS);
+			Table peerTable = peerTableInfobox.body.addTable(Category.N2NTMSENDSTATUS);
 			Row peerTableHeaderRow = peerTable.addRow();
 			peerTableHeaderRow.addHeader(l10n("peerName"));
 			peerTableHeaderRow.addHeader(l10n("sendStatus"));
@@ -224,32 +224,32 @@ public class N2NTMToadlet extends Toadlet {
 					
 					String sendStatusShort;
 					String sendStatusLong;
-					HTMLClass sendStatusClass;
+					Category sendStatusClass;
 					if(status == PeerManager.PEER_NODE_STATUS_ROUTING_BACKED_OFF) {
 						sendStatusShort = l10n("delayedTitle");
 						sendStatusLong = l10n("delayed");
-						sendStatusClass = HTMLClass.N2NTMSENDDELAYED;
+						sendStatusClass = Category.N2NTMSENDDELAYED;
 						Logger.normal(this, "Sent N2NTM to '"
 								+ pn.getName() + "': " + message);
 					} else if(status == PeerManager.PEER_NODE_STATUS_CONNECTED) {
 						sendStatusShort = l10n("sentTitle");
 						sendStatusLong = l10n("sent");
-						sendStatusClass = HTMLClass.N2NTMSENDSENT;
+						sendStatusClass = Category.N2NTMSENDSENT;
 						Logger.normal(this, "Sent N2NTM to '"
 								+ pn.getName() + "': " + message);
 					} else {
 						sendStatusShort = l10n("queuedTitle");
 						sendStatusLong = l10n("queued");
-						sendStatusClass = HTMLClass.N2NTMSENDQUEUED;
+						sendStatusClass = Category.N2NTMSENDQUEUED;
 						Logger.normal(this, "Queued N2NTM to '"
 								+ pn.getName() + "': " + message);
 					}
 					Row peerRow = peerTable.addRow();
 					peerRow.addCell("peer-name").addText(pn.getName());
-					peerRow.addCell(sendStatusClass).addInlineBox(HTMLClass.N2NTMSENDSTATUS, sendStatusLong, sendStatusShort);
+					peerRow.addCell(sendStatusClass).addInlineBox(Category.N2NTMSENDSTATUS, sendStatusLong, sendStatusShort);
 				}
 			}
-			HTMLNode infoboxContent = peerTableInfobox.body.addBox(HTMLClass.N2NTMMESSAGETEXT);
+			HTMLNode infoboxContent = peerTableInfobox.body.addBox(Category.N2NTMMESSAGETEXT);
 			infoboxContent.addText(message);
 			OutputList list = peerTableInfobox.body.addList();
 			Toadlet.addHomepageLink(list);
@@ -267,7 +267,7 @@ public class N2NTMToadlet extends Toadlet {
 			throws ToadletContextClosedException, IOException {
 		InfoboxWidget messageeditor = new InfoboxWidget(InfoboxWidget.Type.NONE, l10n("sendMessage"));
 		contentNode.addChild(messageeditor);
-		messageeditor.setID(HTMLID.N2NBOX);
+		messageeditor.setID(Identifier.N2NBOX);
 		messageeditor.body.addBlockText( l10n("composingMessageLabel"));
 		OutputList messageTargetList = messageeditor.body.addList();
 		// Iterate peers

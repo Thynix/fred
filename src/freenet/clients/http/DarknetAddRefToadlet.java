@@ -80,7 +80,7 @@ public class DarknetAddRefToadlet extends Toadlet {
 		
 		contentNode.addChild(core.alerts.createSummary());
 
-		InfoboxWidget darknetExplainations = new InfoboxWidget(InfoboxWidget.Type.INFORMATION, HTMLID.DARKNETEXPLAINATIONS, l10n("explainBoxTitle"));
+		InfoboxWidget darknetExplainations = new InfoboxWidget(InfoboxWidget.Type.INFORMATION, Identifier.DARKNETEXPLAINATIONS, l10n("explainBoxTitle"));
 		contentNode.addInfobox(darknetExplainations);
 		darknetExplainations.body.addText(l10n("explainBox1"));
 		darknetExplainations.body.addText(l10n("explainBox2"));

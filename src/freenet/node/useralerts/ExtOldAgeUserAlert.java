@@ -1,9 +1,9 @@
 package freenet.node.useralerts;
 
 import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Category;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
-import freenet.clients.http.uielements.HTMLClass;
 
 public class ExtOldAgeUserAlert extends AbstractUserAlert {
 	
@@ -30,7 +30,7 @@ public class ExtOldAgeUserAlert extends AbstractUserAlert {
 
 	@Override
 	public HTMLNode getHTMLText() {
-		return new Box(HTMLClass.NONE, getText());
+		return new Box(Category.NONE, getText());
 	}
 
 	@Override

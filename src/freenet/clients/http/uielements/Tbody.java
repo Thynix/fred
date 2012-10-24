@@ -6,9 +6,9 @@ package freenet.clients.http.uielements;
 public class Tbody extends OutputNode {
 
 	//Constructors
-	public Tbody(HTMLClass CLASS) {
+	public Tbody(Category category) {
 		this();
-		addClass(CLASS);
+		addClass(category);
 	}
 
 	public Tbody() {
@@ -20,8 +20,8 @@ public class Tbody extends OutputNode {
 		this.addChild(newRow);
 		return newRow;
 	}
-	public Row addRow(HTMLClass CLASS) {
-		Row newRow = new Row(CLASS);
+	public Row addRow(Category category) {
+		Row newRow = new Row(category);
 		this.addChild(newRow);
 		return newRow;
 	}

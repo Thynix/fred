@@ -14,19 +14,19 @@ public class OutputList extends OutputNode {
 	}
 
 	//Constructors
-	public OutputList(Type type, HTMLClass CLASS) {
+	public OutputList(Type type, Category category) {
 		super(type.tagName);
-		addClass(CLASS);
+		addClass(category);
 	}
 
-	public OutputList(HTMLClass CLASS) {
+	public OutputList(Category category) {
 		this();
-		addClass(CLASS);
+		addClass(category);
 	}
 
-	public OutputList(HTMLID ID) {
+	public OutputList(Identifier id) {
 		this();
-		setID(ID);
+		setID(id);
 	}
 
 	public OutputList() {
@@ -34,8 +34,8 @@ public class OutputList extends OutputNode {
 	}
 
 	//Methods for adding list items
-	public Item addItem(HTMLClass CLASS, String content) {
-		Item newListItem = new Item(CLASS, content);
+	public Item addItem(Category category, String content) {
+		Item newListItem = new Item(category, content);
 		addChild(newListItem);
 		return newListItem;
 	}
@@ -44,8 +44,8 @@ public class OutputList extends OutputNode {
 		addChild(newListItem);
 		return newListItem;
 	}
-	public Item addItem(HTMLClass CLASS) {
-		Item newListItem = new Item(CLASS);
+	public Item addItem(Category category) {
+		Item newListItem = new Item(category);
 		addChild(newListItem);
 		return newListItem;
 	}

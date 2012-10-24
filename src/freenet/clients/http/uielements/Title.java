@@ -5,7 +5,7 @@ package freenet.clients.http.uielements;
  */
 public class Title extends OutputNode {
 
-	public Title(String Name) {
-		super("title", Name);
+	public Title(String name) {
+		super("title", name);
 	}
 }

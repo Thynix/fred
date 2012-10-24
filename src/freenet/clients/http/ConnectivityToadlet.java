@@ -101,7 +101,7 @@ public class ConnectivityToadlet extends Toadlet {
 		
 		UdpSocketHandler[] handlers = node.getPacketSocketHandlers();
 
-		InfoboxWidget ConnectivitySummary = new InfoboxWidget(InfoboxWidget.Type.WTF, HTMLID.CONNECTIVITYSUMMARY, NodeL10n.getBase().getString("ConnectivityToadlet.summaryTitle"));
+		InfoboxWidget ConnectivitySummary = new InfoboxWidget(InfoboxWidget.Type.WTF, Identifier.CONNECTIVITYSUMMARY, NodeL10n.getBase().getString("ConnectivityToadlet.summaryTitle"));
 		contentNode.addInfobox(ConnectivitySummary);
 		Table SummaryTable = ConnectivitySummary.body.addTable();
 		
@@ -125,7 +125,7 @@ public class ConnectivityToadlet extends Toadlet {
 		for(int i=0;i<handlers.length;i++) {
 			// Peers
 			AddressTracker tracker = handlers[i].getAddressTracker();
-			InfoboxWidget byPorts = new InfoboxWidget(InfoboxWidget.Type.WTF, HTMLClass.CONNECTIVITYPORT, NodeL10n.getBase().getString("ConnectivityToadlet.byPortTitle", new String[] { "port", "status", "tunnelLength" }, new String[] { handlers[i].getTitle(), AddressTracker.statusString(tracker.getPortForwardStatus()), TimeUtil.formatTime(tracker.getLongestSendReceiveGap()) }));
+			InfoboxWidget byPorts = new InfoboxWidget(InfoboxWidget.Type.WTF, Category.CONNECTIVITYPORT, NodeL10n.getBase().getString("ConnectivityToadlet.byPortTitle", new String[] { "port", "status", "tunnelLength" }, new String[] { handlers[i].getTitle(), AddressTracker.statusString(tracker.getPortForwardStatus()), TimeUtil.formatTime(tracker.getLongestSendReceiveGap()) }));
 			contentNode.addInfobox(byPorts);
 			SummaryTable = new Table();
 			byPorts.body.addTable(SummaryTable);
@@ -160,7 +160,7 @@ public class ConnectivityToadlet extends Toadlet {
 			}
 
 			// IPs
-			InfoboxWidget byIP = new InfoboxWidget(InfoboxWidget.Type.WTF, HTMLClass.CONNECTIVITYIP, NodeL10n.getBase().getString("ConnectivityToadlet.byIPTitle", new String[] { "ip", "status", "tunnelLength" }, new String[] { handlers[i].getTitle(), AddressTracker.statusString(tracker.getPortForwardStatus()), TimeUtil.formatTime(tracker.getLongestSendReceiveGap()) }));
+			InfoboxWidget byIP = new InfoboxWidget(InfoboxWidget.Type.WTF, Category.CONNECTIVITYIP, NodeL10n.getBase().getString("ConnectivityToadlet.byIPTitle", new String[] { "ip", "status", "tunnelLength" }, new String[] { handlers[i].getTitle(), AddressTracker.statusString(tracker.getPortForwardStatus()), TimeUtil.formatTime(tracker.getLongestSendReceiveGap()) }));
 			contentNode.addInfobox(byIP);
 			SummaryTable = new Table();
 			byIP.body.addChild(SummaryTable);

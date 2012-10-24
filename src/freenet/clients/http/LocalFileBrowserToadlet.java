@@ -202,7 +202,7 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 	 */
 	private HTMLNode renderPersistenceFields (Hashtable<String, String> fieldPairs) {
 		Box result = new Box();
-		result.setID(HTMLID.PERSISTENCEFIELDS);
+		result.setID(Identifier.PERSISTENCEFIELDS);
 		for (String key : fieldPairs.keySet()) {
 			result.addChild("input", 
 				new String[] { "type", "name", "value" },
@@ -289,7 +289,7 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 		PageMaker pageMaker = ctx.getPageMaker();
 		if (currentPath != null && !allowedDir(currentPath)) {
 			PageNode page = pageMaker.getPageNode(l10n("listingTitle", "path", attemptedPath), ctx);
-			page.content.addInfobox(InfoboxWidget.Type.ERROR, HTMLID.ACCESSDENIED, "Forbidden").
+			page.content.addInfobox(InfoboxWidget.Type.ERROR, Identifier.ACCESSDENIED, "Forbidden").
 				addText(l10n("dirAccessDenied"));
 			sendErrorPage(ctx, 403, "Forbidden", l10n("dirAccessDenied"));
 			return;
@@ -381,7 +381,7 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 						}
 					} else {
 						fileRow.addCell();
-						fileRow.addCell(HTMLClass.UNREADABLEFILE,currentFile.getName());
+						fileRow.addCell(Category.UNREADABLEFILE,currentFile.getName());
 					}
 					fileRow.addCell();
 				} else {
@@ -394,11 +394,11 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 						        persistenceFields);
 						
 						fileRow.addCell(currentFile.getName());
-						fileRow.addCell(HTMLClass.ALIGNRIGHT, String.valueOf(currentFile.length()));
+						fileRow.addCell(Category.ALIGNRIGHT, String.valueOf(currentFile.length()));
 					} else {
 						fileRow.addCell();
-						fileRow.addCell(HTMLClass.UNREADABLEFILE, currentFile.getName());
-						fileRow.addCell(HTMLClass.ALIGNRIGHT, String.valueOf(currentFile.length()));
+						fileRow.addCell(Category.UNREADABLEFILE, currentFile.getName());
+						fileRow.addCell(Category.ALIGNRIGHT, String.valueOf(currentFile.length()));
 					}
 				}
 			}

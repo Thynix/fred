@@ -5,20 +5,20 @@ package freenet.clients.http.uielements;
  */
 public class Head extends OutputNode {
 
-	public Title Title;
+	public Title title;
 
 	public Head(String title) {
 		super("head");
-		Title = new Title(title);
-		this.addChild(Title);
+		this.title = new Title(title);
+		this.addChild(this.title);
 	}
 
-	public void setTitle(String Title) {
-		this.Title.setContent(Title);
+	public void setTitle(String title) {
+		this.title.setContent(title);
 	}
 
-	public Meta addMeta(String Equiv, String Content) {
-		Meta newMeta = new Meta(Equiv, Content);
+	public Meta addMeta(String equiv, String content) {
+		Meta newMeta = new Meta(equiv, content);
 		this.addChild(newMeta);
 		return newMeta;
 	}

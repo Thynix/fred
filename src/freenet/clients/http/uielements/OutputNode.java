@@ -4,21 +4,21 @@ import freenet.support.HTMLNode;
 
 public class OutputNode extends HTMLNode {
 
-	public OutputNode(String Name) {
-		super(Name);
+	public OutputNode(String name) {
+		super(name);
 	}
 
-	public OutputNode(String Name, HTMLClass Class) {
-		super(Name);
-		this.addClass(Class);
+	public OutputNode(String name, Category category) {
+		super(name);
+		this.addClass(category);
 	}
 
-	public OutputNode(String Name, String Attribute, String Value) {
-		super(Name, Attribute, Value);
+	public OutputNode(String name, String attribute, String value) {
+		super(name, attribute, value);
 	}
 
-	public OutputNode(String Name, String Content) {
-		super(Name, Content);
+	public OutputNode(String name, String content) {
+		super(name, content);
 	}
 
 	public OutputNode addChild(String name, String attribute, String value, String content) {

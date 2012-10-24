@@ -1,6 +1,6 @@
 package freenet.clients.http.uielements;
 
-public enum HTMLID {
+public enum Identifier {
 	ACCESSDENIED("access-denied"),
 	BOOKMARKS("bookmarks"),
 	BOOKMARKADDCONFIRM("add-bookmark-confirm"),
@@ -70,7 +70,7 @@ public enum HTMLID {
 
 	public final String name;
 
-	private HTMLID(String ID) {
-		this.name = ID;
+	private Identifier(String id) {
+		this.name = id;
 	}
 }

@@ -2,23 +2,23 @@ package freenet.clients.http.uielements;
 
 public class AlertLine extends InfoboxWidget {
 
-	public Box header = new Box(HTMLClass.INFOBOXHEADER);
-	public Box body = new Box(HTMLClass.INFOBOXCONTENT);
+	public Box header = new Box(Category.INFOBOXHEADER);
+	public Box body = new Box(Category.INFOBOXCONTENT);
 
 	public enum Type {
-		ALERT(HTMLClass.CONTAINSALERT),
-		INFORMATION(HTMLClass.CONTAINSINFORMATION),
-		WARNING(HTMLClass.CONTAINSWARNING);
+		ALERT(Category.CONTAINSALERT),
+		INFORMATION(Category.CONTAINSINFORMATION),
+		WARNING(Category.CONTAINSWARNING);
 
-		public final HTMLClass htmlclass;
+		public final Category category;
 
-		private Type(HTMLClass ID) {
-			this.htmlclass = ID;
+		private Type(Category category) {
+			this.category = category;
 		}
 	}
 
 	public AlertLine(Type type, String title) {
-		super(type.htmlclass, title);
+		super(type.category, title);
 	}
 
 

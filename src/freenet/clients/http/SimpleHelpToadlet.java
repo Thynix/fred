@@ -37,7 +37,7 @@ public class SimpleHelpToadlet extends Toadlet {
 		}
 		// Description infobox
 		Text Description = new Text(NodeL10n.getBase().getString("SimpleHelpToadlet.descriptionText"));
-		contentNode.addInfobox(InfoboxWidget.Type.INFORMATION, HTMLID.FREENETDESCRIPTION,
+		contentNode.addInfobox(InfoboxWidget.Type.INFORMATION, Identifier.FREENETDESCRIPTION,
 			NodeL10n.getBase().getString("SimpleHelpToadlet.descriptionTitle"), Description);
 		// Definitions infobox
 		Table Definitions = new Table();
@@ -47,11 +47,11 @@ public class SimpleHelpToadlet extends Toadlet {
 		row.addText(NodeL10n.getBase().getString("SimpleHelpToadlet.SSK"));
 		row.addLineBreak();
 		row.addText(NodeL10n.getBase().getString("SimpleHelpToadlet.USK"));
-		contentNode.addInfobox(InfoboxWidget.Type.INFORMATION, HTMLID.FREENETDESCRIPTION,
+		contentNode.addInfobox(InfoboxWidget.Type.INFORMATION, Identifier.FREENETDESCRIPTION,
 			NodeL10n.getBase().getString("SimpleHelpToadlet.definitionsTitle"), Definitions);
 		// Port forwarding, etc.
 		Text Connectivity = new Text(NodeL10n.getBase().getString("SimpleHelpToadlet.connectivityText"));
-		contentNode.addInfobox(InfoboxWidget.Type.INFORMATION, HTMLID.FREENETDESCRIPTION,
+		contentNode.addInfobox(InfoboxWidget.Type.INFORMATION, Identifier.FREENETDESCRIPTION,
 			NodeL10n.getBase().getString("SimpleHelpToadlet.connectivityTitle"), Connectivity);
 		this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
 	}
