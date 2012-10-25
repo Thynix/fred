@@ -13,8 +13,7 @@ public class OPENNET implements Step {
 
 	@Override
 	public void getStep(HTTPRequest request, PageHelper helper) {
-		HTMLNode contentNode = helper.getPageContent(WizardL10n.l10n("opennetChoicePageTitle"));
-		InfoboxWidget infoboxContent = contentNode.addInfobox(InfoboxWidget.Type.NORMAL,
+		InfoboxWidget infoboxContent = helper.getPageContent(WizardL10n.l10n("opennetChoicePageTitle")).addInfobox(InfoboxWidget.Type.NORMAL,
 			WizardL10n.l10n("opennetChoiceTitle"));
 
 		infoboxContent.body.addChild(new BlockText(WizardL10n.l10n("opennetChoiceIntroduction")));

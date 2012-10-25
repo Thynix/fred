@@ -378,8 +378,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 	}
 
 	public static void sendCantDeleteMasterKeysFileInner(PageHelper helper, String filename, String physicalSecurityLevel) {
-		HTMLNode contentNode = helper.getPageContent(l10nSec("cantDeletePasswordFileTitle"));
-		InfoboxWidget content = contentNode.addInfobox(InfoboxWidget.Type.ERROR, Identifier.PASSWORDERROR,
+		InfoboxWidget content = helper.getPageContent(l10nSec("cantDeletePasswordFileTitle")).addInfobox(InfoboxWidget.Type.ERROR, Identifier.PASSWORDERROR,
 			l10nSec("cantDeletePasswordFileTitle"));
 		HTMLNode form = helper.addFormChild(content.body, "/wizard/", "masterPasswordForm");
 		sendCantDeleteMasterKeysFileInner(content.body, form, filename, physicalSecurityLevel);
@@ -401,7 +400,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 		return pageNode;
 	}
 
-	private static void sendCantDeleteMasterKeysFileInner(HTMLNode content, HTMLNode form, String filename, String physicalSecurityLevel) {
+	private static void sendCantDeleteMasterKeysFileInner(Box content, HTMLNode form, String filename, String physicalSecurityLevel) {
 		form.addChild("input",
 		        new String[] { "type", "name", "value" },
 		        new String[] { "hidden", "security-levels.physicalThreatLevel", physicalSecurityLevel });
@@ -413,7 +412,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 		        new String[] { "type", "name", "value" },
 		        new String[] { "submit", "tryAgain", l10nSec("cantDeletePasswordFileButton") });
 
-		content.addChild(new BlockText(l10nSec("cantDeletePasswordFile", "filename", filename)));
+		content.addBlockText(l10nSec("cantDeletePasswordFile", "filename", filename));
 	}
 
 	/**
@@ -660,8 +659,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 	}
 
 	public static void sendPasswordFileCorruptedPageInner(PageHelper helper, String masterPasswordFile) {
-		HTMLNode contentNode = helper.getPageContent(l10nSec("passwordFileCorruptedTitle"));
-		InfoboxWidget infoBox = contentNode.addInfobox(InfoboxWidget.Type.ERROR, Identifier.PASSWORDERROR,
+		InfoboxWidget infoBox = helper.getPageContent(l10nSec("passwordFileCorruptedTitle")).addInfobox(InfoboxWidget.Type.ERROR, Identifier.PASSWORDERROR,
 			l10nSec("passwordFileCorruptedTitle"));
 		sendPasswordFileCorruptedPageInner(infoBox.body, masterPasswordFile);
 	}
@@ -680,14 +678,12 @@ public class SecurityLevelsToadlet extends Toadlet {
 	}
 
 	/** Send a page asking what to do when the master password file has been corrupted.
-	 * @param infoBox containing more information. Will be added to.
+	 * @param content containing more information. Will be added to.
 	 * @param masterPasswordFile path to master password file */
-	private static void sendPasswordFileCorruptedPageInner(HTMLNode infoBox, String masterPasswordFile) {
-		infoBox.addChild(new BlockText(l10nSec("passwordFileCorrupted", "file", masterPasswordFile)));
-
-		addHomepageLink(infoBox);
-
-		addBackToSeclevelsLink(infoBox);
+	private static void sendPasswordFileCorruptedPageInner(Box content, String masterPasswordFile) {
+		content.addChild(new BlockText(l10nSec("passwordFileCorrupted", "file", masterPasswordFile)));
+		addHomepageLink(content);
+		addBackToSeclevelsLink(content);
 	}
 
 	/**

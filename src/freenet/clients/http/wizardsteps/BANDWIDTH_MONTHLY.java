@@ -1,10 +1,7 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
-import freenet.clients.http.uielements.InfoboxWidget;
-import freenet.clients.http.uielements.Row;
-import freenet.clients.http.uielements.Table;
-import freenet.clients.http.uielements.Text;
+import freenet.clients.http.uielements.*;
 import freenet.config.Config;
 import freenet.config.InvalidConfigValueException;
 import freenet.l10n.NodeL10n;
@@ -29,7 +26,7 @@ public class BANDWIDTH_MONTHLY extends BandwidthManipulator implements Step {
 
 	@Override
 	public void getStep(HTTPRequest request, PageHelper helper) {
-		HTMLNode contentNode = helper.getPageContent(WizardL10n.l10n("bandwidthLimit"));
+		Box contentNode = helper.getPageContent(WizardL10n.l10n("bandwidthLimit"));
 
 		if (request.isParameterSet("parseError")) {
 			parseErrorBox(contentNode, helper, request.getParam("parseTarget"));

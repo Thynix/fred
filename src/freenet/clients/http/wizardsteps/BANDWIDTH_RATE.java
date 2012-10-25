@@ -59,7 +59,7 @@ public class BANDWIDTH_RATE extends BandwidthManipulator implements Step {
 
 	@Override
 	public void getStep(HTTPRequest request, PageHelper helper) {
-		HTMLNode contentNode = helper.getPageContent(WizardL10n.l10n("bandwidthLimit"));
+		Box contentNode = helper.getPageContent(WizardL10n.l10n("bandwidthLimit"));
 		
 		HTMLNode formNode = helper.addFormChild(contentNode, ".", "limit");
 

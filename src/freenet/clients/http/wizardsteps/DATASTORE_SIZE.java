@@ -31,8 +31,7 @@ public class DATASTORE_SIZE implements Step {
 
 	@Override
 	public void getStep(HTTPRequest request, PageHelper helper) {
-		HTMLNode contentNode = helper.getPageContent(WizardL10n.l10n("step4Title"));
-		InfoboxWidget bandwidthInfoboxContent = contentNode.addInfobox(WizardL10n.l10n("datastoreSize"));
+		InfoboxWidget bandwidthInfoboxContent = helper.getPageContent(WizardL10n.l10n("step4Title")).addInfobox(WizardL10n.l10n("datastoreSize"));
 
 		bandwidthInfoboxContent.body.addText(WizardL10n.l10n("datastoreSizeLong"));
 		HTMLNode bandwidthForm = helper.addFormChild(bandwidthInfoboxContent.body, ".", "dsForm");

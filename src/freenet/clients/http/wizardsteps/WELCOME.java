@@ -1,6 +1,7 @@
 package freenet.clients.http.wizardsteps;
 
-import freenet.clients.http.*;
+import freenet.clients.http.ConfigToadlet;
+import freenet.clients.http.FirstTimeWizardToadlet;
 import freenet.clients.http.uielements.Box;
 import freenet.clients.http.uielements.Cell;
 import freenet.clients.http.uielements.Row;
@@ -32,7 +33,7 @@ public class WELCOME implements Step {
 	 */
 	@Override
 	public void getStep(HTTPRequest request, PageHelper helper) {
-		HTMLNode contentNode = helper.getPageContent(WizardL10n.l10n("homepageTitle"));
+		Box contentNode = helper.getPageContent(WizardL10n.l10n("homepageTitle"));
 		boolean incognito = request.isParameterSet("incognito");
 
 		Table optionsTable = new Table();

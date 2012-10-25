@@ -46,8 +46,7 @@ public class SECURITY_PHYSICAL implements Step {
 			//Problem generating error page; generate default.
 		}
 
-		HTMLNode contentNode = helper.getPageContent(WizardL10n.l10n("physicalSecurityPageTitle"));
-		InfoboxWidget PhysicalThreatLevel = contentNode.addInfobox(InfoboxWidget.Type.NORMAL,
+		InfoboxWidget PhysicalThreatLevel = helper.getPageContent(WizardL10n.l10n("physicalSecurityPageTitle")).addInfobox(InfoboxWidget.Type.NORMAL,
 		        WizardL10n.l10nSec("physicalThreatLevelShort"));
 		Box infoboxContent = PhysicalThreatLevel.body;
 		infoboxContent.addBlockText(WizardL10n.l10nSec("physicalThreatLevel"));
@@ -143,9 +142,7 @@ public class SECURITY_PHYSICAL implements Step {
 					return false;
 			}
 
-			HTMLNode contentNode = helper.getPageContent(WizardL10n.l10nSec(pageTitleKey));
-
-			InfoboxWidget ErrorBox = contentNode.addInfobox(InfoboxWidget.Type.ERROR,
+			InfoboxWidget ErrorBox = helper.getPageContent(WizardL10n.l10nSec(pageTitleKey)).addInfobox(InfoboxWidget.Type.ERROR,
 				WizardL10n.l10nSec(infoboxTitleKey));
 			Box content = ErrorBox.body;
 

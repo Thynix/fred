@@ -27,8 +27,7 @@ public class MISC implements Step {
 
 	@Override
 	public void getStep(HTTPRequest request, PageHelper helper) {
-		HTMLNode contentNode = helper.getPageContent(WizardL10n.l10n("stepMiscTitle"));
-		HTMLNode form = helper.addFormChild(contentNode, ".", "miscForm");
+		HTMLNode form = helper.addFormChild(helper.getPageContent(WizardL10n.l10n("stepMiscTitle")), ".", "miscForm");
 
 		InfoboxWidget autoUpdate = form.addInfobox(InfoboxWidget.Type.NORMAL, WizardL10n.l10n("autoUpdate"));
 		Box miscInfoboxContent = autoUpdate.body;

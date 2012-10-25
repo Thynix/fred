@@ -52,8 +52,6 @@ public class BROWSER_WARNING implements Step {
 		}
 		boolean isRelativelySafe = isFirefox && !isOldFirefox;
 
-		HTMLNode contentNode = helper.getPageContent(WizardL10n.l10n("browserWarningPageTitle"));
-
 		String infoBoxHeader;
 		if(incognito) {
 			infoBoxHeader = WizardL10n.l10n("browserWarningIncognitoShort");
@@ -63,7 +61,7 @@ public class BROWSER_WARNING implements Step {
 			infoBoxHeader = WizardL10n.l10n("browserWarningShort");
 		}
 		
-		InfoboxWidget infoboxContent = contentNode.addInfobox(InfoboxWidget.Type.NORMAL, infoBoxHeader);
+		InfoboxWidget infoboxContent = helper.getPageContent(WizardL10n.l10n("browserWarningPageTitle")).addInfobox(InfoboxWidget.Type.NORMAL, infoBoxHeader);
 		if(isOldFirefox) {
 			HTMLNode p = infoboxContent.body.addBlockText();
 			p.addText(WizardL10n.l10n("browserWarningOldFirefox"));

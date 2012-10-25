@@ -23,7 +23,7 @@ public class SECURITY_NETWORK implements Step {
 
 	@Override
 	public void getStep(HTTPRequest request, PageHelper helper) {
-		HTMLNode contentNode = helper.getPageContent(WizardL10n.l10n("networkSecurityPageTitle"));
+		Box contentNode = helper.getPageContent(WizardL10n.l10n("networkSecurityPageTitle"));
 		String opennetParam = request.getParam("opennet", "false");
 		boolean opennet = Fields.stringToBool(opennetParam, false);
 
