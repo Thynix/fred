@@ -7,7 +7,6 @@ import freenet.client.HighLevelSimpleClient;
 import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
-import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
 
 import java.io.IOException;
@@ -28,16 +27,14 @@ public class SimpleHelpToadlet extends Toadlet {
 
 	public void handleMethodGET(URI uri, HTTPRequest request, ToadletContext ctx)
 		throws ToadletContextClosedException, IOException {
-		PageNode page = ctx.getPageMaker()
-			.getPageNode("Freenet " + NodeL10n.getBase().getString("FProxyToadlet.help"), ctx);
-		HTMLNode pageNode = page.outer;
-		HTMLNode contentNode = page.content;
+		Page page = ctx.getPageMaker()
+			.getPage("Freenet " + NodeL10n.getBase().getString("FProxyToadlet.help"), ctx);
 		if (ctx.isAllowedFullAccess()) {
-			contentNode.addChild(core.alerts.createSummary());
+			page.content.addChild(core.alerts.createSummary());
 		}
 		// Description infobox
 		Text Description = new Text(NodeL10n.getBase().getString("SimpleHelpToadlet.descriptionText"));
-		contentNode.addInfobox(InfoboxWidget.Type.INFORMATION, Identifier.FREENETDESCRIPTION,
+		page.content.addInfobox(InfoboxWidget.Type.INFORMATION, Identifier.FREENETDESCRIPTION,
 			NodeL10n.getBase().getString("SimpleHelpToadlet.descriptionTitle"), Description);
 		// Definitions infobox
 		Table Definitions = new Table();
@@ -47,13 +44,13 @@ public class SimpleHelpToadlet extends Toadlet {
 		row.addText(NodeL10n.getBase().getString("SimpleHelpToadlet.SSK"));
 		row.addLineBreak();
 		row.addText(NodeL10n.getBase().getString("SimpleHelpToadlet.USK"));
-		contentNode.addInfobox(InfoboxWidget.Type.INFORMATION, Identifier.FREENETDESCRIPTION,
+		page.content.addInfobox(InfoboxWidget.Type.INFORMATION, Identifier.FREENETDESCRIPTION,
 			NodeL10n.getBase().getString("SimpleHelpToadlet.definitionsTitle"), Definitions);
 		// Port forwarding, etc.
 		Text Connectivity = new Text(NodeL10n.getBase().getString("SimpleHelpToadlet.connectivityText"));
-		contentNode.addInfobox(InfoboxWidget.Type.INFORMATION, Identifier.FREENETDESCRIPTION,
+		page.content.addInfobox(InfoboxWidget.Type.INFORMATION, Identifier.FREENETDESCRIPTION,
 			NodeL10n.getBase().getString("SimpleHelpToadlet.connectivityTitle"), Connectivity);
-		this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
+		this.writeHTMLReply(ctx, 200, "OK", page.generate());
 	}
 
 	@Override
