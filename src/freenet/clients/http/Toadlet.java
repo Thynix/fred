@@ -7,6 +7,7 @@ import freenet.client.*;
 import freenet.client.async.ClientGetter;
 import freenet.clients.http.uielements.InfoboxWidget;
 import freenet.clients.http.uielements.Link;
+import freenet.clients.http.uielements.Page;
 import freenet.clients.http.uielements.Text;
 import freenet.keys.FreenetURI;
 import freenet.l10n.NodeL10n;
@@ -68,19 +69,13 @@ public abstract class Toadlet {
 	 * TODO: not used?!
 	 */
 	private void handleUnhandledRequest(URI uri, Bucket data, ToadletContext toadletContext) throws ToadletContextClosedException, IOException, RedirectException {
-		PageNode page = toadletContext.getPageMaker().getPageNode(l10n("notSupportedTitle"), toadletContext);
-		HTMLNode pageNode = page.outer;
-		HTMLNode contentNode = page.content;
-
-		InfoboxWidget warningbox = new InfoboxWidget(InfoboxWidget.Type.ERROR, l10n("notSupportedTitle"));
-		contentNode.addChild(warningbox);
+		Page page = toadletContext.getPageMaker().getPage(l10n("notSupportedTitle"), toadletContext);
+		InfoboxWidget warningbox = page.content.addInfobox(InfoboxWidget.Type.ERROR, l10n("notSupportedTitle"));
 		warningbox.body.setContent(l10n("notSupportedWithClass", "class", getClass().getName()));
-
 		MultiValueTable<String, String> hdrtbl = new MultiValueTable<String, String>();
 		hdrtbl.put("Allow", findSupportedMethods());
-
 		StringBuilder pageBuffer = new StringBuilder();
-		pageNode.generate(pageBuffer);
+		page.generate(pageBuffer);
 		toadletContext.sendReplyHeaders(405, "Operation not Supported", hdrtbl, "text/html; charset=utf-8", pageBuffer.length());
 		toadletContext.writeData(pageBuffer.toString().getBytes("UTF-8"));
 	}
@@ -294,17 +289,14 @@ public abstract class Toadlet {
 	 */
 	protected void sendErrorPage(ToadletContext ctx, int code, String desc, HTMLNode message)
 		throws ToadletContextClosedException, IOException {
-		PageNode page = ctx.getPageMaker().getPageNode(desc, ctx);
-		HTMLNode pageNode = page.outer;
-		HTMLNode contentNode = page.content;
-		InfoboxWidget ErrorMessage = new InfoboxWidget(InfoboxWidget.Type.ERROR, desc);
-		contentNode.addInfobox(ErrorMessage);
+		Page page = ctx.getPageMaker().getPage(desc, ctx);
+		InfoboxWidget ErrorMessage = page.content.addInfobox(InfoboxWidget.Type.ERROR, desc);
 		ErrorMessage.body.addChild(message);
 		ErrorMessage.body.addLineBreak();
 		ErrorMessage.body.addLink(".", l10n("returnToPrevPage"));
 		ErrorMessage.body.addLineBreak();
 		addHomepageLink(ErrorMessage.body);
-		writeHTMLReply(ctx, code, desc, pageNode.generate());
+		writeHTMLReply(ctx, code, desc, page.generate());
 	}
 
 	/**
@@ -319,11 +311,8 @@ public abstract class Toadlet {
 	 */
 	protected void sendErrorPage(ToadletContext ctx, String desc, String message, Throwable t)
 		throws ToadletContextClosedException, IOException {
-		PageNode page = ctx.getPageMaker().getPageNode(desc, ctx);
-		HTMLNode pageNode = page.outer;
-		HTMLNode contentNode = page.content;
-		InfoboxWidget ErrorMessage = new InfoboxWidget(InfoboxWidget.Type.ERROR, desc);
-		contentNode.addInfobox(ErrorMessage);
+		Page page = ctx.getPageMaker().getPage(desc, ctx);
+		InfoboxWidget ErrorMessage = page.content.addInfobox(InfoboxWidget.Type.ERROR, desc);
 		ErrorMessage.body.addText(message);
 		ErrorMessage.body.addLineBreak();
 		StringWriter sw = new StringWriter();
@@ -336,7 +325,7 @@ public abstract class Toadlet {
 		ErrorMessage.body.addLineBreak();
 		ErrorMessage.body.addLink(".", l10n("returnToPrevPage"));
 		addHomepageLink(ErrorMessage.body);
-		writeHTMLReply(ctx, 500, desc, pageNode.generate());
+		writeHTMLReply(ctx, 500, desc, page.generate());
 	}
 
 	protected void writeInternalError(Throwable t, ToadletContext ctx) throws ToadletContextClosedException, IOException {
