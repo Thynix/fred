@@ -3,28 +3,8 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.clients.http;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.EnumMap;
-
 import freenet.client.HighLevelSimpleClient;
-import freenet.clients.http.wizardsteps.BANDWIDTH;
-import freenet.clients.http.wizardsteps.BANDWIDTH_MONTHLY;
-import freenet.clients.http.wizardsteps.BANDWIDTH_RATE;
-import freenet.clients.http.wizardsteps.BROWSER_WARNING;
-import freenet.clients.http.wizardsteps.DATASTORE_SIZE;
-import freenet.clients.http.wizardsteps.MISC;
-import freenet.clients.http.wizardsteps.NAME_SELECTION;
-import freenet.clients.http.wizardsteps.OPENNET;
-import freenet.clients.http.wizardsteps.PageHelper;
-import freenet.clients.http.wizardsteps.PersistFields;
-import freenet.clients.http.wizardsteps.SECURITY_NETWORK;
-import freenet.clients.http.wizardsteps.SECURITY_PHYSICAL;
-import freenet.clients.http.wizardsteps.Step;
-import freenet.clients.http.wizardsteps.WELCOME;
+import freenet.clients.http.wizardsteps.*;
 import freenet.config.Config;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
@@ -34,6 +14,13 @@ import freenet.support.LogThresholdCallback;
 import freenet.support.Logger;
 import freenet.support.Logger.LogLevel;
 import freenet.support.api.HTTPRequest;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.EnumMap;
 
 /**
  * A first time wizard aimed to ease the configuration of the node.
@@ -158,7 +145,7 @@ public class FirstTimeWizardToadlet extends Toadlet {
 		Step getStep = steps.get(currentStep);
 		PageHelper helper = new PageHelper(ctx, persistFields, currentStep);
 		getStep.getStep(request, helper);
-		writeHTMLReply(ctx, 200, "OK", helper.getPageOuter().generate());
+		writeHTMLReply(ctx, 200, "OK", helper.generate());
 	}
 
 	/**

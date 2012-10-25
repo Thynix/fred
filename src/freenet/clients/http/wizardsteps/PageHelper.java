@@ -40,11 +40,11 @@ public class PageHelper {
 	/**
 	 * Generates page HTML. Use only after calling getPageContent()..
 	 */
-	public void generate() {
+	public String generate() {
 		if (pageNode == null) {
 			throw new NullPointerException("pageNode was not initialized. getPageContent must be called first.");
 		}
-		pageNode.generate();
+		return pageNode.generate();
 	}
 
 	@Deprecated

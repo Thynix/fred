@@ -220,8 +220,7 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 					}
 				}
 			}
-			N2NTMToadlet.createN2NTMSendForm(altPostPage, ctx.getContainer().isAdvancedModeEnabled(),
-				altPostPage.content, ctx, peers);
+			N2NTMToadlet.createN2NTMSendForm(altPostPage, ctx.getContainer().isAdvancedModeEnabled(), ctx, peers);
 			writeHTMLReply(ctx, 200, "OK", altPostPage.generate());
 			return;
 		} else if (request.isPartSet("doAction") && request.getPartAsStringFailsafe("action",25).equals("update_notes")) {
