@@ -534,19 +534,10 @@ public class WelcomeToadlet extends Toadlet {
 				new String[]{Version.publicVersion(), Integer.toString(Version.buildNumber()),
 					Version.cvsRevision()}));
 		versionContent.body.addLineBreak();
-		if (NodeStarter.extBuildNumber < NodeStarter.RECOMMENDED_EXT_BUILD_NUMBER) {
-			versionContent.body.addInlineBox(Category.FREENETEXTVERSION, NodeL10n.getBase()
-				.getString("WelcomeToadlet.extVersionWithRecommended",
-					new String[]{"build", "recbuild", "rev"},
-					new String[]{Integer.toString(NodeStarter.extBuildNumber),
-						Integer.toString(NodeStarter.RECOMMENDED_EXT_BUILD_NUMBER),
-						NodeStarter.extRevisionNumber}));
-		} else {
 			versionContent.body.addInlineBox(Category.FREENETEXTVERSION, NodeL10n.getBase()
 				.getString("WelcomeToadlet.extVersion", new String[]{"build", "rev"},
 					new String[]{Integer.toString(NodeStarter.extBuildNumber),
 						NodeStarter.extRevisionNumber}));
-		}
 		versionContent.body.addLineBreak();
 		if (ctx.isAllowedFullAccess()) {
 			HTMLNode shutdownForm = ctx.addFormChild(versionContent.body, ".", "shutdownForm");

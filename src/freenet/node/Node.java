@@ -3545,12 +3545,6 @@ public class Node implements TimeSkewDetectorCallback {
 		 */
 		checkForEvilJVMBugs();
 
-		// TODO: implement a "required" version if needed
-		if(!nodeUpdater.isEnabled() && (NodeStarter.RECOMMENDED_EXT_BUILD_NUMBER > NodeStarter.extBuildNumber))
-			clientCore.alerts.register(new ExtOldAgeUserAlert());
-		else if(NodeStarter.extBuildNumber == -1)
-			clientCore.alerts.register(new ExtOldAgeUserAlert());
-
 		if(!NativeThread.HAS_ENOUGH_NICE_LEVELS)
 			clientCore.alerts.register(new NotEnoughNiceLevelsUserAlert());
 

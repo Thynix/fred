@@ -3,6 +3,8 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.pluginmanager;
 
+import java.util.Collection;
+import java.util.Collections;
 import com.db4o.ObjectContainer;
 import freenet.client.HighLevelSimpleClient;
 import freenet.clients.http.PageMaker.THEME;
@@ -1061,8 +1063,16 @@ public class PluginManager {
 			this.advanced = advanced;
 		}
 	}
+	
+	public static OfficialPluginDescription getOfficialPlugin(String name) {
+		return officialPlugins.get(name);
+	}
 
-	public static Map<String, OfficialPluginDescription> officialPlugins = new HashMap<String, OfficialPluginDescription>();
+	public static Collection<OfficialPluginDescription> getOfficialPlugins() {
+		return Collections.unmodifiableCollection(officialPlugins.values());
+	}
+	
+	private static Map<String, OfficialPluginDescription> officialPlugins = new HashMap<String, OfficialPluginDescription>();
 
 	static {
 		try {
@@ -1742,4 +1752,5 @@ public class PluginManager {
 		if(!reloading)
 			node.nodeUpdater.stopPluginUpdater(wrapper.getFilename());
 	}
+
 }

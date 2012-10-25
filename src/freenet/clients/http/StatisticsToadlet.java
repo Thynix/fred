@@ -528,11 +528,6 @@ public class StatisticsToadlet extends Toadlet {
 		versionInfobox.body.addChild(versionInfoboxList);
 		versionInfoboxList.addItem(NodeL10n.getBase().getString("WelcomeToadlet.version", new String[]{"fullVersion", "build", "rev"},
 			new String[]{Version.publicVersion(), Integer.toString(Version.buildNumber()), Version.cvsRevision()}));
-		if(NodeStarter.extBuildNumber < NodeStarter.RECOMMENDED_EXT_BUILD_NUMBER)
-			versionInfoboxList.addItem(NodeL10n.getBase().getString("WelcomeToadlet.extVersionWithRecommended",
-				new String[]{"build", "recbuild", "rev"},
-				new String[]{Integer.toString(NodeStarter.extBuildNumber), Integer.toString(NodeStarter.RECOMMENDED_EXT_BUILD_NUMBER), NodeStarter.extRevisionNumber}));
-		else
 			versionInfoboxList.addItem(NodeL10n.getBase().getString("WelcomeToadlet.extVersion", new String[]{"build", "rev"},
 				new String[]{Integer.toString(NodeStarter.extBuildNumber), NodeStarter.extRevisionNumber}));
 		
