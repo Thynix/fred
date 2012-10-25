@@ -861,9 +861,7 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 				OutputList optionList = explanationTitle.body.addList();
 				if (! restricted) {
 					option = optionList.addItem();
-					HTMLNode optionForm = option.addChild("form", new String[]{"action",
-						"method"},
-						new String[]{'/' + key.toString(), "get"});
+					Form optionForm = option.addForm('/' + key.toString(), "get");
 					optionForm.addChild("input", new String[]{"type", "name", "value"},
 						new String[]{"hidden", "max-size", String.valueOf(
 							e.expectedSize == - 1 ? Long.MAX_VALUE : e.expectedSize *

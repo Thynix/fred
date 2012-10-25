@@ -578,6 +578,40 @@ public class HTMLNode implements XMLCharacterClasses {
 		return newBlockText;
 	}
 
+	//methods for creating Form children
+	public Form addForm(String action, String method) {
+		Form form = new Form(action, method);
+		addChild(form);
+		return form;
+	}
+	public Form addForm(String action, String method, Link.Target target) {
+		Form form = new Form(action, method, target);
+		addChild(form);
+		return form;
+	}
+	public Form addForm(String action, String method, String enctype, String charset, Identifier id) {
+		Form form = new Form(action, method, enctype, charset, id);
+		addChild(form);
+		return form;
+	}
+	@Deprecated
+	public Form addForm(String action, String method, String enctype, String charset, String id) {
+		Form form = new Form(action, method, enctype, charset, id);
+		addChild(form);
+		return form;
+	}
+	public Form addForm(String action, String method, String enctype, String charset, Identifier id, String name) {
+		Form form = new Form(action, method, enctype, charset, id, name);
+		addChild(form);
+		return form;
+	}
+	@Deprecated
+	public Form addForm(String action, String method, String enctype, String charset, String id, String name) {
+		Form form = new Form(action, method, enctype, charset, id, name);
+		addChild(form);
+		return form;
+	}
+
 	//methods for creating InlineBox children
 	public InlineBox addInlineBox() {
 		InlineBox newInlineBox = new InlineBox();

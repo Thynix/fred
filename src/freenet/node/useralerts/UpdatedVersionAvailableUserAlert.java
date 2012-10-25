@@ -3,8 +3,6 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node.useralerts;
 
-import java.io.File;
-
 import freenet.clients.http.uielements.Box;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
@@ -12,6 +10,8 @@ import freenet.node.updater.NodeUpdateManager;
 import freenet.node.updater.RevocationChecker;
 import freenet.support.HTMLNode;
 import freenet.support.TimeUtil;
+
+import java.io.File;
 
 public class UpdatedVersionAvailableUserAlert extends AbstractUserAlert {
 	private final NodeUpdateManager updater;
@@ -88,9 +88,8 @@ public class UpdatedVersionAvailableUserAlert extends AbstractUserAlert {
 		alertNode.addText(ut.firstBit);
 		
 		if(ut.formText != null) {
-			alertNode.addChild("form", new String[] { "action", "method" }, new String[] { "/", "post" }).addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "update", ut.formText });
+			alertNode.addForm("/", "post").addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "update", ut.formText });
 		}
-		
 		return alertNode;
 	}
 	

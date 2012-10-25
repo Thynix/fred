@@ -81,11 +81,10 @@ public class IPUndetectedUserAlert extends AbstractUserAlert {
 		
 		addPortForwardSuggestion(textNode);
 		
-		HTMLNode formNode = textNode.addChild("form", new String[] { "action", "method" }, new String[] { "/config/"+sc.getPrefix(), "post" });
+		Form formNode = textNode.addForm("/config/"+sc.getPrefix(), "post");
 		formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", node.clientCore.formPassword });
 		formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "subconfig", sc.getPrefix() });
-		OutputList listNode = new OutputList(Category.CONFIG);
-		formNode.addChild(listNode);
+		OutputList listNode =formNode.addList(Category.CONFIG);
 		Item itemNode = listNode.addItem();
 		itemNode.addInlineBox(Category.CONFIGSHORTDESC, NodeL10n.getBase().getString(o.getShortDesc())).addChild("input", new String[] { "type", "name", "value" }, new String[] { "text", sc.getPrefix() + ".tempIPAddressHint", o.getValueString() });
 		itemNode.addInlineBox(Category.CONFIGLONGDESC, NodeL10n.getBase().getString(o.getLongDesc()));

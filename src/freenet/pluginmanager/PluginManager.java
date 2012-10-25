@@ -3,66 +3,29 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.pluginmanager;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Vector;
-import java.util.jar.Attributes;
-import java.util.jar.JarException;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
-import java.util.zip.ZipException;
-
+import com.db4o.ObjectContainer;
+import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.PageMaker.THEME;
+import freenet.clients.http.QueueToadlet;
+import freenet.clients.http.Toadlet;
+import freenet.clients.http.uielements.BlockText;
 import freenet.clients.http.uielements.Box;
 import freenet.clients.http.uielements.Cell;
-import org.tanukisoftware.wrapper.WrapperManager;
-
-import com.db4o.ObjectContainer;
-
-import freenet.client.HighLevelSimpleClient;
-import freenet.clients.http.QueueToadlet;
-import freenet.clients.http.PageMaker.THEME;
-import freenet.clients.http.Toadlet;
+import freenet.clients.http.uielements.Form;
 import freenet.config.Config;
 import freenet.config.InvalidConfigValueException;
 import freenet.config.NodeNeedRestartException;
 import freenet.config.SubConfig;
 import freenet.crypt.SHA256;
 import freenet.keys.FreenetURI;
-import freenet.l10n.NodeL10n;
 import freenet.l10n.BaseL10n.LANGUAGE;
-import freenet.node.Node;
-import freenet.node.NodeClientCore;
-import freenet.node.RequestClient;
-import freenet.node.RequestStarter;
-import freenet.node.SecurityLevelListener;
+import freenet.l10n.NodeL10n;
+import freenet.node.*;
 import freenet.node.SecurityLevels.NETWORK_THREAT_LEVEL;
 import freenet.node.fcp.ClientPut;
 import freenet.node.useralerts.AbstractUserAlert;
 import freenet.node.useralerts.UserAlert;
-import freenet.support.HTMLNode;
-import freenet.support.HexUtil;
-import freenet.support.JarClassLoader;
-import freenet.support.Logger;
-import freenet.support.SerialExecutor;
-import freenet.support.Ticker;
+import freenet.support.*;
 import freenet.support.Logger.LogLevel;
 import freenet.support.api.BooleanCallback;
 import freenet.support.api.HTTPRequest;
@@ -70,6 +33,17 @@ import freenet.support.api.StringArrCallback;
 import freenet.support.io.Closer;
 import freenet.support.io.FileUtil;
 import freenet.support.io.NativeThread;
+import org.tanukisoftware.wrapper.WrapperManager;
+
+import java.io.*;
+import java.net.MalformedURLException;
+import java.security.MessageDigest;
+import java.util.*;
+import java.util.jar.Attributes;
+import java.util.jar.JarException;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+import java.util.zip.ZipException;
 
 public class PluginManager {
 
@@ -565,36 +539,35 @@ public class PluginManager {
 
 		@Override
 		public HTMLNode getHTMLText() {
-			Box box_ = new Box();
-			HTMLNode p = box_.addBlockText();
+			Box box = new Box();
+			BlockText p = box.addBlockText();
 			p.addText(l10n("pluginLoadingFailedWithMessage", new String[] { "name", "message" }, new String[] { filename, message }));
 			if(stillTryingOverFreenet) {
-				box_.addBlockText( l10n("pluginLoadingFailedStillTryingOverFreenet"));
+				box.addBlockText(l10n("pluginLoadingFailedStillTryingOverFreenet"));
 			}
 
 			if(official) {
-				p = box_.addBlockText();
+				p = box.addBlockText();
 				if(officialFromFreenet)
 					p.addText(l10n("officialPluginLoadFailedSuggestTryAgainFreenet"));
 				else
 					p.addText(l10n("officialPluginLoadFailedSuggestTryAgainHTTPS"));
 
-				HTMLNode reloadForm = box_.addChild("form", new String[] { "action", "method" }, new String[] { "/plugins/", "post" });
+				Form reloadForm = box.addForm("/plugins/", "post");
 				reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", node.clientCore.formPassword });
 				reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "plugin-name", filename });
 				reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "pluginSource", "https" });
 				reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "submit-official", l10n("officialPluginLoadFailedTryAgain") });
 
 				if(!stillTryingOverFreenet) {
-					reloadForm = box_.addChild("form", new String[] { "action", "method" }, new String[] { "/plugins/", "post" });
+					reloadForm = box.addForm("/plugins/", "post");
 					reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", node.clientCore.formPassword });
 					reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "plugin-name", filename });
 					reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "pluginSource", "freenet" });
 					reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "submit-official", l10n("officialPluginLoadFailedTryAgainFreenet") });
 				}
 			}
-
-			return box_;
+			return box;
 		}
 
 		@Override

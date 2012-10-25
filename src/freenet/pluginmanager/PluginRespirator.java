@@ -1,12 +1,7 @@
 package freenet.pluginmanager;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
-
 import freenet.client.HighLevelSimpleClient;
 import freenet.client.async.ClientContext;
 import freenet.client.async.DBJob;
@@ -15,12 +10,17 @@ import freenet.client.filter.FilterCallback;
 import freenet.clients.http.PageMaker;
 import freenet.clients.http.SessionManager;
 import freenet.clients.http.ToadletContainer;
+import freenet.clients.http.uielements.Form;
 import freenet.config.SubConfig;
 import freenet.node.Node;
 import freenet.node.RequestStarter;
 import freenet.support.HTMLNode;
 import freenet.support.URIPreEncoder;
 import freenet.support.io.NativeThread;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 public class PluginRespirator {
 	private static final ArrayList<SessionManager> sessionManagers = new ArrayList<SessionManager>(4);
@@ -79,12 +79,9 @@ public class PluginRespirator {
 	 * @param name The id/name of the form.
 	 * @return The form's HTMLNode. */
 	public HTMLNode addFormChild(HTMLNode parentNode, String target, String name) {
-		HTMLNode formNode =
-			parentNode.addChild("form", new String[] { "action", "method", "enctype", "id", "name", "accept-charset" }, 
-					new String[] { target, "post", "multipart/form-data", name, name, "utf-8"} );
+		Form formNode = parentNode.addForm(target, "post", "multipart/form-data", "utf-8", name, name);
 		formNode.addChild("input", new String[] { "type", "name", "value" }, 
 				new String[] { "hidden", "formPassword", node.clientCore.formPassword });
-		
 		return formNode;
 	}
 	

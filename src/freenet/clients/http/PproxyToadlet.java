@@ -483,14 +483,15 @@ public class PproxyToadlet extends Toadlet {
 					pluginRow.addCell();
 				} else {
 					if (pi.isPproxyPlugin()) {
-						HTMLNode visitForm = pluginRow.addCell().addChild("form", new String[] { "method", "action", "target" }, new String[] { "get", pi.getPluginClassName(), "_blank" });
+						Form visitForm = pluginRow.addCell().addForm(pi.getPluginClassName(), "get", Link.Target.BLANK);
 						visitForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", core.formPassword });
 						visitForm.addChild("input", new String[] { "type", "value" }, new String[] { "submit", NodeL10n.getBase().getString("PluginToadlet.visit") });
 					} else
 						pluginRow.addCell();
 					HTMLNode unloadForm = ctx.addFormChild(pluginRow.addCell(), ".", "unloadPluginForm");
 					unloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "unload", pi.getThreadName() });
-					unloadForm.addChild("input", new String[] { "type", "value" }, new String[] { "submit", l10n("unload") });
+					unloadForm.addChild("input", new String[] { "type", "value" }, new String[] { "submit", l10n(
+						"unload") });
 					HTMLNode reloadForm = ctx.addFormChild(pluginRow.addCell(), ".", "reloadPluginForm");
 					reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "reload", pi.getThreadName() });
 					reloadForm.addChild("input", new String[] { "type", "value" }, new String[] { "submit", l10n("reload") });

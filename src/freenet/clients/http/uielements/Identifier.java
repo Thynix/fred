@@ -46,6 +46,7 @@ public enum Identifier {
 	RECOMMENDFILE("recommend-file"),
 	RESETCONFIRM("reset-confirm"),
 	RESTARTCONFIRM("restart-confirm"),
+	RESTARTFORM("restartForm"),
 	SEARCH("search-freenet"),
 	SELECTEDSUBNAVBAR("selected-subnavbar"),
 	SELECTEDSUBNAVBARLIST("selected-subnavbar-list"),

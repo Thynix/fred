@@ -61,18 +61,13 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 		}
 
 		@Override
-		public HTMLNode getHTMLText() {
-			HTMLNode alertNode = new Box();
+		public Box getHTMLText() {
+			Box alertNode = new Box();
 			alertNode.addText(l10n("needRestart"));
 
 			if (node.isUsingWrapper()) {
 				alertNode.addLineBreak();
-				HTMLNode restartForm = alertNode.addChild(
-						"form",
-						new String[] { "action", "method", "enctype", "id",
-								"accept-charset" },
-						new String[] { "/", "post", "multipart/form-data",
-								"restartForm", "utf-8" }).addChild(new Box());
+				Box restartForm = alertNode.addForm("/", "post", "multipart/form-data", "utf-8", Identifier.RESTARTFORM).addBox();
 				restartForm.addChild("input", new String[] { "type", "name",
 						"value" }, new String[] { "hidden", "formPassword",
 						node.clientCore.formPassword });
@@ -85,7 +80,6 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 						new String[] { "submit", "restart2",
 								l10n("restartNode") });
 			}
-
 			return alertNode;
 		}
 

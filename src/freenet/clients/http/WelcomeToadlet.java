@@ -113,12 +113,9 @@ public class WelcomeToadlet extends Toadlet {
 
 	private void putFetchKeyBox(ToadletContext ctx, HTMLNode contentNode) {
 		// Fetch-a-key box
-		Infobox fetchKey =
-			new Infobox(Infobox.Type.NORMAL, Identifier.FETCHKEY, l10n("fetchKeyLabel"));
-		HTMLNode fetchKeyForm =
-			fetchKey.body.addChild("form", new String[]{"action", "method"}, new String[]{"/", "get"})
-				.addChild(new Box());
-		fetchKeyForm.addChild(new InlineBox(Category.FETCHKEYLABEL, l10n("keyRequestLabel") + ' '));
+		Infobox fetchKey = new Infobox(Infobox.Type.NORMAL, Identifier.FETCHKEY, l10n("fetchKeyLabel"));
+		Box fetchKeyForm = fetchKey.body.addForm("/", "get").addBox();
+		fetchKeyForm.addInlineBox(Category.FETCHKEYLABEL, l10n("keyRequestLabel") + ' ');
 		fetchKeyForm.addChild("input", new String[]{"type", "size", "name"}, new String[]{"text", "80", "key"});
 		fetchKeyForm.addChild("input", new String[]{"type", "value"}, new String[]{"submit", l10n("fetch")});
 	}

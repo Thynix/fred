@@ -3,19 +3,6 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.clients.http;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.SocketException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Iterator;
-import java.util.LinkedList;
-
-import freenet.clients.http.uielements.Box;
-import org.tanukisoftware.wrapper.WrapperManager;
-
 import freenet.client.filter.HTMLFilter;
 import freenet.client.filter.LinkFilterExceptionProvider;
 import freenet.clients.http.FProxyFetchInProgress.REFILTER_POLICY;
@@ -39,20 +26,18 @@ import freenet.node.SecurityLevelListener;
 import freenet.node.SecurityLevels.NETWORK_THREAT_LEVEL;
 import freenet.node.SecurityLevels.PHYSICAL_THREAT_LEVEL;
 import freenet.pluginmanager.FredPluginL10n;
-import freenet.support.Executor;
-import freenet.support.HTMLNode;
-import freenet.support.LogThresholdCallback;
-import freenet.support.Logger;
-import freenet.support.OOMHandler;
-import freenet.support.Ticker;
+import freenet.support.*;
 import freenet.support.Logger.LogLevel;
-import freenet.support.api.BooleanCallback;
-import freenet.support.api.BucketFactory;
-import freenet.support.api.IntCallback;
-import freenet.support.api.LongCallback;
-import freenet.support.api.StringCallback;
+import freenet.support.api.*;
 import freenet.support.io.ArrayBucketFactory;
 import freenet.support.io.NativeThread;
+import org.tanukisoftware.wrapper.WrapperManager;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.*;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /** 
  * The Toadlet (HTTP) Server
@@ -1103,12 +1088,10 @@ public final class SimpleToadletServer implements ToadletContainer, Runnable, Li
 	@Override
 	public HTMLNode addFormChild(HTMLNode parentNode, String target, String id) {
 		HTMLNode formNode =
-			parentNode.addChild(new Box())
-			.addChild("form", new String[]{"action", "method", "enctype", "id", "accept-charset"},
-				new String[]{target, "post", "multipart/form-data", id, "utf-8"});
+			parentNode.addBox()
+			.addForm(target, "post", "multipart/form-data", "utf-8", id);
 		formNode.addChild("input", new String[] { "type", "name", "value" }, 
 				new String[] { "hidden", "formPassword", getFormPassword() });
-		
 		return formNode;
 	}
 
