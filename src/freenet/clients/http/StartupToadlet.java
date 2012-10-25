@@ -2,6 +2,7 @@ package freenet.clients.http;
 
 import freenet.clients.http.PageMaker.RenderParameters;
 import freenet.clients.http.uielements.InfoboxWidget;
+import freenet.clients.http.uielements.Page;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
@@ -31,13 +32,10 @@ public class StartupToadlet extends Toadlet {
 			staticToadlet.handleMethodGET(uri, req, ctx);
 		} else {
 			String desc = NodeL10n.getBase().getString("StartupToadlet.title");
-			PageNode page = ctx.getPageMaker().getPageNode(desc, ctx,
+			Page page = ctx.getPageMaker().getPage(desc, ctx,
 				new RenderParameters().renderStatus(false).renderNavigationLinks(false)
 					.renderModeSwitch(false));
-			HTMLNode pageNode = page.outer;
-			HTMLNode headNode = page.headNode;
-			headNode.addChild("meta", new String[]{"http-equiv", "content"},
-				new String[]{"refresh", "20; url="});
+			page.root.head.addMeta("refresh", "20; url=");
 			HTMLNode contentNode = page.content;
 			if (! isPRNGReady) {
 				InfoboxWidget EntropyError = new InfoboxWidget(InfoboxWidget.Type.ERROR,
@@ -51,7 +49,7 @@ public class StartupToadlet extends Toadlet {
 			StartingUp.body.addText(NodeL10n.getBase().getString("StartupToadlet.isStartingUp"));
 			WelcomeToadlet.maybeDisplayWrapperLogfile(ctx, contentNode);
 			//TODO: send a Retry-After header ?
-			writeHTMLReply(ctx, 503, desc, pageNode.generate());
+			writeHTMLReply(ctx, 503, desc, page.generate());
 		}
 	}
 
