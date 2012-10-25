@@ -118,7 +118,7 @@ public class StatisticsToadlet extends Toadlet {
 
 		node.clientCore.bandwidthStatsPutter.updateData();
 
-		HTMLNode pageNode;
+		Page page;
 		
 		// Synchronize to avoid problems with DecimalFormat.
 		synchronized(this) {
@@ -154,28 +154,19 @@ public class StatisticsToadlet extends Toadlet {
 		int numberOfDisconnecting = PeerNodeStatus.getPeerStatusCount(peerNodeStatuses, PeerManager.PEER_NODE_STATUS_DISCONNECTING);
 		int numberOfNoLoadStats = PeerNodeStatus.getPeerStatusCount(peerNodeStatuses, PeerManager.PEER_NODE_STATUS_NO_LOAD_STATS);
 
-		PageNode page = ctx.getPageMaker().getPageNode(l10n("fullTitle"), ctx);
+		page = ctx.getPageMaker().getPage(l10n("fullTitle"), ctx);
 		boolean advancedMode = ctx.getContainer().isAdvancedModeEnabled();
-		pageNode = page.outer;
-		HTMLNode contentNode = page.content;
-
 		// FIXME! We need some nice images
 		final long now = System.currentTimeMillis();
 		double myLocation = node.getLocation();
 		final long nodeUptimeSeconds = (now - node.startupTime) / 1000;
-
 		if(ctx.isAllowedFullAccess())
-			contentNode.addChild(core.alerts.createSummary());
-
+			page.content.addChild(core.alerts.createSummary());
 		double swaps = node.getSwaps();
 		double noSwaps = node.getNoSwaps();
-
-		Table overviewTable = new Table(Category.COLUMN);
-		contentNode.addChild(overviewTable);
-
+		Table overviewTable = page.content.addTable(Category.COLUMN);
 		Row overviewTableRow = overviewTable.addRow();
 		Cell nextTableCell = overviewTableRow.addCell(Category.FIRST);
-
 		// node version information box
 		InfoboxWidget versionInfobox = nextTableCell.addInfobox(InfoboxWidget.Type.NONE, null);
 		drawNodeVersionBox(versionInfobox);
@@ -204,8 +195,7 @@ public class StatisticsToadlet extends Toadlet {
 		if(advancedMode) {
 			// store size box
 			//HTMLNode storeSizeInfobox = nextTableCell.addChild(new div(HTMLClass.INFOBOX));
-			InfoboxWidget storeSizeInfobox = new InfoboxWidget(InfoboxWidget.Type.NONE, null);
-			contentNode.addChild(storeSizeInfobox);
+			InfoboxWidget storeSizeInfobox = page.content.addInfobox(InfoboxWidget.Type.NONE, null);
 			drawStoreSizeBox(storeSizeInfobox, myLocation, nodeUptimeSeconds);
            
 			if(numberOfConnected + numberOfRoutingBackedOff > 0) {
@@ -484,16 +474,13 @@ public class StatisticsToadlet extends Toadlet {
 		}
 		}
 
-		this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
+		this.writeHTMLReply(ctx, 200, "OK", page.generate());
 	}
 
 	private void showRequesters(HTTPRequest request, ToadletContext ctx) throws ToadletContextClosedException, IOException {
-		PageNode page = ctx.getPageMaker().getPageNode(l10n("fullTitle"), ctx);
-		HTMLNode pageNode = page.outer;
-		HTMLNode contentNode = page.content;
-
-		drawClientRequestersBox(contentNode);
-		writeHTMLReply(ctx, 200, "OK", pageNode.generate());
+		Page page = ctx.getPageMaker().getPage(l10n("fullTitle"), ctx);
+		drawClientRequestersBox(page.content);
+		writeHTMLReply(ctx, 200, "OK", page.generate());
 	}
 
 	private void drawLoadBalancingBox(InfoboxWidget loadStatsInfobox, boolean realTime) {
