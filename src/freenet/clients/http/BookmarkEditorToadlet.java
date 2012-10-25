@@ -212,12 +212,12 @@ public class BookmarkEditorToadlet extends Toadlet {
 				confirmDeleteBookmark.body.addBlockText(query);
 				HTMLNode confirmForm =
 					ctx.addFormChild(confirmDeleteBookmark.body, "", "confirmDeleteForm");
-				confirmForm.addChild("input", new String[]{"type", "name", "value"},
+				confirmForm.addInput(
 					new String[]{"hidden", "bookmark", bookmarkPath});
-				confirmForm.addChild("input", new String[]{"type", "name", "value"},
+				confirmForm.addInput(
 					new String[]{"submit", "cancel",
 						NodeL10n.getBase().getString("Toadlet.cancel")});
-				confirmForm.addChild("input", new String[]{"type", "name", "value"},
+				confirmForm.addInput(
 					new String[]{"submit", "confirmdelete",
 						NodeL10n.getBase().getString("BookmarkEditorToadlet.confirmDelete")});
 			} else if ("cut".equals(action)) {
@@ -313,9 +313,9 @@ public class BookmarkEditorToadlet extends Toadlet {
 						form.addLineBreak();
 					}
 				}
-				form.addChild("input", new String[]{"type", "name", "value"},
+				form.addInput(
 					new String[]{"hidden", "bookmark", bookmarkPath});
-				form.addChild("input", new String[]{"type", "name", "value"},
+				form.addInput(
 					new String[]{"hidden", "action", req.getParam("action")});
 				form.addChild("input", new String[]{"type", "value"}, new String[]{"submit",
 					"share".equals(action) ?
@@ -334,17 +334,17 @@ public class BookmarkEditorToadlet extends Toadlet {
 				.addText(NodeL10n.getBase().getString("BookmarkEditorToadlet.pasteOrCancel"));
 			HTMLNode cancelForm =
 				ctx.addFormChild(confirmClipboard.body, "/bookmarkEditor/", "cancelCutForm");
-			cancelForm.addChild("input", new String[]{"type", "name", "value"},
+			cancelForm.addInput(
 				new String[]{"submit", "cancelCut",
 					NodeL10n.getBase().getString("BookmarkEditorToadlet.cancelCut")});
-			cancelForm.addChild("input", new String[]{"type", "name", "value"},
+			cancelForm.addInput(
 				new String[]{"hidden", "action", "cancelCut"});
 		}
 		bookmarkEditor.content.addInfobox(Infobox.Type.NORMAL, Category.BOOKMARKTITLE,
 			NodeL10n.getBase().getString("BookmarkEditorToadlet.myBookmarksTitle")).body
 			.addList(getBookmarksList());
 		HTMLNode addDefaultBookmarksForm = ctx.addFormChild(bookmarkEditor.content, "", "AddDefaultBookmarks");
-		addDefaultBookmarksForm.addChild("input", new String[]{"type", "name", "value"},
+		addDefaultBookmarksForm.addInput(
 			new String[]{"submit", "AddDefaultBookmarks",
 				NodeL10n.getBase().getString("BookmarkEditorToadlet.addDefaultBookmarks")});
 		if (logDEBUG) {
@@ -492,7 +492,7 @@ public class BookmarkEditorToadlet extends Toadlet {
 			NodeL10n.getBase().getString("BookmarkEditorToadlet.myBookmarksTitle")).
 			addList(getBookmarksList());
 		HTMLNode addDefaultBookmarksForm = ctx.addFormChild(response.content, "", "AddDefaultBookmarks");
-		addDefaultBookmarksForm.addChild("input", new String[]{"type", "name", "value"},
+		addDefaultBookmarksForm.addInput(
 			new String[]{"submit", "AddDefaultBookmarks",
 				NodeL10n.getBase().getString("BookmarkEditorToadlet.addDefaultBookmarks")});
 		this.writeHTMLReply(ctx, 200, "OK", response.generate());

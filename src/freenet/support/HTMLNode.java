@@ -710,6 +710,13 @@ public class HTMLNode implements XMLCharacterClasses {
 		return newInfobox;
 	}
 
+	//methods for creating input elements
+	public Input addInput(String type, String name, String value){
+		Input newInput = new Input(type, name, value);
+		this.addChild(newInput);
+		return newInput;
+	}
+
 	//methods for creating line break elements
 	public LineBreak addLineBreak() {
 		LineBreak newLineBreak = new LineBreak();

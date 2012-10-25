@@ -191,10 +191,8 @@ public class WelcomeToadlet extends Toadlet {
 					l10n("nodeUpdateConfirmTitle"));
 			content.body.addBlockText(l10n("nodeUpdateConfirm"));
 			HTMLNode updateForm = ctx.addFormChild(content.body, "/", "updateConfirmForm");
-			updateForm.addChild("input", new String[]{"type", "name", "value"},
-				new String[]{"submit", "cancel", NodeL10n.getBase().getString("Toadlet.cancel")});
-			updateForm.addChild("input", new String[]{"type", "name", "value"},
-				new String[]{"submit", "updateconfirm", l10n("update")});
+			updateForm.addInput("submit", "cancel", NodeL10n.getBase().getString("Toadlet.cancel"));
+			updateForm.addInput("submit", "updateconfirm", l10n("update"));
 			writeHTMLReply(ctx, 200, "OK", page.generate());
 		} else if (request.isPartSet("getThreadDump")) {
 			if (noPassword) {
@@ -297,10 +295,8 @@ public class WelcomeToadlet extends Toadlet {
 			content.body.addChild(new BlockText()).addText(l10n("shutdownConfirm"));
 			HTMLNode shutdownForm =
 				ctx.addFormChild(content.body.addBlockText(), "/", "confirmShutdownForm");
-			shutdownForm.addChild("input", new String[]{"type", "name", "value"},
-				new String[]{"submit", "cancel", NodeL10n.getBase().getString("Toadlet.cancel")});
-			shutdownForm.addChild("input", new String[]{"type", "name", "value"},
-				new String[]{"submit", "shutdownconfirm", l10n("shutdown")});
+			shutdownForm.addInput("submit", "cancel", NodeL10n.getBase().getString("Toadlet.cancel"));
+			shutdownForm.addInput("submit", "shutdownconfirm", l10n("shutdown"));
 			writeHTMLReply(ctx, 200, "OK", page.generate());
 			return;
 		} else if (request.isPartSet("shutdownconfirm")) {
@@ -325,10 +321,8 @@ public class WelcomeToadlet extends Toadlet {
 			content.body.addChild(new BlockText()).addText(l10n("restartConfirm"));
 			HTMLNode restartForm = ctx.addFormChild(content.body.addBlockText(), "/",
 				"confirmRestartForm");
-			restartForm.addChild("input", new String[]{"type", "name", "value"},
-				new String[]{"submit", "cancel", NodeL10n.getBase().getString("Toadlet.cancel")});
-			restartForm.addChild("input", new String[]{"type", "name", "value"},
-				new String[]{"submit", "restartconfirm", l10n("restart")});
+			restartForm.addInput("submit", "cancel", NodeL10n.getBase().getString("Toadlet.cancel"));
+			restartForm.addInput("submit", "restartconfirm", l10n("restart"));
 			writeHTMLReply(ctx, 200, "OK", page.generate());
 			return;
 		} else if (request.isPartSet("restartconfirm")) {
@@ -404,22 +398,16 @@ public class WelcomeToadlet extends Toadlet {
 				if (key.startsWith("freenet:")) {
 					key = key.substring(8);
 				}
-				addForm.addChild("input", new String[]{"type", "name", "value"},
-					new String[]{"hidden", "key", key});
+				addForm.addInput("hidden", "key", key);
 				if (request.isParameterSet("hasAnActivelink")) {
-					addForm.addChild("input", new String[]{"type", "name", "value"},
-						new String[]{"hidden", "hasAnActivelink",
-							request.getParam("hasAnActivelink")});
+					addForm.addInput("hidden", "hasAnActivelink", request.getParam("hasAnActivelink"));
 				}
 				addForm.addChild("label", "for", "name",
 					NodeL10n.getBase().getString("BookmarkEditorToadlet.nameLabel") + ' ');
-				addForm.addChild("input", new String[]{"type", "name", "value"},
-					new String[]{"text", "name", request.getParam("desc")});
+				addForm.addInput("text", "name", request.getParam("desc"));
 				addForm.addLineBreak();
-				addForm.addChild("input", new String[]{"type", "name", "value"},
-					new String[]{"hidden", "bookmark", "/"});
-				addForm.addChild("input", new String[]{"type", "name", "value"},
-					new String[]{"hidden", "action", "addItem"});
+				addForm.addInput("hidden", "bookmark", "/");
+				addForm.addInput("hidden", "action", "addItem");
 				addForm.addChild("label", "for", "descB",
 					NodeL10n.getBase().getString("BookmarkEditorToadlet.descLabel") + ' ');
 				addForm.addLineBreak();
@@ -448,9 +436,8 @@ public class WelcomeToadlet extends Toadlet {
 						new String[]{"descB", "publicDescB", "3", "70"}, "");
 				}
 				addForm.addLineBreak();
-				addForm.addChild("input", new String[]{"type", "name", "value"},
-					new String[]{"submit", "addbookmark",
-						NodeL10n.getBase().getString("BookmarkEditorToadlet.addBookmark")});
+				addForm.addInput("submit", "addbookmark",
+						NodeL10n.getBase().getString("BookmarkEditorToadlet.addBookmark"));
 				this.writeHTMLReply(ctx, 200, "OK", page.generate());
 				return;
 			} else if (uri.getQuery() != null && uri.getQuery().startsWith("_CHECKED_HTTP_=")) {
@@ -548,8 +535,7 @@ public class WelcomeToadlet extends Toadlet {
 				HTMLNode restartForm = ctx.addFormChild(versionContent.body, ".", "restartForm");
 				restartForm.addChild("input", new String[]{"type", "name"},
 					new String[]{"hidden", "restart"});
-				restartForm.addChild("input", new String[]{"type", "name", "value"},
-					new String[]{"submit", "restart2", l10n("restartNode")});
+				restartForm.addInput("submit", "restart2", l10n("restartNode"));
 			}
 		}
 		this.writeHTMLReply(ctx, 200, "OK", page.generate());

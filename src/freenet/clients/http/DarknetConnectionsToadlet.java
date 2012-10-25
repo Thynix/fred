@@ -424,15 +424,15 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 						HTMLNode removeForm =
 							ctx.addFormChild(removeDarknetNode.body, "/friends/",
 								"removeConfirmForm");
-						removeForm.addChild("input", new String[]{"type", "name", "value"},
+						removeForm.addInput(
 							new String[]{"hidden", "node_" + peerNodes[i].hashCode(),
 								"remove"});
-						removeForm.addChild("input", new String[]{"type", "name", "value"},
+						removeForm.addInput(
 							new String[]{"submit", "cancel",
 								NodeL10n.getBase().getString("Toadlet.cancel")});
-						removeForm.addChild("input", new String[]{"type", "name", "value"},
+						removeForm.addInput(
 							new String[]{"submit", "remove", l10n("remove")});
-						removeForm.addChild("input", new String[]{"type", "name", "value"},
+						removeForm.addInput(
 							new String[]{"hidden", "forceit", l10n("forceRemove")});
 						writeHTMLReply(ctx, 200, "OK", confirmPage.generate());
 						return; // FIXME: maybe it breaks multi-node removing

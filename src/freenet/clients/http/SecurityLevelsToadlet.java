@@ -348,8 +348,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 				core.storeConfig();
 			}
 			if (page != null) {
-				formNode.addChild("input", new String[]{"type", "name", "value"},
-					new String[]{"hidden", "seclevels", "on"});
+				formNode.addInput("hidden", "seclevels", "on");
 				formNode.addChild("input", new String[]{"type", "value"},
 					new String[]{"submit", l10n("apply")});
 				formNode.addChild("input", new String[]{"type", "value"},
@@ -476,10 +475,8 @@ public class SecurityLevelsToadlet extends Toadlet {
 		HTMLNode form = ctx.addFormChild(passwordChange.body, path(), "changePasswordForm");
 		addPasswordChangeForm(form);
 		if (physicalSecurityLevel != null) {
-			form.addChild("input", new String[]{"type", "name", "value"},
-				new String[]{"hidden", "security-levels.physicalThreatLevel", physicalSecurityLevel});
-			form.addChild("input", new String[]{"type", "name", "value"},
-				new String[]{"hidden", "seclevels", "true"});
+			form.addInput("hidden", "security-levels.physicalThreatLevel", physicalSecurityLevel);
+			form.addInput("hidden", "seclevels", "true");
 		}
 		addBackToSeclevelsLink(passwordChange.body);
 		writeHTMLReply(ctx, 200, "OK", page.generate());
@@ -543,7 +540,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 			if(level == networkLevel) {
 				input = div.addChild(new BlockText()).addChild("input", new String[]{"type", "checked", "name", "value"}, new String[]{"radio", "on", controlName, level.name()});
 			} else {
-				input = div.addChild(new BlockText()).addChild("input", new String[]{"type", "name", "value"}, new String[]{"radio", controlName, level.name()});
+				input = div.addChild(new BlockText()).addInput("radio", controlName, level.name());
 			}
 			input.addInlineBox(Category.BOLD, l10nSec("networkThreatLevel.name." + level));
 			input.addText(": ");
@@ -565,7 +562,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 			if(level == networkLevel) {
 				input = div.addChild(new BlockText()).addChild("input", new String[]{"type", "checked", "name", "value"}, new String[]{"radio", "on", controlName, level.name()});
 			} else {
-				input = div.addChild(new BlockText()).addChild("input", new String[]{"type", "name", "value"}, new String[]{"radio", controlName, level.name()});
+				input = div.addChild(new BlockText()).addInput("radio", controlName, level.name());
 			}
 			input.addInlineBox(Category.BOLD, l10nSec("networkThreatLevel.name." + level));
 			input.addText(": ");
@@ -603,9 +600,9 @@ public class SecurityLevelsToadlet extends Toadlet {
 		for (PHYSICAL_THREAT_LEVEL level : PHYSICAL_THREAT_LEVEL.values()) {
 			HTMLNode input;
 			if(level == physicalLevel) {
-				input = seclevelGroup.addChild(new BlockText()).addChild("input", new String[]{"type", "checked", "name", "value"}, new String[]{"radio", "on", controlName, level.name()});
+				input = seclevelGroup.addBlockText().addChild("input", new String[]{"type", "checked", "name", "value"}, new String[]{"radio", "on", controlName, level.name()});
 			} else {
-				input = seclevelGroup.addChild(new BlockText()).addChild("input", new String[]{"type", "name", "value"}, new String[]{"radio", controlName, level.name()});
+				input = seclevelGroup.addBlockText().addInput("radio", controlName, level.name());
 			}
 			input.addInlineBox(Category.BOLD, l10nSec("physicalThreatLevel.name." + level));
 			input.addText(": ");

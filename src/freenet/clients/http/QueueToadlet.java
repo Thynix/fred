@@ -815,8 +815,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 					form.addLineBreak();
 					form.addText(key);
 					form.addLineBreak();
-					form.addChild("input", new String[]{"type", "name", "value"},
-						new String[]{"hidden", "key-" + x, key});
+					form.addInput("hidden", "key-" + x, key);
 				}
 				form.addChild("label", "for", "descB", (l10n("recommendDescription") + ' '));
 				form.addLineBreak();
@@ -1945,8 +1944,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		HTMLNode panicForm = ctx.addFormChild(infobox.body, path(), "queuePanicForm");
 		panicForm.addText((SimpleToadletServer.noConfirmPanic ? l10n("panicButtonNoConfirmation") :
 			l10n("panicButtonWithConfirmation")) + ' ');
-		panicForm.addChild("input", new String[]{"type", "name", "value"},
-			new String[]{"submit", "panic", l10n("panicButton")});
+		panicForm.addInput("submit", "panic", l10n("panicButton"));
 		return infobox;
 	}
 

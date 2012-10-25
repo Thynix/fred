@@ -298,9 +298,8 @@ public class N2NTMToadlet extends Toadlet {
 			messageForm.addLineBreak();
 			messageForm.addText(NodeL10n.getBase().getString("QueueToadlet.insertFileBrowseLabel") + ":" +
 				" ");
-			messageForm.addChild("input", new String[]{"type", "name", "value"},
-				new String[]{"submit", "n2nm-browse",
-					NodeL10n.getBase().getString("QueueToadlet.insertFileBrowseButton") + "..."});
+			messageForm.addInput("submit", "n2nm-browse",
+					NodeL10n.getBase().getString("QueueToadlet.insertFileBrowseButton") + "...");
 			messageForm.addLineBreak();
 		}
 		if (advancedMode) {
@@ -309,12 +308,10 @@ public class N2NTMToadlet extends Toadlet {
 					true)));
 			messageForm.addLineBreak();
 			messageForm.addText(NodeL10n.getBase().getString("QueueToadlet.insertFileLabel") + ": ");
-			messageForm.addChild("input", new String[]{"type", "name", "value"},
-				new String[]{"file", "n2nm-upload", ""});
+			messageForm.addInput("file", "n2nm-upload", "");
 			messageForm.addLineBreak();
 		}
-		messageForm.addChild("input", new String[]{"type", "name", "value"},
-			new String[]{"submit", "send", l10n("sendMessageShort")});
+		messageForm.addInput("submit", "send", l10n("sendMessageShort"));
 	}
 
 	@Override

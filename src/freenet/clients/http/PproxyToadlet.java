@@ -559,7 +559,7 @@ public class PproxyToadlet extends Toadlet {
 				}
 			}
 		}
-		addOfficialForm.addChild(new BlockText()).addChild("input", new String[]{"type", "name", "value"}, new String[]{"submit", "submit-official", l10n("Load")});
+		addOfficialForm.addBlockText().addInput("submit", "submit-official", l10n("Load"));
 	}
 	
 	private void showUnofficialPluginLoader(ToadletContext toadletContext, HTMLNode contentNode) {
