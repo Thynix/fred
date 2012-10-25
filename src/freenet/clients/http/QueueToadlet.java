@@ -158,10 +158,9 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 			if (request.isPartSet("delete_request") &&
 				(request.getPartAsStringFailsafe("delete_request", 128).length() > 0)) {
 				// Confirm box
-				PageNode page = ctx.getPageMaker().getPageNode(l10n("confirmDeleteTitle"), ctx);
-				HTMLNode inner = page.content;
+				Page page = ctx.getPageMaker().getPage(l10n("confirmDeleteTitle"), ctx);
 				InfoboxWidget ConfirmDelete =
-					inner.addInfobox(InfoboxWidget.Type.WARNING, Identifier.CONFIRMDELETETITLE,
+					page.content.addInfobox(InfoboxWidget.Type.WARNING, Identifier.CONFIRMDELETETITLE,
 						l10n("confirmDeleteTitle"));
 				HTMLNode deleteForm =
 					ctx.addFormChild(ConfirmDelete.addBlockText(), path(), "queueDeleteForm");
@@ -223,7 +222,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 				deleteForm.addChild("input",
 					new String[]{"type", "name", "value"},
 					new String[]{"submit", "cancel", NodeL10n.getBase().getString("Toadlet.no")});
-				this.writeHTMLReply(ctx, 200, "OK", page.outer.generate());
+				this.writeHTMLReply(ctx, 200, "OK", page.generate());
 				return;
 			} else if(request.isPartSet("remove_request") && (request.getPartAsStringFailsafe("remove_request", 128).length() > 0)) {
 				
@@ -419,10 +418,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 				}
 				boolean displayFailureBox = failure.size() > 0;
 				boolean displaySuccessBox = success.size() > 0;
-				PageNode page = ctx.getPageMaker().getPageNode(l10n("downloadFiles"), ctx);
-				HTMLNode pageNode = page.outer;
-				HTMLNode contentNode = page.content;
-				InfoboxWidget alertContent = contentNode.addInfobox(
+				Page page = ctx.getPageMaker().getPage(l10n("downloadFiles"), ctx);
+				InfoboxWidget alertContent = page.content.addInfobox(
 					(displayFailureBox ? InfoboxWidget.Type.WARNING :
 						InfoboxWidget.Type.INFORMATION), Identifier.GROUPEDDOWNLOAD,
 					l10n("downloadFiles"));
@@ -448,7 +445,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 				}
 				alertContent.body.addLink(path(),
 					NodeL10n.getBase().getString("Toadlet.returnToQueuepage"));
-				writeHTMLReply(ctx, 200, "OK", pageNode.generate());
+				writeHTMLReply(ctx, 200, "OK", page.generate());
 				return;
 			} else if (request.isPartSet("change_priority")) {
 				short newPriority = Short.parseShort(request.getPartAsStringFailsafe("priority", 32));
@@ -799,10 +796,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 				}
 				return;
 			} else if (request.isPartSet("recommend_request")) {
-				PageNode page = ctx.getPageMaker().getPageNode(l10n("recommendAFileToFriends"), ctx);
-				HTMLNode pageNode = page.outer;
-				HTMLNode contentNode = page.content;
-				InfoboxWidget RecommendFile = contentNode
+				Page page = ctx.getPageMaker().getPage(l10n("recommendAFileToFriends"), ctx);
+				InfoboxWidget RecommendFile = page.content
 					.addInfobox(InfoboxWidget.Type.WTF, Identifier.RECOMMENDFILE,
 						l10n("recommendAFileToFriends"));
 				HTMLNode form = ctx.addFormChild(RecommendFile.body, path(), "recommendForm2");
@@ -841,7 +836,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 				form.addChild("input",
 					new String[]{"type", "name", "value"},
 					new String[]{"submit", "recommend_uri", l10n("recommend")});
-				this.writeHTMLReply(ctx, 200, "OK", pageNode.generate());
+				this.writeHTMLReply(ctx, 200, "OK", page.generate());
 				return;
 			} else if(request.isPartSet("recommend_uri") && request.isPartSet("URI")) {
 				String description = request.getPartAsStringFailsafe("description", 32768);
@@ -875,15 +870,13 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 
 	private void downloadDisallowedPage(NotAllowedException e, String downloadPath, ToadletContext ctx)
 		throws IOException, ToadletContextClosedException {
-		PageNode page = ctx.getPageMaker().getPageNode(l10n("downloadFiles"), ctx);
-		HTMLNode pageNode = page.outer;
-		HTMLNode contentNode = page.content;
+		Page page = ctx.getPageMaker().getPage(l10n("downloadFiles"), ctx);
 		Logger.warning(this, e.toString());
-		InfoboxWidget alert = contentNode.addInfobox(InfoboxWidget.Type.ALERT, Identifier.GROUPEDDOWNLOAD,
+		InfoboxWidget alert = page.content.addInfobox(InfoboxWidget.Type.ALERT, Identifier.GROUPEDDOWNLOAD,
 			l10n("downloadFiles"));
 		alert.addBlockText(l10n("downloadDisallowed", "directory", downloadPath));
 		alert.addLink(path(), NodeL10n.getBase().getString("Toadlet.returnToQueuepage"));
-		writeHTMLReply(ctx, 200, "OK", pageNode.generate());
+		writeHTMLReply(ctx, 200, "OK", page.generate());
 	}
 
 	private File getDownloadsDir (String downloadPath) throws NotAllowedException {
@@ -901,10 +894,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 	}
 
 	private void sendConfirmPanicPage(ToadletContext ctx) throws ToadletContextClosedException, IOException {
-		PageNode page = ctx.getPageMaker().getPageNode(l10n("confirmPanicButtonPageTitle"), ctx);
-		HTMLNode pageNode = page.outer;
-		HTMLNode contentNode = page.content;
-		InfoboxWidget ConfirmPanic = contentNode.addInfobox(InfoboxWidget.Type.ERROR, Identifier.PANICCONFIRM,
+		Page page = ctx.getPageMaker().getPage(l10n("confirmPanicButtonPageTitle"), ctx);
+		InfoboxWidget ConfirmPanic = page.content.addInfobox(InfoboxWidget.Type.ERROR, Identifier.PANICCONFIRM,
 			l10n("confirmPanicButtonPageTitle"));
 		ConfirmPanic.body.addChild(new BlockText(l10n("confirmPanicButton")));
 		HTMLNode form = ctx.addFormChild(ConfirmPanic.body, path(), "confirmPanicButton");
@@ -919,22 +910,20 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		} else {
 			ConfirmPanic.body.addBlockText().addLink(path(), l10n("backToDownloadsPage"));
 		}
-		writeHTMLReply(ctx, 200, "OK", pageNode.generate());
+		writeHTMLReply(ctx, 200, "OK", page.generate());
 	}
 
 	private void sendPersistenceDisabledError(ToadletContext ctx)
 		throws ToadletContextClosedException, IOException {
 		String title = l10n("awaitingPasswordTitle" + (uploads ? "Uploads" : "Downloads"));
 		if (core.node.awaitingPassword()) {
-			PageNode page = ctx.getPageMaker().getPageNode(title, ctx);
-			HTMLNode pageNode = page.outer;
-			HTMLNode contentNode = page.content;
-			InfoboxWidget PasswordPrompt = contentNode.addInfobox(InfoboxWidget.Type.ERROR, title);
+			Page page = ctx.getPageMaker().getPage(title, ctx);
+			InfoboxWidget PasswordPrompt = page.content.addInfobox(InfoboxWidget.Type.ERROR, title);
 			SecurityLevelsToadlet
 				.generatePasswordFormPage(false, container, PasswordPrompt.body, false, false, false,
 					null, path());
 			addHomepageLink(PasswordPrompt.body);
-			writeHTMLReply(ctx, 500, "Internal Server Error", pageNode.generate());
+			writeHTMLReply(ctx, 500, "Internal Server Error", page.generate());
 			return;
 		}
 		if (core.node.isStopping()) {
@@ -961,14 +950,12 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 	private void writeError(String header, String message, ToadletContext context, boolean returnToQueuePage,
 	                        boolean returnToInsertPage) throws ToadletContextClosedException, IOException {
 		PageMaker pageMaker = context.getPageMaker();
-		PageNode page = pageMaker.getPageNode(header, context);
-		HTMLNode pageNode = page.outer;
-		HTMLNode contentNode = page.content;
+		Page page = pageMaker.getPage(header, context);
 		if (context.isAllowedFullAccess()) {
-			contentNode.addChild(core.alerts.createSummary());
+			page.content.addChild(core.alerts.createSummary());
 		}
 		InfoboxWidget infoboxContent =
-			contentNode.addInfobox(InfoboxWidget.Type.ERROR, Category.QUEUEERROR, header);
+			page.content.addInfobox(InfoboxWidget.Type.ERROR, Category.QUEUEERROR, header);
 		infoboxContent.addText(message);
 		if (returnToQueuePage) {
 			NodeL10n.getBase()
@@ -979,50 +966,41 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 				"QueueToadlet.tryAgainUploadFilePage", new String[]{"link"},
 				new HTMLNode[]{new Link(FileInsertWizardToadlet.PATH)});
 		}
-		writeHTMLReply(context, 400, "Bad request", pageNode.generate());
+		writeHTMLReply(context, 400, "Bad request", page.generate());
 	}
 
 	public void handleMethodGET(URI uri, final HTTPRequest request, final ToadletContext ctx)
-	throws ToadletContextClosedException, IOException, RedirectException {
-
+		throws ToadletContextClosedException, IOException, RedirectException {
 		// We ensure that we have a FCP server running
-		if(!fcp.enabled){
+		if (! fcp.enabled) {
 			writeError(l10n("fcpIsMissing"), l10n("pleaseEnableFCP"), ctx, false, false);
 			return;
 		}
-
-		if(container.publicGatewayMode() && !ctx.isAllowedFullAccess()) {
-			super.sendErrorPage(ctx, 403, NodeL10n.getBase().getString("Toadlet.unauthorizedTitle"), NodeL10n.getBase().getString("Toadlet.unauthorized"));
+		if (container.publicGatewayMode() && ! ctx.isAllowedFullAccess()) {
+			super.sendErrorPage(ctx, 403, NodeL10n.getBase().getString("Toadlet.unauthorizedTitle"),
+				NodeL10n.getBase().getString("Toadlet.unauthorized"));
 			return;
 		}
-
 		final String requestPath = request.getPath().substring(path().length());
-
 		boolean countRequests = false;
 		boolean listFetchKeys = false;
-
 		if (requestPath.length() > 0) {
-			if(requestPath.equals("countRequests.html") || requestPath.equals("/countRequests.html")) {
+			if (requestPath.equals("countRequests.html") || requestPath.equals("/countRequests.html")) {
 				countRequests = true;
-			} else if(requestPath.equals("listFetchKeys.txt")) {
+			} else if (requestPath.equals("listFetchKeys.txt")) {
 				listFetchKeys = true;
 			}
 		}
-
 		class OutputWrapper {
 			boolean done;
-			HTMLNode pageNode;
+			Page pageNode;
 			String plainText;
 		}
-
 		final OutputWrapper ow = new OutputWrapper();
-
 		final PageMaker pageMaker = ctx.getPageMaker();
-
 		final boolean count = countRequests;
 		final boolean keys = listFetchKeys;
-		
-		if(!(count || keys)) {
+		if (! (count || keys)) {
 			try {
 				RequestStatus[] reqs = fcp.getGlobalRequests();
 				MultiValueTable<String, String> pageHeaders = new MultiValueTable<String, String>();
@@ -1034,18 +1012,15 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 				return;
 			}
 		}
-
 		try {
 			core.clientContext.jobRunner.queue(new DBJob() {
-
 				@Override
 				public String toString() {
 					return "QueueToadlet ShowQueue";
 				}
-
 				@Override
 				public boolean run(ObjectContainer container, ClientContext context) {
-					HTMLNode pageNode = null;
+					Page pageNode = null;
 					String plainText = null;
 					try {
 						if (count) {
@@ -1060,13 +1035,12 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 									.countPersistentQueuedRequests(container);
 							Logger.minor(this,
 								"Total queued CHK requests: " + reallyQueued);
-							PageNode page = pageMaker.getPageNode(l10n("title"), ctx);
-							pageNode = page.outer;
-							HTMLNode contentNode = page.content;
+							Page page = pageMaker.getPage(l10n("title"), ctx);
 							/* add alert summary box */
-							if (ctx.isAllowedFullAccess())
-								contentNode.addChild(core.alerts.createSummary());
-							InfoboxWidget RequestStatus = contentNode.addInfobox(
+							if (ctx.isAllowedFullAccess()) {
+								page.content.addChild(core.alerts.createSummary());
+							}
+							InfoboxWidget RequestStatus = page.content.addInfobox(
 								InfoboxWidget.Type.INFORMATION,
 								"Queued requests status");
 							RequestStatus.body.addBlockText(
@@ -1100,18 +1074,18 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 						}
 					}
 				}
-				// Do not use maximal priority: There may be exceptional cases which have higher priority than the UI, to get rid of excessive garbage for example.
+				// Do not use maximal priority: There may be exceptional cases which have higher
+				// priority than the UI, to get rid of excessive garbage for example.
 			}, NativeThread.HIGH_PRIORITY, false);
 		} catch (DatabaseDisabledException e1) {
 			sendPersistenceDisabledError(ctx);
 			return;
 		}
-
-		HTMLNode pageNode;
+		Page pageNode;
 		String plainText;
-		synchronized(ow) {
-			while(true) {
-				if(ow.done) {
+		synchronized (ow) {
+			while (true) {
+				if (ow.done) {
 					pageNode = ow.pageNode;
 					plainText = ow.plainText;
 					break;
@@ -1123,19 +1097,18 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 				}
 			}
 		}
-
 		MultiValueTable<String, String> pageHeaders = new MultiValueTable<String, String>();
-		if(pageNode != null)
+		if (pageNode != null) {
 			writeHTMLReply(ctx, 200, "OK", pageHeaders, pageNode.generate());
-		else if(plainText != null)
+		} else if (plainText != null) {
 			this.writeReply(ctx, 200, "text/plain", "OK", plainText);
-		else {
-			if(core.killedDatabase())
+		} else {
+			if (core.killedDatabase()) {
 				sendPersistenceDisabledError(ctx);
-			else
+			} else {
 				this.writeError("Internal error", "Internal error", ctx);
+			}
 		}
-
 	}
 
 	protected String makeFetchKeysList(ClientContext context) throws DatabaseDisabledException {
@@ -1155,7 +1128,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		return sb.toString();
 	}
 
-	private HTMLNode handleGetInner(PageMaker pageMaker, RequestStatus[] reqs, ClientContext context, final HTTPRequest request, ToadletContext ctx) throws DatabaseDisabledException {
+	private Page handleGetInner(PageMaker pageMaker, RequestStatus[] reqs, ClientContext context, final HTTPRequest request, ToadletContext ctx) throws DatabaseDisabledException {
 
 		// First, get the queued requests, and separate them into different types.
 		LinkedList<DownloadRequestStatus> completedDownloadToDisk = new LinkedList<DownloadRequestStatus>();
@@ -1178,20 +1151,18 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 			Logger.minor(this, "Request count: "+reqs.length);
 
 		if (reqs.length < 1) {
-			PageNode page = pageMaker.getPageNode(l10n("title" + (uploads ? "Uploads" : "Downloads")),
+			Page page = pageMaker.getPage(l10n("title" + (uploads ? "Uploads" : "Downloads")),
 				ctx);
-			HTMLNode pageNode = page.outer;
-			HTMLNode contentNode = page.content;
 			/* add alert summary box */
 			if (ctx.isAllowedFullAccess()) {
-				contentNode.addChild(core.alerts.createSummary());
+				page.content.addChild(core.alerts.createSummary());
 			}
-			contentNode.addInfobox(InfoboxWidget.Type.INFORMATION, Identifier.QUEUEEMPTY,
+			page.content.addInfobox(InfoboxWidget.Type.INFORMATION, Identifier.QUEUEEMPTY,
 				l10n("globalQueueIsEmpty"), l10n("noTaskOnGlobalQueue"));
 			if (! uploads) {
-				contentNode.addInfobox(createBulkDownloadForm(ctx));
+				page.content.addInfobox(createBulkDownloadForm(ctx));
 			}
-			return pageNode;
+			return page;
 		}
 		short lowestQueuedPrio = RequestStarter.MINIMUM_PRIORITY_CLASS;
 		long totalQueuedDownloadSize = 0;
@@ -1357,13 +1328,10 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 				'/' + (completedDownloadToDisk.size() + completedDownloadToTemp.size()) +
 				") "+l10n("titleDownloads");
 
-		PageNode page = pageMaker.getPageNode(pageName, ctx);
-		HTMLNode pageNode = page.outer;
-		HTMLNode contentNode = page.content;
-
+		Page page = pageMaker.getPage(pageName, ctx);
 		/* add alert summary box */
 		if(ctx.isAllowedFullAccess())
-			contentNode.addChild(core.alerts.createSummary());
+			page.content.addChild(core.alerts.createSummary());
 
 		/* navigation bar */
 		InfoboxWidget navigationBar = new InfoboxWidget(InfoboxWidget.Type.NAVBAR, l10n("requestNavigation"));
@@ -1460,7 +1428,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 			includeNavigationBar = true;
 		}
 		if (includeNavigationBar) {
-			contentNode.addInfobox(navigationBar);
+			page.content.addInfobox(navigationBar);
 		}
 
 		final String[] priorityClasses = new String[] {
@@ -1476,7 +1444,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		boolean advancedModeEnabled = pageMaker.advancedMode(request, this.container);
 		if (advancedModeEnabled) {
 			Table legendTable =
-				contentNode.addInfobox(InfoboxWidget.Type.LEGEND, Identifier.QUEUELEGEND, l10n("legend"))
+				page.content.addInfobox(InfoboxWidget.Type.LEGEND, Identifier.QUEUELEGEND, l10n("legend"))
 					.addTable(Category.QUEUE);
 			Row legendRow = legendTable.addRow();
 			Cell cell;
@@ -1490,7 +1458,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		}
 
 		if (reqs.length > 1 && SimpleToadletServer.isPanicButtonToBeShown) {
-			contentNode.addInfobox(createPanicBox(ctx));
+			page.content.addInfobox(createPanicBox(ctx));
 		}
 
 		final QueueColumn[] advancedModeFailure = new QueueColumn[] {
@@ -1511,8 +1479,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		        QueueColumn.KEY };
 
 		if (! completedDownloadToTemp.isEmpty()) {
-			contentNode.addLink(Link.Type.ANCHOR, Identifier.COMPLETEDDOWNLOADTOTEMP);
-			InfoboxWidget completedDownloadsToTemp = contentNode
+			page.content.addLink(Link.Type.ANCHOR, Identifier.COMPLETEDDOWNLOADTOTEMP);
+			InfoboxWidget completedDownloadsToTemp = page.content
 				.addInfobox(InfoboxWidget.Type.REQUESTCOMPLETE, Category.REQUESTCOMPLETED,
 					l10n("completedDinTempDirectory", new String[]{"size"},
 						new String[]{String.valueOf(completedDownloadToTemp.size())}));
@@ -1534,8 +1502,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		}
 
 		if (! completedDownloadToDisk.isEmpty()) {
-			contentNode.addLink(Link.Type.ANCHOR, Identifier.COMPLETEDDOWNLOADTODISK);
-			InfoboxWidget completedToDiskInfoboxContent = contentNode
+			page.content.addLink(Link.Type.ANCHOR, Identifier.COMPLETEDDOWNLOADTODISK);
+			InfoboxWidget completedToDiskInfoboxContent = page.content
 				.addInfobox(InfoboxWidget.Type.REQUESTCOMPLETE, Category.REQUESTCOMPLETED,
 					l10n("completedDinDownloadDirectory", new String[]{"size"},
 						new String[]{String.valueOf(completedDownloadToDisk.size())}));
@@ -1558,8 +1526,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		}
 
 		if (! completedUpload.isEmpty()) {
-			contentNode.addLink(Link.Type.ANCHOR, Identifier.COMPLETEDUPLOAD);
-			InfoboxWidget completedUploadInfobox = contentNode
+			page.content.addLink(Link.Type.ANCHOR, Identifier.COMPLETEDUPLOAD);
+			InfoboxWidget completedUploadInfobox = page.content
 				.addInfobox(InfoboxWidget.Type.REQUESTCOMPLETE, Category.DOWNLOADCOMPLETE,
 					l10n("completedU", new String[]{"size"},
 						new String[]{String.valueOf(completedUpload.size())}));
@@ -1580,8 +1548,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		}
 
 		if (! completedDirUpload.isEmpty()) {
-			contentNode.addLink(Link.Type.ANCHOR, Identifier.COMPLETEDDIRUPLOAD);
-			InfoboxWidget completedUploadDir = contentNode
+			page.content.addLink(Link.Type.ANCHOR, Identifier.COMPLETEDDIRUPLOAD);
+			InfoboxWidget completedUploadDir = page.content
 				.addInfobox(InfoboxWidget.Type.REQUESTCOMPLETE, Category.DOWNLOADCOMPLETE,
 					l10n("completedUDirectory", new String[]{"size"},
 						new String[]{String.valueOf(completedDirUpload.size())}));
@@ -1602,8 +1570,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		}
 
 		if (! failedDownload.isEmpty()) {
-			contentNode.addLink(Link.Type.ANCHOR, Identifier.FAILEDDOWNLOAD);
-			InfoboxWidget failedContent = contentNode.addInfobox(InfoboxWidget.Type.FAILEDREQUESTS,
+			page.content.addLink(Link.Type.ANCHOR, Identifier.FAILEDDOWNLOAD);
+			InfoboxWidget failedContent = page.content.addInfobox(InfoboxWidget.Type.FAILEDREQUESTS,
 				Category.DOWNLOADFAILED, l10n("failedD", new String[]{"size"},
 				new String[]{String.valueOf(failedDownload.size())}));
 			if (advancedModeEnabled) {
@@ -1620,8 +1588,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		}
 
 		if (! failedUpload.isEmpty()) {
-			contentNode.addLink(Link.Type.ANCHOR, Identifier.FAILEDUPLOAD);
-			InfoboxWidget failedContent = contentNode.addInfobox(InfoboxWidget.Type.FAILEDREQUESTS,
+			page.content.addLink(Link.Type.ANCHOR, Identifier.FAILEDUPLOAD);
+			InfoboxWidget failedContent = page.content.addInfobox(InfoboxWidget.Type.FAILEDREQUESTS,
 				Category.UPLOADFAILED, l10n("failedU", new String[]{"size"},
 				new String[]{String.valueOf(failedUpload.size())}));
 			if (advancedModeEnabled) {
@@ -1638,8 +1606,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		}
 
 		if (! failedDirUpload.isEmpty()) {
-			contentNode.addLink(Link.Type.ANCHOR, Identifier.FAILEDDIRUPLOAD);
-			InfoboxWidget failedContent = contentNode.addInfobox(InfoboxWidget.Type.FAILEDREQUESTS,
+			page.content.addLink(Link.Type.ANCHOR, Identifier.FAILEDDIRUPLOAD);
+			InfoboxWidget failedContent = page.content.addInfobox(InfoboxWidget.Type.FAILEDREQUESTS,
 				Category.UPLOADFAILED, l10n("failedU", new String[]{"size"},
 				new String[]{String.valueOf(failedDirUpload.size())}));
 			if (advancedModeEnabled) {
@@ -1664,9 +1632,9 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 			for (String type : types) {
 				LinkedList<DownloadRequestStatus> getters = failedBadMIMEType.get(type);
 				String atype = type.replace("-", "--").replace('/', '-');
-				contentNode.addLink(Link.Type.ANCHOR, "failedDownload-badtype-" + atype);
+				page.content.addLink(Link.Type.ANCHOR, "failedDownload-badtype-" + atype);
 				MIMEType typeHandler = ContentFilter.getMIMEType(type);
-				InfoboxWidget failedContent = contentNode.addInfobox(InfoboxWidget.Type
+				InfoboxWidget failedContent = page.content.addInfobox(InfoboxWidget.Type
 					.FAILEDREQUESTS,
 					l10n("failedDBadMIME", new String[]{"size", "type"},
 						new String[]{String.valueOf(getters.size()), type}));
@@ -1706,8 +1674,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 			for (String type : types) {
 				LinkedList<DownloadRequestStatus> getters = failedUnknownMIMEType.get(type);
 				String atype = type.replace("-", "--").replace('/', '-');
-				contentNode.addLink(Link.Type.ANCHOR, "failedDownload-unknowntype-" + atype);
-				InfoboxWidget failedContent = contentNode.addInfobox(InfoboxWidget.Type
+				page.content.addLink(Link.Type.ANCHOR, "failedDownload-unknowntype-" + atype);
+				InfoboxWidget failedContent = page.content.addInfobox(InfoboxWidget.Type
 					.FAILEDREQUESTS,
 					l10n("failedDUnknownMIME", new String[]{"size", "type"},
 						new String[]{String.valueOf(getters.size()), type}));
@@ -1733,9 +1701,9 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		}
 
 		if (! uncompletedDownload.isEmpty()) {
-			contentNode.addLink(Link.Type.ANCHOR, Identifier.UNCOMPLETEDDOWNLOAD);
+			page.content.addLink(Link.Type.ANCHOR, Identifier.UNCOMPLETEDDOWNLOAD);
 			InfoboxWidget uncompletedContent =
-				contentNode.addInfobox(InfoboxWidget.Type.PROGRESSING, Category.DOWNLOADPROGRESSING,
+				page.content.addInfobox(InfoboxWidget.Type.PROGRESSING, Category.DOWNLOADPROGRESSING,
 					l10n("wipD", new String[]{"size"},
 						new String[]{String.valueOf(uncompletedDownload.size())}));
 			if (advancedModeEnabled) {
@@ -1757,9 +1725,9 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		}
 
 		if (! uncompletedUpload.isEmpty()) {
-			contentNode.addLink(Link.Type.ANCHOR, Identifier.UNCOMPLETEDUPLOAD);
+			page.content.addLink(Link.Type.ANCHOR, Identifier.UNCOMPLETEDUPLOAD);
 			InfoboxWidget uncompletedContent =
-				contentNode.addInfobox(InfoboxWidget.Type.PROGRESSING, Category.UPLOADPROGRESSING,
+				page.content.addInfobox(InfoboxWidget.Type.PROGRESSING, Category.UPLOADPROGRESSING,
 					l10n("wipU", new String[]{"size"},
 						new String[]{String.valueOf(uncompletedUpload.size())}));
 			uncompletedContent.addClass(Category.DOWNLOADPROGRESSING);
@@ -1780,9 +1748,9 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		}
 
 		if (! uncompletedDirUpload.isEmpty()) {
-			contentNode.addLink(Link.Type.ANCHOR, Identifier.UNCOMPLETEDDIRUPLOAD);
+			page.content.addLink(Link.Type.ANCHOR, Identifier.UNCOMPLETEDDIRUPLOAD);
 			InfoboxWidget uncompletedContent =
-				contentNode.addInfobox(InfoboxWidget.Type.PROGRESSING, Category.DOWNLOADPROGRESSING,
+				page.content.addInfobox(InfoboxWidget.Type.PROGRESSING, Category.DOWNLOADPROGRESSING,
 					l10n("wipDU", new String[]{"size"},
 						new String[]{String.valueOf(uncompletedDirUpload.size())}));
 			if (advancedModeEnabled) {
@@ -1802,12 +1770,10 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 						"uncompleted-upload-dir", false, false));
 			}
 		}
-
 		if(!uploads) {
-			contentNode.addInfobox(createBulkDownloadForm(ctx));
+			page.content.addInfobox(createBulkDownloadForm(ctx));
 		}
-
-		return pageNode;
+		return page;
 	}
 
 	private Cell createReasonCell(String failureReason) {
