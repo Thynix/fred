@@ -25,7 +25,7 @@ public class OPENNET implements Step {
 		HTMLNode input = p.addChild("input",
 		        new String[] { "type", "name", "value" },
 		        new String[] { "radio", "opennet", "false" });
-		input.addB(WizardL10n.l10n("opennetChoiceConnectFriends") + ":");
+		input.addInlineBox(Category.BOLD, WizardL10n.l10n("opennetChoiceConnectFriends") + ":");
 		p.addLineBreak();
 		p.addText(WizardL10n.l10n("opennetChoicePro"));
 		p.addText(": " + WizardL10n.l10n("opennetChoiceConnectFriendsPRO") + "¹");
@@ -37,7 +37,7 @@ public class OPENNET implements Step {
 		input = p.addChild("input",
 		        new String[] { "type", "name", "value" },
 		        new String[] { "radio", "opennet", "true" });
-		input.addB(WizardL10n.l10n("opennetChoiceConnectStrangers") + ":");
+		input.addInlineBox(Category.BOLD, WizardL10n.l10n("opennetChoiceConnectStrangers") + ":");
 		p.addLineBreak();
 		p.addText(WizardL10n.l10n("opennetChoicePro"));
 		p.addText(": " + WizardL10n.l10n("opennetChoiceConnectStrangersPRO"));

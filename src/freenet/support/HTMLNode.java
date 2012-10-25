@@ -515,20 +515,6 @@ public class HTMLNode implements XMLCharacterClasses {
 		return new HTMLNode("#", Short.toString(count));
 	}
 
-	//methods for creating <b> tags
-	@Deprecated
-	public B addB() {
-		B newB = new B();
-		addChild(newB);
-		return newB;
-	}
-	@Deprecated
-	public B addB(String content) {
-		B newB = new B(content);
-		addChild(newB);
-		return newB;
-	}
-
 	//methods for creating Box children
 	public Box addBox() {
 		Box newBox = new Box();

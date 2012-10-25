@@ -3,6 +3,7 @@ package freenet.clients.http;
 import freenet.client.HighLevelSimpleClient;
 import freenet.client.InsertContext;
 import freenet.client.InsertContext.CompatibilityMode;
+import freenet.clients.http.uielements.Category;
 import freenet.clients.http.uielements.Identifier;
 import freenet.clients.http.uielements.Infobox;
 import freenet.clients.http.uielements.Page;
@@ -77,7 +78,7 @@ public class FileInsertWizardToadlet extends Toadlet implements LinkEnabledCallb
 			(rememberedLastTime && wasCanonicalLastTime && seclevel != NETWORK_THREAT_LEVEL.MAXIMUM)) {
 			input.addAttribute("checked", "checked");
 		}
-		insertForm.addB(l10n("insertCanonicalTitle"));
+		insertForm.addInlineBox(Category.BOLD, l10n("insertCanonicalTitle"));
 		insertForm.addText(": " + l10n("insertCanonical"));
 		insertForm.addLineBreak();
 		input = insertForm.addChild("input",
@@ -86,14 +87,14 @@ public class FileInsertWizardToadlet extends Toadlet implements LinkEnabledCallb
 		if (seclevel == NETWORK_THREAT_LEVEL.MAXIMUM || (rememberedLastTime && ! wasCanonicalLastTime)) {
 			input.addAttribute("checked", "checked");
 		}
-		insertForm.addB(l10n("insertRandomTitle"));
+		insertForm.addInlineBox(Category.BOLD, l10n("insertRandomTitle"));
 		insertForm.addText(": " + l10n("insertRandom"));
 		if (isAdvancedModeEnabled) {
 			insertForm.addLineBreak();
 			insertForm.addChild("input",
 				new String[]{"type", "name", "value"},
 				new String[]{"radio", "keytype", "specify"});
-			insertForm.addB(l10n("insertSpecificKeyTitle"));
+			insertForm.addInlineBox(Category.BOLD, l10n("insertSpecificKeyTitle"));
 			insertForm.addText(": " + l10n("insertSpecificKey") + " ");
 			insertForm.addChild("input",
 				new String[]{"type", "name", "value"},

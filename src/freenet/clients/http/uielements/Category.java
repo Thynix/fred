@@ -6,6 +6,7 @@ public enum Category {
 	ADVANCED("advanced"),
 	ALERTSLINE("alerts-line"),
 	ALIGNRIGHT("right-align"),
+	BOLD("bold"),
 	BOOKMARKACTION("bookmark-action"),
 	BOOKMARKADDNEW("bookmark-add-new"),
 	BOOKMARKDELETE("bookmark-delete"),

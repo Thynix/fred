@@ -72,7 +72,7 @@ public class SECURITY_PHYSICAL implements Step {
 			input = div.addChild(new BlockText()).addChild("input",
 				new String[]{"type", "name", "value"},
 				new String[]{"radio", controlName, level.name()});
-			input.addB(WizardL10n.l10nSec("physicalThreatLevel.name." + level));
+			input.addInlineBox(Category.BOLD, WizardL10n.l10nSec("physicalThreatLevel.name." + level));
 			input.addText(": ");
 			NodeL10n.getBase().addL10nSubstitution(input, "SecurityLevels.physicalThreatLevel.choice."+level, new String[] { "bold" }, new HTMLNode[] { HTMLNode.STRONG });
 			if(level == SecurityLevels.PHYSICAL_THREAT_LEVEL.HIGH &&

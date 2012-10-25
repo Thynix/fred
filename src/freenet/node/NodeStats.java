@@ -1,6 +1,7 @@
 package freenet.node;
 
 import freenet.clients.http.uielements.BlockText;
+import freenet.clients.http.uielements.Category;
 import freenet.clients.http.uielements.Row;
 import freenet.clients.http.uielements.Table;
 import freenet.config.InvalidConfigValueException;
@@ -3626,7 +3627,7 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 		synchronized(slotTimeoutsSync) {
 			if(fatalTimeoutsInWaitLocal + fatalTimeoutsInWaitRemote + 
 					allocatedSlotLocal + allocatedSlotRemote > 0) {
-				content.addB(l10n("timeoutFractions"));
+				content.addInlineBox(Category.BOLD, l10n("timeoutFractions"));
 				table = new Table();
 				content.addChild(table);
 				header = table.addRow();

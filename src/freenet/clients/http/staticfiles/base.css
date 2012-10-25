@@ -76,7 +76,11 @@
 }
 
 .italic {
-        font-style:italic;
+	font-style: italic;
+}
+
+.bold {
+	font-weight: bold;
 }
 /* base font settings for entire page */
 

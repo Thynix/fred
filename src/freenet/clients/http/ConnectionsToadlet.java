@@ -882,23 +882,23 @@ public abstract class ConnectionsToadlet extends Toadlet {
 		peerAdditionForm.addChild("input", new String[] { "id", "type", "name" }, new String[] { "reffile", "file", "reffile" });
 		peerAdditionForm.addLineBreak();
 		if(!isOpennet) {
-			peerAdditionForm.addB(l10n("peerTrustTitle"));
+			peerAdditionForm.addInlineBox(Category.BOLD, l10n("peerTrustTitle"));
 			peerAdditionForm.addText(" ");
 			peerAdditionForm.addText(l10n("peerTrustIntroduction"));
 			for(FRIEND_TRUST trust : FRIEND_TRUST.valuesBackwards()) { // FIXME reverse order
 				HTMLNode input = peerAdditionForm.addLineBreak().addChild("input", new String[] { "type", "name", "value" }, new String[] { "radio", "trust", trust.name() });
-				input.addB(l10n("peerTrust." + trust.name())); // FIXME l10n
+				input.addInlineBox(Category.BOLD, l10n("peerTrust." + trust.name())); // FIXME l10n
 				input.addText(": ");
 				input.addText(l10n("peerTrustExplain." + trust.name()));
 			}
 			peerAdditionForm.addLineBreak();
 			
-			peerAdditionForm.addB(l10n("peerVisibilityTitle"));
+			peerAdditionForm.addInlineBox(Category.BOLD, l10n("peerVisibilityTitle"));
 			peerAdditionForm.addText(" ");
 			peerAdditionForm.addText(l10n("peerVisibilityIntroduction"));
 			for(FRIEND_VISIBILITY trust : FRIEND_VISIBILITY.values()) { // FIXME reverse order
 				HTMLNode input = peerAdditionForm.addLineBreak().addChild("input", new String[] { "type", "name", "value" }, new String[] { "radio", "visibility", trust.name() });
-				input.addB(l10n("peerVisibility." + trust.name())); // FIXME l10n
+				input.addInlineBox(Category.BOLD, l10n("peerVisibility." + trust.name())); // FIXME l10n
 				input.addText(": ");
 				input.addText(l10n("peerVisibilityExplain." + trust.name()));
 			}
@@ -980,7 +980,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 		// location column
 		if (advancedModeEnabled) {
 			Cell locationNode = peerRow.addCell(Category.PEERLOCATION);
-			locationNode.addB(String.valueOf(peerNodeStatus.getLocation()));
+			locationNode.addInlineBox(Category.BOLD, String.valueOf(peerNodeStatus.getLocation()));
 			locationNode.addLineBreak();
 			double[] peersLoc = peerNodeStatus.getPeersLocation();
 			if(peersLoc != null) {

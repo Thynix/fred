@@ -972,7 +972,7 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 								new String[]{"link"}, new HTMLNode[]{new Link(
 								"/plugins/plugins.ThawIndexBrowser" +
 									".ThawIndexBrowser/?key=" +
-									key.toString()).addB()});
+									new InlineBox(Category.BOLD, key.toString()))});
 					}
 					option = optionList.addItem();
 					// FIXME: is this safe? See bug #131
