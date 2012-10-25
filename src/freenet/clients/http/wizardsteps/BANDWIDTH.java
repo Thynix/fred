@@ -2,7 +2,7 @@ package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
 import freenet.clients.http.uielements.Box;
-import freenet.clients.http.uielements.InfoboxWidget;
+import freenet.clients.http.uielements.Infobox;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
@@ -14,9 +14,9 @@ public class BANDWIDTH implements Step {
 
 	@Override
 	public void getStep(HTTPRequest request, PageHelper helper) {
-		InfoboxWidget bandwidthInfoboxContent = helper.getPageContent(WizardL10n.l10n("step3Title"))
+		Infobox bandwidthInfoboxContent = helper.getPageContent(WizardL10n.l10n("step3Title"))
 			.addInfobox(
-				InfoboxWidget.Type.NORMAL,
+				Infobox.Type.NORMAL,
 				WizardL10n.l10n("bandwidthLimit"));
 		bandwidthInfoboxContent.body.addText(WizardL10n.l10n("bandwidthCapPrompt"));
 		HTMLNode bandwidthForm = helper.addFormChild(bandwidthInfoboxContent.body, ".", "bwForm");

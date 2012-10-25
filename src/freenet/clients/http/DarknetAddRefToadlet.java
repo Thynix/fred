@@ -73,8 +73,8 @@ public class DarknetAddRefToadlet extends Toadlet {
 		PageMaker pageMaker = ctx.getPageMaker();
 		Page addDarknetRef = pageMaker.getPage(l10n("title"), ctx);
 		addDarknetRef.content.addChild(core.alerts.createSummary());
-		InfoboxWidget darknetExplainations = addDarknetRef.content
-			.addInfobox(InfoboxWidget.Type.INFORMATION, Identifier.DARKNETEXPLAINATIONS,
+		Infobox darknetExplainations = addDarknetRef.content
+			.addInfobox(Infobox.Type.INFORMATION, Identifier.DARKNETEXPLAINATIONS,
 				l10n("explainBoxTitle"));
 		darknetExplainations.body.addText(l10n("explainBox1"));
 		darknetExplainations.body.addText(l10n("explainBox2"));

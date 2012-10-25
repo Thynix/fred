@@ -414,15 +414,15 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 						Page confirmPage =
 							ctx.getPageMaker().getPage(l10n("confirmRemoveNodeTitle"),
 								ctx);
-						InfoboxWidget RemoveDarknetNode = confirmPage.content.addInfobox(
-							InfoboxWidget.Type.WARNING, Identifier.DARKNETREMOVENODE,
+						Infobox removeDarknetNode = confirmPage.content.addInfobox(
+							Infobox.Type.WARNING, Identifier.DARKNETREMOVENODE,
 							l10n("confirmRemoveNodeWarningTitle"));
-						RemoveDarknetNode.body.addBlockText((NodeL10n.getBase()
+						removeDarknetNode.body.addBlockText((NodeL10n.getBase()
 							.getString("DarknetConnectionsToadlet.confirmRemoveNode",
 								new String[]{"name"},
 								new String[]{peerNodes[i].getName()})));
 						HTMLNode removeForm =
-							ctx.addFormChild(RemoveDarknetNode.body, "/friends/",
+							ctx.addFormChild(removeDarknetNode.body, "/friends/",
 								"removeConfirmForm");
 						removeForm.addChild("input", new String[]{"type", "name", "value"},
 							new String[]{"hidden", "node_" + peerNodes[i].hashCode(),

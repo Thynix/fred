@@ -100,8 +100,8 @@ public class SecurityLevelsToadlet extends Toadlet {
 								new String[]{"type", "name", "value"},
 								new String[]{"hidden", configName,
 									networkThreatLevel});
-							InfoboxWidget networkthreatlevelconfirm =
-								new InfoboxWidget(InfoboxWidget.Type.INFORMATION,
+							Infobox networkthreatlevelconfirm =
+								new Infobox(Infobox.Type.INFORMATION,
 									l10nSec("networkThreatLevelConfirmTitle",
 										"mode", SecurityLevels
 										.localisedName(newThreatLevel)));
@@ -198,15 +198,15 @@ public class SecurityLevelsToadlet extends Toadlet {
 								page = ctx.getPageMaker()
 									.getPage(l10nSec("passwordPageTitle"),
 										ctx);
-								InfoboxWidget WrongPassword = new InfoboxWidget(
-									InfoboxWidget.Type.ERROR,
+								Infobox wrongPassword = new Infobox(
+									Infobox.Type.ERROR,
 									Identifier.WRONGPASSWORD,
 									l10nSec("passwordWrongTitle"));
-								page.content.addInfobox(WrongPassword);
+								page.content.addInfobox(wrongPassword);
 								SecurityLevelsToadlet.generatePasswordFormPage(true,
-									ctx.getContainer(), WrongPassword.body, false,
+									ctx.getContainer(), wrongPassword.body, false,
 									false, true, newPhysicalLevel.name(), null);
-								addBackToSeclevelsLink(WrongPassword.body);
+								addBackToSeclevelsLink(wrongPassword.body);
 								writeHTMLReply(ctx, 200, "OK", page.generate());
 								if (changedAnything) {
 									core.storeConfig();
@@ -279,15 +279,15 @@ public class SecurityLevelsToadlet extends Toadlet {
 									.getPage(l10nSec
 										("passwordForDecryptTitle"),
 										ctx);
-								InfoboxWidget WrongPassword = new InfoboxWidget(
-									InfoboxWidget.Type.ERROR,
+								Infobox wrongPassword = new Infobox(
+									Infobox.Type.ERROR,
 									Identifier.WRONGPASSWORD,
 									("passwordWrongTitle"));
-								page.content.addInfobox(WrongPassword);
+								page.content.addInfobox(wrongPassword);
 								SecurityLevelsToadlet.generatePasswordFormPage(true,
-									ctx.getContainer(), WrongPassword.body, false,
+									ctx.getContainer(), wrongPassword.body, false,
 									true, false, newPhysicalLevel.name(), null);
-								addBackToSeclevelsLink(WrongPassword.body);
+								addBackToSeclevelsLink(wrongPassword.body);
 								writeHTMLReply(ctx, 200, "OK", page.generate());
 								if (changedAnything) {
 									core.storeConfig();
@@ -312,19 +312,19 @@ public class SecurityLevelsToadlet extends Toadlet {
 							// We need the old password
 							page = ctx.getPageMaker()
 								.getPage(l10nSec("passwordForDecryptTitle"), ctx);
-							InfoboxWidget PasswordPrompt = new InfoboxWidget(
-								InfoboxWidget.Type.ERROR, Category.PASSWORDPROMPT,
+							Infobox passwordPrompt = new Infobox(
+								Infobox.Type.ERROR, Category.PASSWORDPROMPT,
 								l10nSec("passwordForDecryptTitle"));
-							page.content.addInfobox(PasswordPrompt);
+							page.content.addInfobox(passwordPrompt);
 							if (password != null && password.length() == 0) {
-								PasswordPrompt.body.addText(
+								passwordPrompt.body.addText(
 									l10nSec("passwordNotZeroLength"));
 							}
 							SecurityLevelsToadlet
 								.generatePasswordFormPage(false, ctx.getContainer(),
-									PasswordPrompt.body, false, true, false,
+									passwordPrompt.body, false, true, false,
 									newPhysicalLevel.name(), null);
-							addBackToSeclevelsLink(PasswordPrompt.body);
+							addBackToSeclevelsLink(passwordPrompt.body);
 							writeHTMLReply(ctx, 200, "OK", page.generate());
 							if (changedAnything) {
 								core.storeConfig();
@@ -418,7 +418,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 	}
 
 	public static void sendCantDeleteMasterKeysFileInner(PageHelper helper, String filename, String physicalSecurityLevel) {
-		InfoboxWidget content = helper.getPageContent(l10nSec("cantDeletePasswordFileTitle")).addInfobox(InfoboxWidget.Type.ERROR, Identifier.PASSWORDERROR,
+		Infobox content = helper.getPageContent(l10nSec("cantDeletePasswordFileTitle")).addInfobox(Infobox.Type.ERROR, Identifier.PASSWORDERROR,
 			l10nSec("cantDeletePasswordFileTitle"));
 		HTMLNode form = helper.addFormChild(content.body, "/wizard/", "masterPasswordForm");
 		sendCantDeleteMasterKeysFileInner(content.body, form, filename, physicalSecurityLevel);
@@ -428,13 +428,13 @@ public class SecurityLevelsToadlet extends Toadlet {
 	                                                         boolean forFirstTimeWizard,
 	                                                         String physicalSecurityLevel, Node node) {
 		Page page = ctx.getPageMaker().getPage(l10nSec("cantDeletePasswordFileTitle"), ctx);
-		InfoboxWidget PasswordError = new InfoboxWidget(InfoboxWidget.Type.ERROR, Identifier.PASSWORDERROR,
+		Infobox passwordError = new Infobox(Infobox.Type.ERROR, Identifier.PASSWORDERROR,
 			l10nSec("cantDeletePasswordFileTitle"));
-		page.content.addInfobox(PasswordError);
+		page.content.addInfobox(passwordError);
 		HTMLNode form =
-			forFirstTimeWizard ? ctx.addFormChild(PasswordError.body, "/wizard/", "masterPasswordForm") :
-				ctx.addFormChild(PasswordError.body, "/seclevels/", "masterPasswordForm");
-		sendCantDeleteMasterKeysFileInner(PasswordError.body, form, filename, physicalSecurityLevel);
+			forFirstTimeWizard ? ctx.addFormChild(passwordError.body, "/wizard/", "masterPasswordForm") :
+				ctx.addFormChild(passwordError.body, "/seclevels/", "masterPasswordForm");
+		sendCantDeleteMasterKeysFileInner(passwordError.body, form, filename, physicalSecurityLevel);
 		return page;
 	}
 
@@ -464,16 +464,16 @@ public class SecurityLevelsToadlet extends Toadlet {
 		throws ToadletContextClosedException, IOException {
 		// Must set a password!
 		Page page = ctx.getPageMaker().getPage(l10nSec("changePasswordTitle"), ctx);
-		InfoboxWidget PasswordChange = page.content.addInfobox(InfoboxWidget.Type.ERROR,
+		Infobox passwordChange = page.content.addInfobox(Infobox.Type.ERROR,
 			Identifier.PASSWORDCHANGE,
 			l10nSec("changePasswordTitle"));
 		if (emptyPassword) {
-			PasswordChange.body.addBlockText(l10nSec("passwordNotZeroLength"));
+			passwordChange.body.addBlockText(l10nSec("passwordNotZeroLength"));
 		}
 		if (wrongPassword) {
-			PasswordChange.body.addBlockText(l10nSec("wrongOldPassword"));
+			passwordChange.body.addBlockText(l10nSec("wrongOldPassword"));
 		}
-		HTMLNode form = ctx.addFormChild(PasswordChange.body, path(), "changePasswordForm");
+		HTMLNode form = ctx.addFormChild(passwordChange.body, path(), "changePasswordForm");
 		addPasswordChangeForm(form);
 		if (physicalSecurityLevel != null) {
 			form.addChild("input", new String[]{"type", "name", "value"},
@@ -481,7 +481,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 			form.addChild("input", new String[]{"type", "name", "value"},
 				new String[]{"hidden", "seclevels", "true"});
 		}
-		addBackToSeclevelsLink(PasswordChange.body);
+		addBackToSeclevelsLink(passwordChange.body);
 		writeHTMLReply(ctx, 200, "OK", page.generate());
 	}
 
@@ -489,15 +489,15 @@ public class SecurityLevelsToadlet extends Toadlet {
 		throws ToadletContextClosedException, IOException {
 		// Must set a password!
 		Page page = ctx.getPageMaker().getPage(l10nSec("setPasswordTitle"), ctx);
-		InfoboxWidget PasswordPrompt = page.content.addInfobox(InfoboxWidget.Type.ERROR, Identifier.PASSWORDERROR,
+		Infobox passwordPrompt = page.content.addInfobox(Infobox.Type.ERROR, Identifier.PASSWORDERROR,
 				l10nSec("setPasswordTitle"));
 		if (emptyPassword) {
-			PasswordPrompt.body.addBlockText(l10nSec("passwordNotZeroLength"));
+			passwordPrompt.body.addBlockText(l10nSec("passwordNotZeroLength"));
 		}
 		SecurityLevelsToadlet
-			.generatePasswordFormPage(false, ctx.getContainer(), PasswordPrompt.body, false, false, true,
+			.generatePasswordFormPage(false, ctx.getContainer(), passwordPrompt.body, false, false, true,
 					threatlevel, null);
-		addBackToSeclevelsLink(PasswordPrompt.body);
+		addBackToSeclevelsLink(passwordPrompt.body);
 		writeHTMLReply(ctx, 200, "OK", page.generate());
 	}
 
@@ -520,7 +520,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 	}
 
 	private void drawSecurityLevelsPage(HTMLNode contentNode, ToadletContext ctx) {
-		InfoboxWidget configformcontainer = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10nSec("title"));
+		Infobox configformcontainer = new Infobox(Infobox.Type.NORMAL, l10nSec("title"));
 		contentNode.addChild(configformcontainer);
 		HTMLNode formNode = ctx.addFormChild(configformcontainer.body, ".", "configFormSecLevels");
 		// Network security level
@@ -549,7 +549,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 			input.addText(": ");
 			NodeL10n.getBase().addL10nSubstitution(input, "SecurityLevels.networkThreatLevel.choice."+level, new String[] { "bold" },
 					new HTMLNode[] { HTMLNode.STRONG });
-			HTMLNode inner = input.addChild(new BlockText()).addI();
+			HTMLNode inner = input.addBlockText(Category.ITALIC);
 
 			NodeL10n.getBase().addL10nSubstitution(inner, "SecurityLevels.networkThreatLevel.desc."+level, new String[] { "bold" },
 					new HTMLNode[] { HTMLNode.STRONG });
@@ -571,7 +571,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 			input.addText(": ");
 			NodeL10n.getBase().addL10nSubstitution(input, "SecurityLevels.networkThreatLevel.choice."+level, new String[] { "bold" },
 					new HTMLNode[] { HTMLNode.STRONG });
-			HTMLNode inner = input.addChild(new BlockText()).addI();
+			HTMLNode inner = input.addBlockText(Category.ITALIC);
 			NodeL10n.getBase().addL10nSubstitution(inner, "SecurityLevels.networkThreatLevel.desc."+level, new String[] { "bold", "link" },
 					new HTMLNode[] { HTMLNode.STRONG, new Link("/wizard/?step=OPENNET", Link.Target.BLANK) });
 		}
@@ -584,11 +584,11 @@ public class SecurityLevelsToadlet extends Toadlet {
 		seclevelGroup = secLevelList.addItem();
 		seclevelGroup.addText(l10nSec("physicalThreatLevel"));
 		
-		NodeL10n.getBase().addL10nSubstitution(seclevelGroup.addChild(new BlockText()).addI(), "SecurityLevels.physicalThreatLevelTruecrypt",
+		NodeL10n.getBase().addL10nSubstitution(seclevelGroup.addBlockText(Category.ITALIC), "SecurityLevels.physicalThreatLevelTruecrypt",
 		        new String[]{"bold", "truecrypt"},
 		        new HTMLNode[]{HTMLNode.STRONG,
 		                new Link(ExternalLinkToadlet.escape("http://www.truecrypt.org/"), Link.Target.BLANK)});
-		OutputNode swapWarning = seclevelGroup.addBlockText().addI();
+		OutputNode swapWarning = seclevelGroup.addBlockText(Category.ITALIC);
 		OperatingSystem os = FileUtil.detectedOS;
 		swapWarning.addText(NodeL10n.getBase().getString("SecurityLevels.physicalThreatLevelSwapfile",
 				"operatingSystem",
@@ -611,7 +611,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 			input.addText(": ");
 			NodeL10n.getBase().addL10nSubstitution(input, "SecurityLevels.physicalThreatLevel.choice."+level, new String[] { "bold" },
 					new HTMLNode[] { HTMLNode.STRONG });
-			HTMLNode inner = input.addChild(new BlockText()).addI();
+			HTMLNode inner = input.addBlockText(Category.ITALIC);
 			NodeL10n.getBase().addL10nSubstitution(inner, "SecurityLevels.physicalThreatLevel.desc."+level, new String[] { "bold" },
 					new HTMLNode[] { HTMLNode.STRONG });
 			if(level != PHYSICAL_THREAT_LEVEL.LOW && physicalLevel == PHYSICAL_THREAT_LEVEL.LOW && node.hasDatabase() && !node.isDatabaseEncrypted()) {
@@ -689,7 +689,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 	}
 
 	public static void sendPasswordFileCorruptedPageInner(PageHelper helper, String masterPasswordFile) {
-		InfoboxWidget infoBox = helper.getPageContent(l10nSec("passwordFileCorruptedTitle")).addInfobox(InfoboxWidget.Type.ERROR, Identifier.PASSWORDERROR,
+		Infobox infoBox = helper.getPageContent(l10nSec("passwordFileCorruptedTitle")).addInfobox(Infobox.Type.ERROR, Identifier.PASSWORDERROR,
 			l10nSec("passwordFileCorruptedTitle"));
 		sendPasswordFileCorruptedPageInner(infoBox.body, masterPasswordFile);
 	}
@@ -698,10 +698,10 @@ public class SecurityLevelsToadlet extends Toadlet {
 	                                                          boolean forSecLevels, boolean forFirstTimeWizard,
 	                                                          String masterPasswordFile, Node node) {
 		Page page = ctx.getPageMaker().getPage(l10nSec("passwordFileCorruptedTitle"), ctx);
-		InfoboxWidget PasswordCorrupted = page.content.addInfobox(InfoboxWidget.Type.ERROR,
+		Infobox passwordCorrupted = page.content.addInfobox(Infobox.Type.ERROR,
 			Identifier.PASSWORDERROR,
 			l10nSec("passwordFileCorruptedTitle"));
-		sendPasswordFileCorruptedPageInner(PasswordCorrupted.body, masterPasswordFile);
+		sendPasswordFileCorruptedPageInner(passwordCorrupted.body, masterPasswordFile);
 		return page;
 	}
 
@@ -726,12 +726,12 @@ public class SecurityLevelsToadlet extends Toadlet {
 	private void sendPasswordFormPage(boolean wasWrong, ToadletContext ctx)
 		throws ToadletContextClosedException, IOException {
 		Page page = ctx.getPageMaker().getPage(l10nSec("passwordPageTitle"), ctx);
-		InfoboxWidget PasswordForm = page.content.addInfobox(InfoboxWidget.Type.ERROR,
+		Infobox passwordForm = page.content.addInfobox(Infobox.Type.ERROR,
 			Identifier.PASSWORDERROR,
 			wasWrong ? l10nSec("passwordWrongTitle") : l10nSec("enterPasswordTitle"));
-		generatePasswordFormPage(wasWrong, ctx.getContainer(), PasswordForm.body, false, false, false, null,
+		generatePasswordFormPage(wasWrong, ctx.getContainer(), passwordForm.body, false, false, false, null,
 			null);
-		addHomepageLink(PasswordForm.body);
+		addHomepageLink(passwordForm.body);
 		writeHTMLReply(ctx, 200, "OK", page.generate());
 	}
 

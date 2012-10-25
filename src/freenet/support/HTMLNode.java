@@ -640,68 +640,54 @@ public class HTMLNode implements XMLCharacterClasses {
 	}
 
 	//methods for creating Infobox children
-	public InfoboxWidget addInfobox(InfoboxWidget newInfobox) {
+	public Infobox addInfobox(Infobox newInfobox) {
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public InfoboxWidget addInfobox(String title) {
-		InfoboxWidget newInfobox = new InfoboxWidget(title);
+	public Infobox addInfobox(String title) {
+		Infobox newInfobox = new Infobox(title);
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public InfoboxWidget addInfobox(InfoboxWidget.Type type, String title) {
-		InfoboxWidget newInfobox = new InfoboxWidget(type, title);
+	public Infobox addInfobox(Infobox.Type type, String title) {
+		Infobox newInfobox = new Infobox(type, title);
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public InfoboxWidget addInfobox(InfoboxWidget.Type type, Identifier id, String title) {
-		InfoboxWidget newInfobox = new InfoboxWidget(type, id, title);
+	public Infobox addInfobox(Infobox.Type type, Identifier id, String title) {
+		Infobox newInfobox = new Infobox(type, id, title);
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public InfoboxWidget addInfobox(InfoboxWidget.Type type, Identifier id, String title, OutputNode content) {
-		InfoboxWidget newInfobox = new InfoboxWidget(type, id, title, content);
+	public Infobox addInfobox(Infobox.Type type, Identifier id, String title, OutputNode content) {
+		Infobox newInfobox = new Infobox(type, id, title, content);
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public InfoboxWidget addInfobox(InfoboxWidget.Type type, Identifier id, String title, String content) {
-		InfoboxWidget newInfobox = new InfoboxWidget(type, id, title, content);
+	public Infobox addInfobox(Infobox.Type type, Identifier id, String title, String content) {
+		Infobox newInfobox = new Infobox(type, id, title, content);
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public InfoboxWidget addInfobox(Identifier id, String title) {
-		InfoboxWidget newInfobox = new InfoboxWidget(id, title);
+	public Infobox addInfobox(Identifier id, String title) {
+		Infobox newInfobox = new Infobox(id, title);
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public InfoboxWidget addInfobox(InfoboxWidget.Type type, Category category, String title) {
-		InfoboxWidget newInfobox = new InfoboxWidget(type, category, title);
+	public Infobox addInfobox(Infobox.Type type, Category category, String title) {
+		Infobox newInfobox = new Infobox(type, category, title);
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public InfoboxWidget addInfobox(InfoboxWidget.Type type, Category category, String title, OutputNode content) {
-		InfoboxWidget newInfobox = new InfoboxWidget(type, category, title, content);
+	public Infobox addInfobox(Infobox.Type type, Category category, String title, OutputNode content) {
+		Infobox newInfobox = new Infobox(type, category, title, content);
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public InfoboxWidget addInfobox(InfoboxWidget.Type type, Category category, String title, String content) {
-		InfoboxWidget newInfobox = new InfoboxWidget(type, category, title, content);
+	public Infobox addInfobox(Infobox.Type type, Category category, String title, String content) {
+		Infobox newInfobox = new Infobox(type, category, title, content);
 		addChild(newInfobox);
 		return newInfobox;
-	}
-
-	//methods for creating <i> tags
-	@Deprecated
-	public I addI() {
-		I newI = new I();
-		addChild(newI);
-		return newI;
-	}
-	@Deprecated
-	public I addI(String content) {
-		I newI = new I(content);
-		addChild(newI);
-		return newI;
 	}
 
 	//methods for creating line break elements

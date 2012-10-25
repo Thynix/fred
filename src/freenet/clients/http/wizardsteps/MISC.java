@@ -3,7 +3,7 @@ package freenet.clients.http.wizardsteps;
 import freenet.clients.http.FirstTimeWizardToadlet;
 import freenet.clients.http.uielements.BlockText;
 import freenet.clients.http.uielements.Box;
-import freenet.clients.http.uielements.InfoboxWidget;
+import freenet.clients.http.uielements.Infobox;
 import freenet.config.Config;
 import freenet.config.ConfigException;
 import freenet.l10n.NodeL10n;
@@ -29,7 +29,7 @@ public class MISC implements Step {
 	public void getStep(HTTPRequest request, PageHelper helper) {
 		HTMLNode form = helper.addFormChild(helper.getPageContent(WizardL10n.l10n("stepMiscTitle")), ".", "miscForm");
 
-		InfoboxWidget autoUpdate = form.addInfobox(InfoboxWidget.Type.NORMAL, WizardL10n.l10n("autoUpdate"));
+		Infobox autoUpdate = form.addInfobox(Infobox.Type.NORMAL, WizardL10n.l10n("autoUpdate"));
 		Box miscInfoboxContent = autoUpdate.body;
 
 		miscInfoboxContent.addChild(new BlockText(WizardL10n.l10n("autoUpdateLong")));
@@ -40,7 +40,7 @@ public class MISC implements Step {
 		        new String[] { "type", "name", "value" },
 		        new String[] { "radio", "autodeploy", "false" }, WizardL10n.l10n("autoUpdateNoAutodeploy"));
 
-		InfoboxWidget plugins = form.addInfobox(InfoboxWidget.Type.NORMAL, WizardL10n.l10n("plugins"));
+		Infobox plugins = form.addInfobox(Infobox.Type.NORMAL, WizardL10n.l10n("plugins"));
 		miscInfoboxContent = plugins.body;
 
 		miscInfoboxContent.addChild(new BlockText(WizardL10n.l10n("pluginsLong")));

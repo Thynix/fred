@@ -251,7 +251,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 				Table overviewTable = connectionsPage.content.addTable(Category.COLUMN);
 				Row overviewTableRow = overviewTable.addRow();
 				Cell nextTableCell = overviewTableRow.addCell(Category.FIRST);
-				OutputList overviewList = nextTableCell.addInfobox(InfoboxWidget.Type.NONE,
+				OutputList overviewList = nextTableCell.addInfobox(Infobox.Type.NONE,
 					"Node status overview").body.addList();
 				overviewList.addItem("bwlimitDelayTime:\u00a0" + bwlimitDelayTime + "ms");
 				overviewList.addItem("nodeAveragePingTime:\u00a0" + nodeAveragePingTime + "ms");
@@ -281,8 +281,8 @@ public abstract class ConnectionsToadlet extends Toadlet {
 				// Activity box
 				int numARKFetchers = node.getNumARKFetchers();
 				nextTableCell = overviewTableRow.addCell();
-				InfoboxWidget activityInfobox =
-					nextTableCell.addInfobox(InfoboxWidget.Type.NONE, l10n("activityTitle"));
+				Infobox activityInfobox =
+					nextTableCell.addInfobox(Infobox.Type.NONE, l10n("activityTitle"));
 				OutputList activityList = StatisticsToadlet.drawActivity(activityInfobox.body, node);
 				if (advancedMode && (activityList != null)) {
 					if (numARKFetchers > 0) {
@@ -294,8 +294,8 @@ public abstract class ConnectionsToadlet extends Toadlet {
 				}
 				// Peer statistics box
 				nextTableCell = overviewTableRow.addCell(Category.LAST);
-				InfoboxWidget peerStatsInfobox =
-					nextTableCell.addInfobox(InfoboxWidget.Type.NONE, null);
+				Infobox peerStatsInfobox =
+					nextTableCell.addInfobox(Infobox.Type.NONE, null);
 				StatisticsToadlet.drawPeerStatsBox(peerStatsInfobox, advancedMode, numberOfConnected,
 					numberOfRoutingBackedOff, numberOfTooNew, numberOfTooOld,
 					numberOfDisconnected,
@@ -304,8 +304,8 @@ public abstract class ConnectionsToadlet extends Toadlet {
 					numberOfConnError, numberOfDisconnecting, numberOfNoLoadStats, node);
 				// Peer routing backoff reason box
 				if (advancedMode) {
-					InfoboxWidget backoffReasonInfobox =
-						new InfoboxWidget(InfoboxWidget.Type.NONE, null);
+					Infobox backoffReasonInfobox =
+						new Infobox(Infobox.Type.NONE, null);
 					nextTableCell.addChild(backoffReasonInfobox);
 					String[] routingBackoffReasons = peers.getPeerNodeRoutingBackoffReasons(true);
 					int total = 0;
@@ -333,7 +333,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 						backoffReasonInfobox.header
 							.setContent("Peer backoff reasons (realtime)");
 					}
-					backoffReasonInfobox = new InfoboxWidget(InfoboxWidget.Type.NONE, null);
+					backoffReasonInfobox = new Infobox(Infobox.Type.NONE, null);
 					nextTableCell.addChild(backoffReasonInfobox);
 					routingBackoffReasons = peers.getPeerNodeRoutingBackoffReasons(false);
 					total = 0;
@@ -398,7 +398,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 				connectionsPage.content.addChild("script", "type", "text/javascript")
 					.addChild("%", jsBuf.toString());
 			}
-			InfoboxWidget peerTableInfobox = connectionsPage.content.addInfobox(InfoboxWidget.Type.NORMAL,
+			Infobox peerTableInfobox = connectionsPage.content.addInfobox(Infobox.Type.NORMAL,
 				null);
 			peerTableInfobox.header.addText(getPeerListTitle());
 			if (advancedMode) {
@@ -733,7 +733,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 					StatusRow.addCell(results.get(returnCode).toString());
 				}
 			}
-			InfoboxWidget nodeAdded =
+			Infobox nodeAdded =
 				addedNodesPage.content.addInfobox(Identifier.NODEADDED, l10n("reportOfNodeAddition"));
 			nodeAdded.body.addChild(detailedStatusBox);
 			if (! isOpennet()) {
@@ -836,7 +836,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 	 *                    show a link to download it.
 	 */
 	static void drawNoderefBox(HTMLNode contentNode, SimpleFieldSet fs, boolean showNoderef) {
-		InfoboxWidget referenceInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, null);
+		Infobox referenceInfobox = new Infobox(Infobox.Type.NORMAL, null);
 		contentNode.addChild(referenceInfobox);
 		// FIXME better way to deal with this sort of thing???
 		NodeL10n.getBase().addL10nSubstitution(referenceInfobox.header, "DarknetConnectionsToadlet.myReferenceHeader",
@@ -868,7 +868,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 	
 	protected static void drawAddPeerBox(HTMLNode contentNode, ToadletContext ctx, boolean isOpennet, String formTarget) {
 		// BEGIN PEER ADDITION BOX
-		InfoboxWidget peerAdditionInfobox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10n(isOpennet ? "addOpennetPeerTitle" : "addPeerTitle"));
+		Infobox peerAdditionInfobox = new Infobox(Infobox.Type.NORMAL, l10n(isOpennet ? "addOpennetPeerTitle" : "addPeerTitle"));
 		contentNode.addChild(peerAdditionInfobox);
 		HTMLNode peerAdditionForm = ctx.addFormChild(peerAdditionInfobox.body, formTarget, "addPeerForm");
 		peerAdditionForm.addText(l10n("pasteReference"));
@@ -985,7 +985,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 			double[] peersLoc = peerNodeStatus.getPeersLocation();
 			if(peersLoc != null) {
 				for(double loc : peersLoc)
-					locationNode.addI(String.valueOf(loc)).addLineBreak();
+					locationNode.addInlineBox(Category.ITALIC, String.valueOf(loc)).addLineBreak();
 			}
 		}
 
@@ -1183,7 +1183,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 	protected void sendErrorPage(ToadletContext ctx, int code, String desc, String message,
 	                             boolean returnToAddFriends) throws ToadletContextClosedException, IOException {
 		Page errorPage = ctx.getPageMaker().getPage(desc, ctx);
-		InfoboxWidget errorMessage = errorPage.content.addInfobox(InfoboxWidget.Type.ERROR, desc);
+		Infobox errorMessage = errorPage.content.addInfobox(Infobox.Type.ERROR, desc);
 		errorMessage.body.addText(message);
 		if (returnToAddFriends) {
 			errorMessage.body.addLineBreak();

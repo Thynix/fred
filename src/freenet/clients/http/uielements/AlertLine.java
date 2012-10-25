@@ -1,6 +1,6 @@
 package freenet.clients.http.uielements;
 
-public class AlertLine extends InfoboxWidget {
+public class AlertLine extends Infobox {
 
 	public Box header = new Box(Category.INFOBOXHEADER);
 	public Box body = new Box(Category.INFOBOXCONTENT);

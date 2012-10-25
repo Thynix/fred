@@ -75,6 +75,9 @@
 	border: none;
 }
 
+.italic {
+        font-style:italic;
+}
 /* base font settings for entire page */
 
 div,

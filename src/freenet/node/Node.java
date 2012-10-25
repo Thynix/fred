@@ -4,43 +4,6 @@
 /* Freenet 0.7 node. */
 package freenet.node;
 
-import static freenet.node.stats.DataStoreKeyType.CHK;
-import static freenet.node.stats.DataStoreKeyType.PUB_KEY;
-import static freenet.node.stats.DataStoreKeyType.SSK;
-import static freenet.node.stats.DataStoreType.CACHE;
-import static freenet.node.stats.DataStoreType.CLIENT;
-import static freenet.node.stats.DataStoreType.SLASHDOT;
-import static freenet.node.stats.DataStoreType.STORE;
-
-import java.io.BufferedReader;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.RandomAccessFile;
-import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.Random;
-import java.util.Set;
-
-import freenet.clients.http.uielements.BlockText;
-import freenet.clients.http.uielements.Box;
-import freenet.clients.http.uielements.InfoboxWidget;
-import freenet.clients.http.uielements.OutputList;
-import org.tanukisoftware.wrapper.WrapperManager;
-
 import com.db4o.Db4o;
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
@@ -57,50 +20,20 @@ import com.db4o.diagnostic.DiagnosticListener;
 import com.db4o.ext.Db4oException;
 import com.db4o.io.IoAdapter;
 import com.db4o.io.RandomAccessFileAdapter;
-
 import freenet.client.FECQueue;
 import freenet.client.FetchContext;
 import freenet.client.async.SplitFileInserterSegment;
 import freenet.clients.http.SecurityLevelsToadlet;
 import freenet.clients.http.SimpleToadletServer;
-import freenet.config.EnumerableOptionCallback;
-import freenet.config.FreenetFilePersistentConfig;
-import freenet.config.InvalidConfigValueException;
-import freenet.config.NodeNeedRestartException;
-import freenet.config.PersistentConfig;
-import freenet.config.SubConfig;
-import freenet.crypt.DSAPublicKey;
-import freenet.crypt.DiffieHellman;
-import freenet.crypt.EncryptingIoAdapter;
-import freenet.crypt.RandomSource;
-import freenet.crypt.Yarrow;
-import freenet.io.comm.DMT;
-import freenet.io.comm.DisconnectedException;
-import freenet.io.comm.FreenetInetAddress;
-import freenet.io.comm.IOStatisticCollector;
-import freenet.io.comm.Message;
-import freenet.io.comm.MessageCore;
-import freenet.io.comm.MessageFilter;
-import freenet.io.comm.Peer;
-import freenet.io.comm.PeerParseException;
-import freenet.io.comm.ReferenceSignatureVerificationException;
-import freenet.io.comm.UdpSocketHandler;
+import freenet.clients.http.uielements.BlockText;
+import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Infobox;
+import freenet.clients.http.uielements.OutputList;
+import freenet.config.*;
+import freenet.crypt.*;
+import freenet.io.comm.*;
 import freenet.io.xfer.PartiallyReceivedBlock;
-import freenet.keys.CHKBlock;
-import freenet.keys.CHKVerifyException;
-import freenet.keys.ClientCHK;
-import freenet.keys.ClientCHKBlock;
-import freenet.keys.ClientKey;
-import freenet.keys.ClientKeyBlock;
-import freenet.keys.ClientSSK;
-import freenet.keys.ClientSSKBlock;
-import freenet.keys.Key;
-import freenet.keys.KeyBlock;
-import freenet.keys.KeyVerifyException;
-import freenet.keys.NodeCHK;
-import freenet.keys.NodeSSK;
-import freenet.keys.SSKBlock;
-import freenet.keys.SSKVerifyException;
+import freenet.keys.*;
 import freenet.l10n.BaseL10n;
 import freenet.l10n.NodeL10n;
 import freenet.node.DarknetPeerNode.FRIEND_TRUST;
@@ -120,55 +53,33 @@ import freenet.node.stats.StoreCallbackStats;
 import freenet.node.updater.NodeUpdateManager;
 import freenet.node.updater.UpdateDeployContext;
 import freenet.node.updater.UpdateDeployContext.CHANGED;
-import freenet.node.useralerts.ExtOldAgeUserAlert;
-import freenet.node.useralerts.MeaningfulNodeNameUserAlert;
-import freenet.node.useralerts.NotEnoughNiceLevelsUserAlert;
-import freenet.node.useralerts.SimpleUserAlert;
-import freenet.node.useralerts.TimeSkewDetectedUserAlert;
-import freenet.node.useralerts.UserAlert;
+import freenet.node.useralerts.*;
 import freenet.pluginmanager.ForwardPort;
 import freenet.pluginmanager.PluginDownLoaderOfficialHTTPS;
 import freenet.pluginmanager.PluginManager;
 import freenet.pluginmanager.PluginStore;
-import freenet.store.BlockMetadata;
-import freenet.store.CHKStore;
-import freenet.store.FreenetStore;
-import freenet.store.KeyCollisionException;
-import freenet.store.NullFreenetStore;
-import freenet.store.PubkeyStore;
-import freenet.store.RAMFreenetStore;
-import freenet.store.SSKStore;
-import freenet.store.SlashdotStore;
-import freenet.store.StorableBlock;
-import freenet.store.StoreCallback;
+import freenet.store.*;
 import freenet.store.saltedhash.ResizablePersistentIntBuffer;
 import freenet.store.saltedhash.SaltedHashFreenetStore;
-import freenet.support.Executor;
-import freenet.support.Fields;
-import freenet.support.HTMLNode;
-import freenet.support.HexUtil;
-import freenet.support.LogThresholdCallback;
-import freenet.support.Logger;
+import freenet.support.*;
 import freenet.support.Logger.LogLevel;
-import freenet.support.OOMHandler;
-import freenet.support.PooledExecutor;
-import freenet.support.PrioritizedTicker;
-import freenet.support.ShortBuffer;
-import freenet.support.SimpleFieldSet;
-import freenet.support.SizeUtil;
-import freenet.support.Ticker;
-import freenet.support.TokenBucket;
-import freenet.support.api.BooleanCallback;
-import freenet.support.api.IntCallback;
-import freenet.support.api.LongCallback;
-import freenet.support.api.ShortCallback;
-import freenet.support.api.StringCallback;
+import freenet.support.api.*;
 import freenet.support.io.ArrayBucketFactory;
 import freenet.support.io.Closer;
 import freenet.support.io.FileUtil;
 import freenet.support.io.NativeThread;
 import freenet.support.math.MersenneTwister;
 import freenet.support.transport.ip.HostnameSyntaxException;
+import org.tanukisoftware.wrapper.WrapperManager;
+
+import java.io.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.text.DecimalFormat;
+import java.util.*;
+
+import static freenet.node.stats.DataStoreKeyType.*;
+import static freenet.node.stats.DataStoreType.*;
 
 /**
  * @author amphibian
@@ -5184,14 +5095,14 @@ public class Node implements TimeSkewDetectorCallback {
 		return false;
 	}
 
-	public void drawClientCacheBox(InfoboxWidget storeSizeInfobox) {
+	public void drawClientCacheBox(Infobox storeSizeInfobox) {
 		storeSizeInfobox.body.addBlockText("Client cache max size: " + this.maxClientCacheKeys + " keys");
 		storeSizeInfobox.body.addBlockText("Client cache size: CHK " + this.chkClientcache.keyCount() + " pubkey " + this.pubKeyClientcache.keyCount() + " SSK " + this.sskClientcache.keyCount());
 		storeSizeInfobox.body.addBlockText("Client cache misses: CHK " + this.chkClientcache.misses() + " pubkey " + this.pubKeyClientcache.misses() + " SSK " + this.sskClientcache.misses());
 		storeSizeInfobox.body.addBlockText("Client cache hits: CHK " + this.chkClientcache.hits() + " pubkey " + this.pubKeyClientcache.hits() + " SSK " + this.sskClientcache.hits());
 	}
 
-	public void drawSlashdotCacheBox(InfoboxWidget storeSizeInfobox) {
+	public void drawSlashdotCacheBox(Infobox storeSizeInfobox) {
 		storeSizeInfobox.body.addBlockText("Slashdot/ULPR cache max size: " + maxSlashdotCacheKeys + " keys");
 		storeSizeInfobox.body.addBlockText("Slashdot/ULPR cache size: CHK " + this.chkSlashdotcache.keyCount() + " pubkey " + this.pubKeySlashdotcache.keyCount() + " SSK " + this.sskSlashdotcache.keyCount());
 		storeSizeInfobox.body.addBlockText("Slashdot/ULPR cache misses: CHK " + this.chkSlashdotcache.misses() + " pubkey " + this.pubKeySlashdotcache.misses() + " SSK " + this.sskSlashdotcache.misses());

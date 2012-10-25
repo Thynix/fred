@@ -3,7 +3,7 @@ package freenet.clients.http;
 import freenet.client.HighLevelSimpleClient;
 import freenet.clients.http.PageMaker.RenderParameters;
 import freenet.clients.http.uielements.Identifier;
-import freenet.clients.http.uielements.InfoboxWidget;
+import freenet.clients.http.uielements.Infobox;
 import freenet.clients.http.uielements.Page;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
@@ -73,10 +73,10 @@ public class ExternalLinkToadlet extends Toadlet {
 		boolean renderBars = node.clientCore.getToadletContainer().fproxyHasCompletedWizard();
 		Page externalLinkPage = ctx.getPageMaker().getPage(l10n("confirmExternalLinkTitle"), ctx,
 			new RenderParameters().renderNavigationLinks(renderBars).renderStatus(renderBars));
-		InfoboxWidget ExternalLinkWarning = externalLinkPage.content
-			.addInfobox(InfoboxWidget.Type.WARNING, Identifier.CONFIRMEXTERNALLINK,
+		Infobox externalLinkWarning = externalLinkPage.content
+			.addInfobox(Infobox.Type.WARNING, Identifier.CONFIRMEXTERNALLINK,
 				l10n("confirmExternalLinkSubTitle"));
-		HTMLNode externalLinkForm = ctx.addFormChild(ExternalLinkWarning.body, PATH,
+		HTMLNode externalLinkForm = ctx.addFormChild(externalLinkWarning.body, PATH,
 			"confirmExternalLinkForm");
 		final String target = request.getParam(magicHTTPEscapeString);
 		externalLinkForm.addText(l10n("confirmExternalLinkWithURL", "url", target));

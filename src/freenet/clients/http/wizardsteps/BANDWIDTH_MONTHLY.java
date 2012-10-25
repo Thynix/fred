@@ -33,7 +33,7 @@ public class BANDWIDTH_MONTHLY extends BandwidthManipulator implements Step {
 		}
 
 		//Box for prettiness and explanation of function.
-		InfoboxWidget infoBox = contentNode.addInfobox(InfoboxWidget.Type.NORMAL,
+		Infobox infoBox = contentNode.addInfobox(Infobox.Type.NORMAL,
 			WizardL10n.l10n("bandwidthLimitMonthlyTitle"));
 		NodeL10n.getBase().addL10nSubstitution(infoBox.body, "FirstTimeWizardToadlet.bandwidthLimitMonthly",
 		        new String[] { "bold", "coreSettings" }, new HTMLNode[] { HTMLNode.STRONG, 

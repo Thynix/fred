@@ -131,14 +131,14 @@ public class TranslationToadlet extends Toadlet {
 		} else if (request.isParameterSet("remove")) {
 			String key = request.getParam("remove");
 			Page page = ctx.getPageMaker().getPage(l10n("removeOverrideTitle"), ctx);
-			InfoboxWidget ConfirmRemove =
-				page.content.addInfobox(InfoboxWidget.Type.WARNING, Identifier.TRANSLATIONOVERRIDE,
+			Infobox confirmRemove =
+				page.content.addInfobox(Infobox.Type.WARNING, Identifier.TRANSLATIONOVERRIDE,
 					l10n("removeOverrideWarningTitle"));
-			ConfirmRemove.body.addBlockText(NodeL10n.getBase()
+			confirmRemove.body.addBlockText(NodeL10n.getBase()
 				.getString("TranslationToadlet.confirmRemoveOverride", new String[]{"key", "value"},
 					new String[]{key, this.base.getString(key)}));
 			HTMLNode removeForm =
-				ctx.addFormChild(ConfirmRemove.body.addChild(new BlockText()), TOADLET_URL,
+				ctx.addFormChild(confirmRemove.body.addChild(new BlockText()), TOADLET_URL,
 					"remove_confirmed");
 			if (! showEverything) {
 				removeForm.addChild("input", new String[]{"type", "name", "value"},
@@ -154,7 +154,7 @@ public class TranslationToadlet extends Toadlet {
 			return;
 		}
 		Page page = ctx.getPageMaker().getPage(l10n("translationUpdateTitle"), ctx);
-		InfoboxWidget SelectTranslation = page.content.addInfobox(l10n("selectTranslation"));
+		Infobox selectTranslation = page.content.addInfobox(l10n("selectTranslation"));
 		Vector<String> elementsToTranslate = new Vector<String>();
 		elementsToTranslate.add("Node");
 		for (PluginInfoWrapper pluginInfo : this.core.node.pluginManager.getPlugins()) {
@@ -164,7 +164,7 @@ public class TranslationToadlet extends Toadlet {
 			elementsToTranslate.add(pluginInfo.getPluginClassName());
 		}
 		final HTMLNode translatingForForm =
-			ctx.addFormChild(SelectTranslation.body, TOADLET_URL, "ChooseWhatToTranslate")
+			ctx.addFormChild(selectTranslation.body, TOADLET_URL, "ChooseWhatToTranslate")
 				.addChild(new BlockText(l10n("showTranslationOf")));
 		final HTMLNode translatingForOption = translatingForForm.addChild("select", "name",
 			"translating_for");

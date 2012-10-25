@@ -288,7 +288,7 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 		PageMaker pageMaker = ctx.getPageMaker();
 		if (currentPath != null && ! allowedDir(currentPath)) {
 			Page page = pageMaker.getPage(l10n("listingTitle", "path", attemptedPath), ctx);
-			page.content.addInfobox(InfoboxWidget.Type.ERROR, Identifier.ACCESSDENIED, "Forbidden").
+			page.content.addInfobox(Infobox.Type.ERROR, Identifier.ACCESSDENIED, "Forbidden").
 				addText(l10n("dirAccessDenied"));
 			sendErrorPage(ctx, 403, "Forbidden", l10n("dirAccessDenied"));
 			return;
@@ -302,8 +302,8 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 			if (ctx.isAllowedFullAccess()) {
 				page.content.addChild(core.alerts.createSummary());
 			}
-			InfoboxWidget filelist =
-				page.content.addInfobox(InfoboxWidget.Type.NONE, l10n("listing", "path",
+			Infobox filelist =
+				page.content.addInfobox(Infobox.Type.NONE, l10n("listing", "path",
 					currentPath.getAbsolutePath()));
 			File[] files = currentPath.listFiles();
 			if (files == null) {
@@ -407,8 +407,8 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 			if (ctx.isAllowedFullAccess()) {
 				page.content.addChild(core.alerts.createSummary());
 			}
-			InfoboxWidget filelist = page.content
-				.addInfobox(InfoboxWidget.Type.NONE, l10n("listing", "path", attemptedPath));
+			Infobox filelist = page.content
+				.addInfobox(Infobox.Type.NONE, l10n("listing", "path", attemptedPath));
 			filelist.body.addText(l10n("dirCannotBeRead", "path", attemptedPath));
 			OutputList ulNode = filelist.body.addList();
 			ulNode.addItem(l10n("checkPathExist"));

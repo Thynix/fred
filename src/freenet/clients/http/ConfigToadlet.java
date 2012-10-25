@@ -191,11 +191,11 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 		// User requested reset to defaults, so present confirmation page.
 		if (request.isPartSet("confirm-reset-to-defaults")) {
 			Page confirmDefaults = ctx.getPageMaker().getPage(l10n("confirmResetTitle"), ctx);
-			InfoboxWidget ResetWarning = confirmDefaults
-				.addInfobox(InfoboxWidget.Type.WARNING, Identifier.RESETCONFIRM,
+			Infobox resetWarning = confirmDefaults
+				.addInfobox(Infobox.Type.WARNING, Identifier.RESETCONFIRM,
 					l10n("confirmResetTitle"));
-			ResetWarning.body.addText(l10n("confirmReset"));
-			HTMLNode formNode = ctx.addFormChild(ResetWarning.body, path(), "yes-button");
+			resetWarning.body.addText(l10n("confirmReset"));
+			HTMLNode formNode = ctx.addFormChild(resetWarning.body, path(), "yes-button");
 			String subconfig = request.getPartAsStringFailsafe("subconfig",
 				MAX_PARAM_VALUE_SIZE);
 			formNode.addChild("input",
@@ -350,8 +350,8 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
  		config.store();
 		Page configAppliedPage = ctx.getPageMaker().getPage(l10n("appliedTitle"), ctx);
 		if (errbuf.length() == 0) {
-			InfoboxWidget successMessage = configAppliedPage.content
-				.addInfobox(InfoboxWidget.Type.SUCCESS, Identifier.CONFIGURATIONAPPLIED,
+			Infobox successMessage = configAppliedPage.content
+				.addInfobox(Infobox.Type.SUCCESS, Identifier.CONFIGURATIONAPPLIED,
 					l10n("appliedTitle"));
 			successMessage.body.addText(l10n("appliedSuccess"));
 			if (needRestart) {
@@ -375,15 +375,15 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 				}
 			}
 		} else {
-			InfoboxWidget failedMessage = configAppliedPage.content
-				.addInfobox(InfoboxWidget.Type.ERROR, Identifier.CONFIGURATIONERROR,
+			Infobox failedMessage = configAppliedPage.content
+				.addInfobox(Infobox.Type.ERROR, Identifier.CONFIGURATIONERROR,
 					l10n("appliedFailureTitle"));
 			failedMessage.body.addText(l10n("appliedFailureExceptions"));
 			failedMessage.body.addLineBreak();
 			failedMessage.body.addText(errbuf.toString());
 		}
-		InfoboxWidget destinationMessage = configAppliedPage.content
-			.addInfobox(InfoboxWidget.Type.NORMAL, Category.CONFIGURATIONPOSSIBILITIES,
+		Infobox destinationMessage = configAppliedPage.content
+			.addInfobox(Infobox.Type.NORMAL, Category.CONFIGURATIONPOSSIBILITIES,
 				l10n("possibilitiesTitle"));
 		destinationMessage.body.addLink(path(), l10n("shortTitle"), l10n("returnToNodeConfig"));
 		destinationMessage.body.addLineBreak();
@@ -408,7 +408,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 		Page configPage = ctx.getPageMaker().getPage(NodeL10n.getBase().getString("ConfigToadlet.fullTitle"),
 			ctx);
 		configPage.content.addChild(core.alerts.createSummary());
-		InfoboxWidget configformcontainer = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10n("title"));
+		Infobox configformcontainer = new Infobox(Infobox.Type.NORMAL, l10n("title"));
 		configPage.content.addChild(configformcontainer);
 		HTMLNode formNode = ctx.addFormChild(configformcontainer.body, path(), "configForm");
 		// Invisible apply button at the top so that an enter keypress will

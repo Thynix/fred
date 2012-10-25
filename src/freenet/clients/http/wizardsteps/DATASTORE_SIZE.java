@@ -2,7 +2,7 @@ package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
 import freenet.clients.http.uielements.Box;
-import freenet.clients.http.uielements.InfoboxWidget;
+import freenet.clients.http.uielements.Infobox;
 import freenet.config.Config;
 import freenet.config.ConfigException;
 import freenet.config.Option;
@@ -31,7 +31,8 @@ public class DATASTORE_SIZE implements Step {
 
 	@Override
 	public void getStep(HTTPRequest request, PageHelper helper) {
-		InfoboxWidget bandwidthInfoboxContent = helper.getPageContent(WizardL10n.l10n("step4Title")).addInfobox(WizardL10n.l10n("datastoreSize"));
+		Infobox bandwidthInfoboxContent = helper.getPageContent(WizardL10n.l10n("step4Title")).addInfobox(
+			WizardL10n.l10n("datastoreSize"));
 
 		bandwidthInfoboxContent.body.addText(WizardL10n.l10n("datastoreSizeLong"));
 		HTMLNode bandwidthForm = helper.addFormChild(bandwidthInfoboxContent.body, ".", "dsForm");

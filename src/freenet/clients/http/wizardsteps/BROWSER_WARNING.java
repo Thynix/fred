@@ -1,7 +1,7 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
-import freenet.clients.http.uielements.InfoboxWidget;
+import freenet.clients.http.uielements.Infobox;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
@@ -61,7 +61,8 @@ public class BROWSER_WARNING implements Step {
 			infoBoxHeader = WizardL10n.l10n("browserWarningShort");
 		}
 		
-		InfoboxWidget infoboxContent = helper.getPageContent(WizardL10n.l10n("browserWarningPageTitle")).addInfobox(InfoboxWidget.Type.NORMAL, infoBoxHeader);
+		Infobox infoboxContent = helper.getPageContent(WizardL10n.l10n("browserWarningPageTitle")).addInfobox(
+			Infobox.Type.NORMAL, infoBoxHeader);
 		if(isOldFirefox) {
 			HTMLNode p = infoboxContent.body.addBlockText();
 			p.addText(WizardL10n.l10n("browserWarningOldFirefox"));

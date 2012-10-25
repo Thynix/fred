@@ -31,7 +31,7 @@ public class SECURITY_NETWORK implements Step {
 			String networkThreatLevel = request.getParam("security-levels.networkThreatLevel");
 			SecurityLevels.NETWORK_THREAT_LEVEL newThreatLevel = SecurityLevels.parseNetworkThreatLevel(networkThreatLevel);
 
-			InfoboxWidget networkThreadLevel = contentNode.addInfobox(InfoboxWidget.Type.INFORMATION,
+			Infobox networkThreadLevel = contentNode.addInfobox(Infobox.Type.INFORMATION,
 			        WizardL10n.l10n("networkThreatLevelConfirmTitle."+newThreatLevel));
 
 			HTMLNode formNode = helper.addFormChild(networkThreadLevel.body, ".", "configFormSecLevels");
@@ -82,7 +82,7 @@ public class SECURITY_NETWORK implements Step {
 		//Add choices and description depending on whether opennet was selected.
 		HTMLNode form;
 		if(opennet) {
-			InfoboxWidget Opennet = contentNode.addInfobox(InfoboxWidget.Type.NORMAL,
+			Infobox Opennet = contentNode.addInfobox(Infobox.Type.NORMAL,
 			        WizardL10n.l10n("networkThreatLevelHeaderOpennet"));
 			Opennet.body.addChild(new BlockText(WizardL10n.l10n("networkThreatLevelIntroOpennet")));
 
@@ -92,11 +92,11 @@ public class SECURITY_NETWORK implements Step {
 				securityLevelChoice(div, level);
 			}
 		} else {
-			InfoboxWidget Darknet = contentNode.addInfobox(InfoboxWidget.Type.NORMAL,
+			Infobox darknet = contentNode.addInfobox(Infobox.Type.NORMAL,
 			        WizardL10n.l10n("networkThreatLevelHeaderDarknet"));
-			Darknet.body.addChild(new BlockText(WizardL10n.l10n("networkThreatLevelIntroDarknet")));
+			darknet.body.addChild(new BlockText(WizardL10n.l10n("networkThreatLevelIntroDarknet")));
 
-			form = helper.addFormChild(Darknet.body, ".", "networkSecurityForm");
+			form = helper.addFormChild(darknet.body, ".", "networkSecurityForm");
 			HTMLNode div = form.addChild(new Box(Category.DARKNETDIV));
 			for(SecurityLevels.NETWORK_THREAT_LEVEL level : SecurityLevels.NETWORK_THREAT_LEVEL.DARKNET_VALUES) {
 				securityLevelChoice(div, level);
@@ -125,7 +125,7 @@ public class SECURITY_NETWORK implements Step {
 		NodeL10n.getBase().addL10nSubstitution(input, "SecurityLevels.networkThreatLevel.choice."+level,
 		        new String[] { "bold" },
 		        new HTMLNode[] { HTMLNode.STRONG });
-		HTMLNode inner = input.addChild(new BlockText()).addI();
+		HTMLNode inner = input.addBlockText(Category.ITALIC);
 		NodeL10n.getBase().addL10nSubstitution(inner, "SecurityLevels.networkThreatLevel.desc."+level,
 		        new String[] { "bold" },
 		        new HTMLNode[] { HTMLNode.STRONG });

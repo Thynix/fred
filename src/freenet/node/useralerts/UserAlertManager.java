@@ -3,17 +3,6 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node.useralerts;
 
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
-
 import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
@@ -21,6 +10,11 @@ import freenet.node.fcp.FCPConnectionHandler;
 import freenet.support.Base64;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
+
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * Collection of UserAlert's.
@@ -208,7 +202,7 @@ public class UserAlertManager implements Comparator<UserAlert> {
 	 */
 	public HTMLNode renderAlert(UserAlert userAlert) {
 		short level = userAlert.getPriorityClass();
-		InfoboxWidget userAlertNode = new InfoboxWidget(getAlertLevelName(level), userAlert.getTitle());
+		Infobox userAlertNode = new Infobox(getAlertLevelName(level), userAlert.getTitle());
 		userAlertNode.body.addChild(userAlert.getHTMLText());
 		if (userAlert.userCanDismiss()) {
 			HTMLNode dismissFormNode = userAlertNode.body.addChild("form", new String[] { "action", "method" }, new String[] { "/alerts/", "post" }).addChild(new Box());
@@ -219,18 +213,18 @@ public class UserAlertManager implements Comparator<UserAlert> {
 		return userAlertNode;
 	}
 
-	private InfoboxWidget.Type getAlertLevelName(short level) {
+	private Infobox.Type getAlertLevelName(short level) {
 		if (level <= UserAlert.CRITICAL_ERROR)
-			return InfoboxWidget.Type.ERROR;
+			return Infobox.Type.ERROR;
 		else if (level <= UserAlert.ERROR)
-			return InfoboxWidget.Type.ALERT;
+			return Infobox.Type.ALERT;
 		else if (level <= UserAlert.WARNING)
-			return InfoboxWidget.Type.WARNING;
+			return Infobox.Type.WARNING;
 		else if (level <= UserAlert.MINOR)
-			return InfoboxWidget.Type.MINOR;
+			return Infobox.Type.MINOR;
 		else {
 			Logger.error(this, "Unknown alert level: "+level, new Exception("debug"));
-			return InfoboxWidget.Type.ERROR;
+			return Infobox.Type.ERROR;
 		}
 	}
 
@@ -320,15 +314,15 @@ public class UserAlertManager implements Comparator<UserAlert> {
 				alertSummaryString.append(separator);
 			alertSummaryString.append(l10n("totalLabel")).append(' ').append(totalNumber);
 		}
-		InfoboxWidget summaryBox = null;
+		Infobox summaryBox = null;
 		if (highestLevel <= UserAlert.CRITICAL_ERROR && !oneLine) {
-			summaryBox = new InfoboxWidget(InfoboxWidget.Type.ERROR, null);
+			summaryBox = new Infobox(Infobox.Type.ERROR, null);
 		} else if (highestLevel <= UserAlert.ERROR && !oneLine) {
-			summaryBox = new InfoboxWidget(InfoboxWidget.Type.ALERT, null);
+			summaryBox = new Infobox(Infobox.Type.ALERT, null);
 		} else if (highestLevel <= UserAlert.WARNING) {
-			summaryBox = oneLine ? new AlertLine(AlertLine.Type.WARNING, null) : new InfoboxWidget(InfoboxWidget.Type.WARNING, null);
+			summaryBox = oneLine ? new AlertLine(AlertLine.Type.WARNING, null) : new Infobox(Infobox.Type.WARNING, null);
 		} else if (highestLevel <= UserAlert.MINOR) {
-			summaryBox = oneLine ? new AlertLine(AlertLine.Type.INFORMATION, null) : new InfoboxWidget(InfoboxWidget.Type.INFORMATION, null);
+			summaryBox = oneLine ? new AlertLine(AlertLine.Type.INFORMATION, null) : new Infobox(Infobox.Type.INFORMATION, null);
 		}
 		summaryBox.setTitle(l10n("alertsTitle"));
 		if(!oneLine) {

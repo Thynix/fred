@@ -1,7 +1,7 @@
 package freenet.clients.http;
 
 import freenet.clients.http.PageMaker.RenderParameters;
-import freenet.clients.http.uielements.InfoboxWidget;
+import freenet.clients.http.uielements.Infobox;
 import freenet.clients.http.uielements.Page;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
@@ -38,15 +38,15 @@ public class StartupToadlet extends Toadlet {
 			page.root.head.addMeta("refresh", "20; url=");
 			HTMLNode contentNode = page.content;
 			if (! isPRNGReady) {
-				InfoboxWidget EntropyError = new InfoboxWidget(InfoboxWidget.Type.ERROR,
+				Infobox entropyError = new Infobox(Infobox.Type.ERROR,
 					NodeL10n.getBase().getString("StartupToadlet.entropyErrorTitle"));
-				contentNode.addInfobox(EntropyError);
-				EntropyError.body.addText(
+				contentNode.addInfobox(entropyError);
+				entropyError.body.addText(
 					NodeL10n.getBase().getString("StartupToadlet.entropyErrorContent"));
 			}
-			InfoboxWidget StartingUp = new InfoboxWidget(InfoboxWidget.Type.ERROR, desc);
-			contentNode.addInfobox(StartingUp);
-			StartingUp.body.addText(NodeL10n.getBase().getString("StartupToadlet.isStartingUp"));
+			Infobox startingUp = new Infobox(Infobox.Type.ERROR, desc);
+			contentNode.addInfobox(startingUp);
+			startingUp.body.addText(NodeL10n.getBase().getString("StartupToadlet.isStartingUp"));
 			WelcomeToadlet.maybeDisplayWrapperLogfile(ctx, contentNode);
 			//TODO: send a Retry-After header ?
 			writeHTMLReply(ctx, 503, desc, page.generate());

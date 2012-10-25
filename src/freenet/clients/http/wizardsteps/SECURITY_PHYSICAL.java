@@ -46,15 +46,16 @@ public class SECURITY_PHYSICAL implements Step {
 			//Problem generating error page; generate default.
 		}
 
-		InfoboxWidget PhysicalThreatLevel = helper.getPageContent(WizardL10n.l10n("physicalSecurityPageTitle")).addInfobox(InfoboxWidget.Type.NORMAL,
-		        WizardL10n.l10nSec("physicalThreatLevelShort"));
-		Box infoboxContent = PhysicalThreatLevel.body;
+		Infobox physicalThreatLevel = helper.getPageContent(WizardL10n.l10n("physicalSecurityPageTitle")).addInfobox(
+			Infobox.Type.NORMAL,
+			WizardL10n.l10nSec("physicalThreatLevelShort"));
+		Box infoboxContent = physicalThreatLevel.body;
 		infoboxContent.addBlockText(WizardL10n.l10nSec("physicalThreatLevel"));
 
 		HTMLNode form = helper.addFormChild(infoboxContent, ".", "physicalSecurityForm");
 		HTMLNode div = form.addBox(Category.OPENNETDIV);
 		String controlName = "security-levels.physicalThreatLevel";
-		HTMLNode swapWarning = div.addChild(new BlockText()).addI();
+		HTMLNode swapWarning = div.addBlockText(Category.ITALIC);
 		NodeL10n.getBase().addL10nSubstitution(swapWarning, "SecurityLevels.physicalThreatLevelTruecrypt",
 		        new String[]{"bold", "truecrypt"},
 		        new HTMLNode[]{HTMLNode.STRONG,
@@ -142,9 +143,10 @@ public class SECURITY_PHYSICAL implements Step {
 					return false;
 			}
 
-			InfoboxWidget ErrorBox = helper.getPageContent(WizardL10n.l10nSec(pageTitleKey)).addInfobox(InfoboxWidget.Type.ERROR,
+			Infobox errorBox = helper.getPageContent(WizardL10n.l10nSec(pageTitleKey)).addInfobox(
+				Infobox.Type.ERROR,
 				WizardL10n.l10nSec(infoboxTitleKey));
-			Box content = ErrorBox.body;
+			Box content = errorBox.body;
 
 			if (type == PASSWORD_PROMPT.SET_BLANK || type == PASSWORD_PROMPT.DECRYPT_BLANK) {
 				content.addBlockText(WizardL10n.l10nSec("passwordNotZeroLength"));

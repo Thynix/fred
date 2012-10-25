@@ -24,14 +24,14 @@ public class InsertFreesiteToadlet extends Toadlet {
 		throws ToadletContextClosedException, IOException {
 		Page page = ctx.getPageMaker().getPage(l10n("title"), ctx);
 		page.content.addChild(alerts.createSummary());
-		InfoboxWidget InsertFreesite =
-			new InfoboxWidget(InfoboxWidget.Type.INFORMATION, Identifier.FREESITEINSERT, l10n("title"));
-		page.content.addInfobox(InsertFreesite);
-		InsertFreesite.body.addBlockText(l10n("content1"));
-		NodeL10n.getBase().addL10nSubstitution(InsertFreesite.body.addChild(new BlockText()),
+		Infobox insertFreesite =
+			new Infobox(Infobox.Type.INFORMATION, Identifier.FREESITEINSERT, l10n("title"));
+		page.content.addInfobox(insertFreesite);
+		insertFreesite.body.addBlockText(l10n("content1"));
+		NodeL10n.getBase().addL10nSubstitution(insertFreesite.body.addChild(new BlockText()),
 			"InsertFreesiteToadlet.contentFlogHelper", new String[]{"plugins"},
 			new HTMLNode[]{new Link(PproxyToadlet.PATH)});
-		NodeL10n.getBase().addL10nSubstitution(InsertFreesite.body.addChild(new BlockText()),
+		NodeL10n.getBase().addL10nSubstitution(insertFreesite.body.addChild(new BlockText()),
 			"InsertFreesiteToadlet.content2",
 			new String[]{"jsite-http", "jsite-freenet", "jsite-freenet-version", "jsite-info"},
 			new HTMLNode[]{new Link(
@@ -44,9 +44,9 @@ public class InsertFreesiteToadlet extends Toadlet {
 					"9T20t3xoG-dQfMO94LGOl9AxRTkaz~TykFY-voqaTQI,AQACAAE/FAFS-49/files/jsite" +
 					".htm"),
 			});
-		InsertFreesite.body.addBlockText(l10n("content3"));
+		insertFreesite.body.addBlockText(l10n("content3"));
 		OutputList uploadTutorialList = new OutputList();
-		InsertFreesite.body.addList(uploadTutorialList);
+		insertFreesite.body.addList(uploadTutorialList);
 		Item uploadTutorial = uploadTutorialList.addItem();
 		uploadTutorial.addLink(
 			"/SSK@940RYvj1-aowEHGsb5HeMTigq8gnV14pbKNsIvUO~-0," +
@@ -59,7 +59,7 @@ public class InsertFreesiteToadlet extends Toadlet {
 				"P42IgNemestUdaI7T6z3Og6P-Hi7g9U~e37R3kWGVj8,AQACAAE/freesite-HOWTO-4/",
 			"Freesite HOWTO");
 		uploadTutorial.addText(" - " + l10n("freesiteHowtoExplanation"));
-		NodeL10n.getBase().addL10nSubstitution(InsertFreesite.body.addChild(new BlockText()),
+		NodeL10n.getBase().addL10nSubstitution(insertFreesite.body.addChild(new BlockText()),
 			"InsertFreesiteToadlet.contentThingamablog",
 			new String[]{"thingamablog", "thingamablog-freenet"},
 			new HTMLNode[]{new Link(ExternalLinkToadlet

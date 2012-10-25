@@ -4,7 +4,7 @@ import freenet.client.HighLevelSimpleClient;
 import freenet.client.InsertContext;
 import freenet.client.InsertContext.CompatibilityMode;
 import freenet.clients.http.uielements.Identifier;
-import freenet.clients.http.uielements.InfoboxWidget;
+import freenet.clients.http.uielements.Infobox;
 import freenet.clients.http.uielements.Page;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
@@ -62,14 +62,14 @@ public class FileInsertWizardToadlet extends Toadlet implements LinkEnabledCallb
 		writeHTMLReply(ctx, 200, "OK", null, insertFilePage.generate());
 	}
 
-	private InfoboxWidget createInsertBox(ToadletContext ctx, boolean isAdvancedModeEnabled) {
+	private Infobox createInsertBox(ToadletContext ctx, boolean isAdvancedModeEnabled) {
 		/* the insert file box */
-		InfoboxWidget InsertFileBox = new InfoboxWidget(Identifier.INSERTQUEUE,
+		Infobox insertFileBox = new Infobox(Identifier.INSERTQUEUE,
 			NodeL10n.getBase().getString("QueueToadlet.insertFile"));
-		InsertFileBox.body.addText(l10n("insertIntro"));
+		insertFileBox.body.addText(l10n("insertIntro"));
 		NETWORK_THREAT_LEVEL seclevel = core.node.securityLevels.getNetworkThreatLevel();
 		HTMLNode insertForm =
-			ctx.addFormChild(InsertFileBox.body, QueueToadlet.PATH_UPLOADS, "queueInsertForm");
+			ctx.addFormChild(insertFileBox.body, QueueToadlet.PATH_UPLOADS, "queueInsertForm");
 		HTMLNode input = insertForm.addChild("input",
 			new String[]{"type", "name", "value"},
 			new String[]{"radio", "keytype", "CHK"});
@@ -155,7 +155,7 @@ public class FileInsertWizardToadlet extends Toadlet implements LinkEnabledCallb
 			new String[]{"submit", "insert",
 				NodeL10n.getBase().getString("QueueToadlet.insertFileInsertFileLabel")});
 		insertForm.addText(" \u00a0 ");
-		return InsertFileBox;
+		return insertFileBox;
 	}
 
 	String l10n (String key) {

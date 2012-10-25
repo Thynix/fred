@@ -68,7 +68,7 @@ public class N2NTMToadlet extends Toadlet {
 				}
 			}
 			if (peernode_name == null) {
-				sendMessagePage.content.addInfobox(createPeerInfobox(InfoboxWidget.Type.ERROR,
+				sendMessagePage.content.addInfobox(createPeerInfobox(Infobox.Type.ERROR,
 					l10n("peerNotFoundTitle"), l10n("peerNotFoundWithHash",
 					"hash", input_hashcode_string)));
 				this.writeHTMLReply(ctx, 200, "OK", sendMessagePage.generate());
@@ -107,8 +107,8 @@ public class N2NTMToadlet extends Toadlet {
 		return limit;
 	}
 
-	private static InfoboxWidget createPeerInfobox(InfoboxWidget.Type infoboxType, String header, String message) {
-		InfoboxWidget peerInfobox = new InfoboxWidget(infoboxType, header);
+	private static Infobox createPeerInfobox(Infobox.Type infoboxType, String header, String message) {
+		Infobox peerInfobox = new Infobox(infoboxType, header);
 		peerInfobox.body.addText(message);
 		OutputList peerList = peerInfobox.body.addList();
 		Toadlet.addHomepageLink(peerList);
@@ -150,7 +150,7 @@ public class N2NTMToadlet extends Toadlet {
 				return;
 			}
 			Page sendPage = ctx.getPageMaker().getPage(l10n("processingSend"), ctx);
-			InfoboxWidget peerTableInfobox = sendPage.content.addInfobox(InfoboxWidget.Type.NORMAL, null);
+			Infobox peerTableInfobox = sendPage.content.addInfobox(Infobox.Type.NORMAL, null);
 			DarknetPeerNode[] peerNodes = node.getDarknetConnections();
 			if (request.isPartSet(LocalFileBrowserToadlet.selectFile)) {
 				String fnam = request.getPartAsStringFailsafe("filename", 1024);
@@ -273,8 +273,8 @@ public class N2NTMToadlet extends Toadlet {
 	public static void createN2NTMSendForm(Page pageNode, boolean advancedMode,
 	                                       ToadletContext ctx, HashMap<String, String> peers)
 		throws ToadletContextClosedException, IOException {
-		InfoboxWidget messageeditor =
-			pageNode.content.addInfobox(InfoboxWidget.Type.NONE, Identifier.N2NBOX, l10n(
+		Infobox messageeditor =
+			pageNode.content.addInfobox(Infobox.Type.NONE, Identifier.N2NBOX, l10n(
 				"sendMessage"));
 		messageeditor.body.addBlockText(l10n("composingMessageLabel"));
 		OutputList messageTargetList = messageeditor.body.addList();

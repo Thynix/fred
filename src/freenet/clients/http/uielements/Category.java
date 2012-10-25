@@ -75,6 +75,7 @@ public enum Category {
 	INSERTFAILED("failed-insert"),
 	INSERTSUCCESS("successful-insert"),
 	INTERFACELINK("interfacelink"),
+	ITALIC("italic"),
 	ITEM("item"),
 	KEYIS("key_is"),
 	KEYUNKNOWN("key_unknown"),

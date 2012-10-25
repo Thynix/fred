@@ -67,7 +67,7 @@ public class BANDWIDTH_RATE extends BandwidthManipulator implements Step {
 			parseErrorBox(contentNode, helper, request.getParam("parseTarget"));
 		}
 
-		InfoboxWidget infoBox = formNode.addInfobox(InfoboxWidget.Type.NORMAL,
+		Infobox infoBox = formNode.addInfobox(Infobox.Type.NORMAL,
 			WizardL10n.l10n("bandwidthLimitRateTitle"));
 		NodeL10n.getBase().addL10nSubstitution(infoBox.body, "FirstTimeWizardToadlet.bandwidthLimitRate",
 		        new String[] { "bold", "coreSettings" }, new HTMLNode[] { HTMLNode.STRONG, 

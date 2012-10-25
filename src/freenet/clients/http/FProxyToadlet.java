@@ -153,8 +153,8 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 			if (horribleEvilHack(data) && ! (mimeType.startsWith("application/rss+xml"))) {
 				Page downloadPage = context.getPageMaker().getPage(l10n("dangerousRSSTitle"),
 					context);
-				InfoboxWidget dangerousRSSwarning = downloadPage.content.addInfobox(
-					InfoboxWidget.Type.ALERT, l10n("dangerousRSSSubtitle"));
+				Infobox dangerousRSSwarning = downloadPage.content.addInfobox(
+					Infobox.Type.ALERT, l10n("dangerousRSSSubtitle"));
 				dangerousRSSwarning.body.addText(NodeL10n.getBase()
 					.getString("FProxyToadlet.dangerousRSS", new String[]{"type"},
 						new String[]{mimeType}));
@@ -586,8 +586,8 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 			key = new FreenetURI(ks);
 		} catch (MalformedURLException e) {
 			Page warningPage = ctx.getPageMaker().getPage(l10n("invalidKeyTitle"), ctx);
-			InfoboxWidget errorInfobox =
-				warningPage.content.addInfobox(InfoboxWidget.Type.ERROR, NodeL10n.getBase().
+			Infobox errorInfobox =
+				warningPage.content.addInfobox(Infobox.Type.ERROR, NodeL10n.getBase().
 					getString("FProxyToadlet.invalidKeyWithReason", new String[]{"reason"},
 						new String[]{e.toString()}));
 			errorInfobox.body.addText(l10n("expectedKeyButGot"));
@@ -722,8 +722,8 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 						progressPage.root.head.addMeta("Refresh")
 							.addAttribute("content", "2;URL=" + location);
 					}
-					InfoboxWidget fetchingPage = progressPage.content
-						.addInfobox(InfoboxWidget.Type.INFORMATION, l10n("fetchingPageBox"));
+					Infobox fetchingPage = progressPage.content
+						.addInfobox(Infobox.Type.INFORMATION, l10n("fetchingPageBox"));
 					fetchingPage.body.setID(Identifier.INFOCONTENT);
 					fetchingPage.body.addChild(
 						new ProgressInfoElement(fetchTracker, key, fctx, maxSize,
@@ -740,8 +740,8 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 							new ProgressBarElement(fetchTracker, key, fctx, maxSize, ctx,
 								isWebPushingEnabled));
 					}
-					InfoboxWidget fetchingPageOptions =
-						new InfoboxWidget(InfoboxWidget.Type.INFORMATION,
+					Infobox fetchingPageOptions =
+						new Infobox(Infobox.Type.INFORMATION,
 							l10n("fetchingPageOptions"));
 					progressPage.content.addChild(fetchingPageOptions);
 					OutputList optionList = fetchingPageOptions.body.addList();
@@ -850,13 +850,13 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 			} else if (e.mode == FetchException.TOO_BIG) {
 				Page largeFilePage = ctx.getPageMaker().getPage(l10n("fileInformationTitle"), ctx);
 				OutputList fileInformationList = largeFilePage.content
-					.addInfobox(InfoboxWidget.Type.INFORMATION, l10n("largeFile")).body.addList();
+					.addInfobox(Infobox.Type.INFORMATION, l10n("largeFile")).body.addList();
 				Item option = fileInformationList.addItem();
 				option.addText((l10n("filenameLabel") + ' '));
 				option.addLink('/' + key.toString(), getFilename(key, e.getExpectedMimeType()));
 				String mime = writeSizeAndMIME(fileInformationList, e);
-				InfoboxWidget explanationTitle = largeFilePage.content
-					.addInfobox(InfoboxWidget.Type.INFORMATION, l10n("explanationTitle"));
+				Infobox explanationTitle = largeFilePage.content
+					.addInfobox(Infobox.Type.INFORMATION, l10n("explanationTitle"));
 				explanationTitle.body.addText(l10n("largeFileExplanationAndOptions"));
 				OutputList optionList = explanationTitle.body.addList();
 				if (! restricted) {
@@ -890,15 +890,15 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 				writeHTMLReply(ctx, 200, "OK", largeFilePage.generate());
 			} else {
 				Page errorPage = ctx.getPageMaker().getPage(e.getShortMessage(), ctx);
-				OutputList fileInformationList = errorPage.content.addInfobox(InfoboxWidget.Type
+				OutputList fileInformationList = errorPage.content.addInfobox(Infobox.Type
 					.ERROR,
 					l10n("errorWithReason", "error", e.getShortMessage())).body.addList();
 				Item option = fileInformationList.addItem();
 				option.addText((l10n("filenameLabel") + ' '));
 				option.addLink('/' + key.toString(), getFilename(key, e.getExpectedMimeType()));
 				String mime = writeSizeAndMIME(fileInformationList, e);
-				InfoboxWidget explanationTitle = errorPage.content
-					.addInfobox(InfoboxWidget.Type.ERROR, l10n("explanationTitle"));
+				Infobox explanationTitle = errorPage.content
+					.addInfobox(Infobox.Type.ERROR, l10n("explanationTitle"));
 				explanationTitle.body.addBlockText(l10n("unableToRetrieve"));
 				UnsafeContentTypeException filterException = null;
 				if (e.getCause() != null && e.getCause() instanceof UnsafeContentTypeException) {
@@ -921,7 +921,7 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 						.addText(e.errorCodes.toVerboseString());
 				}
 				OutputList optionList =
-					errorPage.content.addInfobox(InfoboxWidget.Type.ERROR, l10n("options")).body
+					errorPage.content.addInfobox(Infobox.Type.ERROR, l10n("options")).body
 						.addList();
 				PluginInfoWrapper keyUtil;
 				if ((e.mode == FetchException.NOT_IN_ARCHIVE ||

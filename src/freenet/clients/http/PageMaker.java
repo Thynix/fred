@@ -46,7 +46,6 @@ public final class PageMaker {
 		MINIMALISTIC("minimalist", "Minimalistic", "A very minimalistic theme based on Google's designs", true, true),
 		RABBIT_HOLE("rabbit-hole", "Into the Rabbit Hole", "Simple and clean theme", false, false);
 
-		
 		public static final String[] possibleValues = {
 			BOXED.code,
 			BOXED_CLASSIC.code,

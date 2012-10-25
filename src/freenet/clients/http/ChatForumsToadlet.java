@@ -30,8 +30,8 @@ public class ChatForumsToadlet extends Toadlet implements LinkEnabledCallback {
 		throws ToadletContextClosedException, IOException {
 		Page chatForum = ctx.getPageMaker().getPage(l10n("title"), ctx);
 		chatForum.content.addChild(alerts.createSummary());
-		InfoboxWidget chatList = chatForum.content
-			.addInfobox(InfoboxWidget.Type.INFORMATION, Identifier.CHATLIST, l10n("title"));
+		Infobox chatList = chatForum.content
+			.addInfobox(Infobox.Type.INFORMATION, Identifier.CHATLIST, l10n("title"));
 		chatList.body.addChild(new BlockText(l10n("freetalkRecommended")));
 		chatList.body.addChild(new BlockText(l10n("freetalkCaveat")));
 		ctx.addFormChild(chatList.body, path(), "loadFreetalkButton")

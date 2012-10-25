@@ -177,7 +177,7 @@ public class BookmarkEditorToadlet extends Toadlet {
 				bookmarkPath = URLDecoder.decode(originalBookmark, false);
 			} catch (URLEncodedFormatException e) {
 				bookmarkEditor.content
-					.addInfobox(InfoboxWidget.Type.ERROR, Category.BOOKMARKURLDECODEERROR,
+					.addInfobox(Infobox.Type.ERROR, Category.BOOKMARKURLDECODEERROR,
 						error).body
 					.addText(NodeL10n.getBase().getString("BookmarkEditorToadlet" +
 						".urlDecodeError"));
@@ -192,7 +192,7 @@ public class BookmarkEditorToadlet extends Toadlet {
 			}
 			if (bookmark == null) {
 				bookmarkEditor.content
-					.addInfobox(InfoboxWidget.Type.ERROR, Category.BOOKMARKDOESNOTEXIST,
+					.addInfobox(Infobox.Type.ERROR, Category.BOOKMARKDOESNOTEXIST,
 						error).body
 					.addText(NodeL10n.getBase()
 						.getString("BookmarkEditorToadlet.bookmarkDoesNotExist",
@@ -207,11 +207,11 @@ public class BookmarkEditorToadlet extends Toadlet {
 				String query = NodeL10n.getBase().getString("BookmarkEditorToadlet." +
 					((bookmark instanceof BookmarkItem) ? "deleteBookmarkConfirm" :
 						"deleteCategoryConfirm"), bm, path);
-				InfoboxWidget ConfirmDeleteBookmark = bookmarkEditor.content.addInfobox(
-					InfoboxWidget.Type.QUERY, Category.BOOKMARKDELETE, queryTitle);
-				ConfirmDeleteBookmark.body.addBlockText(query);
+				Infobox confirmDeleteBookmark = bookmarkEditor.content.addInfobox(
+					Infobox.Type.QUERY, Category.BOOKMARKDELETE, queryTitle);
+				confirmDeleteBookmark.body.addBlockText(query);
 				HTMLNode confirmForm =
-					ctx.addFormChild(ConfirmDeleteBookmark.body, "", "confirmDeleteForm");
+					ctx.addFormChild(confirmDeleteBookmark.body, "", "confirmDeleteForm");
 				confirmForm.addChild("input", new String[]{"type", "name", "value"},
 					new String[]{"hidden", "bookmark", bookmarkPath});
 				confirmForm.addChild("input", new String[]{"type", "name", "value"},
@@ -241,10 +241,10 @@ public class BookmarkEditorToadlet extends Toadlet {
 				} else {
 					header = NodeL10n.getBase().getString("BookmarkEditorToadlet.addNewCategory");
 				}
-				InfoboxWidget BookmarkAction = bookmarkEditor.addInfobox(InfoboxWidget.Type
+				Infobox bookmarkAction = bookmarkEditor.addInfobox(Infobox.Type
 					.QUERY,
 					Category.BOOKMARKACTION, header);
-				HTMLNode form = ctx.addFormChild(BookmarkAction.body, "", "editBookmarkForm");
+				HTMLNode form = ctx.addFormChild(bookmarkAction.body, "", "editBookmarkForm");
 				form.addChild("label", "for", "name",
 					(NodeL10n.getBase().getString("BookmarkEditorToadlet.nameLabel") + ' '));
 				form.addChild("input", new String[]{"type", "id", "name", "size", "value"},
@@ -328,7 +328,7 @@ public class BookmarkEditorToadlet extends Toadlet {
 			}
 		}
 		if (cutedPath != null) {
-			InfoboxWidget confirmClipboard = bookmarkEditor.content.addInfobox(InfoboxWidget.Type.NORMAL,
+			Infobox confirmClipboard = bookmarkEditor.content.addInfobox(Infobox.Type.NORMAL,
 				NodeL10n.getBase().getString("BookmarkEditorToadlet.pasteTitle"));
 			confirmClipboard.body
 				.addText(NodeL10n.getBase().getString("BookmarkEditorToadlet.pasteOrCancel"));
@@ -340,7 +340,7 @@ public class BookmarkEditorToadlet extends Toadlet {
 			cancelForm.addChild("input", new String[]{"type", "name", "value"},
 				new String[]{"hidden", "action", "cancelCut"});
 		}
-		bookmarkEditor.content.addInfobox(InfoboxWidget.Type.NORMAL, Category.BOOKMARKTITLE,
+		bookmarkEditor.content.addInfobox(Infobox.Type.NORMAL, Category.BOOKMARKTITLE,
 			NodeL10n.getBase().getString("BookmarkEditorToadlet.myBookmarksTitle")).body
 			.addList(getBookmarksList());
 		HTMLNode addDefaultBookmarksForm = ctx.addFormChild(bookmarkEditor.content, "", "AddDefaultBookmarks");
@@ -377,7 +377,7 @@ public class BookmarkEditorToadlet extends Toadlet {
 				bookmark = bookmarkManager.getItemByPath(bookmarkPath);
 			}
 			if (bookmark == null && ! req.isPartSet("cancelCut")) {
-				response.content.addInfobox(InfoboxWidget.Type.ERROR, Category.BOOKMARKERROR,
+				response.content.addInfobox(Infobox.Type.ERROR, Category.BOOKMARKERROR,
 					NodeL10n.getBase().getString("BookmarkEditorToadlet.error"))
 					.addText(NodeL10n.getBase()
 						.getString("BookmarkEditorToadlet.bookmarkDoesNotExist",
@@ -389,7 +389,7 @@ public class BookmarkEditorToadlet extends Toadlet {
 			if (req.isPartSet("confirmdelete")) {
 				bookmarkManager.removeBookmark(bookmarkPath);
 				bookmarkManager.storeBookmarks();
-				response.content.addInfobox(InfoboxWidget.Type.SUCCESS,
+				response.content.addInfobox(Infobox.Type.SUCCESS,
 					Category.BOOKMARKSUCCESSFULDELETE,
 					NodeL10n.getBase().getString("BookmarkEditorToadlet.deleteSucceededTitle"))
 					.addBlockText(
@@ -417,7 +417,7 @@ public class BookmarkEditorToadlet extends Toadlet {
 							req.getPartAsStringFailsafe("publicDescB", MAX_KEY_LENGTH));
 					}
 					bookmarkManager.storeBookmarks();
-					response.content.addInfobox(InfoboxWidget.Type.SUCCESS,
+					response.content.addInfobox(Infobox.Type.SUCCESS,
 						Category.BOOKMARKERROR,
 						NodeL10n.getBase().getString("BookmarkEditorToadlet" +
 							".changesSavedTitle"))
@@ -439,7 +439,7 @@ public class BookmarkEditorToadlet extends Toadlet {
 						 */
 						boolean hasAnActivelink = req.isPartSet("hasAnActivelink");
 						if (name.contains("/")) {
-							response.content.addInfobox(InfoboxWidget.Type.ERROR,
+							response.content.addInfobox(Infobox.Type.ERROR,
 								Category.BOOKMARKERROR, NodeL10n.getBase()
 								.getString("BookmarkEditorToadlet.invalidNameTitle")).
 								addText(NodeL10n.getBase().getString(
@@ -453,7 +453,7 @@ public class BookmarkEditorToadlet extends Toadlet {
 						}
 					} else if (name.contains("/")) {
 						response.content
-							.addInfobox(InfoboxWidget.Type.ERROR, Category.BOOKMARKERROR,
+							.addInfobox(Infobox.Type.ERROR, Category.BOOKMARKERROR,
 								NodeL10n.getBase().getString(
 									"BookmarkEditorToadlet.invalidNameTitle")).
 							addText(NodeL10n.getBase()
@@ -470,7 +470,7 @@ public class BookmarkEditorToadlet extends Toadlet {
 									MAX_KEY_LENGTH));
 						}
 						response.content
-							.addInfobox(InfoboxWidget.Type.SUCCESS,
+							.addInfobox(Infobox.Type.SUCCESS,
 								Category.BOOKMARKADDNEW,
 								NodeL10n.getBase().getString(
 									"BookmarkEditorToadlet" +
@@ -484,11 +484,11 @@ public class BookmarkEditorToadlet extends Toadlet {
 					req.getPartAsStringFailsafe("publicDescB", MAX_KEY_LENGTH));
 			}
 		} catch (MalformedURLException mue) {
-			response.content.addInfobox(InfoboxWidget.Type.ERROR, Category.BOOKMARKERROR,
+			response.content.addInfobox(Infobox.Type.ERROR, Category.BOOKMARKERROR,
 				NodeL10n.getBase().getString("BookmarkEditorToadlet.invalidKeyTitle")).
 				addText(NodeL10n.getBase().getString("BookmarkEditorToadlet.invalidKey"));
 		}
-		response.content.addInfobox(InfoboxWidget.Type.NORMAL, Category.BOOKMARKS,
+		response.content.addInfobox(Infobox.Type.NORMAL, Category.BOOKMARKS,
 			NodeL10n.getBase().getString("BookmarkEditorToadlet.myBookmarksTitle")).
 			addList(getBookmarksList());
 		HTMLNode addDefaultBookmarksForm = ctx.addFormChild(response.content, "", "AddDefaultBookmarks");

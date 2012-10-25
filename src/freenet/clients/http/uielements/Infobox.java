@@ -1,6 +1,6 @@
 package freenet.clients.http.uielements;
 
-public class InfoboxWidget extends Box {
+public class Infobox extends Box {
 
 	public Box header;
 	public Box body;
@@ -29,49 +29,49 @@ public class InfoboxWidget extends Box {
 		}
 	}
 
-	public InfoboxWidget(Type type, Category category, String title, String content) {
+	public Infobox(Type type, Category category, String title, String content) {
 		this(type, category, title);
 		this.body.setContent(content);
 	}
 
-	public InfoboxWidget(Type type, Category category, String title, OutputNode content) {
+	public Infobox(Type type, Category category, String title, OutputNode content) {
 		this(type, category, title);
 		this.body.addChild(content);
 	}
 
-	public InfoboxWidget(Type type, Category category, String title) {
+	public Infobox(Type type, Category category, String title) {
 		this(type, title);
 		this.addClass(category);
 	}
 
-	public InfoboxWidget(Identifier id, String title) {
+	public Infobox(Identifier id, String title) {
 		this(Type.NONE, id, title);
 	}
 
-	public InfoboxWidget(Type type, Identifier id, String title, String content) {
+	public Infobox(Type type, Identifier id, String title, String content) {
 		this(type, id, title);
 		this.body.setContent(content);
 	}
 
-	public InfoboxWidget(Type type, Identifier id, String title, OutputNode content) {
+	public Infobox(Type type, Identifier id, String title, OutputNode content) {
 		this(type, id, title);
 		this.body.addChild(content);
 	}
 
-	public InfoboxWidget(Type type, Identifier id, String title) {
+	public Infobox(Type type, Identifier id, String title) {
 		this(type, title);
 		this.setID(id);
 	}
 
-	public InfoboxWidget(Type type, String title) {
+	public Infobox(Type type, String title) {
 		this(type.htmlclass, title);
 	}
 
-	public InfoboxWidget(String title) {
+	public Infobox(String title) {
 		this(Type.NONE, title);
 	}
 
-	protected InfoboxWidget(Category type, String title) {
+	protected Infobox(Category type, String title) {
 		super(Category.INFOBOX);
 		if (type != Category.NONE) {
 			this.addClass(type);

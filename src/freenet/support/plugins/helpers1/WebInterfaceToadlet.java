@@ -7,7 +7,7 @@ import freenet.clients.http.LinkEnabledCallback;
 import freenet.clients.http.Toadlet;
 import freenet.clients.http.ToadletContext;
 import freenet.clients.http.uielements.Box;
-import freenet.clients.http.uielements.InfoboxWidget;
+import freenet.clients.http.uielements.Infobox;
 import freenet.clients.http.uielements.Link;
 import freenet.keys.FreenetURI;
 import freenet.support.HTMLNode;
@@ -71,8 +71,8 @@ public abstract class WebInterfaceToadlet extends Toadlet implements LinkEnabled
 	}
 
 	public HTMLNode createErrorBox(List<String> errors, String path, FreenetURI retryUri, String extraParams) {
-		InfoboxWidget ErrorList = new InfoboxWidget(InfoboxWidget.Type.ALERT, "ERROR");
-		Box errorBox = ErrorList.body;
+		Infobox errorList = new Infobox(Infobox.Type.ALERT, "ERROR");
+		Box errorBox = errorList.body;
 		for (String error : errors) {
 			errorBox.addText(error);
 			errorBox.addLineBreak();
@@ -82,6 +82,6 @@ public abstract class WebInterfaceToadlet extends Toadlet implements LinkEnabled
 			errorBox.addChild(new Link(path + "?key=" + ((extraParams == null) ? retryUri :
 				(retryUri + extraParams)), retryUri.toString(false, false)));
 		}
-		return ErrorList;
+		return errorList;
 	}
 }

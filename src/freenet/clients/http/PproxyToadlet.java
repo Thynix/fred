@@ -176,7 +176,7 @@ public class PproxyToadlet extends Toadlet {
 					pm.removeCachedCopy(pluginSpecification);
 				}
 				Page page = pageMaker.getPage(l10n("plugins"), ctx);
-				InfoboxWidget success = page.content.addInfobox(InfoboxWidget.Type.SUCCESS, l10n("pluginUnloaded"));
+				Infobox success = page.content.addInfobox(Infobox.Type.SUCCESS, l10n("pluginUnloaded"));
 				success.body.addText(l10n("pluginUnloadedWithName", "name", pluginThreadName));
 				success.body.addLineBreak();
 				success.body.addLink("/plugins/", l10n("returnToPluginPage"));
@@ -184,7 +184,7 @@ public class PproxyToadlet extends Toadlet {
 				return;
 			} if (request.getPartAsStringFailsafe("unload", MAX_PLUGIN_NAME_LENGTH).length() > 0) {
 				Page page = pageMaker.getPage(l10n("plugins"), ctx);
-				InfoboxWidget query = page.content.addInfobox(InfoboxWidget.Type.QUERY, l10n("unloadPluginTitle"));
+				Infobox query = page.content.addInfobox(Infobox.Type.QUERY, l10n("unloadPluginTitle"));
 				query.body.addText(l10n("unloadPluginWithName", "name", request.getPartAsStringFailsafe("unload", MAX_PLUGIN_NAME_LENGTH)));
 				HTMLNode unloadForm = ctx.addFormChild(query.body, "/plugins/",
 					"unloadPluginConfirmForm");
@@ -200,10 +200,10 @@ public class PproxyToadlet extends Toadlet {
 				return;
 			} else if (request.getPartAsStringFailsafe("reload", MAX_PLUGIN_NAME_LENGTH).length() > 0) {
 				Page page = pageMaker.getPage(l10n("plugins"), ctx);
-				InfoboxWidget ReloadPlugin = page.content.addInfobox(InfoboxWidget.Type.QUERY, Identifier.PLUGINRELOAD, l10n("reloadPluginTitle"));
-				ReloadPlugin.body.addBlockText(l10n("reloadExplanation"));
-				ReloadPlugin.body.addBlockText(l10n("reloadWarning"));
-				HTMLNode reloadForm = ctx.addFormChild(ReloadPlugin.body, "/plugins/", "reloadPluginConfirmForm");
+				Infobox reloadPlugin = page.content.addInfobox(Infobox.Type.QUERY, Identifier.PLUGINRELOAD, l10n("reloadPluginTitle"));
+				reloadPlugin.body.addBlockText(l10n("reloadExplanation"));
+				reloadPlugin.body.addBlockText(l10n("reloadWarning"));
+				HTMLNode reloadForm = ctx.addFormChild(reloadPlugin.body, "/plugins/", "reloadPluginConfirmForm");
 				reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "reloadconfirm", request.getPartAsStringFailsafe("reload", MAX_PLUGIN_NAME_LENGTH) });
 				HTMLNode tempNode = reloadForm.addChild(new BlockText());
 				tempNode.addChild("input", new String[] { "type", "name" }, new String[] { "checkbox", "purge" });
@@ -422,7 +422,7 @@ public class PproxyToadlet extends Toadlet {
 	private void showStartingPlugins(PluginManager pluginManager, HTMLNode contentNode) {
 		Set<PluginProgress> startingPlugins = pluginManager.getStartingPlugins();
 		if (!startingPlugins.isEmpty()) {
-			InfoboxWidget startingPluginsBox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10n("startingPluginsTitle"));
+			Infobox startingPluginsBox = new Infobox(Infobox.Type.NORMAL, l10n("startingPluginsTitle"));
 			contentNode.addChild(startingPluginsBox);
 			Table startingPluginsTable = startingPluginsBox.body.addTable();
 			Row startingPluginsHeader = startingPluginsTable.addRow();
@@ -441,7 +441,7 @@ public class PproxyToadlet extends Toadlet {
 	}
 
 	private void showPluginList(ToadletContext ctx, PluginManager pm, HTMLNode contentNode, boolean advancedMode) throws ToadletContextClosedException, IOException {
-		InfoboxWidget pluginList = new InfoboxWidget(InfoboxWidget.Type.NORMAL, NodeL10n.getBase().getString("PluginToadlet.pluginListTitle"));
+		Infobox pluginList = new Infobox(Infobox.Type.NORMAL, NodeL10n.getBase().getString("PluginToadlet.pluginListTitle"));
 		contentNode.addChild(pluginList);
 		if (pm.getPlugins().isEmpty()) {
 			pluginList.body.addChild(new Box(Category.NONE, l10n("noPlugins")));
@@ -501,7 +501,7 @@ public class PproxyToadlet extends Toadlet {
 	
 	private void showOfficialPluginLoader(ToadletContext toadletContext, HTMLNode contentNode, Map<String, List<OfficialPluginDescription>> availablePlugins, PluginManager pm, boolean advancedModeEnabled) {
 		/* box for "official" plugins. */
-		InfoboxWidget addOfficialPluginBox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10n("loadOfficialPlugin"));
+		Infobox addOfficialPluginBox = new Infobox(Infobox.Type.NORMAL, l10n("loadOfficialPlugin"));
 		contentNode.addChild(addOfficialPluginBox);
 		HTMLNode addOfficialForm = toadletContext.addFormChild(addOfficialPluginBox.body, ".", "addOfficialPluginForm");
 		
@@ -545,7 +545,7 @@ public class PproxyToadlet extends Toadlet {
 				if(!pm.isPluginLoaded(pluginName)) {
 					HTMLNode option = pluginNode.addChild("input", new String[] { "type", "name", "value" },
 							new String[] { "radio", "plugin-name", pluginName });
-					option.addI(pluginName);
+					option.addInlineBox(Category.ITALIC, pluginName);
 					if(pluginDescription.deprecated)
 						option.addB(" (" + l10n("loadLabelDeprecated") + ")");
 					if(pluginDescription.experimental)
@@ -562,7 +562,7 @@ public class PproxyToadlet extends Toadlet {
 	
 	private void showUnofficialPluginLoader(ToadletContext toadletContext, HTMLNode contentNode) {
 		/* box for unofficial plugins. */
-		InfoboxWidget addOtherPluginBox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10n("loadOtherPlugin"));
+		Infobox addOtherPluginBox = new Infobox(Infobox.Type.NORMAL, l10n("loadOtherPlugin"));
 		contentNode.addChild(addOtherPluginBox);
 		HTMLNode addOtherForm = toadletContext.addFormChild(addOtherPluginBox.body, ".", "addOtherPluginForm");
 		addOtherForm.addChild(new Box(Category.NONE , l10n("loadOtherPluginText")));
@@ -577,7 +577,7 @@ public class PproxyToadlet extends Toadlet {
 	
 	private void showFreenetPluginLoader(ToadletContext toadletContext, HTMLNode contentNode) {
 		/* box for freenet plugins. */
-		InfoboxWidget addFreenetPluginBox = new InfoboxWidget(InfoboxWidget.Type.NORMAL, l10n("loadFreenetPlugin"));
+		Infobox addFreenetPluginBox = new Infobox(Infobox.Type.NORMAL, l10n("loadFreenetPlugin"));
 		contentNode.addChild(addFreenetPluginBox);
 		HTMLNode addFreenetForm = toadletContext.addFormChild(addFreenetPluginBox.body, ".", "addFreenetPluginForm");
 		addFreenetForm.addChild(new Box(Category.NONE, l10n("loadFreenetPluginText")));

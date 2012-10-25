@@ -13,23 +13,24 @@ public class OPENNET implements Step {
 
 	@Override
 	public void getStep(HTTPRequest request, PageHelper helper) {
-		InfoboxWidget infoboxContent = helper.getPageContent(WizardL10n.l10n("opennetChoicePageTitle")).addInfobox(InfoboxWidget.Type.NORMAL,
+		Infobox infoboxContent = helper.getPageContent(WizardL10n.l10n("opennetChoicePageTitle")).addInfobox(
+			Infobox.Type.NORMAL,
 			WizardL10n.l10n("opennetChoiceTitle"));
 
 		infoboxContent.body.addChild(new BlockText(WizardL10n.l10n("opennetChoiceIntroduction")));
 
 		HTMLNode form = helper.addFormChild(infoboxContent.body, ".", "opennetForm", false);
 
-		HTMLNode p = form.addChild(new BlockText());
+		HTMLNode p = form.addChild(new BlockText(Category.ITALIC));
 		HTMLNode input = p.addChild("input",
 		        new String[] { "type", "name", "value" },
 		        new String[] { "radio", "opennet", "false" });
 		input.addB(WizardL10n.l10n("opennetChoiceConnectFriends") + ":");
 		p.addLineBreak();
-		p.addI(WizardL10n.l10n("opennetChoicePro"));
+		p.addText(WizardL10n.l10n("opennetChoicePro"));
 		p.addText(": " + WizardL10n.l10n("opennetChoiceConnectFriendsPRO") + "¹");
 		p.addLineBreak();
-		p.addI(WizardL10n.l10n("opennetChoiceCon"));
+		p.addText(WizardL10n.l10n("opennetChoiceCon"));
 		p.addText(": " + WizardL10n.l10n("opennetChoiceConnectFriendsCON", "minfriends", "5"));
 
 		p = form.addChild(new BlockText());
@@ -38,10 +39,10 @@ public class OPENNET implements Step {
 		        new String[] { "radio", "opennet", "true" });
 		input.addB(WizardL10n.l10n("opennetChoiceConnectStrangers") + ":");
 		p.addLineBreak();
-		p.addI(WizardL10n.l10n("opennetChoicePro"));
+		p.addText(WizardL10n.l10n("opennetChoicePro"));
 		p.addText(": " + WizardL10n.l10n("opennetChoiceConnectStrangersPRO"));
 		p.addLineBreak();
-		p.addI(WizardL10n.l10n("opennetChoiceCon"));
+		p.addText(WizardL10n.l10n("opennetChoiceCon"));
 		p.addText(": " + WizardL10n.l10n("opennetChoiceConnectStrangersCON"));
 
 		form.addChild("input",
@@ -53,7 +54,7 @@ public class OPENNET implements Step {
 
 		Box foot = new Box(Category.TOGGLEABLE);
 		infoboxContent.addChild(foot);
-		foot.addI("¹: " + WizardL10n.l10n("opennetChoiceHowSafeIsFreenetToggle"));
+		foot.addInlineBox(Category.ITALIC, "¹: " + WizardL10n.l10n("opennetChoiceHowSafeIsFreenetToggle"));
 		Box footHidden = foot.addBox(Category.HIDDEN);
 		OutputList footList = footHidden.addList(OutputList.Type.ORDERED, Category.NULL);
 		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetStupid"));

@@ -62,8 +62,8 @@ public class ConnectivityToadlet extends Toadlet {
 			connectivityPage.content.addChild(core.alerts.createSummary());
 		}
 		// our ports
-		InfoboxWidget portInfobox =
-			connectivityPage.content.addInfobox(InfoboxWidget.Type.NORMAL, l10nConn("nodePortsTitle"));
+		Infobox portInfobox =
+			connectivityPage.content.addInfobox(Infobox.Type.NORMAL, l10nConn("nodePortsTitle"));
 		OutputList portInfoList = portInfobox.body.addList();
 		SimpleFieldSet fproxyConfig = node.config.get("fproxy").exportFieldSet(true);
 		SimpleFieldSet fcpConfig = node.config.get("fcp").exportFieldSet(true);
@@ -105,10 +105,10 @@ public class ConnectivityToadlet extends Toadlet {
 		// Add connection type box.
 		node.ipDetector.addConnectionTypeBox(connectivityPage.content);
 		UdpSocketHandler[] handlers = node.getPacketSocketHandlers();
-		InfoboxWidget ConnectivitySummary = connectivityPage.content
-			.addInfobox(InfoboxWidget.Type.WTF, Identifier.CONNECTIVITYSUMMARY,
+		Infobox connectivitySummary = connectivityPage.content
+			.addInfobox(Infobox.Type.WTF, Identifier.CONNECTIVITYSUMMARY,
 				NodeL10n.getBase().getString("ConnectivityToadlet.summaryTitle"));
-		Table SummaryTable = ConnectivitySummary.body.addTable();
+		Table SummaryTable = connectivitySummary.body.addTable();
 		for (int i = 0; i < handlers.length; i++) {
 			UdpSocketHandler handler = handlers[i];
 			AddressTracker tracker = handlers[i].getAddressTracker();
@@ -126,7 +126,7 @@ public class ConnectivityToadlet extends Toadlet {
 				// Peers
 				AddressTracker tracker = handlers[i].getAddressTracker();
 				SummaryTable = connectivityPage.content
-					.addInfobox(InfoboxWidget.Type.WTF, Category.CONNECTIVITYPORT,
+					.addInfobox(Infobox.Type.WTF, Category.CONNECTIVITYPORT,
 						NodeL10n.getBase().getString("ConnectivityToadlet.byPortTitle",
 							new String[]{"port", "status", "tunnelLength"},
 							new String[]{handlers[i].getTitle(), AddressTracker
@@ -168,7 +168,7 @@ public class ConnectivityToadlet extends Toadlet {
 				}
 				// IPs
 				SummaryTable = connectivityPage.content
-					.addInfobox(InfoboxWidget.Type.WTF, Category.CONNECTIVITYIP,
+					.addInfobox(Infobox.Type.WTF, Category.CONNECTIVITYIP,
 						NodeL10n.getBase()
 						.getString("ConnectivityToadlet.byIPTitle",
 							new String[]{"ip", "status", "tunnelLength"},
