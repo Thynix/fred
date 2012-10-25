@@ -4,7 +4,6 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.RootPanel;
-
 import freenet.client.tools.TimeUtil;
 
 /** This class increments/decrements the time counters in the page. */
