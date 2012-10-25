@@ -1,15 +1,17 @@
 package freenet.clients.http;
 
-import java.io.IOException;
-import java.net.URI;
-import java.text.ParseException;
-import java.util.Date;
-
 import freenet.clients.http.FProxyFetchInProgress.REFILTER_POLICY;
+import freenet.clients.http.uielements.Form;
+import freenet.clients.http.uielements.Identifier;
 import freenet.support.HTMLNode;
 import freenet.support.MultiValueTable;
 import freenet.support.api.Bucket;
 import freenet.support.api.BucketFactory;
+
+import java.io.IOException;
+import java.net.URI;
+import java.text.ParseException;
+import java.util.Date;
 
 /**
  * Object represents context for a single request. Is used as a token,
@@ -94,6 +96,16 @@ public interface ToadletContext {
 	 * @return The form HTMLNode.
 	 */
 	HTMLNode addFormChild(HTMLNode parentNode, String target, String id);
+
+	/**
+	 * Return a form node to the caller. This will have the correct enctype and
+	 * formPassword set already, so all the caller needs to do is add its specific fields and attach the returned
+	 * form to a node.
+	 * @param target Where the form should be POSTed to.
+	 * @param id HTML name for the form for stylesheet/script access. Will be added as both id and name.
+	 * @return The Form object.
+	 */
+	Form getForm(String target, Identifier id);
 
 	/** Is this Toadlet allowed full access to the node, including the ability to reconfigure it,
 	 * restart it etc? */
