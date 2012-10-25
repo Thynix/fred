@@ -2,6 +2,7 @@ package freenet.clients.http;
 
 import freenet.support.HTMLNode;
 
+@Deprecated
 public class InfoboxNode {
 
 	public final HTMLNode outer;
