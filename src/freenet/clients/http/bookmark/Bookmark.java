@@ -12,8 +12,10 @@ public abstract class Bookmark {
 	}
 
 	public String getVisibleName() {
-		if(name.startsWith("L10N:"))
-			return NodeL10n.getBase().getString("Bookmarks.Defaults.Name."+name.substring("L10N:".length()));
+		if (name.startsWith("L10N:")) {
+			return NodeL10n.getBase()
+				.getString("Bookmarks.Defaults.Name." + name.substring("L10N:".length()));
+		}
 		return name;
 	}
 
@@ -23,15 +25,19 @@ public abstract class Bookmark {
 
 	@Override
 	public boolean equals(Object o) {
-		if(o == this)
+		if (o == this) {
 			return true;
-		if(o instanceof Bookmark) {
+		}
+		if (o instanceof Bookmark) {
 			Bookmark b = (Bookmark) o;
-			if(!b.name.equals(name))
+			if (! b.name.equals(name)) {
 				return false;
-			return true;
-		} else
+			} else {
+				return true;
+			}
+		} else {
 			return false;
+		}
 	}
 
 	@Override
