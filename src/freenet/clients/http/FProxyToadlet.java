@@ -317,7 +317,7 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 			NodeL10n.getBase().addL10nSubstitution(optionForm, "FProxyToadlet.downloadInBackgroundToDisk",
 			        new String[] { "dir", "page" },
 			        new HTMLNode[] { new Input(Input.Type.TEXT, "path", downloadLocation,
-				                (int) downloadLocation.length(),
+				                downloadLocation.length(),
 				                (short) QueueToadlet.MAX_FILENAME_LENGTH),
 			                DOWNLOADS_LINK });
 			optionForm.addInput(Input.Type.SUBMIT, "select-location",
