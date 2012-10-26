@@ -8,8 +8,7 @@ import freenet.client.HighLevelSimpleClient;
 import freenet.client.InsertBlock;
 import freenet.client.InsertException;
 import freenet.clients.http.PageMaker.RenderParameters;
-import freenet.clients.http.bookmark.BookmarkCategory;
-import freenet.clients.http.bookmark.BookmarkItem;
+import freenet.clients.http.bookmark.BookmarkList;
 import freenet.clients.http.bookmark.BookmarkManager;
 import freenet.clients.http.uielements.*;
 import freenet.keys.FreenetURI;
@@ -30,7 +29,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashSet;
-import java.util.List;
 
 public class WelcomeToadlet extends Toadlet {
 
@@ -73,42 +71,6 @@ public class WelcomeToadlet extends Toadlet {
 		headers.put("Location", "/");
 		ctx.sendReplyHeaders(302, "Found", headers, null, 0);
 		return;
-	}
-
-	private void addCategoryToList(BookmarkCategory cat, OutputList list, boolean noActiveLinks, ToadletContext ctx) {
-		if(ctx.getPageMaker().getTheme().forceActivelinks) {
-			noActiveLinks = false;
-		}
-		List<BookmarkItem> items = cat.getItems();
-		if (items.size() > 0) {
-		// FIXME CSS noborder ...
-			Table table = list.addItem().addTable(Category.BOOKMARKLIST);
-			for (int i = 0; i < items.size(); i++) {
-				BookmarkItem item = items.get(i);
-				Row bookmarkItemRow = table.addRow(Category.BOOKMARKLIST);
-				if (item.hasAnActivelink() && !noActiveLinks) {
-					String initialKey = item.getKey();
-					String key = '/' + initialKey + (initialKey.endsWith("/") ? "" : "/") + "activelink.png";
-					bookmarkItemRow.addCell(Category.BOOKMARKLIST).addLink('/' + item.getKey()).addChild("img", new String[]{"src", "height", "width", "alt", "title"},
-						new String[]{key, "36", "108", "activelink", item.getDescription()});
-				} else {
-					bookmarkItemRow.addCell(Category.BOOKMARKLIST).addText(" ");
-				}
-				Cell linkCell = bookmarkItemRow.addCell(Category.BOOKMARKLIST);
-				linkCell.addLink('/' + item.getKey(), item.getDescription(), Category.BOOKMARKTITLE, item.getVisibleName());
-				String explain = item.getShortDescription();
-				if (explain != null && explain.length() > 0) {
-					linkCell.addText(" (");
-					linkCell.addText(explain);
-					linkCell.addText(")");
-				}
-			}
-		}
-		List<BookmarkCategory> cats = cat.getSubCategories();
-		for (int i = 0; i < cats.size(); i++) {
-			list.addItem(Category.CAT, cats.get(i).getVisibleName());
-			addCategoryToList(cats.get(i), list.addItem().addList(), noActiveLinks, ctx);
-		}
 	}
 
 	private void putFetchKeyBox(ToadletContext ctx, HTMLNode contentNode) {
@@ -423,7 +385,7 @@ public class WelcomeToadlet extends Toadlet {
 					for (DarknetPeerNode peer : node.getDarknetConnections()) {
 						Row peerRow = peerTable.addRow(Category.DARKNETCONNECTIONSNORMAL);
 						peerRow.addCell(Category.PEERMARKER)
-							.addInput("node_" + peer.hashCode(),Input.Type.CHECKBOX);
+							.addInput("node_" + peer.hashCode(), Input.Type.CHECKBOX);
 						peerRow.addCell(Category.PEERNAME).addText(peer.getName());
 					}
 					addForm.addChild("label", "for", "descB",
@@ -436,7 +398,7 @@ public class WelcomeToadlet extends Toadlet {
 				}
 				addForm.addLineBreak();
 				addForm.addInput(Input.Type.SUBMIT, "addbookmark",
-						NodeL10n.getBase().getString("BookmarkEditorToadlet.addBookmark"));
+					NodeL10n.getBase().getString("BookmarkEditorToadlet.addBookmark"));
 				this.writeHTMLReply(ctx, 200, "OK", page.generate());
 				return;
 			} else if (uri.getQuery() != null && uri.getQuery().startsWith("_CHECKED_HTTP_=")) {
@@ -465,26 +427,24 @@ public class WelcomeToadlet extends Toadlet {
 			this.putFetchKeyBox(ctx, page.content);
 		}
 		// Bookmarks
-		Infobox bookmarkBox = page.content.addInfobox(Infobox.Type.NORMAL,null);
+		Infobox bookmarkBox = page.content.addInfobox(Infobox.Type.NORMAL, null);
 		bookmarkBox.addClass(Category.BOOKMARKSBOX);
 		bookmarkBox.header.addLink(Category.BOOKMARKSHEADERTEXT,
-			NodeL10n.getBase().getString("BookmarkEditorToadlet.myBookmarksExplanation"),
-			NodeL10n.getBase().getString("BookmarkEditorToadlet.myBookmarksTitle"));
+		                           NodeL10n.getBase().getString("BookmarkEditorToadlet.myBookmarksExplanation"),
+		                           NodeL10n.getBase().getString("BookmarkEditorToadlet.myBookmarksTitle"));
 		OutputNode editLink = new Text();
 		editLink.addInlineBox(Category.EDITBRACKET, "[");
 		editLink.addInlineBox(Identifier.BOOKMARKEDIT).addLink("/bookmarkEditor/", Category.INTERFACELINK,
-			NodeL10n.getBase().getString("BookmarkEditorToadlet.edit"));
+		                                                       NodeL10n.getBase().getString(
+			                                                       "BookmarkEditorToadlet.edit"));
 		editLink.addInlineBox(Category.EDITBRACKET, "]");
 		if (ctx.isAllowedFullAccess()) {
 			bookmarkBox.header.addChild(editLink);
 		}
-		OutputList bookmarksList = bookmarkBox.body.addList(Identifier.BOOKMARKS);
-		if (ctx.isAllowedFullAccess() || !ctx.getContainer().publicGatewayMode()) {
-			addCategoryToList(BookmarkManager.MAIN_CATEGORY, bookmarksList, (!container.enableActivelinks()) || (useragent != null && useragent.contains("khtml") && !useragent.contains("chrome")), ctx);
-		}
-		else {
-			addCategoryToList(BookmarkManager.DEFAULT_CATEGORY, bookmarksList, (!container.enableActivelinks()) || (useragent != null && useragent.contains("khtml") && !useragent.contains("chrome")), ctx);
-		}
+		bookmarkBox.body.addList(
+			new BookmarkList((ctx.getContainer().publicGatewayMode() || ! (ctx.isAllowedFullAccess())),
+			                 (ctx.getPageMaker().getTheme().forceActivelinks ||
+			                  container.enableActivelinks())));
 		// Search Box
 		// FIXME search box is BELOW bookmarks for now, until we get search fixed properly.
 		Infobox searchBox = page.content.addInfobox(Infobox.Type.NORMAL, null);
