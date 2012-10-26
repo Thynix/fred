@@ -3,18 +3,16 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.clients.http;
 
-import freenet.clients.http.FProxyFetchInProgress.REFILTER_POLICY;
-import freenet.clients.http.PageMaker.THEME;
-import freenet.clients.http.uielements.Form;
-import freenet.clients.http.uielements.Identifier;
-import freenet.pluginmanager.FredPluginL10n;
-import freenet.support.HTMLNode;
-import freenet.support.api.BucketFactory;
-
 import java.io.File;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import freenet.clients.http.FProxyFetchInProgress.REFILTER_POLICY;
+import freenet.clients.http.PageMaker.THEME;
+import freenet.pluginmanager.FredPluginL10n;
+import freenet.support.HTMLNode;
+import freenet.support.api.BucketFactory;
 
 /** Interface for toadlet containers. Toadlets should register here. */
 public interface ToadletContainer {
@@ -84,8 +82,6 @@ public interface ToadletContainer {
 	public boolean doRobots();
 
 	public HTMLNode addFormChild(HTMLNode parentNode, String target, String name);
-
-	public Form getForm(String target, Identifier name);
 
 	public boolean enablePersistentConnections();
 

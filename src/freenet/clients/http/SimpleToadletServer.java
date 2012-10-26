@@ -8,8 +8,6 @@ import freenet.client.filter.LinkFilterExceptionProvider;
 import freenet.clients.http.FProxyFetchInProgress.REFILTER_POLICY;
 import freenet.clients.http.PageMaker.THEME;
 import freenet.clients.http.bookmark.BookmarkManager;
-import freenet.clients.http.uielements.Form;
-import freenet.clients.http.uielements.Identifier;
 import freenet.clients.http.uielements.Input;
 import freenet.clients.http.updateableelements.PushDataManager;
 import freenet.config.EnumerableOptionCallback;
@@ -1093,12 +1091,6 @@ public final class SimpleToadletServer implements ToadletContainer, Runnable, Li
 		HTMLNode formNode =
 			parentNode.addBox()
 			.addForm(target, "post", "multipart/form-data", "utf-8", id);
-		formNode.addInput(Input.Type.HIDDEN, "formPassword", getFormPassword());
-		return formNode;
-	}
-
-	public Form getForm(String target, Identifier id) {
-		Form formNode = new Form(target, "post", "multipart/form-data", "utf-8", id);
 		formNode.addInput(Input.Type.HIDDEN, "formPassword", getFormPassword());
 		return formNode;
 	}
