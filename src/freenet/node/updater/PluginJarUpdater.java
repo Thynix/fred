@@ -1,11 +1,10 @@
 package freenet.node.updater;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import freenet.client.FetchResult;
 import freenet.clients.http.PproxyToadlet;
 import freenet.clients.http.uielements.Box;
 import freenet.clients.http.uielements.Form;
+import freenet.clients.http.uielements.Input;
 import freenet.keys.FreenetURI;
 import freenet.l10n.NodeL10n;
 import freenet.node.RequestClient;
@@ -19,6 +18,8 @@ import freenet.support.Logger;
 import freenet.support.api.Bucket;
 import freenet.support.io.BucketTools;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class PluginJarUpdater extends NodeUpdater {
@@ -182,15 +183,10 @@ public class PluginJarUpdater extends NodeUpdater {
 							// written it yet.
 							Form formNode =
 								updatedPlugin.addForm(PproxyToadlet.PATH, "post");
-							formNode.addChild("input",
-								new String[]{"type", "name", "value"},
-								new String[]{"hidden", "formPassword",
-									node.clientCore.formPassword});
-							formNode.addChild("input",
-								new String[]{"type", "name", "value"},
-								new String[]{"hidden", "update", pluginName});
-							formNode.addChild("input", new String[]{"type", "value"},
-								new String[]{"submit", l10n("updatePlugin")});
+							formNode.addInput(Input.Type.HIDDEN, "formPassword",
+								node.clientCore.formPassword);
+							formNode.addInput(Input.Type.HIDDEN, "update", pluginName);
+							formNode.addInput(Input.Type.SUBMIT, l10n("updatePlugin"));
 						}
 					}
 					return updatedPlugin;

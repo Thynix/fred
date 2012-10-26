@@ -128,12 +128,8 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 	 * @param persistence Additional persistence fields to include.
 	 */
 	protected void createSelectDirectoryButton (HTMLNode node, String absolutePath, HTMLNode persistence) {
-		node.addChild("input",
-		        new String[]{"type", "name", "value"},
-		        new String[]{"submit", selectDir, l10n("insert")});
-		node.addChild("input",
-		        new String[]{"type", "name", "value"},
-		        new String[]{"hidden", filenameField(), absolutePath});
+		node.addInput(Input.Type.SUBMIT, selectDir, l10n("insert"));
+		node.addInput(Input.Type.HIDDEN, filenameField(), absolutePath);
 		node.addChild(persistence);
 	}
 
@@ -144,12 +140,8 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 	 * @param persistence Additional persistence fields to include.
 	 */
 	protected void createSelectFileButton (HTMLNode node, String absolutePath, HTMLNode persistence) {
-		node.addChild("input",
-		        new String[]{"type", "name", "value"},
-		        new String[]{"submit", selectFile, l10n("insert")});
-		node.addChild("input",
-		        new String[]{"type", "name", "value"},
-		        new String[]{"hidden", filenameField(), absolutePath});
+		node.addInput(Input.Type.SUBMIT, selectFile, l10n("insert"));
+		node.addInput(Input.Type.HIDDEN, filenameField(), absolutePath);
 		node.addChild(persistence);
 	}
 
@@ -160,12 +152,8 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 	 * @param persistence Additional persistence fields to include.
 	 */
 	private void createChangeDirButton (HTMLNode node, String buttonText, String path, HTMLNode persistence) {
-		node.addChild("input",
-		        new String[]{"type", "name", "value"},
-		        new String[]{"submit", changeDir, buttonText});
-		node.addChild("input",
-		        new String[]{"type", "name", "value"},
-		        new String[]{"hidden", "path", path});
+		node.addInput(Input.Type.SUBMIT, changeDir, buttonText);
+		node.addInput(Input.Type.HIDDEN, "path", path);
 		node.addChild(persistence);
 	}
 	
@@ -204,9 +192,7 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 		Box result = new Box();
 		result.setID(Identifier.PERSISTENCEFIELDS);
 		for (String key : fieldPairs.keySet()) {
-			result.addChild("input", 
-				new String[] { "type", "name", "value" },
-				new String[] { "hidden", key, fieldPairs.get(key)});
+			result.addInput(Input.Type.HIDDEN, key, fieldPairs.get(key));
 		}
 		return result;
 	}

@@ -206,9 +206,9 @@ public class UserAlertManager implements Comparator<UserAlert> {
 		userAlertNode.body.addChild(userAlert.getHTMLText());
 		if (userAlert.userCanDismiss()) {
 			Box dismissFormNode = userAlertNode.body.addForm("/alerts/", "post").addBox();
-			dismissFormNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "disable", String.valueOf(userAlert.hashCode()) });
-			dismissFormNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", core.formPassword });
-			dismissFormNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "dismiss-user-alert", userAlert.dismissButtonText() });
+			dismissFormNode.addInput(Input.Type.HIDDEN, "disable", String.valueOf(userAlert.hashCode()));
+			dismissFormNode.addInput(Input.Type.HIDDEN, "formPassword", core.formPassword);
+			dismissFormNode.addInput(Input.Type.SUBMIT, "dismiss-user-alert", userAlert.dismissButtonText());
 		}
 		return userAlertNode;
 	}

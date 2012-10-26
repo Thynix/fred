@@ -35,8 +35,7 @@ public class ChatForumsToadlet extends Toadlet implements LinkEnabledCallback {
 		chatList.body.addChild(new BlockText(l10n("freetalkRecommended")));
 		chatList.body.addChild(new BlockText(l10n("freetalkCaveat")));
 		ctx.addFormChild(chatList.body, path(), "loadFreetalkButton")
-			.addInput(
-				new String[]{"submit", "loadFreetalk", l10n("freetalkButton")});
+			.addInput(Input.Type.SUBMIT, "loadFreetalk", l10n("freetalkButton"));
 		chatList.body.addChild(new BlockText(l10n("othersIntro")));
 		OutputList chatPluginList = new OutputList();
 		chatList.body.addChild(chatPluginList);

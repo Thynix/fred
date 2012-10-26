@@ -10,6 +10,7 @@ import freenet.clients.http.PageMaker.THEME;
 import freenet.clients.http.bookmark.BookmarkManager;
 import freenet.clients.http.uielements.Form;
 import freenet.clients.http.uielements.Identifier;
+import freenet.clients.http.uielements.Input;
 import freenet.clients.http.updateableelements.PushDataManager;
 import freenet.config.EnumerableOptionCallback;
 import freenet.config.InvalidConfigValueException;
@@ -1092,14 +1093,13 @@ public final class SimpleToadletServer implements ToadletContainer, Runnable, Li
 		HTMLNode formNode =
 			parentNode.addBox()
 			.addForm(target, "post", "multipart/form-data", "utf-8", id);
-		formNode.addChild("input", new String[] { "type", "name", "value" }, 
-				new String[] { "hidden", "formPassword", getFormPassword() });
+		formNode.addInput(Input.Type.HIDDEN, "formPassword", getFormPassword());
 		return formNode;
 	}
 
 	public Form getForm(String target, Identifier id) {
 		Form formNode = new Form(target, "post", "multipart/form-data", "utf-8", id);
-		formNode.addInput("hidden", "formPassword", getFormPassword());
+		formNode.addInput(Input.Type.HIDDEN, "formPassword", getFormPassword());
 		return formNode;
 	}
 

@@ -879,17 +879,17 @@ public abstract class ConnectionsToadlet extends Toadlet {
 		peerAdditionForm.addChild("textarea", new String[] { "id", "name", "rows", "cols" }, new String[] { "reftext", "ref", "8", "74" });
 		peerAdditionForm.addLineBreak();
 		peerAdditionForm.addText((l10n("urlReference") + ' '));
-		peerAdditionForm.addChild("input", new String[] { "id", "type", "name" }, new String[] { "refurl", "text", "url" });
+		peerAdditionForm.addInput(Input.Type.TEXT, "url",  Identifier.REFURL);
 		peerAdditionForm.addLineBreak();
 		peerAdditionForm.addText((l10n("fileReference") + ' '));
-		peerAdditionForm.addChild("input", new String[] { "id", "type", "name" }, new String[] { "reffile", "file", "reffile" });
+		peerAdditionForm.addInput(Input.Type.TEXT, "reffile",  Identifier.REFURL);
 		peerAdditionForm.addLineBreak();
 		if(!isOpennet) {
 			peerAdditionForm.addInlineBox(Category.BOLD, l10n("peerTrustTitle"));
 			peerAdditionForm.addText(" ");
 			peerAdditionForm.addText(l10n("peerTrustIntroduction"));
 			for(FRIEND_TRUST trust : FRIEND_TRUST.valuesBackwards()) { // FIXME reverse order
-				HTMLNode input = peerAdditionForm.addLineBreak().addChild("input", new String[] { "type", "name", "value" }, new String[] { "radio", "trust", trust.name() });
+				HTMLNode input = peerAdditionForm.addLineBreak().addInput(Input.Type.RADIO, "trust", trust.name());
 				input.addInlineBox(Category.BOLD, l10n("peerTrust." + trust.name())); // FIXME l10n
 				input.addText(": ");
 				input.addText(l10n("peerTrustExplain." + trust.name()));
@@ -900,7 +900,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 			peerAdditionForm.addText(" ");
 			peerAdditionForm.addText(l10n("peerVisibilityIntroduction"));
 			for(FRIEND_VISIBILITY trust : FRIEND_VISIBILITY.values()) { // FIXME reverse order
-				HTMLNode input = peerAdditionForm.addLineBreak().addChild("input", new String[] { "type", "name", "value" }, new String[] { "radio", "visibility", trust.name() });
+				HTMLNode input = peerAdditionForm.addLineBreak().addInput(Input.Type.RADIO, "visibility", trust.name());
 				input.addInlineBox(Category.BOLD, l10n("peerVisibility." + trust.name())); // FIXME l10n
 				input.addText(": ");
 				input.addText(l10n("peerVisibilityExplain." + trust.name()));
@@ -911,10 +911,10 @@ public abstract class ConnectionsToadlet extends Toadlet {
 		
 		if(!isOpennet) {
 			peerAdditionForm.addText((l10n("enterDescription") + ' '));
-			peerAdditionForm.addChild("input", new String[] { "id", "type", "name", "size", "maxlength", "value" }, new String[] { "peerPrivateNote", "text", "peerPrivateNote", "16", "250", "" });
+			peerAdditionForm.addInput(Input.Type.TEXT, "peerPrivateNote", "",  16, (short) 250, Identifier.PEERPRIVATENOTE);
 			peerAdditionForm.addLineBreak();
 		}
-		peerAdditionForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "add", l10n("add") });
+		peerAdditionForm.addInput(Input.Type.SUBMIT, "add", l10n("add"));
 	}
 
 	protected Comparator<PeerNodeStatus> comparator(String sortBy, boolean reversed) {
@@ -935,7 +935,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 		
 		if(enablePeerActions) {
 			// check box column
-			peerRow.addCell(Category.PEERMARKER).addChild("input", new String[]{"type", "name"}, new String[]{"checkbox", "node_" + peerNodeStatus.hashCode()});
+			peerRow.addCell(Category.PEERMARKER).addInput("node_" + peerNodeStatus.hashCode(), Input.Type.CHECKBOX);
 		}
 
 		// status column

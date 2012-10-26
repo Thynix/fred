@@ -109,21 +109,13 @@ public class TranslationToadlet extends Toadlet {
 				new String[]{"name", "rows", "cols"},
 				new String[]{"trans", "20", "80"},
 				this.base.getString(key));
-			contentRow.addChild("input",
-				new String[]{"type", "name", "value"},
-				new String[]{"hidden", "key", key
-				});
-			updateForm.addChild("input",
-				new String[]{"type", "name", "value"},
-				new String[]{"submit", "translation_update", l10n("updateTranslationCommand")
-				});
-			updateForm.addChild("input", new String[]{"type", "name",
-				(gotoNext ? "checked" : "unchecked")},
-				new String[]{"checkbox", "gotoNext", ""}, l10n("gotoNext"));
+			contentRow.addInput(Input.Type.HIDDEN, "key", key);
+			updateForm.addInput(Input.Type.SUBMIT, "translation_update", l10n("updateTranslationCommand"));
+			updateForm.addInput(Input.Type.CHECKBOX, "gotoNext", gotoNext).setContent(l10n("gotoNext"));
 			if (! showEverything) {
-				updateForm.addInput("hidden", "toTranslateOnly", key);
+				updateForm.addInput(Input.Type.HIDDEN, "toTranslateOnly", key);
 			}
-			updateForm.addInput("submit", "cancel", NodeL10n.getBase().getString("Toadlet.cancel"));
+			updateForm.addInput(Input.Type.SUBMIT, "cancel", NodeL10n.getBase().getString("Toadlet.cancel"));
 			this.writeHTMLReply(ctx, 200, "OK", page.generate());
 			return;
 		} else if (request.isParameterSet("remove")) {
@@ -139,11 +131,11 @@ public class TranslationToadlet extends Toadlet {
 				ctx.addFormChild(confirmRemove.body.addChild(new BlockText()), TOADLET_URL,
 					"remove_confirmed");
 			if (! showEverything) {
-				removeForm.addInput("hidden", "toTranslateOnly", key);
+				removeForm.addInput(Input.Type.HIDDEN, "toTranslateOnly", key);
 			}
-			removeForm.addInput("hidden", "remove_confirm", key);
-			removeForm.addInput("submit", "remove_confirmed", l10n("remove"));
-			removeForm.addInput("submit", "cancel", NodeL10n.getBase().getString("Toadlet.cancel"));
+			removeForm.addInput(Input.Type.HIDDEN, "remove_confirm", key);
+			removeForm.addInput(Input.Type.SUBMIT, "remove_confirmed", l10n("remove"));
+			removeForm.addInput(Input.Type.SUBMIT, "cancel", NodeL10n.getBase().getString("Toadlet.cancel"));
 			this.writeHTMLReply(ctx, 200, "OK", page.generate());
 			return;
 		}
@@ -168,7 +160,7 @@ public class TranslationToadlet extends Toadlet {
 				option.addAttribute("selected", "selected");
 			}
 		}
-		translatingForForm.addChild("input", "type", "submit");
+		translatingForForm.addInput(Input.Type.SUBMIT);
 		Box translationNode = page.content.addBox(Category.TRANSLATION);
 		BlockText translationHeaderNode = translationNode.addBlockText();
 		translationHeaderNode

@@ -3,17 +3,12 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.pluginmanager;
 
-import java.util.Collection;
-import java.util.Collections;
 import com.db4o.ObjectContainer;
 import freenet.client.HighLevelSimpleClient;
 import freenet.clients.http.PageMaker.THEME;
 import freenet.clients.http.QueueToadlet;
 import freenet.clients.http.Toadlet;
-import freenet.clients.http.uielements.BlockText;
-import freenet.clients.http.uielements.Box;
-import freenet.clients.http.uielements.Cell;
-import freenet.clients.http.uielements.Form;
+import freenet.clients.http.uielements.*;
 import freenet.config.Config;
 import freenet.config.InvalidConfigValueException;
 import freenet.config.NodeNeedRestartException;
@@ -556,17 +551,17 @@ public class PluginManager {
 					p.addText(l10n("officialPluginLoadFailedSuggestTryAgainHTTPS"));
 
 				Form reloadForm = box.addForm("/plugins/", "post");
-				reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", node.clientCore.formPassword });
-				reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "plugin-name", filename });
-				reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "pluginSource", "https" });
-				reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "submit-official", l10n("officialPluginLoadFailedTryAgain") });
+				reloadForm.addInput(Input.Type.HIDDEN, "formPassword", node.clientCore.formPassword);
+				reloadForm.addInput(Input.Type.HIDDEN, "plugin-name", filename);
+				reloadForm.addInput(Input.Type.HIDDEN, "pluginSource", "https");
+				reloadForm.addInput(Input.Type.SUBMIT, "submit-official", l10n("officialPluginLoadFailedTryAgain"));
 
 				if(!stillTryingOverFreenet) {
 					reloadForm = box.addForm("/plugins/", "post");
-					reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", node.clientCore.formPassword });
-					reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "plugin-name", filename });
-					reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "pluginSource", "freenet" });
-					reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "submit-official", l10n("officialPluginLoadFailedTryAgainFreenet") });
+					reloadForm.addInput(Input.Type.HIDDEN, "formPassword", node.clientCore.formPassword);
+					reloadForm.addInput(Input.Type.HIDDEN, "plugin-name", filename);
+					reloadForm.addInput(Input.Type.HIDDEN, "pluginSource", "freenet");
+					reloadForm.addInput(Input.Type.SUBMIT, "submit-official", l10n("officialPluginLoadFailedTryAgainFreenet"));
 				}
 			}
 			return box;

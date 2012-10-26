@@ -398,8 +398,7 @@ public final class PageMaker {
 		template.root.body.setID(filterCSSIdentifier("page-" + activePath));
 		//Add a hidden input that has the request's id
 		if (webPushingEnabled) {
-			template.root.body.addChild("input", new String[]{"type", "name", "value", "id"},
-				new String[]{"hidden", "requestId", ctx.getUniqueId(), "requestId"});
+			template.root.body.addInput(Input.Type.HIDDEN, "requestId", ctx.getUniqueId(), Identifier.REQUESTID);
 		}
 		// Add the client-side localization only when pushing is enabled
 		if (webPushingEnabled) {

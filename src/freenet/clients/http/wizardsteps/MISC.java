@@ -1,9 +1,9 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
-import freenet.clients.http.uielements.BlockText;
 import freenet.clients.http.uielements.Box;
 import freenet.clients.http.uielements.Infobox;
+import freenet.clients.http.uielements.Input;
 import freenet.config.Config;
 import freenet.config.ConfigException;
 import freenet.l10n.NodeL10n;
@@ -32,27 +32,17 @@ public class MISC implements Step {
 		Infobox autoUpdate = form.addInfobox(Infobox.Type.NORMAL, WizardL10n.l10n("autoUpdate"));
 		Box miscInfoboxContent = autoUpdate.body;
 
-		miscInfoboxContent.addChild(new BlockText(WizardL10n.l10n("autoUpdateLong")));
-		miscInfoboxContent.addChild(new BlockText()).addChild("input",
-		        new String[] { "type", "checked", "name", "value" },
-		        new String[] { "radio", "on", "autodeploy", "true" }, WizardL10n.l10n("autoUpdateAutodeploy"));
-		miscInfoboxContent.addChild(new BlockText()).addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "radio", "autodeploy", "false" }, WizardL10n.l10n("autoUpdateNoAutodeploy"));
+		miscInfoboxContent.addBlockText(WizardL10n.l10n("autoUpdateLong"));
+		miscInfoboxContent.addText().addInput(Input.Type.RADIO, "autodeploy", "true", true).setContent(WizardL10n.l10n("autoUpdateAutodeploy"));
+		miscInfoboxContent.addBlockText().addInput(Input.Type.RADIO, "autodeploy", "false").setContent(WizardL10n.l10n("autoUpdateNoAutodeploy"));
 
 		Infobox plugins = form.addInfobox(Infobox.Type.NORMAL, WizardL10n.l10n("plugins"));
 		miscInfoboxContent = plugins.body;
 
-		miscInfoboxContent.addChild(new BlockText(WizardL10n.l10n("pluginsLong")));
-		miscInfoboxContent.addChild(new BlockText()).addChild("input",
-		        new String[] { "type", "checked", "name", "value" },
-		        new String[] { "checkbox", "on", "upnp", "true" }, WizardL10n.l10n("enableUPnP"));
-		miscInfoboxContent.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "back", NodeL10n.getBase().getString("Toadlet.back")});
-		miscInfoboxContent.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "next", NodeL10n.getBase().getString("Toadlet.next")});
+		miscInfoboxContent.addBlockText(WizardL10n.l10n("pluginsLong"));
+		miscInfoboxContent.addBlockText().addInput(Input.Type.CHECKBOX, "upnp", "true", true).setContent(WizardL10n.l10n("enableUPnP"));
+		miscInfoboxContent.addInput(Input.Type.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
+		miscInfoboxContent.addInput(Input.Type.SUBMIT, "next", NodeL10n.getBase().getString("Toadlet.next"));
 	}
 
 	@Override

@@ -82,14 +82,14 @@ public class IPUndetectedUserAlert extends AbstractUserAlert {
 		addPortForwardSuggestion(textNode);
 		
 		Form formNode = textNode.addForm("/config/"+sc.getPrefix(), "post");
-		formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", node.clientCore.formPassword });
-		formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "subconfig", sc.getPrefix() });
+		formNode.addInput(Input.Type.HIDDEN, "formPassword", node.clientCore.formPassword);
+		formNode.addInput(Input.Type.HIDDEN, "subconfig", sc.getPrefix());
 		OutputList listNode =formNode.addList(Category.CONFIG);
 		Item itemNode = listNode.addItem();
-		itemNode.addInlineBox(Category.CONFIGSHORTDESC, NodeL10n.getBase().getString(o.getShortDesc())).addChild("input", new String[] { "type", "name", "value" }, new String[] { "text", sc.getPrefix() + ".tempIPAddressHint", o.getValueString() });
+		itemNode.addInlineBox(Category.CONFIGSHORTDESC, NodeL10n.getBase().getString(o.getShortDesc())).addInput(Input.Type.TEXT, sc.getPrefix() + ".tempIPAddressHint", o.getValueString());
 		itemNode.addInlineBox(Category.CONFIGLONGDESC, NodeL10n.getBase().getString(o.getLongDesc()));
-		formNode.addChild("input", new String[] { "type", "value" }, new String[] { "submit", NodeL10n.getBase().getString("UserAlert.apply") });
-		formNode.addChild("input", new String[] { "type", "value" }, new String[] { "reset", NodeL10n.getBase().getString("UserAlert.reset") });
+		formNode.addInput(Input.Type.SUBMIT, NodeL10n.getBase().getString("UserAlert.apply"));
+		formNode.addInput(Input.Type.RESET, NodeL10n.getBase().getString("UserAlert.reset"));
 		
 		return textNode;
 	}

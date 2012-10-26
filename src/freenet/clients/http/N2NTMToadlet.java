@@ -286,9 +286,7 @@ public class N2NTMToadlet extends Toadlet {
 		HTMLNode messageForm = ctx.addFormChild(sendForm, "/send_n2ntm/", "sendN2NTMForm");
 		// Iterate peers
 		for (String peerNodeHash : peers.keySet()) {
-			messageForm.addChild("input", new String[]{"type", "name",
-				"value"}, new String[]{"hidden", "node_" + peerNodeHash,
-				"1"});
+			messageForm.addInput(Input.Type.HIDDEN, "node_" + peerNodeHash,"1");
 		}
 		messageForm.addChild("textarea", new String[]{"id", "name", "rows",
 			"cols"}, new String[]{"n2ntmtext", "message", "8", "74"});
@@ -298,7 +296,7 @@ public class N2NTMToadlet extends Toadlet {
 			messageForm.addLineBreak();
 			messageForm.addText(NodeL10n.getBase().getString("QueueToadlet.insertFileBrowseLabel") + ":" +
 				" ");
-			messageForm.addInput("submit", "n2nm-browse",
+			messageForm.addInput(Input.Type.SUBMIT, "n2nm-browse",
 					NodeL10n.getBase().getString("QueueToadlet.insertFileBrowseButton") + "...");
 			messageForm.addLineBreak();
 		}
@@ -308,10 +306,10 @@ public class N2NTMToadlet extends Toadlet {
 					true)));
 			messageForm.addLineBreak();
 			messageForm.addText(NodeL10n.getBase().getString("QueueToadlet.insertFileLabel") + ": ");
-			messageForm.addInput("file", "n2nm-upload", "");
+			messageForm.addInput(Input.Type.FILE, "n2nm-upload", "");
 			messageForm.addLineBreak();
 		}
-		messageForm.addInput("submit", "send", l10n("sendMessageShort"));
+		messageForm.addInput(Input.Type.SUBMIT, "send", l10n("sendMessageShort"));
 	}
 
 	@Override

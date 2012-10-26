@@ -56,27 +56,17 @@ public class BANDWIDTH_MONTHLY extends BandwidthManipulator implements Step {
 			//ISPs are likely to list limits in GB instead of GiB, so display GB here.
 			row.addCell(String.valueOf(cap/GB)+" GB");
 			HTMLNode selectForm = helper.addFormChild(row.addCell(), ".", "limit");
-			selectForm.addChild("input",
-			        new String[] { "type", "name", "value" },
-			        new String[] { "hidden", "capTo", String.valueOf(cap)});
-			selectForm.addChild("input",
-			        new String[] { "type", "value" },
-			        new String[] { "submit", WizardL10n.l10n("bandwidthSelect")});
+			selectForm.addInput(Input.Type.HIDDEN, "capTo", String.valueOf(cap));
+			selectForm.addInput(Input.Type.SUBMIT, WizardL10n.l10n("bandwidthSelect"));
 		}
 
 		//Row for custom entry
 		HTMLNode customForm = helper.addFormChild(table.addRow(), ".", "custom-form");
-		customForm.addChild("td").addChild("input",
-			new String[]{"type", "name"},
-			new String[]{"text", "capTo"});
-		customForm.addChild("td").addChild("input",
-			new String[]{"type", "value"},
-			new String[]{"submit", WizardL10n.l10n("bandwidthSelect")});
+		customForm.addChild("td").addInput("capTo", Input.Type.TEXT);
+		customForm.addChild("td").addInput(Input.Type.SUBMIT, WizardL10n.l10n("bandwidthSelect"));
 
 		HTMLNode backForm = helper.addFormChild(infoBox, ".", "backForm");
-		backForm.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "back", NodeL10n.getBase().getString("Toadlet.back")});
+		backForm.addInput(Input.Type.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
 	}
 
 	@Override

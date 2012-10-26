@@ -45,15 +45,15 @@ public class MeaningfulNodeNameUserAlert extends AbstractUserAlert {
 		HTMLNode textNode = alertNode.addChild(new Box());
 		textNode.addText(l10n("noNodeNick"));
 		Form formNode = alertNode.addForm("/config/" + sc.getPrefix(), "post");
-		formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", node.clientCore.formPassword });
-		formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "subconfig", sc.getPrefix() });
+		formNode.addInput(Input.Type.HIDDEN, "formPassword", node.clientCore.formPassword);
+		formNode.addInput(Input.Type.HIDDEN, "subconfig", sc.getPrefix());
 		OutputList listNode = formNode.addList(Category.CONFIG);
 		Item itemNode = listNode.addItem();
 		itemNode.addInlineBox(NodeL10n.getBase().getString("ConfigToadlet.defaultIs"), Category.CONFIGSHORTDESC).addChild(NodeL10n.getBase().getHTMLNode(o.getShortDesc()));
-		itemNode.addChild("input", new String[] { "type", "class", "alt", "name", "value" }, new String[] { "text", "config", o.getShortDesc(), "node.name", o.getValueString() });
+		itemNode.addInput(Input.Type.TEXT, "node.name", o.getValueString(), Category.CONFIG, o.getShortDesc());
 		itemNode.addInlineBox(Category.CONFIGLONGDESC).addChild(NodeL10n.getBase().getHTMLNode(o.getLongDesc()));
-		formNode.addChild("input", new String[] { "type", "value" }, new String[] { "submit", NodeL10n.getBase().getString("UserAlert.apply") });
-		formNode.addChild("input", new String[] { "type", "value" }, new String[] { "reset", NodeL10n.getBase().getString("UserAlert.reset") });
+		formNode.addInput(Input.Type.SUBMIT, NodeL10n.getBase().getString("UserAlert.apply"));
+		formNode.addInput(Input.Type.RESET, NodeL10n.getBase().getString("UserAlert.reset"));
 		return alertNode;
 	}
 

@@ -69,9 +69,7 @@ public class SECURITY_PHYSICAL implements Step {
 		}
 		for(SecurityLevels.PHYSICAL_THREAT_LEVEL level : SecurityLevels.PHYSICAL_THREAT_LEVEL.values()) {
 			HTMLNode input;
-			input = div.addChild(new BlockText()).addChild("input",
-				new String[]{"type", "name", "value"},
-				new String[]{"radio", controlName, level.name()});
+			input = div.addBlockText().addInput(Input.Type.RADIO, controlName, level.name());
 			input.addInlineBox(Category.BOLD, WizardL10n.l10nSec("physicalThreatLevel.name." + level));
 			input.addText(": ");
 			NodeL10n.getBase().addL10nSubstitution(input, "SecurityLevels.physicalThreatLevel.choice."+level, new String[] { "bold" }, new HTMLNode[] { HTMLNode.STRONG });
@@ -80,16 +78,12 @@ public class SECURITY_PHYSICAL implements Step {
 				// Add password form on high security if not already at high security.
 				HTMLNode p = div.addChild(new BlockText());
 				p.addChild("label", "for", "passwordBox", WizardL10n.l10nSec("setPasswordLabel")+":");
-				p.addChild("input", new String[] { "id", "type", "name" }, new String[] { "passwordBox", "password", "masterPassword" });
+				p.addInput(Input.Type.PASSWORD, "masterPassword", Identifier.PASSWORDBOX);
 			}
 		}
 		div.addText(WizardL10n.l10nSec("physicalThreatLevelEnd"));
-		form.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "back", NodeL10n.getBase().getString("Toadlet.back")});
-		form.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "next", NodeL10n.getBase().getString("Toadlet.next")});
+		form.addInput(Input.Type.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
+		form.addInput(Input.Type.SUBMIT, "next", NodeL10n.getBase().getString("Toadlet.next"));
 	}
 
 	/**
@@ -288,8 +282,6 @@ public class SECURITY_PHYSICAL implements Step {
 	}
 
 	private void addBackToPhysicalSeclevelsButton(HTMLNode form) {
-		form.addChild(new BlockText()).addChild("input",
-			new String[]{"type", "name", "value"},
-			new String[]{"submit", "backToMain", WizardL10n.l10n("backToSecurityLevels")});
+		form.addBlockText().addInput(Input.Type.SUBMIT, "backToMain", WizardL10n.l10n("backToSecurityLevels"));
 	}
 }

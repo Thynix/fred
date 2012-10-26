@@ -357,6 +357,24 @@ public class HTMLNode implements XMLCharacterClasses {
 			attributes.put(CLASS, bookended);
 		}
 	}
+
+	/**
+	 * Add an onBlur attribute to a tag.
+	 * @param script
+	 */
+	public void onBlur(String script) {
+		attributes.put("onBlur", script);
+	}
+
+	/**
+	 * Add an onChange attribute to a tag.
+	 * @param script
+	 */
+	public void onChange(String script) {
+		attributes.put("onChange", script);
+	}
+
+
 	/**
 	 * Set the html "id" attribute
 	 * @param tagID ID attribute to be set
@@ -711,8 +729,107 @@ public class HTMLNode implements XMLCharacterClasses {
 	}
 
 	//methods for creating input elements
-	public Input addInput(String type, String name, String value){
+	public Input addInput(Input input){
+		this.addChild(input);
+		return input;
+	}
+	public Input addInput(Input.Type type){
+		Input newInput = new Input(type);
+		this.addChild(newInput);
+		return newInput;
+	}
+	public Input addInput(String name){
+		Input newInput = new Input(name);
+		this.addChild(newInput);
+		return newInput;
+	}
+	public Input addInput(Input.Type type, String value){
+		Input newInput = new Input(type, value);
+		this.addChild(newInput);
+		return newInput;
+	}
+	public Input addInput(String name, Input.Type type){
+		Input newInput = new Input(name, type);
+		this.addChild(newInput);
+		return newInput;
+	}
+	public Input addInput(Input.Type type, String name, int size){
+		Input newInput = new Input(type, name, size);
+		this.addChild(newInput);
+		return newInput;
+	}
+	public Input addInput(Input.Type type, String name, Category category){
+		Input newInput = new Input(type, name, category);
+		this.addChild(newInput);
+		return newInput;
+	}
+	public Input addInput(Input.Type type, String name, boolean checked){
+		Input newInput = new Input(type, name, checked);
+		this.addChild(newInput);
+		return newInput;
+	}
+	public Input addInput(Input.Type type, String name, short maxlength){
+		Input newInput = new Input(type, name, maxlength);
+		this.addChild(newInput);
+		return newInput;
+	}
+	public Input addInput(Input.Type type, String name, Identifier id){
+		Input newInput = new Input(type, name, id);
+		this.addChild(newInput);
+		return newInput;
+	}
+	public Input addInput(Input.Type type, String name, String value){
 		Input newInput = new Input(type, name, value);
+		this.addChild(newInput);
+		return newInput;
+	}
+	public Input addInput(Input.Type type, String name, String value, Identifier id){
+		Input newInput = new Input(type, name, value, id);
+		this.addChild(newInput);
+		return newInput;
+	}
+	public Input addInput(Input.Type type, String name, String value, Category category){
+		Input newInput = new Input(type, name, value, category);
+		this.addChild(newInput);
+		return newInput;
+	}
+	public Input addInput(Input.Type type, String name, String value, boolean checked){
+		Input newInput = new Input(type, name, value, checked);
+		this.addChild(newInput);
+		return newInput;
+	}
+	public Input addInput(Input.Type type, String name, boolean checked, Identifier id){
+		Input newInput = new Input(type, name, checked, id);
+		this.addChild(newInput);
+		return newInput;
+	}
+	public Input addInput(Input.Type type, String name, int size, Identifier id){
+		Input newInput = new Input(type, name, size, id);
+		this.addChild(newInput);
+		return newInput;
+	}
+	public Input addInput(Input.Type type, String name, String value, Identifier id, int size) {
+		Input newInput = new Input(type, name, value, id, size);
+		this.addChild(newInput);
+		return newInput;
+	}
+	public Input addInput(Input.Type type, String name, String value, Category category, String alt) {
+		Input newInput = new Input(type, name, value, category, alt);
+		this.addChild(newInput);
+		return newInput;
+	}
+	public Input addInput(Input.Type type, String name, String value, int size, short maxlength) {
+		Input newInput = new Input(type, name, value, size, maxlength);
+		this.addChild(newInput);
+		return newInput;
+	}
+	public Input addInput(Input.Type type, String name, String value, int size, short maxlength, Identifier id) {
+		Input newInput = new Input(type, name, value, size, maxlength, id);
+		this.addChild(newInput);
+		return newInput;
+	}
+	public Input addInput(Input.Type type, String name, String value, Category category, String alt, boolean disabled) {
+		Input newInput = new Input(type, name, value, category, alt, disabled);
 		this.addChild(newInput);
 		return newInput;
 	}

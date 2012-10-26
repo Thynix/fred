@@ -181,7 +181,7 @@ public class StatisticsToadlet extends Toadlet {
 		// Generate a Thread-Dump
 		if(node.isUsingWrapper()){
 			HTMLNode threadDumpForm = ctx.addFormChild(statisticsGenerating.body, "/", "threadDumpForm");
-			threadDumpForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "getThreadDump", l10n("threadDumpButton")});
+			threadDumpForm.addInput(Input.Type.SUBMIT, "getThreadDump", l10n("threadDumpButton"));
 		}
 		// Get logs
 		OutputList logsList = new OutputList();

@@ -112,11 +112,12 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 	protected void drawPrivateNoteColumn(Row peerRow, PeerNodeStatus peerNodeStatus, boolean fProxyJavascriptEnabled) {
 		// private darknet node comment note column
 		DarknetPeerNodeStatus status = (DarknetPeerNodeStatus) peerNodeStatus;
+		Input commentNote = new Input(Input.Type.TEXT, "peerPrivateNote_", status.getPrivateDarknetCommentNote(), 16, (short) 250);
 		if(fProxyJavascriptEnabled) {
-			peerRow.addCell(Category.PEERPRIVATEDARKNETCOMMENTNOTE).addChild("input", new String[]{"type", "name", "size", "maxlength", "onBlur", "onChange", "value"}, new String[]{"text", "peerPrivateNote_" + peerNodeStatus.hashCode(), "16", "250", "peerNoteBlur();", "peerNoteChange();", status.getPrivateDarknetCommentNote()});
-		} else {
-			peerRow.addCell(Category.PEERPRIVATEDARKNETCOMMENTNOTE).addChild("input", new String[] { "type", "name", "size", "maxlength", "value" }, new String[] { "text", "peerPrivateNote_" + peerNodeStatus.hashCode(), "16", "250", status.getPrivateDarknetCommentNote() });
+			commentNote.onBlur("peerNoteBlur();");
+			commentNote.onChange("peerNoteChange();");
 		}
+		peerRow.addCell(Category.PEERPRIVATEDARKNETCOMMENTNOTE).addInput(commentNote);
 	}
 
 	@Override
@@ -167,15 +168,15 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 		}
 		actionSelect.addChild("option", "value", "", l10n("separator"));
 		actionSelect.addChild("option", "value", "remove", l10n("removePeers"));
-		peerForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "doAction", l10n("go") });
+		peerForm.addInput(Input.Type.SUBMIT, "doAction", l10n("go"));
 		peerForm.addLineBreak();
-		peerForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "doChangeTrust", l10n("changeTrustButton") });
+		peerForm.addInput(Input.Type.SUBMIT, "doChangeTrust", l10n("changeTrustButton"));
 		HTMLNode changeTrustLevelSelect = peerForm.addChild("select", new String[] { "id", "name" }, new String[] { "changeTrust", "changeTrust" });
 		for(FRIEND_TRUST trust : FRIEND_TRUST.valuesBackwards()) {
 			changeTrustLevelSelect.addChild("option", "value", trust.name(), l10n("peerTrust."+trust.name()));
 		}
 		peerForm.addLineBreak();
-		peerForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "doChangeVisibility", l10n("changeVisibilityButton") });
+		peerForm.addInput(Input.Type.SUBMIT, "doChangeVisibility", l10n("changeVisibilityButton"));
 		HTMLNode changeVisibilitySelect = peerForm.addChild("select", new String[] { "id", "name" }, new String[] { "changeVisibility", "changeVisibility" });
 		for(FRIEND_VISIBILITY trust : FRIEND_VISIBILITY.values()) {
 			changeVisibilitySelect.addChild("option", "value", trust.name(), l10n("peerVisibility."+trust.name()));
@@ -424,16 +425,12 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 						HTMLNode removeForm =
 							ctx.addFormChild(removeDarknetNode.body, "/friends/",
 								"removeConfirmForm");
-						removeForm.addInput(
-							new String[]{"hidden", "node_" + peerNodes[i].hashCode(),
-								"remove"});
-						removeForm.addInput(
-							new String[]{"submit", "cancel",
-								NodeL10n.getBase().getString("Toadlet.cancel")});
-						removeForm.addInput(
-							new String[]{"submit", "remove", l10n("remove")});
-						removeForm.addInput(
-							new String[]{"hidden", "forceit", l10n("forceRemove")});
+						removeForm.addInput(Input.Type.HIDDEN, "node_" + peerNodes[i].hashCode(),
+								"remove");
+						removeForm.addInput(Input.Type.SUBMIT, "cancel",
+								NodeL10n.getBase().getString("Toadlet.cancel"));
+						removeForm.addInput(Input.Type.SUBMIT, "remove", l10n("remove"));
+						removeForm.addInput(Input.Type.HIDDEN, "forceit", l10n("forceRemove"));
 						writeHTMLReply(ctx, 200, "OK", confirmPage.generate());
 						return; // FIXME: maybe it breaks multi-node removing
 					}

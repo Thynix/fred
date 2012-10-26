@@ -104,24 +104,14 @@ public class BANDWIDTH_RATE extends BandwidthManipulator implements Step {
 		//Add custom option.
 		Row customForm = table.addRow();
 		customForm.addCell(WizardL10n.l10n("bandwidthCustom"));
-		customForm.addCell().addChild("input",
-		        new String[] { "type", "name" },
-		        new String[] { "text", "customDown" });
-		customForm.addCell().addChild("input",
-			new String[]{"type", "name"},
-			new String[]{"text", "customUp"});
+		customForm.addCell().addInput("customDown", Input.Type.TEXT);
+		customForm.addCell().addInput("customUp", Input.Type.TEXT);
 		// This is valid if it's filled in. So don't show the selector.
 		// FIXME javascript to auto-select it?
-//		customForm.addCell().addChild("input",
-//				new String[] { "type", "name", "value" },
-//				new String[] { "radio", "bandwidth", "custom" });
+//		customForm.addCell().addInput(Input.Type.RADIO, "bandwidth", "custom");
 
-		infoBox.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "back", NodeL10n.getBase().getString("Toadlet.back")});
-		infoBox.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "next", NodeL10n.getBase().getString("Toadlet.next")});
+		infoBox.addInput(Input.Type.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
+		infoBox.addInput(Input.Type.SUBMIT, "next", NodeL10n.getBase().getString("Toadlet.next"));
 	}
 
 	@Override
@@ -244,9 +234,7 @@ public class BANDWIDTH_RATE extends BandwidthManipulator implements Step {
 		Cell buttonCell = row.addCell();
 		
 		HTMLNode radio = 
-			buttonCell.addChild("input",
-					new String[] { "type", "name", "value" },
-					new String[] { "radio", "bandwidth", limit.downBytes+"/"+limit.upBytes });
+			buttonCell.addInput(Input.Type.RADIO, "bandwidth", limit.downBytes+"/"+limit.upBytes);
 		if(recommended || (useMaybeDefault && limit.maybeDefault))
 			radio.addAttribute("checked", "checked");
 		if (recommended) {

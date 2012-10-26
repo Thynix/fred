@@ -210,18 +210,11 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 								size);
 					}
 					infoList.addText(l10n("deleteFileFromTemp"));
-					infoList.addChild("input", new String[]{"type", "name", "value", "checked"},
-						new String[]{"checkbox", "identifier-" + part, identifier,
-							"checked"});
+					infoList.addInput(Input.Type.CHECKBOX, "identifier-" + part, identifier, true);
 				}
 				confirmDelete.body.addBlockText(l10n("confirmDelete"));
-				deleteForm.addChild("input",
-					new String[]{"type", "name", "value"},
-					new String[]{"submit", "remove_request",
-						NodeL10n.getBase().getString("Toadlet.yes")});
-				deleteForm.addChild("input",
-					new String[]{"type", "name", "value"},
-					new String[]{"submit", "cancel", NodeL10n.getBase().getString("Toadlet.no")});
+				deleteForm.addInput(Input.Type.SUBMIT, "remove_request", NodeL10n.getBase().getString("Toadlet.yes"));
+				deleteForm.addInput(Input.Type.SUBMIT, "cancel", NodeL10n.getBase().getString("Toadlet.no"));
 				this.writeHTMLReply(ctx, 200, "OK", page.generate());
 				return;
 			} else if(request.isPartSet("remove_request") && (request.getPartAsStringFailsafe("remove_request", 128).length() > 0)) {
@@ -815,7 +808,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 					form.addLineBreak();
 					form.addText(key);
 					form.addLineBreak();
-					form.addInput("hidden", "key-" + x, key);
+					form.addInput(Input.Type.HIDDEN, "key-" + x, key);
 				}
 				form.addChild("label", "for", "descB", (l10n("recommendDescription") + ' '));
 				form.addLineBreak();
@@ -827,14 +820,10 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 				peerTable.addRow().addHeader(2, l10n("recommendToFriends"));
 				for (DarknetPeerNode peer : core.node.getDarknetConnections()) {
 					Row peerRow = peerTable.addRow(Category.DARKNETCONNECTIONSNORMAL);
-					peerRow.addCell(Category.PEERMARKER).addChild("input",
-						new String[]{"type", "name"},
-						new String[]{"checkbox", "node_" + peer.hashCode()});
+					peerRow.addCell(Category.PEERMARKER).addInput("node_" + peer.hashCode(), Input.Type.CHECKBOX);
 					peerRow.addCell(Category.PEERNAME).addText(peer.getName());
 				}
-				form.addChild("input",
-					new String[]{"type", "name", "value"},
-					new String[]{"submit", "recommend_uri", l10n("recommend")});
+				form.addInput(Input.Type.SUBMIT, "recommend_uri", l10n("recommend"));
 				this.writeHTMLReply(ctx, 200, "OK", page.generate());
 				return;
 			} else if(request.isPartSet("recommend_uri") && request.isPartSet("URI")) {
@@ -898,12 +887,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 			l10n("confirmPanicButtonPageTitle"));
 		confirmPanic.body.addChild(new BlockText(l10n("confirmPanicButton")));
 		HTMLNode form = ctx.addFormChild(confirmPanic.body, path(), "confirmPanicButton");
-		form.addChild(new BlockText()).addChild("input",
-			new String[]{"type", "name", "value"},
-			new String[]{"submit", "confirmpanic", l10n("confirmPanicButtonYes")});
-		form.addChild(new BlockText()).addChild("input",
-			new String[]{"type", "name", "value"},
-			new String[]{"submit", "noconfirmpanic", l10n("confirmPanicButtonNo")});
+		form.addInput(Input.Type.SUBMIT, "confirmpanic", l10n("confirmPanicButtonYes"));
+		form.addInput(Input.Type.SUBMIT, "noconfirmpanic", l10n("confirmPanicButtonNo"));
 		if (uploads) {
 			confirmPanic.body.addBlockText().addLink(path(), l10n("backToUploadsPage"));
 		} else {
@@ -1889,7 +1874,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 	private HTMLNode createPriorityControl(PageMaker pageMaker, ToadletContext ctx, short priorityClass, String[] priorityClasses, boolean advancedModeEnabled, boolean isUpload) {
 		Box priorityBox = new Box(Category.REQUESTPRIORITY);
 		priorityBox.addClass(Category.NOWRAP);
-		priorityBox.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "change_priority", NodeL10n.getBase().getString(isUpload ? "QueueToadlet.changeUploadPriorities" : "QueueToadlet.changeDownloadPriorities") });
+		priorityBox.addInput(Input.Type.SUBMIT, "change_priority", NodeL10n.getBase().getString(isUpload ? "QueueToadlet.changeUploadPriorities" : "QueueToadlet.changeDownloadPriorities"));
 		HTMLNode prioritySelect = priorityBox.addChild("select", "name", "priority");
 		for (int p = 0; p < RequestStarter.NUMBER_OF_PRIORITY_CLASSES; p++) {
 			if(p <= RequestStarter.INTERACTIVE_PRIORITY_CLASS && !advancedModeEnabled) continue;
@@ -1904,13 +1889,13 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 	
 	private HTMLNode createRecommendControl(PageMaker pageMaker, ToadletContext ctx) {
 		Box recommendBox = new Box(Category.REQUESTRECOMMEND);
-		recommendBox.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "recommend_request", l10n("recommendFilesToFriends") });
+		recommendBox.addInput(Input.Type.SUBMIT, "recommend_request", l10n("recommendFilesToFriends"));
 		return recommendBox;
 	}
 
 	private HTMLNode createRemoveFinishedDownloadsControl( PageMaker pageMaker, ToadletContext ctx ) {
 		Box deleteBox = new Box(Category.REQUESTDELETEFINISHEDDOWNLOADS);
-		deleteBox.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "remove_finished_downloads_request", l10n("removeFinishedDownloads") });
+		deleteBox.addInput(Input.Type.SUBMIT, "remove_finished_downloads_request", l10n("removeFinishedDownloads"));
 		return deleteBox;
 	}
 	
@@ -1918,17 +1903,17 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 	private HTMLNode createDeleteControl(PageMaker pageMaker, ToadletContext ctx, boolean isDownloadToTemp, boolean canRestart, boolean disableFilterChecked, boolean isUpload, String mimeType) {
 		Box deleteBox = new Box(Category.REQUESTDELETE);
 		if(isDownloadToTemp) {
-			deleteBox.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "delete_request", l10n("deleteFilesFromTemp") });
+			deleteBox.addInput(Input.Type.SUBMIT, "delete_request", l10n("deleteFilesFromTemp"));
 		} else {
-			deleteBox.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "remove_request", l10n("removeFilesFromList") });
+			deleteBox.addInput(Input.Type.SUBMIT, "remove_request", l10n("removeFilesFromList"));
 		}
 		if(canRestart) {
 			deleteBox.addLineBreak();
 			// FIXME: Split stuff with a permanent redirect to a separate grouping and use QueueToadlet.follow here?
 			String restartName = NodeL10n.getBase().getString(/*followRedirect ? "QueueToadlet.follow" : */ isUpload ? "QueueToadlet.restartUploads" : "QueueToadlet.restartDownloads");
-			deleteBox.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "restart_request", restartName });
+			deleteBox.addInput(Input.Type.SUBMIT, "restart_request", restartName);
 			if(mimeType != null) {
-				HTMLNode input = deleteBox.addChild("input", new String[] { "type", "name", "value" }, new String[] {"checkbox", "disableFilterData", "disableFilterData" });
+				HTMLNode input = deleteBox.addInput(Input.Type.CHECKBOX, "disableFilterData", "disableFilterData");
 				if(disableFilterChecked) {
 					input.addAttribute("checked", "checked");
 				}
@@ -1944,7 +1929,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		HTMLNode panicForm = ctx.addFormChild(infobox.body, path(), "queuePanicForm");
 		panicForm.addText((SimpleToadletServer.noConfirmPanic ? l10n("panicButtonNoConfirmation") :
 			l10n("panicButtonWithConfirmation")) + ' ');
-		panicForm.addInput("submit", "panic", l10n("panicButton"));
+		panicForm.addInput(Input.Type.SUBMIT, "panic", l10n("panicButton"));
 		return infobox;
 	}
 
@@ -2015,37 +2000,24 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		//downloading to disk.
 		if (threatLevel == PHYSICAL_THREAT_LEVEL.HIGH || threatLevel == PHYSICAL_THREAT_LEVEL.MAXIMUM ||
 			core.isDownloadDisabled()) {
-			downloadForm.addChild("input",
-				new String[]{"type", "name", "value"},
-				new String[]{"hidden", "target", "direct"});
+			downloadForm.addInput(Input.Type.HIDDEN, "target", "direct");
 		} else if (threatLevel == PHYSICAL_THREAT_LEVEL.LOW) {
-			downloadForm.addChild("input",
-				new String[]{"type", "name", "value"},
-				new String[]{"hidden", "target", "disk"});
+			downloadForm.addInput(Input.Type.HIDDEN, "target", "disk");
 			selectLocation(downloadForm);
 		} else {
 			downloadForm.addLineBreak();
-			downloadForm.addChild("input",
-				new String[]{"type", "value", "name"},
-				new String[]{"radio", "disk", "target"},
+			downloadForm.addInput(Input.Type.RADIO, "target", "disk").setContent(
 				//Nicer spacing for radio button
 				' ' + l10n("bulkDownloadSelectOptionDisk") + ' ');
 			selectLocation(downloadForm);
 			downloadForm.addLineBreak();
-			downloadForm.addChild("input",
-				new String[]{"type", "value", "name", "checked"},
-				new String[]{"radio", "direct", "target", "checked"},
-				' ' + l10n("bulkDownloadSelectOptionDirect") + ' ');
+			downloadForm.addInput(Input.Type.RADIO, "target", "direct", true).setContent(' ' + l10n("bulkDownloadSelectOptionDirect") + ' ');
 		}
 		HTMLNode filterControl = downloadForm.addChild(new Box(Category.NONE, l10n("filterData")));
-		filterControl.addChild("input",
-			new String[]{"type", "name", "value", "checked"},
-			new String[]{"checkbox", "filterData", "filterData", "checked"});
+		filterControl.addInput(Input.Type.CHECKBOX, "filterData", "filterData", true);
 		filterControl.addText(l10n("filterDataMessage"));
 		downloadForm.addLineBreak();
-		downloadForm.addChild("input",
-			new String[]{"type", "name", "value"},
-			new String[]{"submit", "insert", l10n("download")});
+		downloadForm.addInput(Input.Type.SUBMIT, "insert", l10n("download"));
 		return groupedDownloads;
 	}
 
@@ -2056,13 +2028,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		if (!core.allowDownloadTo(core.getDownloadsDir())) {
 			downloadLocation = core.getAllowedDownloadDirs()[0].getAbsolutePath();
 		}
-		node.addChild("input",
-		        new String[] { "type", "name", "value", "maxlength", "size" },
-		        new String[] { "text", "path", downloadLocation, Integer.toString(MAX_FILENAME_LENGTH),
-		                String.valueOf(downloadLocation.length())});
-		node.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "select-location", l10n("browseToChange")+"..." });
+		node.addInput(Input.Type.TEXT, "path", downloadLocation, downloadLocation.length(), (short) MAX_FILENAME_LENGTH);
+		node.addInput(Input.Type.SUBMIT, "select-location", l10n("browseToChange")+"..." );
 	}
 
 	/**
@@ -2240,8 +2207,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 	private Cell createCheckboxCell(RequestStatus clientRequest, int counter) {
 		Cell cell = new Cell(Category.CHECKBOXCELL);
 		String identifier = clientRequest.getIdentifier();
-		cell.addChild("input", new String[] { "type", "name", "value" },
-				new String[] { "checkbox", "identifier-"+counter, identifier } );
+		cell.addInput(Input.Type.CHECKBOX, "identifier-"+counter, identifier);
 		FreenetURI uri;
 		long size = -1;
 		String filename = null;
@@ -2255,16 +2221,13 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 			uri = null;
 		}
 		if(uri != null) {
-			cell.addChild("input", new String[] { "type", "name", "value" },
-					new String[] { "hidden", "key-"+counter, uri.toASCIIString() });
+			cell.addInput(Input.Type.HIDDEN, "key-"+counter, uri.toASCIIString());
 			filename = uri.getPreferredFilename();
 		}
 		if(size != -1)
-			cell.addChild("input", new String[] { "type", "name", "value" },
-					new String[] { "hidden", "size-"+counter, Long.toString(size) });
+			cell.addInput(Input.Type.HIDDEN, "size-"+counter, Long.toString(size));
 		if(filename != null)
-			cell.addChild("input", new String[] { "type", "name", "value" },
-					new String[] { "hidden", "filename-"+counter, filename });
+			cell.addInput(Input.Type.HIDDEN, "filename-"+counter, filename);
 		return cell;
 	}
 
@@ -2545,7 +2508,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 	static final String PATH_UPLOADS = "/uploads/";
 	static final String PATH_DOWNLOADS = "/downloads/";
 	
-	static final HTMLNode DOWNLOADS_LINK = 
+	static final HTMLNode DOWNLOADS_LINK =
 		new Link(PATH_DOWNLOADS).setReadOnly();
 	static final HTMLNode UPLOADS_LINK =
 		new Link(PATH_UPLOADS).setReadOnly();

@@ -22,9 +22,7 @@ public class OPENNET implements Step {
 		HTMLNode form = helper.addFormChild(infoboxContent.body, ".", "opennetForm", false);
 
 		HTMLNode p = form.addChild(new BlockText(Category.ITALIC));
-		HTMLNode input = p.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "radio", "opennet", "false" });
+		HTMLNode input = p.addInput(Input.Type.RADIO, "opennet", "false");
 		input.addInlineBox(Category.BOLD, WizardL10n.l10n("opennetChoiceConnectFriends") + ":");
 		p.addLineBreak();
 		p.addText(WizardL10n.l10n("opennetChoicePro"));
@@ -34,9 +32,7 @@ public class OPENNET implements Step {
 		p.addText(": " + WizardL10n.l10n("opennetChoiceConnectFriendsCON", "minfriends", "5"));
 
 		p = form.addChild(new BlockText());
-		input = p.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "radio", "opennet", "true" });
+		input = p.addInput(Input.Type.RADIO, "opennet", "true");
 		input.addInlineBox(Category.BOLD, WizardL10n.l10n("opennetChoiceConnectStrangers") + ":");
 		p.addLineBreak();
 		p.addText(WizardL10n.l10n("opennetChoicePro"));
@@ -45,12 +41,8 @@ public class OPENNET implements Step {
 		p.addText(WizardL10n.l10n("opennetChoiceCon"));
 		p.addText(": " + WizardL10n.l10n("opennetChoiceConnectStrangersCON"));
 
-		form.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "back", NodeL10n.getBase().getString("Toadlet.back")});
-		form.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "next", NodeL10n.getBase().getString("Toadlet.next")});
+		form.addInput(Input.Type.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
+		form.addInput(Input.Type.SUBMIT, "next", NodeL10n.getBase().getString("Toadlet.next"));
 
 		Box foot = new Box(Category.TOGGLEABLE);
 		infoboxContent.addChild(foot);

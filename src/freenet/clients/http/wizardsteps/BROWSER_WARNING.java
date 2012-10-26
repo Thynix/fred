@@ -2,6 +2,7 @@ package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
 import freenet.clients.http.uielements.Infobox;
+import freenet.clients.http.uielements.Input;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
@@ -92,12 +93,8 @@ public class BROWSER_WARNING implements Step {
 		}
 
 		HTMLNode form = helper.addFormChild(infoboxContent.body.addBlockText(), ".", "continueForm");
-		form.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "back", NodeL10n.getBase().getString("Toadlet.back")});
-		form.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "next", NodeL10n.getBase().getString("Toadlet.next")});
+		form.addInput(Input.Type.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
+		form.addInput(Input.Type.SUBMIT, "next", NodeL10n.getBase().getString("Toadlet.next"));
 	}
 
 	/**

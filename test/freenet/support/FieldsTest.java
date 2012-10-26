@@ -4,9 +4,9 @@
 
 package freenet.support;
 
-import java.util.Random;
-
 import junit.framework.TestCase;
+
+import java.util.Random;
 
 /**
  * Test case for {@link freenet.support.Fields} class.

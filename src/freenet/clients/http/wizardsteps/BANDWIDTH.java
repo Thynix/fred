@@ -1,8 +1,8 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
-import freenet.clients.http.uielements.Box;
 import freenet.clients.http.uielements.Infobox;
+import freenet.clients.http.uielements.Input;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
@@ -20,15 +20,9 @@ public class BANDWIDTH implements Step {
 				WizardL10n.l10n("bandwidthLimit"));
 		bandwidthInfoboxContent.body.addText(WizardL10n.l10n("bandwidthCapPrompt"));
 		HTMLNode bandwidthForm = helper.addFormChild(bandwidthInfoboxContent.body, ".", "bwForm");
-		bandwidthForm.addChild("input",
-			new String[]{"type", "name", "value"},
-			new String[]{"submit", "yes", NodeL10n.getBase().getString("Toadlet.yes")});
-		bandwidthForm.addChild("input",
-			new String[]{"type", "name", "value"},
-			new String[]{"submit", "no", NodeL10n.getBase().getString("Toadlet.no")});
-		bandwidthForm.addChild(new Box()).addChild("input",
-			new String[]{"type", "name", "value"},
-			new String[]{"submit", "back", NodeL10n.getBase().getString("Toadlet.back")});
+		bandwidthForm.addInput(Input.Type.SUBMIT, "yes", NodeL10n.getBase().getString("Toadlet.yes"));
+		bandwidthForm.addInput(Input.Type.SUBMIT, "no", NodeL10n.getBase().getString("Toadlet.no"));
+		bandwidthForm.addInput(Input.Type.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
 	}
 
 	@Override

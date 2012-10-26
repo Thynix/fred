@@ -68,17 +68,10 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 			if (node.isUsingWrapper()) {
 				alertNode.addLineBreak();
 				Box restartForm = alertNode.addForm("/", "post", "multipart/form-data", "utf-8", Identifier.RESTARTFORM).addBox();
-				restartForm.addChild("input", new String[] { "type", "name",
-						"value" }, new String[] { "hidden", "formPassword",
-						node.clientCore.formPassword });
-				restartForm.addChild(new Box());
-				restartForm.addChild("input",//
-						new String[] { "type", "name" },//
-						new String[] { "hidden", "restart" });
-				restartForm.addChild("input", //
-						new String[] { "type", "name", "value" },//
-						new String[] { "submit", "restart2",
-								l10n("restartNode") });
+				restartForm.addInput(Input.Type.HIDDEN, "formPassword", node.clientCore.formPassword );
+				restartForm.addBox();
+				restartForm.addInput("restart", Input.Type.HIDDEN);
+				restartForm.addInput(Input.Type.SUBMIT, "restart2", l10n("restartNode"));
 			}
 			return alertNode;
 		}
@@ -192,31 +185,21 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 			HTMLNode formNode = ctx.addFormChild(resetWarning.body, path(), "yes-button");
 			String subconfig = request.getPartAsStringFailsafe("subconfig",
 				MAX_PARAM_VALUE_SIZE);
-			formNode.addChild("input",
-				new String[]{"type", "name", "value"}, new String[]{
-				"hidden", "subconfig", subconfig});
+			formNode.addInput(Input.Type.HIDDEN, "subconfig", subconfig);
 			// Persist visible fields so that they are reset to default or
 			// unsaved changes are persisted.
 			for (String part : request.getParts()) {
 				if (part.startsWith(subconfig)) {
-					formNode.addChild(
-						"input",
-						new String[]{"type", "name", "value"},
-						new String[]{
-							"hidden",
+					formNode.addInput(Input.Type.HIDDEN,
 							part,
 							request.getPartAsStringFailsafe(part,
-								MAX_PARAM_VALUE_SIZE)});
+								MAX_PARAM_VALUE_SIZE));
 				}
 			}
-			formNode.addChild("input",
-				new String[]{"type", "name", "value"}, new String[]{
-				"submit", "reset-to-defaults",
-				NodeL10n.getBase().getString("Toadlet.yes")});
-			formNode.addChild("input",
-				new String[]{"type", "name", "value"}, new String[]{
-				"submit", "decline-default-reset",
-				NodeL10n.getBase().getString("Toadlet.no")});
+			formNode.addInput(Input.Type.SUBMIT, "reset-to-defaults",
+				NodeL10n.getBase().getString("Toadlet.yes"));
+			formNode.addInput(Input.Type.SUBMIT, "decline-default-reset",
+				NodeL10n.getBase().getString("Toadlet.no"));
 			writeHTMLReply(ctx, 200, "OK", confirmDefaults.generate());
 			return;
 		}
@@ -355,13 +338,9 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 					successMessage.body.addLineBreak();
 					HTMLNode restartForm = ctx.addFormChild(successMessage.body, "/",
 						"restartForm");
-					restartForm.addChild("input",//
-						new String[]{"type", "name"},//
-						new String[]{"hidden", "restart"});
-					restartForm.addChild("input", //
-						new String[]{"type", "name", "value"},//
-						new String[]{"submit", "restart2",//
-							l10n("restartNode")});
+					restartForm.addInput("restart", Input.Type.HIDDEN);
+					restartForm.addInput(Input.Type.SUBMIT, "restart2",//
+							l10n("restartNode"));
 				}
 				if (needRestartUserAlert == null) {
 					needRestartUserAlert = new NeedRestartUserAlert();
@@ -408,8 +387,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 		// Invisible apply button at the top so that an enter keypress will
 		// apply settings instead of
 		// going to a directory browser if present.
-		formNode.addChild("input", new String[]{"type", "value", "class"},
-			new String[]{"submit", l10n("apply"), "invisible"});
+		formNode.addInput(Input.Type.SUBMIT, l10n("apply"), Category.INVISIBLE);
 		/*
 		 * Special case: present an option for the wrapper's maximum memory
 		 * under Core configuration, provided the maximum memory property is
@@ -440,12 +418,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 						new String[]{defaultValue})).addChild(
 					NodeL10n.getBase().getHTMLNode(
 						"WrapperConfig." + configName + ".short"));
-				configOption.addInlineBox(Category.CONFIG)
-					.addChild(
-						"input",
-						new String[]{"type", "class", "name", "value"},
-						new String[]{"text", "config", configName,
-							curValue});
+				configOption.addInlineBox(Category.CONFIG).addInput(Input.Type.TEXT, configName, curValue, Category.CONFIG);
 				configOption.addInlineBox(Category.CONFIGLONGDESC).addChild(
 					NodeL10n.getBase().getHTMLNode(
 						"WrapperConfig." + configName + ".long"));
@@ -548,14 +521,10 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 					case DIRECTORY:
 						configItemValueNode.addChild(addTextBox(value, fullName, o,
 							false));
-						configItemValueNode.addChild(
-							"input",
-							new String[]{"type", "name", "value"},
-							new String[]{
-								"submit",
+						configItemValueNode.addInput(Input.Type.SUBMIT,
 								"select-directory." + fullName,
 								NodeL10n.getBase().getString(
-									"QueueToadlet.browseToChange")});
+									"QueueToadlet.browseToChange"));
 						break;
 					case TEXT_READ_ONLY:
 						configItemValueNode.addChild(addTextBox(value, fullName, o,
@@ -576,28 +545,23 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 			formNode.addChild("a", "id", subConfig.getPrefix());
 			formNode.addChild(configGroupUlNode);
 		}
-		formNode.addChild("input", new String[]{"type", "value"},
-			new String[]{"submit", l10n("apply")});
-		formNode.addChild("input", new String[]{"type", "value"},
-			new String[]{"reset", l10n("undo")});
-		formNode.addInput(
-			new String[]{"hidden", "subconfig", subConfig.getPrefix()});
+		formNode.addInput(Input.Type.SUBMIT, l10n("apply"));
+		formNode.addInput(Input.Type.RESET, l10n("undo"));
+		formNode.addInput(Input.Type.HIDDEN, "subconfig", subConfig.getPrefix());
 		// 'Node' prefix options should not be reset to defaults as it is a,
 		// quoting Toad, "very bad idea".
 		// Options whose defaults are not wise to apply include the location of
 		// the master keys file,
 		// the Darknet port number, and the datastore size.
 		if (! subConfig.getPrefix().equals("node")) {
-			formNode.addChild("input",
-				new String[]{"type", "name", "value"}, new String[]{
-				"submit", "confirm-reset-to-defaults",
-				l10n("resetToDefaults")});
+			formNode.addInput(Input.Type.SUBMIT, "confirm-reset-to-defaults",
+				l10n("resetToDefaults"));
 		}
 		this.writeHTMLReply(ctx, 200, "OK", configPage.generate());
 	}
 
 	/**
-	 * Generates a text box for the given setting suitable for adding to an
+	 * Generates an input element for the given setting suitable for adding to an
 	 * existing form.
 	 * 
 	 * @param value
@@ -613,23 +577,9 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 	 * @return An input of type "text" and class "config" containing the current
 	 *         value of the option.
 	 */
-	public static HTMLNode addTextBox(String value, String fullName,
+	public static Input addTextBox(String value, String fullName,
 			Option<?> o, boolean disabled) {
-		HTMLNode result;
-
-		if (disabled) {
-			result = new HTMLNode("input", new String[] { "type", "class",
-					"disabled", "alt", "name", "value" }, //
-					new String[] { "text", "config", "disabled",
-							o.getShortDesc(), fullName, value });
-		} else {
-			result = new HTMLNode("input", new String[] { "type", "class",
-					"alt", "name", "value" }, //
-					new String[] { "text", "config", o.getShortDesc(),
-							fullName, value });
-		}
-
-		return result;
+		return new Input(Input.Type.TEXT, fullName, value, Category.CONFIG,  o.getShortDesc(), disabled);
 	}
 
 	/**

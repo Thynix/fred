@@ -4,6 +4,7 @@
 package freenet.node.useralerts;
 
 import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Input;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
 import freenet.node.updater.NodeUpdateManager;
@@ -88,7 +89,7 @@ public class UpdatedVersionAvailableUserAlert extends AbstractUserAlert {
 		alertNode.addText(ut.firstBit);
 		
 		if(ut.formText != null) {
-			alertNode.addForm("/", "post").addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "update", ut.formText });
+			alertNode.addForm("/", "post").addInput(Input.Type.SUBMIT, "update", ut.formText);
 		}
 		updater.renderProgress(alertNode);
 		
