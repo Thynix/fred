@@ -292,7 +292,7 @@ public class WelcomeToadlet extends Toadlet {
 			Page page = ctx.getPageMaker().getPage(l10n("shutdownConfirmTitle"), ctx);
 			Infobox content = page.content.addInfobox(Infobox.Type.QUERY,
 				Identifier.SHUTDOWNCONFIRM, l10n("shutdownConfirmTitle"));
-			content.body.addChild(new BlockText()).addText(l10n("shutdownConfirm"));
+			content.body.addBlockText().addText(l10n("shutdownConfirm"));
 			HTMLNode shutdownForm =
 				ctx.addFormChild(content.body.addBlockText(), "/", "confirmShutdownForm");
 			shutdownForm.addInput(Input.Type.SUBMIT, "cancel", NodeL10n.getBase().getString("Toadlet.cancel"));
@@ -318,7 +318,7 @@ public class WelcomeToadlet extends Toadlet {
 			Page page = ctx.getPageMaker().getPage(l10n("restartConfirmTitle"), ctx);
 			Infobox content = page.content.addInfobox(Infobox.Type.QUERY,
 				Identifier.RESTARTCONFIRM, l10n("restartConfirmTitle"));
-			content.body.addChild(new BlockText()).addText(l10n("restartConfirm"));
+			content.body.addBlockText().addText(l10n("restartConfirm"));
 			HTMLNode restartForm = ctx.addFormChild(content.body.addBlockText(), "/",
 				"confirmRestartForm");
 			restartForm.addInput(Input.Type.SUBMIT, "cancel", NodeL10n.getBase().getString("Toadlet.cancel"));

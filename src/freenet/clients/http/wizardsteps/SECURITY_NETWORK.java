@@ -37,7 +37,7 @@ public class SECURITY_NETWORK implements Step {
 			HTMLNode formNode = helper.addFormChild(networkThreadLevel.body, ".", "configFormSecLevels");
 			formNode.addInput(Input.Type.HIDDEN, "security-levels.networkThreatLevel", networkThreatLevel);
 			if(newThreatLevel == SecurityLevels.NETWORK_THREAT_LEVEL.MAXIMUM) {
-				HTMLNode p = formNode.addChild(new BlockText());
+				HTMLNode p = formNode.addBlockText();
 				NodeL10n.getBase().addL10nSubstitution(p, "SecurityLevels.maximumNetworkThreatLevelWarning",
 				        new String[] { "bold" },
 				        new HTMLNode[] { HTMLNode.STRONG });
@@ -47,7 +47,7 @@ public class SECURITY_NETWORK implements Step {
 				        new HTMLNode[] { HTMLNode.STRONG });
 				formNode.addBlockText().addInput(Input.Type.CHECKBOX, "security-levels.networkThreatLevel.confirm", "off").setContent(WizardL10n.l10nSec("maximumNetworkThreatLevelCheckbox"));
 			} else /*if(newThreatLevel == NETWORK_THREAT_LEVEL.HIGH)*/ {
-				HTMLNode p = formNode.addChild(new BlockText());
+				HTMLNode p = formNode.addBlockText();
 				NodeL10n.getBase().addL10nSubstitution(p, "FirstTimeWizardToadlet.highNetworkThreatLevelWarning",
 				        new String[] { "bold", "addAFriend", "friends" },
 				        new HTMLNode[] { HTMLNode.STRONG,
@@ -71,20 +71,20 @@ public class SECURITY_NETWORK implements Step {
 		if(opennet) {
 			Infobox Opennet = contentNode.addInfobox(Infobox.Type.NORMAL,
 			        WizardL10n.l10n("networkThreatLevelHeaderOpennet"));
-			Opennet.body.addChild(new BlockText(WizardL10n.l10n("networkThreatLevelIntroOpennet")));
+			Opennet.body.addBlockText(WizardL10n.l10n("networkThreatLevelIntroOpennet"));
 
 			form = helper.addFormChild(Opennet.body, ".", "networkSecurityForm");
-			HTMLNode div = form.addChild(new Box(Category.OPENNETDIV));
+			HTMLNode div = form.addBox(Category.OPENNETDIV);
 			for(SecurityLevels.NETWORK_THREAT_LEVEL level : SecurityLevels.NETWORK_THREAT_LEVEL.OPENNET_VALUES) {
 				securityLevelChoice(div, level);
 			}
 		} else {
 			Infobox darknet = contentNode.addInfobox(Infobox.Type.NORMAL,
 			        WizardL10n.l10n("networkThreatLevelHeaderDarknet"));
-			darknet.body.addChild(new BlockText(WizardL10n.l10n("networkThreatLevelIntroDarknet")));
+			darknet.body.addBlockText(WizardL10n.l10n("networkThreatLevelIntroDarknet"));
 
 			form = helper.addFormChild(darknet.body, ".", "networkSecurityForm");
-			HTMLNode div = form.addChild(new Box(Category.DARKNETDIV));
+			HTMLNode div = form.addBox(Category.DARKNETDIV);
 			for(SecurityLevels.NETWORK_THREAT_LEVEL level : SecurityLevels.NETWORK_THREAT_LEVEL.DARKNET_VALUES) {
 				securityLevelChoice(div, level);
 			}

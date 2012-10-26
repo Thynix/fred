@@ -1,20 +1,15 @@
 package freenet.clients.http.updateableelements;
 
-import java.text.NumberFormat;
-
 import freenet.client.FetchContext;
-import freenet.clients.http.FProxyFetchInProgress;
-import freenet.clients.http.FProxyFetchResult;
-import freenet.clients.http.FProxyFetchTracker;
-import freenet.clients.http.FProxyFetchWaiter;
-import freenet.clients.http.SimpleToadletServer;
-import freenet.clients.http.ToadletContext;
+import freenet.clients.http.*;
 import freenet.clients.http.uielements.Box;
 import freenet.clients.http.uielements.Category;
 import freenet.keys.FreenetURI;
 import freenet.l10n.NodeL10n;
 import freenet.support.Base64;
 import freenet.support.HTMLNode;
+
+import java.text.NumberFormat;
 
 /** A pushed element that renders the progress bar when loading a page. */
 public class ProgressBarElement extends BaseUpdateableElement {
@@ -54,7 +49,7 @@ public class ProgressBarElement extends BaseUpdateableElement {
 		FProxyFetchWaiter waiter = progress == null ? null : progress.getWaiter();
 		FProxyFetchResult fr = waiter == null ? null : waiter.getResult();
 		if (fr == null) {
-			addChild(new Box(Category.NONE, "No fetcher found"));
+			addBox(Category.NONE, "No fetcher found");
 		} else {
 			if (fr.isFinished() || fr.hasData() || fr.failed != null) {
 				// If finished then we just send a FINISHED text. It will reload the page
@@ -64,7 +59,7 @@ public class ProgressBarElement extends BaseUpdateableElement {
 				int fetchedPercent = (int) (fr.fetchedBlocks / (double) total * 100);
 				int failedPercent = (int) (fr.failedBlocks / (double) total * 100);
 				int fatallyFailedPercent = (int) (fr.fatallyFailedBlocks / (double) total * 100);
-				HTMLNode progressBar = addChild(new Box(Category.PROGRESSBAR));
+				HTMLNode progressBar = addBox(Category.PROGRESSBAR);
 				Box done = new Box(Category.PROGRESSBARDONE);
 				done.addAttribute("style", "width: " + fetchedPercent + "%;");
 				progressBar.addChild(done);

@@ -17,11 +17,11 @@ public class OPENNET implements Step {
 			Infobox.Type.NORMAL,
 			WizardL10n.l10n("opennetChoiceTitle"));
 
-		infoboxContent.body.addChild(new BlockText(WizardL10n.l10n("opennetChoiceIntroduction")));
+		infoboxContent.body.addBlockText(WizardL10n.l10n("opennetChoiceIntroduction"));
 
 		HTMLNode form = helper.addFormChild(infoboxContent.body, ".", "opennetForm", false);
 
-		HTMLNode p = form.addChild(new BlockText(Category.ITALIC));
+		HTMLNode p = form.addBlockText(Category.ITALIC);
 		HTMLNode input = p.addInput(Input.Type.RADIO, "opennet", "false");
 		input.addInlineBox(Category.BOLD, WizardL10n.l10n("opennetChoiceConnectFriends") + ":");
 		p.addLineBreak();
@@ -31,7 +31,7 @@ public class OPENNET implements Step {
 		p.addText(WizardL10n.l10n("opennetChoiceCon"));
 		p.addText(": " + WizardL10n.l10n("opennetChoiceConnectFriendsCON", "minfriends", "5"));
 
-		p = form.addChild(new BlockText());
+		p = form.addBlockText();
 		input = p.addInput(Input.Type.RADIO, "opennet", "true");
 		input.addInlineBox(Category.BOLD, WizardL10n.l10n("opennetChoiceConnectStrangers") + ":");
 		p.addLineBreak();

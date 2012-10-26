@@ -485,7 +485,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 	}
 
 	private static void addBackToSeclevelsLink(HTMLNode content) {
-		content.addChild(new BlockText()).addChild(new Link(PATH, l10nSec("backToSecurityLevels")));
+		content.addBlockText().addLink(PATH, l10nSec("backToSecurityLevels"));
 	}
 
 	public void handleMethodGET(URI uri, HTTPRequest req, ToadletContext ctx)
@@ -507,7 +507,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 		contentNode.addChild(configformcontainer);
 		HTMLNode formNode = ctx.addFormChild(configformcontainer.body, ".", "configFormSecLevels");
 		// Network security level
-		formNode.addChild(new Box(Category.CONFIGPREFIX, l10nSec("networkThreatLevelShort")));
+		formNode.addBox(Category.CONFIGPREFIX, l10nSec("networkThreatLevelShort"));
 		OutputList secLevelList = new OutputList(Category.CONFIG);
 		formNode.addChild(secLevelList);
 		Item seclevelGroup = secLevelList.addItem();
@@ -515,10 +515,10 @@ public class SecurityLevelsToadlet extends Toadlet {
 
 		NETWORK_THREAT_LEVEL networkLevel = node.securityLevels.getNetworkThreatLevel();
 
-		HTMLNode p = seclevelGroup.addChild(new BlockText());
+		HTMLNode p = seclevelGroup.addBlockText();
 		p.addInlineBox(Category.BOLD, l10nSec("networkThreatLevel.opennetLabel"));
 		p.addText(": " + l10nSec("networkThreatLevel.opennetExplain"));
-		HTMLNode div = seclevelGroup.addChild(new Box(Category.OPENNETDIV));
+		HTMLNode div = seclevelGroup.addBox(Category.OPENNETDIV);
 		
 		String controlName = "security-levels.networkThreatLevel";
 		for(NETWORK_THREAT_LEVEL level : NETWORK_THREAT_LEVEL.OPENNET_VALUES) {
@@ -538,10 +538,10 @@ public class SecurityLevelsToadlet extends Toadlet {
 					new HTMLNode[] { HTMLNode.STRONG });
 		}
 
-		p = seclevelGroup.addChild(new BlockText());
+		p = seclevelGroup.addBlockText();
 		p.addInlineBox(Category.BOLD, l10nSec("networkThreatLevel.darknetLabel"));
 		p.addText(": " + l10nSec("networkThreatLevel.darknetExplain"));
-		div = seclevelGroup.addChild(new Box(Category.DARKNETDIV));
+		div = seclevelGroup.addBox(Category.DARKNETDIV);
 		
 		for(NETWORK_THREAT_LEVEL level : NETWORK_THREAT_LEVEL.DARKNET_VALUES) {
 			HTMLNode input;
@@ -561,7 +561,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 		seclevelGroup.addBlockText(Category.BOLD, l10nSec("networkThreatLevel.opennetFriendsWarning"));
 
 		// Physical security level
-		formNode.addChild(new Box(Category.CONFIGPREFIX, l10nSec("physicalThreatLevelShort")));
+		formNode.addBox(Category.CONFIGPREFIX, l10nSec("physicalThreatLevelShort"));
 		secLevelList = new OutputList(Category.CONFIG);
 		formNode.addChild(secLevelList);
 		seclevelGroup = secLevelList.addItem();
@@ -616,7 +616,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 					addPasswordChangeForm(inner);
 				} else {
 					// Add password form
-					p = inner.addChild(new BlockText());
+					p = inner.addBlockText();
 					p.addChild("label", "for", "passwordBox", l10nSec("setPassword"));
 					p.addInput(Input.Type.PASSWORD, "masterPassword", Identifier.PASSWORDBOX);
 				}
@@ -643,7 +643,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 		cell.addChild("label", "for", "newPasswordBox", l10nSec("newPasswordLabel"));
 		cell = row.addCell();
 		cell.addInput(Input.Type.PASSWORD, "masterPassword", 100, Identifier.PASSWORDBOX);
-		HTMLNode p = inner.addChild(new BlockText());
+		HTMLNode p = inner.addBlockText();
 		p.addInput(Input.Type.SUBMIT, "changePassword", l10nSec("changePasswordButton"));
 	}
 
@@ -692,7 +692,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 	 * @param content containing more information. Will be added to.
 	 * @param masterPasswordFile path to master password file */
 	private static void sendPasswordFileCorruptedPageInner(Box content, String masterPasswordFile) {
-		content.addChild(new BlockText(l10nSec("passwordFileCorrupted", "file", masterPasswordFile)));
+		content.addBlockText(l10nSec("passwordFileCorrupted", "file", masterPasswordFile));
 		addHomepageLink(content);
 		addBackToSeclevelsLink(content);
 	}

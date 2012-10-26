@@ -32,11 +32,11 @@ public class ChatForumsToadlet extends Toadlet implements LinkEnabledCallback {
 		chatForum.content.addChild(alerts.createSummary());
 		Infobox chatList = chatForum.content
 			.addInfobox(Infobox.Type.INFORMATION, Identifier.CHATLIST, l10n("title"));
-		chatList.body.addChild(new BlockText(l10n("freetalkRecommended")));
-		chatList.body.addChild(new BlockText(l10n("freetalkCaveat")));
+		chatList.body.addBlockText(l10n("freetalkRecommended"));
+		chatList.body.addBlockText(l10n("freetalkCaveat"));
 		ctx.addFormChild(chatList.body, path(), "loadFreetalkButton")
 			.addInput(Input.Type.SUBMIT, "loadFreetalk", l10n("freetalkButton"));
-		chatList.body.addChild(new BlockText(l10n("othersIntro")));
+		chatList.body.addBlockText(l10n("othersIntro"));
 		OutputList chatPluginList = new OutputList();
 		chatList.body.addChild(chatPluginList);
 		Item chatPlugin = chatPluginList.addItem();
@@ -68,7 +68,7 @@ public class ChatForumsToadlet extends Toadlet implements LinkEnabledCallback {
 				new Link(
 					"/USK@nwa8lHa271k2QvJ8aa0Ov7IHAV-DFOCFgmDt3X6BpCI," +
 						"DuQSUZiI~agF8c-6tjsFFGuZ8eICrzWCILB60nT8KKo,AQACAAE/sone/43/")});
-		chatList.body.addChild(new BlockText(l10n("content2")));
+		chatList.body.addBlockText(l10n("content2"));
 		this.writeHTMLReply(ctx, 200, "OK", chatForum.generate());
 	}
 

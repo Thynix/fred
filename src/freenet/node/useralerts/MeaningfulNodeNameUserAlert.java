@@ -42,7 +42,7 @@ public class MeaningfulNodeNameUserAlert extends AbstractUserAlert {
 		SubConfig sc = node.config.get("node");
 		Option<?> o = sc.getOption("name");
 		Box alertNode = new Box();
-		HTMLNode textNode = alertNode.addChild(new Box());
+		HTMLNode textNode = alertNode.addBox();
 		textNode.addText(l10n("noNodeNick"));
 		Form formNode = alertNode.addForm("/config/" + sc.getPrefix(), "post");
 		formNode.addInput(Input.Type.HIDDEN, "formPassword", node.clientCore.formPassword);

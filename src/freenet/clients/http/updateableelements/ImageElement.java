@@ -4,7 +4,6 @@ import freenet.client.FetchException;
 import freenet.client.filter.HTMLFilter.ParsedTag;
 import freenet.clients.http.*;
 import freenet.clients.http.FProxyFetchInProgress.REFILTER_POLICY;
-import freenet.clients.http.uielements.Box;
 import freenet.clients.http.uielements.Category;
 import freenet.clients.http.uielements.Input;
 import freenet.keys.FreenetURI;
@@ -170,10 +169,10 @@ public class ImageElement extends BaseUpdateableElement {
 					waiter = tracker.makeFetcher(key, maxSize, null, REFILTER_POLICY.RE_FILTER);
 					fr = waiter.getResultFast();
 				} catch (FetchException fe) {
-					whenJsEnabled.addChild(new Box(Category.NONE, "error"));
+					whenJsEnabled.addBox(Category.NONE, "error");
 				}
 				if (fr == null) {
-					whenJsEnabled.addChild(new Box(Category.NONE, "No fetcher found"));
+					whenJsEnabled.addBox(Category.NONE, "No fetcher found");
 				} else {
 
 					if (fr.isFinished() && fr.hasData()) {

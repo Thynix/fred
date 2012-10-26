@@ -25,7 +25,6 @@ import freenet.client.FetchContext;
 import freenet.client.async.SplitFileInserterSegment;
 import freenet.clients.http.SecurityLevelsToadlet;
 import freenet.clients.http.SimpleToadletServer;
-import freenet.clients.http.uielements.BlockText;
 import freenet.clients.http.uielements.Box;
 import freenet.clients.http.uielements.Infobox;
 import freenet.clients.http.uielements.OutputList;
@@ -3885,11 +3884,6 @@ public class Node implements TimeSkewDetectorCallback {
 	 * @param canWriteClientCache
 	 * @param canWriteDatastore
 	 * @param forULPR
-	 * @param mustBeMarkedAsPostCachingChanges If true, the key must have the
-	 * ENTRY_NEW_BLOCK flag (if saltedhash), indicating that it a) has been added
-	 * since the caching changes in 1224 (since we didn't delete the stores), and b)
-	 * that it wasn't added due to low network security caching everything, unless we
-	 * are currently in low network security mode. Only applies to main store.
 	 */
 	public KeyBlock fetch(Key key, boolean canReadClientCache, boolean canWriteClientCache, boolean canWriteDatastore, boolean forULPR, BlockMetadata meta) {
 		if(key instanceof NodeSSK)
@@ -4272,7 +4266,7 @@ public class Node implements TimeSkewDetectorCallback {
 
 	/**
 	 * Fetch or create an SSKInsertSender for a given key/htl.
-	 * @param key The key to be inserted.
+	 * @param block The key to be inserted.
 	 * @param htl The current HTL. We can't coalesce inserts across
 	 * HTL's.
 	 * @param uid The UID of the caller's request chain, or a new
@@ -5332,9 +5326,13 @@ public class Node implements TimeSkewDetectorCallback {
 
 	public synchronized void drawStoreStats(HTMLNode infobox) {
 		if (completeInsertsTotal != 0) {
-			infobox.addChild(new BlockText("Stored inserts: " + completeInsertsStored + " of " + completeInsertsTotal + " (" + fix3p3pct.format((completeInsertsStored * 1.0) / completeInsertsTotal) + ")"));
-			infobox.addChild(new BlockText("Would have stored: " + completeInsertsOldStore + " of " + completeInsertsTotal + " (" + fix3p3pct.format((completeInsertsOldStore * 1.0) / completeInsertsTotal) + ")"));
-			infobox.addChild(new BlockText("Would have stored but wasn't stored: " + completeInsertsNotStoredWouldHaveStored + " of " + completeInsertsTotal + " (" + fix3p3pct.format((completeInsertsNotStoredWouldHaveStored * 1.0) / completeInsertsTotal) + ")"));
+			infobox.addBlockText(
+				"Stored inserts: " + completeInsertsStored + " of " + completeInsertsTotal + " (" +
+					fix3p3pct.format((completeInsertsStored * 1.0) / completeInsertsTotal) + ")");
+			infobox.addBlockText(
+				"Would have stored: " + completeInsertsOldStore + " of " + completeInsertsTotal + " (" +
+					fix3p3pct.format((completeInsertsOldStore * 1.0) / completeInsertsTotal) + ")");
+			infobox.addBlockText("Would have stored but wasn't stored: " + completeInsertsNotStoredWouldHaveStored + " of " + completeInsertsTotal + " (" + fix3p3pct.format((completeInsertsNotStoredWouldHaveStored * 1.0) / completeInsertsTotal) + ")");
 		}
 	}
 

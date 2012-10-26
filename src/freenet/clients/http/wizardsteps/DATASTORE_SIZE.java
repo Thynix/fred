@@ -1,7 +1,6 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
-import freenet.clients.http.uielements.Box;
 import freenet.clients.http.uielements.Infobox;
 import freenet.clients.http.uielements.Input;
 import freenet.config.Config;
@@ -80,7 +79,7 @@ public class DATASTORE_SIZE implements Step {
 
 
 		//Put buttons below dropdown.
-		HTMLNode below = bandwidthForm.addChild(new Box());
+		HTMLNode below = bandwidthForm.addBox();
 		below.addInput(Input.Type.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
 		below.addInput(Input.Type.SUBMIT, "next", NodeL10n.getBase().getString("Toadlet.next"));
 	}

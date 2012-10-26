@@ -8,7 +8,6 @@ import freenet.clients.http.Toadlet;
 import freenet.clients.http.ToadletContext;
 import freenet.clients.http.uielements.Box;
 import freenet.clients.http.uielements.Infobox;
-import freenet.clients.http.uielements.Link;
 import freenet.keys.FreenetURI;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
@@ -79,8 +78,8 @@ public abstract class WebInterfaceToadlet extends Toadlet implements LinkEnabled
 		}
 		if (retryUri != null) {
 			errorBox.addText("Retry: ");
-			errorBox.addChild(new Link(path + "?key=" + ((extraParams == null) ? retryUri :
-				(retryUri + extraParams)), retryUri.toString(false, false)));
+			errorBox.addLink(path + "?key=" + ((extraParams == null) ? retryUri :
+				(retryUri + extraParams)), retryUri.toString(false, false));
 		}
 		return errorList;
 	}

@@ -404,7 +404,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 					MAX_PARAM_VALUE_SIZE);
 			}
 			if (curValue != null) {
-				formNode.addChild(new Box(Category.CONFIGPREFIX, l10n("wrapper")));
+				formNode.addBox(Category.CONFIGPREFIX, l10n("wrapper"));
 				OutputList configOptionList = new OutputList(Category.CONFIG);
 				formNode.addChild(configOptionList);
 				Item configOption = configOptionList.addItem();
@@ -486,14 +486,14 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 				}
 				configItemNode.addAttribute("class", optionType.cssClass);
 				configItemNode
-					.addChild(new Link(Link.Type.ANCHOR, configName, configName))
-					.addChild(new InlineBox(Category.CONFIGSHORTDESC,
+					.addLink(Link.Type.ANCHOR, configName, configName)
+					.addInlineBox(Category.CONFIGSHORTDESC,
 						NodeL10n.getBase().getString(
 							"ConfigToadlet.defaultIs",
 							new String[]{"default"},
 							new String[]{defaultValue})
 							+ (advancedModeEnabled ? " ["
-							+ fullName + ']' : "")))
+							+ fullName + ']' : ""))
 					.addChild(shortDesc);
 				InlineBox configItemValueNode = configItemNode.addInlineBox(Category.CONFIG);
 				// Values persisted through browser or backing down from
@@ -539,9 +539,9 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 			}
 		}
 		if (displayedConfigElements > 0) {
-			formNode.addChild(new Box(Category.CONFIGPREFIX, (plugin == null) ? l10n(subConfig
+			formNode.addBox(Category.CONFIGPREFIX, (plugin == null) ? l10n(subConfig
 				.getPrefix())
-				: plugin.getString(subConfig.getPrefix())));
+				: plugin.getString(subConfig.getPrefix()));
 			formNode.addChild("a", "id", subConfig.getPrefix());
 			formNode.addChild(configGroupUlNode);
 		}

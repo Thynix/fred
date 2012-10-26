@@ -194,7 +194,6 @@ public class StatisticsToadlet extends Toadlet {
 		
 		if(advancedMode) {
 			// store size box
-			//HTMLNode storeSizeInfobox = nextTableCell.addChild(new div(HTMLClass.INFOBOX));
 			Infobox storeSizeInfobox = page.content.addInfobox(Infobox.Type.NONE, null);
 			drawStoreSizeBox(storeSizeInfobox, myLocation, nodeUptimeSeconds);
            
@@ -646,7 +645,7 @@ public class StatisticsToadlet extends Toadlet {
 	}
 
 	private void drawClientRequestersBox(HTMLNode box) {
-		box.addChild(new Box(Category.INFOBOXHEADER, l10n("clientRequesterObjects")));
+		box.addBox(Category.INFOBOXHEADER, l10n("clientRequesterObjects"));
 		Box masterContent = new Box(Category.INFOBOXCONTENT);
 		box.addChild(masterContent);
 		Table table = masterContent.addTable();
@@ -1476,7 +1475,7 @@ public class StatisticsToadlet extends Toadlet {
 			peerHistogramLegendCell = peerHistogramLegendTableRow.addCell();
 			peerHistogramGraphCell = peerHistogramGraphTableRow.addCell();
 			peerHistogramGraphCell.addAttribute("style", "height: 100px;");
-			peerHistogramLegendCell.addChild(new Box(Category.HISTOGRAMLABEL)).addText(fix1p2.format(((double) i) / (HISTOGRAM_LENGTH * 2)));
+			peerHistogramLegendCell.addBox(Category.HISTOGRAMLABEL).addText(fix1p2.format(((double) i) / (HISTOGRAM_LENGTH * 2)));
 			//
 			histogramPercent = ((double) histogramConnected[ i ] ) / newPeerCount;
 			Box graphCell = new Box(Category.HISTOGRAMCONNECTED, "\u00a0");

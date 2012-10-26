@@ -786,8 +786,8 @@ public final class PageMaker {
 			infobox.addAttribute("id", title);
 		}
 
-		infobox.addChild(new Box(Category.INFOBOXHEADER)).addChild(header);
-		return new InfoboxNode(infobox, infobox.addChild(new Box(Category.INFOBOXCONTENT)));
+		infobox.addBox(Category.INFOBOXHEADER).addChild(header);
+		return new InfoboxNode(infobox, infobox.addBox(Category.INFOBOXCONTENT));
 	}
 	
 	private HTMLNode getOverrideContent() {

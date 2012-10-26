@@ -1190,12 +1190,12 @@ public abstract class ConnectionsToadlet extends Toadlet {
 		errorMessage.body.addText(message);
 		if (returnToAddFriends) {
 			errorMessage.body.addLineBreak();
-			errorMessage.body.addChild(new Link(DarknetAddRefToadlet.PATH,
-				l10n("returnToAddAFriendPage")));
+			errorMessage.body.addLink(DarknetAddRefToadlet.PATH,
+				l10n("returnToAddAFriendPage"));
 			errorMessage.body.addLineBreak();
 		} else {
 			errorMessage.body.addLineBreak();
-			errorMessage.body.addChild(new Link(".", l10n("returnToPrevPage")));
+			errorMessage.body.addLink(".", l10n("returnToPrevPage"));
 			errorMessage.body.addLineBreak();
 		}
 		addHomepageLink(errorMessage.body);

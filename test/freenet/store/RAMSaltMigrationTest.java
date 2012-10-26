@@ -1,20 +1,8 @@
 package freenet.store;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Random;
-
-import junit.framework.TestCase;
-
-import freenet.crypt.DummyRandomSource;
 import freenet.crypt.RandomSource;
-import freenet.keys.CHKBlock;
-import freenet.keys.CHKDecodeException;
-import freenet.keys.CHKEncodeException;
-import freenet.keys.CHKVerifyException;
-import freenet.keys.ClientCHK;
-import freenet.keys.ClientCHKBlock;
-import freenet.keys.Key;
+import freenet.crypy.DummyRandomSource;
+import freenet.keys.*;
 import freenet.node.SemiOrderedShutdownHook;
 import freenet.store.saltedhash.ResizablePersistentIntBuffer;
 import freenet.store.saltedhash.SaltedHashFreenetStore;
@@ -27,6 +15,11 @@ import freenet.support.compress.Compressor;
 import freenet.support.io.ArrayBucketFactory;
 import freenet.support.io.BucketTools;
 import freenet.support.io.FileUtil;
+import junit.framework.TestCase;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Random;
 
 /** Test migration from a RAMFreenetStore to a SaltedHashFreenetStore */
 public class RAMSaltMigrationTest extends TestCase {

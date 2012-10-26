@@ -61,9 +61,9 @@ public class SECURITY_PHYSICAL implements Step {
 		        new HTMLNode[]{HTMLNode.STRONG,
 		                new Link(ExternalLinkToadlet.escape("http://www.truecrypt.org/"), Link.Target.BLANK)});
 		OperatingSystem os = FileUtil.detectedOS;
-		div.addChild(new BlockText(NodeL10n.getBase().getString("SecurityLevels.physicalThreatLevelSwapfile",
+		div.addBlockText(NodeL10n.getBase().getString("SecurityLevels.physicalThreatLevelSwapfile",
 			"operatingSystem",
-			NodeL10n.getBase().getString("OperatingSystemName." + os.name()))));
+			NodeL10n.getBase().getString("OperatingSystemName." + os.name())));
 		if(os == FileUtil.OperatingSystem.Windows) {
 			swapWarning.addText(" " + WizardL10n.l10nSec("physicalThreatLevelSwapfileWindows"));
 		}
@@ -76,7 +76,7 @@ public class SECURITY_PHYSICAL implements Step {
 			if(level == SecurityLevels.PHYSICAL_THREAT_LEVEL.HIGH &&
 			        core.node.securityLevels.getPhysicalThreatLevel() != level) {
 				// Add password form on high security if not already at high security.
-				HTMLNode p = div.addChild(new BlockText());
+				HTMLNode p = div.addBlockText();
 				p.addChild("label", "for", "passwordBox", WizardL10n.l10nSec("setPasswordLabel")+":");
 				p.addInput(Input.Type.PASSWORD, "masterPassword", Identifier.PASSWORDBOX);
 			}

@@ -885,7 +885,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		Page page = ctx.getPageMaker().getPage(l10n("confirmPanicButtonPageTitle"), ctx);
 		Infobox confirmPanic = page.content.addInfobox(Infobox.Type.ERROR, Identifier.PANICCONFIRM,
 			l10n("confirmPanicButtonPageTitle"));
-		confirmPanic.body.addChild(new BlockText(l10n("confirmPanicButton")));
+		confirmPanic.body.addBlockText(l10n("confirmPanicButton"));
 		HTMLNode form = ctx.addFormChild(confirmPanic.body, path(), "confirmPanicButton");
 		form.addInput(Input.Type.SUBMIT, "confirmpanic", l10n("confirmPanicButtonYes"));
 		form.addInput(Input.Type.SUBMIT, "noconfirmpanic", l10n("confirmPanicButtonNo"));
@@ -1625,7 +1625,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 				failedContent.addClass("download-failed-" + atype);
 				// FIXME add a class for easier styling.
 				KnownUnsafeContentTypeException e = new KnownUnsafeContentTypeException(typeHandler);
-				failedContent.body.addChild(new BlockText(l10n("badMIMETypeIntro", "type", type)));
+				failedContent.body.addBlockText(l10n("badMIMETypeIntro", "type", type));
 				List<String> detail = e.details();
 				if (detail != null && ! detail.isEmpty()) {
 					OutputList list = new OutputList();
@@ -1634,7 +1634,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 						list.addItem(s);
 					}
 				}
-				failedContent.body.addChild(new BlockText(l10n("mimeProblemFetchAnyway")));
+				failedContent.body.addBlockText(l10n("mimeProblemFetchAnyway"));
 				Collections.sort(getters, jobComparator);
 				if (advancedModeEnabled) {
 					failedContent.body.addChild(createRequestTable(pageMaker, ctx, getters,
@@ -1665,9 +1665,9 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 						new String[]{String.valueOf(getters.size()), type}));
 				failedContent.addClass("failedDownload-unknowntype-" + atype);
 				// FIXME add a class for easier styling.
-				failedContent.body.addChild(new BlockText(NodeL10n.getBase()
-					.getString("UnknownContentTypeException.explanation", "type", type)));
-				failedContent.body.addChild(new BlockText(l10n("mimeProblemFetchAnyway")));
+				failedContent.body.addBlockText(NodeL10n.getBase()
+					.getString("UnknownContentTypeException.explanation", "type", type));
+				failedContent.body.addBlockText(l10n("mimeProblemFetchAnyway"));
 				Collections.sort(getters, jobComparator);
 				if (advancedModeEnabled) {
 					failedContent.body.addChild(createRequestTable(pageMaker, ctx, getters,
@@ -1802,7 +1802,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 			int failedPercent = (int) (failed / (double) total * 100);
 			int fatallyFailedPercent = (int) (fatallyFailed / (double) total * 100);
 			int minPercent = (int) (min / (double) total * 100);
-			HTMLNode progressBar = progressCell.addChild(new Box(Category.PROGRESSBAR));
+			HTMLNode progressBar = progressCell.addBox(Category.PROGRESSBAR);
 			Box completed = new Box(Category.PROGRESSBARDONE);
 			completed.addAttribute("style", "width: " + fetchedPercent + "%;" );
 			progressBar.addChild(completed);
@@ -2013,7 +2013,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 			downloadForm.addLineBreak();
 			downloadForm.addInput(Input.Type.RADIO, "target", "direct", true).setContent(' ' + l10n("bulkDownloadSelectOptionDirect") + ' ');
 		}
-		HTMLNode filterControl = downloadForm.addChild(new Box(Category.NONE, l10n("filterData")));
+		HTMLNode filterControl = downloadForm.addBox(Category.NONE, l10n("filterData"));
 		filterControl.addInput(Input.Type.CHECKBOX, "filterData", "filterData", true);
 		filterControl.addText(l10n("filterDataMessage"));
 		downloadForm.addLineBreak();

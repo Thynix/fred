@@ -3,7 +3,6 @@ package freenet.clients.http.updateableelements;
 import freenet.client.FetchContext;
 import freenet.clients.http.*;
 import freenet.clients.http.complexhtmlnodes.SecondCounterNode;
-import freenet.clients.http.uielements.Box;
 import freenet.clients.http.uielements.Category;
 import freenet.keys.FreenetURI;
 import freenet.support.Base64;
@@ -41,7 +40,7 @@ public class ProgressInfoElement extends BaseUpdateableElement {
 		FProxyFetchWaiter waiter = tracker.makeWaiterForFetchInProgress(key, maxSize, fctx);
 		FProxyFetchResult fr = waiter.getResult();
 		if (fr == null) {
-			addChild( new Box(Category.NONE, "No fetcher found"));
+			addBox(Category.NONE, "No fetcher found");
 		}
 		
 		addText(FProxyToadlet.l10n("filenameLabel")+ " ");

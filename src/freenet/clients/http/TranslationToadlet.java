@@ -128,7 +128,7 @@ public class TranslationToadlet extends Toadlet {
 				.getString("TranslationToadlet.confirmRemoveOverride", new String[]{"key", "value"},
 					new String[]{key, this.base.getString(key)}));
 			HTMLNode removeForm =
-				ctx.addFormChild(confirmRemove.body.addChild(new BlockText()), TOADLET_URL,
+				ctx.addFormChild(confirmRemove.body.addBlockText(), TOADLET_URL,
 					"remove_confirmed");
 			if (! showEverything) {
 				removeForm.addInput(Input.Type.HIDDEN, "toTranslateOnly", key);
@@ -151,7 +151,7 @@ public class TranslationToadlet extends Toadlet {
 		}
 		final HTMLNode translatingForForm =
 			ctx.addFormChild(selectTranslation.body, TOADLET_URL, "ChooseWhatToTranslate")
-				.addChild(new BlockText(l10n("showTranslationOf")));
+				.addBlockText(l10n("showTranslationOf"));
 		final HTMLNode translatingForOption = translatingForForm.addChild("select", "name",
 			"translating_for");
 		for (String element : elementsToTranslate) {

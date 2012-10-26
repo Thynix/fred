@@ -6,7 +6,6 @@ package freenet.clients.http;
 import freenet.client.*;
 import freenet.client.async.ClientGetter;
 import freenet.clients.http.uielements.Infobox;
-import freenet.clients.http.uielements.Link;
 import freenet.clients.http.uielements.Page;
 import freenet.clients.http.uielements.Text;
 import freenet.keys.FreenetURI;
@@ -341,7 +340,7 @@ public abstract class Toadlet {
 	}
 	
 	protected static void addHomepageLink(HTMLNode content) {
-		content.addChild(new Link("/", l10n("homepage"), l10n("returnToNodeHomepage")));
+		content.addLink("/", l10n("homepage"), l10n("returnToNodeHomepage"));
 	}
 
 	/**

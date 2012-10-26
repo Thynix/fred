@@ -165,7 +165,7 @@ public class HTMLNode implements XMLCharacterClasses {
 		addAttributes(attributeNames, attributeValues);
 		this.name = name.toLowerCase(Locale.ENGLISH);
 		if (content != null && !("#").equals(name)&& !("%").equals(name)) {
-			addChild(new Text(content));
+			addText(content);
 			this.content = null;
 		} else {
 			this.content = content;
