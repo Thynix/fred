@@ -360,7 +360,7 @@ public final class PageMaker {
 		//To make something only rendered when javascript is on, then add the jsonly class to it
 		template.root.head.addChild("noscript").addChild("style", " .jsonly {display:none;}");
 		if (override != null) {
-			template.root.head.addChild(getOverrideContent());
+			template.root.head.addLink(getOverrideContent());
 		} else {
 			template.root.head.addChild("link", new String[]{"rel", "href", "type", "title"},
 				new String[]{"stylesheet", "/static/themes/" + theme.code + "/theme.css", "text/css",
@@ -790,8 +790,8 @@ public final class PageMaker {
 		return new InfoboxNode(infobox, infobox.addBox(Category.INFOBOXCONTENT));
 	}
 	
-	private HTMLNode getOverrideContent() {
-		return new HTMLNode("link", new String[] { "rel", "href", "type", "media", "title" }, new String[] { "stylesheet", override, "text/css", "screen", "custom" });
+	private Link getOverrideContent() {
+		return new Link(override, Link.Media.SCREEN, "custom");
 	}
 
 	public boolean advancedMode(HTTPRequest req, ToadletContainer container) {

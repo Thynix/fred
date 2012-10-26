@@ -5,6 +5,25 @@ package freenet.clients.http.uielements;
  */
 public class Link extends OutputNode {
 
+	public enum Media {
+		ALL("all"),
+		AURAL("aural"),
+		BRAILLE("braille"),
+		EMBOSSED("embossed"),
+		HANDHELD("handheld"),
+		PRINT("print"),
+		PROJECTION("projection"),
+		SCREEN("screen"),
+		TTY("tty"),
+		TV("tv");
+
+		public final String name;
+
+		private Media(String type) {
+			this.name = type;
+		}
+	}
+
 	public enum Type {
 		HYPERLINK("href"),
 		ANCHOR("name");
@@ -37,6 +56,15 @@ public class Link extends OutputNode {
 		addClass(category);
 	}
 
+	public Link (String data, Media media, String title) {
+		this();
+		this.addAttribute("rel", "stylesheet");
+		this.addAttribute(Type.HYPERLINK.attribute, data);
+		this.addAttribute("type", "text/css");
+		this.addAttribute("media", media.name);
+		this.setTitle(title);
+
+	}
 	public Link(String data, String title, Category category, String content) {
 		this(data, title, content);
 		addClass(category);

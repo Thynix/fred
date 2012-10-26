@@ -1,6 +1,7 @@
 package freenet.client.filter;
 
 import freenet.support.Logger;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -703,17 +704,4 @@ public class FilterUtils {
 		}
 		return true;
 	}
-//	public static HTMLNode getHTMLNodeFromElement(Element node)
-//	{
-//		String[] propertyName=new String[node.getAttributes().size()];
-//		String[] propertyValue=new String[node.getAttributes().size()];
-//		int index=0;
-//		List<Attribute> attrList=node.getAttributes();
-//		for(Attribute currentAttr:attrList)
-//		{
-//			propertyName[index]=currentAttr.getName();
-//			propertyValue[index]=currentAttr.getValue();
-//		}
-//		return new HTMLNode(node.getName(),propertyName,propertyValue,node.getValue());
-//	}	
 }
