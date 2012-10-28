@@ -1,5 +1,6 @@
 package freenet.clients.http.uielements;
 
+import freenet.clients.http.constants.Category;
 /**
  * Creates table cells
  */

@@ -4,6 +4,7 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.constants.InfoboxType;
 import freenet.clients.http.uielements.Infobox;
 import freenet.clients.http.uielements.Page;
 import freenet.l10n.NodeL10n;
@@ -42,7 +43,7 @@ public class UserAlertsToadlet extends Toadlet {
 		Page page = ctx.getPageMaker().getPage(l10n("title"), ctx);
 		HTMLNode alertsNode = alerts.createAlerts(false);
 		if (alertsNode.getFirstTag() == null) {
-			alertsNode = new Infobox(Infobox.Type.NORMAL,
+			alertsNode = new Infobox(InfoboxType.NORMAL,
 				NodeL10n.getBase().getString("UserAlertsToadlet.noMessages"));
 		}
 		page.content.addChild(alertsNode);

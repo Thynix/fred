@@ -3,8 +3,8 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node.useralerts;
 
+import freenet.clients.http.constants.InputType;
 import freenet.clients.http.uielements.Box;
-import freenet.clients.http.uielements.Input;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
 import freenet.node.updater.NodeUpdateManager;
@@ -89,7 +89,7 @@ public class UpdatedVersionAvailableUserAlert extends AbstractUserAlert {
 		alertNode.addText(ut.firstBit);
 		
 		if(ut.formText != null) {
-			alertNode.addForm("/", "post").addInput(Input.Type.SUBMIT, "update", ut.formText);
+			alertNode.addForm("/", "post").addInput(InputType.SUBMIT, "update", ut.formText);
 		}
 		updater.renderProgress(alertNode);
 		

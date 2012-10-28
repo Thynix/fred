@@ -1,4 +1,4 @@
-package freenet.clients.http.uielements;
+package freenet.clients.http.constants;
 
 public enum Identifier {
 	ACCESSDENIED("access-denied"),

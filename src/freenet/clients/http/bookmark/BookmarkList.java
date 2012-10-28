@@ -1,5 +1,7 @@
 package freenet.clients.http.bookmark;
 
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.Identifier;
 import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.support.URLEncoder;

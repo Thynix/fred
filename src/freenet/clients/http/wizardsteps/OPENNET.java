@@ -1,7 +1,13 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
-import freenet.clients.http.uielements.*;
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.constants.InputType;
+import freenet.clients.http.constants.ListType;
+import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Infobox;
+import freenet.clients.http.uielements.OutputList;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
@@ -14,7 +20,7 @@ public class OPENNET implements Step {
 	@Override
 	public void getStep(HTTPRequest request, PageHelper helper) {
 		Infobox infoboxContent = helper.getPageContent(WizardL10n.l10n("opennetChoicePageTitle")).addInfobox(
-			Infobox.Type.NORMAL,
+			InfoboxType.NORMAL,
 			WizardL10n.l10n("opennetChoiceTitle"));
 
 		infoboxContent.body.addBlockText(WizardL10n.l10n("opennetChoiceIntroduction"));
@@ -22,7 +28,7 @@ public class OPENNET implements Step {
 		HTMLNode form = helper.addFormChild(infoboxContent.body, ".", "opennetForm", false);
 
 		HTMLNode p = form.addBlockText(Category.ITALIC);
-		HTMLNode input = p.addInput(Input.Type.RADIO, "opennet", "false");
+		HTMLNode input = p.addInput(InputType.RADIO, "opennet", "false");
 		input.addInlineBox(Category.BOLD, WizardL10n.l10n("opennetChoiceConnectFriends") + ":");
 		p.addLineBreak();
 		p.addText(WizardL10n.l10n("opennetChoicePro"));
@@ -32,7 +38,7 @@ public class OPENNET implements Step {
 		p.addText(": " + WizardL10n.l10n("opennetChoiceConnectFriendsCON", "minfriends", "5"));
 
 		p = form.addBlockText();
-		input = p.addInput(Input.Type.RADIO, "opennet", "true");
+		input = p.addInput(InputType.RADIO, "opennet", "true");
 		input.addInlineBox(Category.BOLD, WizardL10n.l10n("opennetChoiceConnectStrangers") + ":");
 		p.addLineBreak();
 		p.addText(WizardL10n.l10n("opennetChoicePro"));
@@ -41,14 +47,14 @@ public class OPENNET implements Step {
 		p.addText(WizardL10n.l10n("opennetChoiceCon"));
 		p.addText(": " + WizardL10n.l10n("opennetChoiceConnectStrangersCON"));
 
-		form.addInput(Input.Type.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
-		form.addInput(Input.Type.SUBMIT, "next", NodeL10n.getBase().getString("Toadlet.next"));
+		form.addInput(InputType.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
+		form.addInput(InputType.SUBMIT, "next", NodeL10n.getBase().getString("Toadlet.next"));
 
 		Box foot = new Box(Category.TOGGLEABLE);
 		infoboxContent.addChild(foot);
 		foot.addInlineBox(Category.ITALIC, "¹: " + WizardL10n.l10n("opennetChoiceHowSafeIsFreenetToggle"));
 		Box footHidden = foot.addBox(Category.HIDDEN);
-		OutputList footList = footHidden.addList(OutputList.Type.ORDERED, Category.NULL);
+		OutputList footList = footHidden.addList(ListType.ORDERED, Category.NULL);
 		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetStupid"));
 		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetFriends") + "²");
 		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetTrustworthy"));

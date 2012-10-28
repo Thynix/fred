@@ -1,74 +1,53 @@
 package freenet.clients.http.uielements;
 
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.Identifier;
+import freenet.clients.http.constants.InfoboxType;
 public class Infobox extends Box {
 
 	public Box header;
 	public Box body;
 
-	public enum Type {
-		ALERT(Category.INFOBOXALERT),
-		ERROR(Category.INFOBOXERROR),
-		FAILEDREQUESTS(Category.FAILEDREQUESTS),
-		INFORMATION(Category.INFOBOXINFORMATION),
-		LEGEND(Category.LEGEND),
-		MINOR(Category.INFOBOXMINOR),
-		NAVBAR(Category.NAVBAR),
-		NORMAL(Category.INFOBOXNORMAL),
-		NONE(Category.NONE),
-		PROGRESSING(Category.REQUESTSINPROGRESS),
-		QUERY(Category.INFOBOXQUERY),
-		REQUESTCOMPLETE(Category.REQUESTCOMPLETED),
-		SUCCESS(Category.INFOBOXSUCCESS),
-		WARNING(Category.INFOBOXWARNING),
-		WTF(Category.WTF);
-
-		public final Category htmlclass;
-
-		private Type(Category id) {
-			this.htmlclass = id;
-		}
-	}
-
-	public Infobox(Type type, Category category, String title, String content) {
+	public Infobox(InfoboxType type, Category category, String title, String content) {
 		this(type, category, title);
 		this.body.setContent(content);
 	}
 
-	public Infobox(Type type, Category category, String title, OutputNode content) {
+	public Infobox(InfoboxType type, Category category, String title, OutputNode content) {
 		this(type, category, title);
 		this.body.addChild(content);
 	}
 
-	public Infobox(Type type, Category category, String title) {
+	public Infobox(InfoboxType type, Category category, String title) {
 		this(type, title);
 		this.addClass(category);
 	}
 
 	public Infobox(Identifier id, String title) {
-		this(Type.NONE, id, title);
+		this(InfoboxType.NONE, id, title);
 	}
 
-	public Infobox(Type type, Identifier id, String title, String content) {
+	public Infobox(InfoboxType type, Identifier id, String title, String content) {
 		this(type, id, title);
 		this.body.setContent(content);
 	}
 
-	public Infobox(Type type, Identifier id, String title, OutputNode content) {
+	public Infobox(InfoboxType type, Identifier id, String title, OutputNode content) {
 		this(type, id, title);
 		this.body.addChild(content);
 	}
 
-	public Infobox(Type type, Identifier id, String title) {
+	public Infobox(InfoboxType type, Identifier id, String title) {
 		this(type, title);
 		this.setID(id);
 	}
 
-	public Infobox(Type type, String title) {
+	public Infobox(InfoboxType type, String title) {
 		this(type.htmlclass, title);
 	}
 
 	public Infobox(String title) {
-		this(Type.NONE, title);
+		this(InfoboxType.NONE, title);
 	}
 
 	protected Infobox(Category type, String title) {

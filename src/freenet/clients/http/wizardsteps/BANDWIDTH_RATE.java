@@ -1,6 +1,8 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
+import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.constants.InputType;
 import freenet.clients.http.uielements.*;
 import freenet.config.Config;
 import freenet.config.InvalidConfigValueException;
@@ -67,7 +69,7 @@ public class BANDWIDTH_RATE extends BandwidthManipulator implements Step {
 			parseErrorBox(contentNode, helper, request.getParam("parseTarget"));
 		}
 
-		Infobox infoBox = formNode.addInfobox(Infobox.Type.NORMAL,
+		Infobox infoBox = formNode.addInfobox(InfoboxType.NORMAL,
 			WizardL10n.l10n("bandwidthLimitRateTitle"));
 		NodeL10n.getBase().addL10nSubstitution(infoBox.body, "FirstTimeWizardToadlet.bandwidthLimitRate",
 		        new String[] { "bold", "coreSettings" }, new HTMLNode[] { HTMLNode.STRONG, 
@@ -104,14 +106,14 @@ public class BANDWIDTH_RATE extends BandwidthManipulator implements Step {
 		//Add custom option.
 		Row customForm = table.addRow();
 		customForm.addCell(WizardL10n.l10n("bandwidthCustom"));
-		customForm.addCell().addInput("customDown", Input.Type.TEXT);
-		customForm.addCell().addInput("customUp", Input.Type.TEXT);
+		customForm.addCell().addInput("customDown", InputType.TEXT);
+		customForm.addCell().addInput("customUp", InputType.TEXT);
 		// This is valid if it's filled in. So don't show the selector.
 		// FIXME javascript to auto-select it?
 //		customForm.addCell().addInput(Input.Type.RADIO, "bandwidth", "custom");
 
-		infoBox.addInput(Input.Type.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
-		infoBox.addInput(Input.Type.SUBMIT, "next", NodeL10n.getBase().getString("Toadlet.next"));
+		infoBox.addInput(InputType.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
+		infoBox.addInput(InputType.SUBMIT, "next", NodeL10n.getBase().getString("Toadlet.next"));
 	}
 
 	@Override
@@ -234,7 +236,7 @@ public class BANDWIDTH_RATE extends BandwidthManipulator implements Step {
 		Cell buttonCell = row.addCell();
 		
 		HTMLNode radio = 
-			buttonCell.addInput(Input.Type.RADIO, "bandwidth", limit.downBytes+"/"+limit.upBytes);
+			buttonCell.addInput(InputType.RADIO, "bandwidth", limit.downBytes+"/"+limit.upBytes);
 		if(recommended || (useMaybeDefault && limit.maybeDefault))
 			radio.addAttribute("checked", "checked");
 		if (recommended) {

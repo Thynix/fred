@@ -4,6 +4,10 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.Identifier;
+import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.constants.InputType;
 import freenet.clients.http.uielements.*;
 import freenet.l10n.BaseL10n;
 import freenet.l10n.NodeL10n;
@@ -109,20 +113,20 @@ public class TranslationToadlet extends Toadlet {
 				new String[]{"name", "rows", "cols"},
 				new String[]{"trans", "20", "80"},
 				this.base.getString(key));
-			contentRow.addInput(Input.Type.HIDDEN, "key", key);
-			updateForm.addInput(Input.Type.SUBMIT, "translation_update", l10n("updateTranslationCommand"));
-			updateForm.addInput(Input.Type.CHECKBOX, "gotoNext", gotoNext).setContent(l10n("gotoNext"));
+			contentRow.addInput(InputType.HIDDEN, "key", key);
+			updateForm.addInput(InputType.SUBMIT, "translation_update", l10n("updateTranslationCommand"));
+			updateForm.addInput(InputType.CHECKBOX, "gotoNext", gotoNext).setContent(l10n("gotoNext"));
 			if (! showEverything) {
-				updateForm.addInput(Input.Type.HIDDEN, "toTranslateOnly", key);
+				updateForm.addInput(InputType.HIDDEN, "toTranslateOnly", key);
 			}
-			updateForm.addInput(Input.Type.SUBMIT, "cancel", NodeL10n.getBase().getString("Toadlet.cancel"));
+			updateForm.addInput(InputType.SUBMIT, "cancel", NodeL10n.getBase().getString("Toadlet.cancel"));
 			this.writeHTMLReply(ctx, 200, "OK", page.generate());
 			return;
 		} else if (request.isParameterSet("remove")) {
 			String key = request.getParam("remove");
 			Page page = ctx.getPageMaker().getPage(l10n("removeOverrideTitle"), ctx);
 			Infobox confirmRemove =
-				page.content.addInfobox(Infobox.Type.WARNING, Identifier.TRANSLATIONOVERRIDE,
+				page.content.addInfobox(InfoboxType.WARNING, Identifier.TRANSLATIONOVERRIDE,
 					l10n("removeOverrideWarningTitle"));
 			confirmRemove.body.addBlockText(NodeL10n.getBase()
 				.getString("TranslationToadlet.confirmRemoveOverride", new String[]{"key", "value"},
@@ -131,11 +135,11 @@ public class TranslationToadlet extends Toadlet {
 				ctx.addFormChild(confirmRemove.body.addBlockText(), TOADLET_URL,
 					"remove_confirmed");
 			if (! showEverything) {
-				removeForm.addInput(Input.Type.HIDDEN, "toTranslateOnly", key);
+				removeForm.addInput(InputType.HIDDEN, "toTranslateOnly", key);
 			}
-			removeForm.addInput(Input.Type.HIDDEN, "remove_confirm", key);
-			removeForm.addInput(Input.Type.SUBMIT, "remove_confirmed", l10n("remove"));
-			removeForm.addInput(Input.Type.SUBMIT, "cancel", NodeL10n.getBase().getString("Toadlet.cancel"));
+			removeForm.addInput(InputType.HIDDEN, "remove_confirm", key);
+			removeForm.addInput(InputType.SUBMIT, "remove_confirmed", l10n("remove"));
+			removeForm.addInput(InputType.SUBMIT, "cancel", NodeL10n.getBase().getString("Toadlet.cancel"));
 			this.writeHTMLReply(ctx, 200, "OK", page.generate());
 			return;
 		}
@@ -160,7 +164,7 @@ public class TranslationToadlet extends Toadlet {
 				option.addAttribute("selected", "selected");
 			}
 		}
-		translatingForForm.addInput(Input.Type.SUBMIT);
+		translatingForForm.addInput(InputType.SUBMIT);
 		Box translationNode = page.content.addBox(Category.TRANSLATION);
 		BlockText translationHeaderNode = translationNode.addBlockText();
 		translationHeaderNode

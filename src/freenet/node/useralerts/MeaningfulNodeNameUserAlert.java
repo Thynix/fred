@@ -3,7 +3,12 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node.useralerts;
 
-import freenet.clients.http.uielements.*;
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.InputType;
+import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Form;
+import freenet.clients.http.uielements.Item;
+import freenet.clients.http.uielements.OutputList;
 import freenet.config.Option;
 import freenet.config.SubConfig;
 import freenet.l10n.NodeL10n;
@@ -45,15 +50,15 @@ public class MeaningfulNodeNameUserAlert extends AbstractUserAlert {
 		HTMLNode textNode = alertNode.addBox();
 		textNode.addText(l10n("noNodeNick"));
 		Form formNode = alertNode.addForm("/config/" + sc.getPrefix(), "post");
-		formNode.addInput(Input.Type.HIDDEN, "formPassword", node.clientCore.formPassword);
-		formNode.addInput(Input.Type.HIDDEN, "subconfig", sc.getPrefix());
+		formNode.addInput(InputType.HIDDEN, "formPassword", node.clientCore.formPassword);
+		formNode.addInput(InputType.HIDDEN, "subconfig", sc.getPrefix());
 		OutputList listNode = formNode.addList(Category.CONFIG);
 		Item itemNode = listNode.addItem();
 		itemNode.addInlineBox(NodeL10n.getBase().getString("ConfigToadlet.defaultIs"), Category.CONFIGSHORTDESC).addChild(NodeL10n.getBase().getHTMLNode(o.getShortDesc()));
-		itemNode.addInput(Input.Type.TEXT, "node.name", o.getValueString(), Category.CONFIG, o.getShortDesc());
+		itemNode.addInput(InputType.TEXT, "node.name", o.getValueString(), Category.CONFIG, o.getShortDesc());
 		itemNode.addInlineBox(Category.CONFIGLONGDESC).addChild(NodeL10n.getBase().getHTMLNode(o.getLongDesc()));
-		formNode.addInput(Input.Type.SUBMIT, NodeL10n.getBase().getString("UserAlert.apply"));
-		formNode.addInput(Input.Type.RESET, NodeL10n.getBase().getString("UserAlert.reset"));
+		formNode.addInput(InputType.SUBMIT, NodeL10n.getBase().getString("UserAlert.apply"));
+		formNode.addInput(InputType.RESET, NodeL10n.getBase().getString("UserAlert.reset"));
 		return alertNode;
 	}
 

@@ -1,7 +1,7 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
-import freenet.clients.http.uielements.Input;
+import freenet.clients.http.constants.InputType;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
 import freenet.support.HTMLNode;
@@ -30,9 +30,9 @@ public class LocalDirectoryConfigToadlet extends LocalDirectoryToadlet {
 	
 	@Override
 	protected void createSelectDirectoryButton (HTMLNode formNode, String path, HTMLNode persist) {
-		formNode.addInput(Input.Type.SUBMIT, selectDir,
+		formNode.addInput(InputType.SUBMIT, selectDir,
 		                NodeL10n.getBase().getString("ConfigToadlet.selectDirectory"));
-		formNode.addInput(Input.Type.HIDDEN, filenameField(), path);
+		formNode.addInput(InputType.HIDDEN, filenameField(), path);
 		formNode.addChild(persist);
 	}
 

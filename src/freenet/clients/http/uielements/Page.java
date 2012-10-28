@@ -1,5 +1,7 @@
 package freenet.clients.http.uielements;
 
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.Identifier;
 import freenet.l10n.NodeL10n;
 
 public class Page extends Doctype {

@@ -2,9 +2,10 @@ package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
 import freenet.clients.http.PageMaker.RenderParameters;
-import freenet.clients.http.uielements.Identifier;
+import freenet.clients.http.constants.Identifier;
+import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.constants.InputType;
 import freenet.clients.http.uielements.Infobox;
-import freenet.clients.http.uielements.Input;
 import freenet.clients.http.uielements.Page;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
@@ -75,16 +76,16 @@ public class ExternalLinkToadlet extends Toadlet {
 		Page externalLinkPage = ctx.getPageMaker().getPage(l10n("confirmExternalLinkTitle"), ctx,
 			new RenderParameters().renderNavigationLinks(renderBars).renderStatus(renderBars));
 		Infobox externalLinkWarning = externalLinkPage.content
-			.addInfobox(Infobox.Type.WARNING, Identifier.CONFIRMEXTERNALLINK,
+			.addInfobox(InfoboxType.WARNING, Identifier.CONFIRMEXTERNALLINK,
 				l10n("confirmExternalLinkSubTitle"));
 		HTMLNode externalLinkForm = ctx.addFormChild(externalLinkWarning.body, PATH,
 			"confirmExternalLinkForm");
 		final String target = request.getParam(magicHTTPEscapeString);
 		externalLinkForm.addText(l10n("confirmExternalLinkWithURL", "url", target));
 		externalLinkForm.addLineBreak();
-		externalLinkForm.addInput(Input.Type.HIDDEN, magicHTTPEscapeString, target);
-		externalLinkForm.addInput(Input.Type.SUBMIT, "cancel", NodeL10n.getBase().getString("Toadlet.cancel"));
-		externalLinkForm.addInput(Input.Type.SUBMIT, "Go", l10n("goToExternalLink"));
+		externalLinkForm.addInput(InputType.HIDDEN, magicHTTPEscapeString, target);
+		externalLinkForm.addInput(InputType.SUBMIT, "cancel", NodeL10n.getBase().getString("Toadlet.cancel"));
+		externalLinkForm.addInput(InputType.SUBMIT, "Go", l10n("goToExternalLink"));
 		this.writeHTMLReply(ctx, 200, "OK", externalLinkPage.generate());
 	}
 

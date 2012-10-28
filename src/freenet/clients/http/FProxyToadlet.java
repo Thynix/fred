@@ -6,6 +6,10 @@ import freenet.client.async.ClientContext;
 import freenet.client.filter.*;
 import freenet.clients.http.ajaxpush.*;
 import freenet.clients.http.bookmark.BookmarkManager;
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.Identifier;
+import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.constants.InputType;
 import freenet.clients.http.uielements.*;
 import freenet.clients.http.updateableelements.ProgressBarElement;
 import freenet.clients.http.updateableelements.ProgressInfoElement;
@@ -154,7 +158,7 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 				Page downloadPage = context.getPageMaker().getPage(l10n("dangerousRSSTitle"),
 					context);
 				Infobox dangerousRSSwarning = downloadPage.content.addInfobox(
-					Infobox.Type.ALERT, l10n("dangerousRSSSubtitle"));
+					InfoboxType.ALERT, l10n("dangerousRSSSubtitle"));
 				dangerousRSSwarning.body.addText(NodeL10n.getBase()
 					.getString("FProxyToadlet.dangerousRSS", new String[]{"type"},
 						new String[]{mimeType}));
@@ -301,13 +305,13 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 		if (threatLevel != PHYSICAL_THREAT_LEVEL.MAXIMUM && !core.isDownloadDisabled()) {
 			HTMLNode option = optionList.addItem();
 			HTMLNode optionForm = ctx.addFormChild(option, "/downloads/", "tooBigQueueForm");
-			optionForm.addInput(Input.Type.HIDDEN, "key", key.toString());
-			optionForm.addInput(Input.Type.HIDDEN, "return-type", "disk");
-			optionForm.addInput(Input.Type.HIDDEN, "persistence", "forever");
+			optionForm.addInput(InputType.HIDDEN, "key", key.toString());
+			optionForm.addInput(InputType.HIDDEN, "return-type", "disk");
+			optionForm.addInput(InputType.HIDDEN, "persistence", "forever");
 			if (mimeType != null && !mimeType.equals("")) {
-				optionForm.addInput(Input.Type.HIDDEN, "type", mimeType);
+				optionForm.addInput(InputType.HIDDEN, "type", mimeType);
 			}
-			optionForm.addInput(Input.Type.SUBMIT, "download", l10n("downloadInBackgroundToDiskButton"));
+			optionForm.addInput(InputType.SUBMIT, "download", l10n("downloadInBackgroundToDiskButton"));
 			String downloadLocation = core.getDownloadsDir().getAbsolutePath();
 			//If the download directory isn't allowed, yet downloading is, at least one directory must
 			//have been explicitly defined, so take the first one.
@@ -316,15 +320,15 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 			}
 			NodeL10n.getBase().addL10nSubstitution(optionForm, "FProxyToadlet.downloadInBackgroundToDisk",
 			        new String[] { "dir", "page" },
-			        new HTMLNode[] { new Input(Input.Type.TEXT, "path", downloadLocation,
+			        new HTMLNode[] { new Input(InputType.TEXT, "path", downloadLocation,
 				                downloadLocation.length(),
 				                (short) QueueToadlet.MAX_FILENAME_LENGTH),
 			                DOWNLOADS_LINK });
-			optionForm.addInput(Input.Type.SUBMIT, "select-location",
+			optionForm.addInput(InputType.SUBMIT, "select-location",
 				        NodeL10n.getBase().getString("QueueToadlet.browseToChange")+"...");
 			if(!dontShowFilter) {
 				HTMLNode filterControl = optionForm.addBox(Category.NONE, l10n("filterData"));
-				HTMLNode f = filterControl.addInput(Input.Type.CHECKBOX, "filterData", "filterData");
+				HTMLNode f = filterControl.addInput(InputType.CHECKBOX, "filterData", "filterData");
 				if(filterChecked) f.addAttribute("checked", "checked");
 				filterControl.addBox(Category.NONE, l10n("filterDataMessage"));
 			}
@@ -341,19 +345,19 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 		if (threatLevel != PHYSICAL_THREAT_LEVEL.LOW || core.isDownloadDisabled()) {
 			HTMLNode option = optionList.addItem();
 			HTMLNode optionForm = ctx.addFormChild(option, "/downloads/", "tooBigQueueForm");
-			optionForm.addInput(Input.Type.HIDDEN, "key", key.toString());
-			optionForm.addInput(Input.Type.HIDDEN, "return-type", "direct");
-			optionForm.addInput(Input.Type.HIDDEN, "persistence", "forever");
+			optionForm.addInput(InputType.HIDDEN, "key", key.toString());
+			optionForm.addInput(InputType.HIDDEN, "return-type", "direct");
+			optionForm.addInput(InputType.HIDDEN, "persistence", "forever");
 			if (mimeType != null && !mimeType.equals("")) {
-				optionForm.addInput(Input.Type.HIDDEN, "type", mimeType);
+				optionForm.addInput(InputType.HIDDEN, "type", mimeType);
 			}
-			optionForm.addInput(Input.Type.SUBMIT, "download", l10n("downloadInBackgroundToTempSpaceButton"));
+			optionForm.addInput(InputType.SUBMIT, "download", l10n("downloadInBackgroundToTempSpaceButton"));
 			NodeL10n.getBase().addL10nSubstitution(optionForm,
 			        "FProxyToadlet.downloadInBackgroundToTempSpace",
 			        new String[] { "page", "bold" }, new HTMLNode[] { DOWNLOADS_LINK, HTMLNode.STRONG });
 			if(!dontShowFilter) {
 				HTMLNode filterControl = optionForm.addBox(Category.NONE, l10n("filterData"));
-				HTMLNode f = filterControl.addInput(Input.Type.CHECKBOX, "filterData", "filterData");
+				HTMLNode f = filterControl.addInput(InputType.CHECKBOX, "filterData", "filterData");
 				if(filterChecked) f.addAttribute("checked", "checked");
 				filterControl.addBox(Category.NONE, l10n("filterDataMessage"));
 			}
@@ -561,7 +565,7 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 		} catch (MalformedURLException e) {
 			Page warningPage = ctx.getPageMaker().getPage(l10n("invalidKeyTitle"), ctx);
 			Infobox errorInfobox =
-				warningPage.content.addInfobox(Infobox.Type.ERROR, NodeL10n.getBase().
+				warningPage.content.addInfobox(InfoboxType.ERROR, NodeL10n.getBase().
 					getString("FProxyToadlet.invalidKeyWithReason", new String[]{"reason"},
 						new String[]{e.toString()}));
 			errorInfobox.body.addText(l10n("expectedKeyButGot"));
@@ -697,7 +701,7 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 							.addAttribute("content", "2;URL=" + location);
 					}
 					Infobox fetchingPage = progressPage.content
-						.addInfobox(Infobox.Type.INFORMATION, l10n("fetchingPageBox"));
+						.addInfobox(InfoboxType.INFORMATION, l10n("fetchingPageBox"));
 					fetchingPage.body.setID(Identifier.INFOCONTENT);
 					fetchingPage.body.addChild(
 						new ProgressInfoElement(fetchTracker, key, fctx, maxSize,
@@ -715,7 +719,7 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 								isWebPushingEnabled));
 					}
 					Infobox fetchingPageOptions =
-						new Infobox(Infobox.Type.INFORMATION,
+						new Infobox(InfoboxType.INFORMATION,
 							l10n("fetchingPageOptions"));
 					progressPage.content.addChild(fetchingPageOptions);
 					OutputList optionList = fetchingPageOptions.body.addList();
@@ -824,29 +828,29 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 			} else if (e.mode == FetchException.TOO_BIG) {
 				Page largeFilePage = ctx.getPageMaker().getPage(l10n("fileInformationTitle"), ctx);
 				OutputList fileInformationList = largeFilePage.content
-					.addInfobox(Infobox.Type.INFORMATION, l10n("largeFile")).body.addList();
+					.addInfobox(InfoboxType.INFORMATION, l10n("largeFile")).body.addList();
 				Item option = fileInformationList.addItem();
 				option.addText((l10n("filenameLabel") + ' '));
 				option.addLink('/' + key.toString(), getFilename(key, e.getExpectedMimeType()));
 				String mime = writeSizeAndMIME(fileInformationList, e);
 				Infobox explanationTitle = largeFilePage.content
-					.addInfobox(Infobox.Type.INFORMATION, l10n("explanationTitle"));
+					.addInfobox(InfoboxType.INFORMATION, l10n("explanationTitle"));
 				explanationTitle.body.addText(l10n("largeFileExplanationAndOptions"));
 				OutputList optionList = explanationTitle.body.addList();
 				if (! restricted) {
 					option = optionList.addItem();
 					Form optionForm = option.addForm('/' + key.toString(), "get");
-					optionForm.addInput(Input.Type.HIDDEN, "max-size", String.valueOf(
+					optionForm.addInput(InputType.HIDDEN, "max-size", String.valueOf(
 							e.expectedSize == - 1 ? Long.MAX_VALUE : e.expectedSize *
 								2));
 					if (requestedMimeType != null) {
-						optionForm.addInput(Input.Type.HIDDEN, "type", requestedMimeType);
+						optionForm.addInput(InputType.HIDDEN, "type", requestedMimeType);
 					}
 					if (maxRetries >= - 1) {
-						optionForm.addInput(Input.Type.HIDDEN, "max-retries",
+						optionForm.addInput(InputType.HIDDEN, "max-retries",
 								Integer.toString(maxRetries));
 					}
-					optionForm.addInput(Input.Type.SUBMIT, "fetch",
+					optionForm.addInput(InputType.SUBMIT, "fetch",
 							l10n("fetchLargeFileAnywayAndDisplayButton"));
 					optionForm.addText(" - " + l10n("fetchLargeFileAnywayAndDisplay"));
 					addDownloadOptions(ctx, optionList, key, mime, false, false, core);
@@ -858,7 +862,7 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 				writeHTMLReply(ctx, 200, "OK", largeFilePage.generate());
 			} else {
 				Page errorPage = ctx.getPageMaker().getPage(e.getShortMessage(), ctx);
-				OutputList fileInformationList = errorPage.content.addInfobox(Infobox.Type
+				OutputList fileInformationList = errorPage.content.addInfobox(InfoboxType
 					.ERROR,
 					l10n("errorWithReason", "error", e.getShortMessage())).body.addList();
 				Item option = fileInformationList.addItem();
@@ -866,7 +870,7 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 				option.addLink('/' + key.toString(), getFilename(key, e.getExpectedMimeType()));
 				String mime = writeSizeAndMIME(fileInformationList, e);
 				Infobox explanationTitle = errorPage.content
-					.addInfobox(Infobox.Type.ERROR, l10n("explanationTitle"));
+					.addInfobox(InfoboxType.ERROR, l10n("explanationTitle"));
 				explanationTitle.body.addBlockText(l10n("unableToRetrieve"));
 				UnsafeContentTypeException filterException = null;
 				if (e.getCause() != null && e.getCause() instanceof UnsafeContentTypeException) {
@@ -889,7 +893,7 @@ public final class FProxyToadlet extends Toadlet implements RequestClient {
 						.addText(e.errorCodes.toVerboseString());
 				}
 				OutputList optionList =
-					errorPage.content.addInfobox(Infobox.Type.ERROR, l10n("options")).body
+					errorPage.content.addInfobox(InfoboxType.ERROR, l10n("options")).body
 						.addList();
 				PluginInfoWrapper keyUtil;
 				if ((e.mode == FetchException.NOT_IN_ARCHIVE ||

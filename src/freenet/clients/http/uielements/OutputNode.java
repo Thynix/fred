@@ -1,5 +1,6 @@
 package freenet.clients.http.uielements;
 
+import freenet.clients.http.constants.Category;
 import freenet.support.HTMLNode;
 
 public class OutputNode extends HTMLNode {

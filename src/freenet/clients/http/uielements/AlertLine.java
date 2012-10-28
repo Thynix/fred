@@ -1,5 +1,6 @@
 package freenet.clients.http.uielements;
 
+import freenet.clients.http.constants.Category;
 public class AlertLine extends Infobox {
 
 	public Box header = new Box(Category.INFOBOXHEADER);

@@ -3,7 +3,11 @@ package freenet.clients.http;
 import freenet.client.HighLevelSimpleClient;
 import freenet.client.InsertContext;
 import freenet.client.InsertContext.CompatibilityMode;
-import freenet.clients.http.uielements.*;
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.Identifier;
+import freenet.clients.http.constants.InputType;
+import freenet.clients.http.uielements.Infobox;
+import freenet.clients.http.uielements.Page;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
 import freenet.node.SecurityLevels.NETWORK_THREAT_LEVEL;
@@ -68,7 +72,7 @@ public class FileInsertWizardToadlet extends Toadlet implements LinkEnabledCallb
 		NETWORK_THREAT_LEVEL seclevel = core.node.securityLevels.getNetworkThreatLevel();
 		HTMLNode insertForm =
 			ctx.addFormChild(insertFileBox.body, QueueToadlet.PATH_UPLOADS, "queueInsertForm");
-		HTMLNode input = insertForm.addInput(Input.Type.RADIO, "keytype", "CHK");
+		HTMLNode input = insertForm.addInput(InputType.RADIO, "keytype", "CHK");
 		if ((! rememberedLastTime && seclevel == NETWORK_THREAT_LEVEL.LOW) ||
 			(rememberedLastTime && wasCanonicalLastTime && seclevel != NETWORK_THREAT_LEVEL.MAXIMUM)) {
 			input.addAttribute("checked", "checked");
@@ -76,7 +80,7 @@ public class FileInsertWizardToadlet extends Toadlet implements LinkEnabledCallb
 		insertForm.addInlineBox(Category.BOLD, l10n("insertCanonicalTitle"));
 		insertForm.addText(": " + l10n("insertCanonical"));
 		insertForm.addLineBreak();
-		input = insertForm.addInput(Input.Type.RADIO, "keytype", "SSK");
+		input = insertForm.addInput(InputType.RADIO, "keytype", "SSK");
 		if (seclevel == NETWORK_THREAT_LEVEL.MAXIMUM || (rememberedLastTime && ! wasCanonicalLastTime)) {
 			input.addAttribute("checked", "checked");
 		}
@@ -84,19 +88,19 @@ public class FileInsertWizardToadlet extends Toadlet implements LinkEnabledCallb
 		insertForm.addText(": " + l10n("insertRandom"));
 		if (isAdvancedModeEnabled) {
 			insertForm.addLineBreak();
-			insertForm.addInput(Input.Type.RADIO, "keytype", "specify");
+			insertForm.addInput(InputType.RADIO, "keytype", "specify");
 			insertForm.addInlineBox(Category.BOLD, l10n("insertSpecificKeyTitle"));
 			insertForm.addText(": " + l10n("insertSpecificKey") + " ");
-			insertForm.addInput(Input.Type.TEXT, "key", "KSK@");
+			insertForm.addInput(InputType.TEXT, "key", "KSK@");
 		}
 		if (isAdvancedModeEnabled) {
 			insertForm.addLineBreak();
 			insertForm.addLineBreak();
-			insertForm.addInput(Input.Type.CHECKBOX, "compress", true);
+			insertForm.addInput(InputType.CHECKBOX, "compress", true);
 			insertForm.addText(' ' +
 				NodeL10n.getBase().getString("QueueToadlet.insertFileCompressLabel"));
 		} else {
-			insertForm.addInput(Input.Type.HIDDEN, "compress", "true");
+			insertForm.addInput(InputType.HIDDEN, "compress", "true");
 		}
 		if (isAdvancedModeEnabled) {
 			insertForm.addLineBreak();
@@ -116,21 +120,21 @@ public class FileInsertWizardToadlet extends Toadlet implements LinkEnabledCallb
 			}
 			insertForm.addLineBreak();
 			insertForm.addText(l10n("splitfileCryptoKeyLabel") + ": ");
-			insertForm.addInput(Input.Type.TEXT, "overrideSplitfileKey", (short) 64);
+			insertForm.addInput(InputType.TEXT, "overrideSplitfileKey", (short) 64);
 		}
 		insertForm.addLineBreak();
 		insertForm.addLineBreak();
 		// Local file browser
 		if (ctx.isAllowedFullAccess()) {
 			insertForm.addText(NodeL10n.getBase().getString("QueueToadlet.insertFileBrowseLabel") + ": ");
-			insertForm.addInput(Input.Type.SUBMIT, "insert-local",
+			insertForm.addInput(InputType.SUBMIT, "insert-local",
 					NodeL10n.getBase().getString("QueueToadlet.insertFileBrowseButton") + "...");
 			insertForm.addLineBreak();
 		}
 		insertForm.addText(NodeL10n.getBase().getString("QueueToadlet.insertFileLabel") + ": ");
-		insertForm.addInput(Input.Type.FILE, "filename", "");
+		insertForm.addInput(InputType.FILE, "filename", "");
 		insertForm.addText(" \u00a0 ");
-		insertForm.addInput(Input.Type.SUBMIT, "insert",
+		insertForm.addInput(InputType.SUBMIT, "insert",
 			NodeL10n.getBase().getString("QueueToadlet.insertFileInsertFileLabel"));
 		insertForm.addText(" \u00a0 ");
 		return insertFileBox;

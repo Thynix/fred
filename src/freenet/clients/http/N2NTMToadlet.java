@@ -4,6 +4,10 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.Identifier;
+import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.constants.InputType;
 import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.DarknetPeerNode;
@@ -68,7 +72,7 @@ public class N2NTMToadlet extends Toadlet {
 				}
 			}
 			if (peernode_name == null) {
-				sendMessagePage.content.addInfobox(createPeerInfobox(Infobox.Type.ERROR,
+				sendMessagePage.content.addInfobox(createPeerInfobox(InfoboxType.ERROR,
 					l10n("peerNotFoundTitle"), l10n("peerNotFoundWithHash",
 					"hash", input_hashcode_string)));
 				this.writeHTMLReply(ctx, 200, "OK", sendMessagePage.generate());
@@ -107,8 +111,8 @@ public class N2NTMToadlet extends Toadlet {
 		return limit;
 	}
 
-	private static Infobox createPeerInfobox(Infobox.Type infoboxType, String header, String message) {
-		Infobox peerInfobox = new Infobox(infoboxType, header);
+	private static Infobox createPeerInfobox(InfoboxType type, String header, String message) {
+		Infobox peerInfobox = new Infobox(type, header);
 		peerInfobox.body.addText(message);
 		OutputList peerList = peerInfobox.body.addList();
 		Toadlet.addHomepageLink(peerList);
@@ -150,7 +154,7 @@ public class N2NTMToadlet extends Toadlet {
 				return;
 			}
 			Page sendPage = ctx.getPageMaker().getPage(l10n("processingSend"), ctx);
-			Infobox peerTableInfobox = sendPage.content.addInfobox(Infobox.Type.NORMAL, null);
+			Infobox peerTableInfobox = sendPage.content.addInfobox(InfoboxType.NORMAL, null);
 			DarknetPeerNode[] peerNodes = node.getDarknetConnections();
 			if (request.isPartSet(LocalFileBrowserToadlet.selectFile)) {
 				String fnam = request.getPartAsStringFailsafe("filename", 1024);
@@ -274,7 +278,7 @@ public class N2NTMToadlet extends Toadlet {
 	                                       ToadletContext ctx, HashMap<String, String> peers)
 		throws ToadletContextClosedException, IOException {
 		Infobox messageeditor =
-			pageNode.content.addInfobox(Infobox.Type.NONE, Identifier.N2NBOX, l10n(
+			pageNode.content.addInfobox(InfoboxType.NONE, Identifier.N2NBOX, l10n(
 				"sendMessage"));
 		messageeditor.body.addBlockText(l10n("composingMessageLabel"));
 		OutputList messageTargetList = messageeditor.body.addList();
@@ -286,7 +290,7 @@ public class N2NTMToadlet extends Toadlet {
 		HTMLNode messageForm = ctx.addFormChild(sendForm, "/send_n2ntm/", "sendN2NTMForm");
 		// Iterate peers
 		for (String peerNodeHash : peers.keySet()) {
-			messageForm.addInput(Input.Type.HIDDEN, "node_" + peerNodeHash,"1");
+			messageForm.addInput(InputType.HIDDEN, "node_" + peerNodeHash,"1");
 		}
 		messageForm.addChild("textarea", new String[]{"id", "name", "rows",
 			"cols"}, new String[]{"n2ntmtext", "message", "8", "74"});
@@ -296,7 +300,7 @@ public class N2NTMToadlet extends Toadlet {
 			messageForm.addLineBreak();
 			messageForm.addText(NodeL10n.getBase().getString("QueueToadlet.insertFileBrowseLabel") + ":" +
 				" ");
-			messageForm.addInput(Input.Type.SUBMIT, "n2nm-browse",
+			messageForm.addInput(InputType.SUBMIT, "n2nm-browse",
 					NodeL10n.getBase().getString("QueueToadlet.insertFileBrowseButton") + "...");
 			messageForm.addLineBreak();
 		}
@@ -306,10 +310,10 @@ public class N2NTMToadlet extends Toadlet {
 					true)));
 			messageForm.addLineBreak();
 			messageForm.addText(NodeL10n.getBase().getString("QueueToadlet.insertFileLabel") + ": ");
-			messageForm.addInput(Input.Type.FILE, "n2nm-upload", "");
+			messageForm.addInput(InputType.FILE, "n2nm-upload", "");
 			messageForm.addLineBreak();
 		}
-		messageForm.addInput(Input.Type.SUBMIT, "send", l10n("sendMessageShort"));
+		messageForm.addInput(InputType.SUBMIT, "send", l10n("sendMessageShort"));
 	}
 
 	@Override

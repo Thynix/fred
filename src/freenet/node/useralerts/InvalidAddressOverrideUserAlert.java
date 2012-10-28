@@ -3,6 +3,8 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node.useralerts;
 
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.InputType;
 import freenet.clients.http.uielements.*;
 import freenet.config.Option;
 import freenet.config.SubConfig;
@@ -43,15 +45,16 @@ public class InvalidAddressOverrideUserAlert extends AbstractUserAlert {
 				new String[] { "link" }, 
 				new HTMLNode[] { new Link("/config/node")});
 		Form formNode = textNode.addForm("/config/node", "post");
-		formNode.addInput(Input.Type.HIDDEN, "formPassword", node.clientCore.formPassword);
-		formNode.addInput(Input.Type.HIDDEN, "subconfig", sc.getPrefix());
+		formNode.addInput(InputType.HIDDEN, "formPassword", node.clientCore.formPassword);
+		formNode.addInput(InputType.HIDDEN, "subconfig", sc.getPrefix());
 		OutputList listNode = new OutputList(Category.CONFIG);
 		formNode.addChild(listNode);
 		Item itemNode = listNode.addItem();
-		itemNode.addInlineBox(Category.CONFIGSHORTDESC, NodeL10n.getBase().getString(o.getShortDesc())).addInput(Input.Type.TEXT, sc.getPrefix() + ".ipAddressOverride", o.getValueString());
+		itemNode.addInlineBox(Category.CONFIGSHORTDESC, NodeL10n.getBase().getString(o.getShortDesc())).addInput(
+			InputType.TEXT, sc.getPrefix() + ".ipAddressOverride", o.getValueString());
 		itemNode.addInlineBox(Category.CONFIGLONGDESC, NodeL10n.getBase().getString(o.getLongDesc()));
-		formNode.addInput(Input.Type.SUBMIT, NodeL10n.getBase().getString("UserAlert.apply"));
-		formNode.addInput(Input.Type.RESET, NodeL10n.getBase().getString("UserAlert.reset"));
+		formNode.addInput(InputType.SUBMIT, NodeL10n.getBase().getString("UserAlert.apply"));
+		formNode.addInput(InputType.RESET, NodeL10n.getBase().getString("UserAlert.reset"));
 		return textNode;
 	}
 

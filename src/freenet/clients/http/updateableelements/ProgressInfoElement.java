@@ -3,7 +3,7 @@ package freenet.clients.http.updateableelements;
 import freenet.client.FetchContext;
 import freenet.clients.http.*;
 import freenet.clients.http.complexhtmlnodes.SecondCounterNode;
-import freenet.clients.http.uielements.Category;
+import freenet.clients.http.constants.Category;
 import freenet.keys.FreenetURI;
 import freenet.support.Base64;
 import freenet.support.HTMLNode;

@@ -4,6 +4,7 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.constants.*;
 import freenet.clients.http.uielements.*;
 import freenet.config.*;
 import freenet.l10n.NodeL10n;
@@ -68,10 +69,10 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 			if (node.isUsingWrapper()) {
 				alertNode.addLineBreak();
 				Box restartForm = alertNode.addForm("/", "post", "multipart/form-data", "utf-8", Identifier.RESTARTFORM).addBox();
-				restartForm.addInput(Input.Type.HIDDEN, "formPassword", node.clientCore.formPassword );
+				restartForm.addInput(InputType.HIDDEN, "formPassword", node.clientCore.formPassword );
 				restartForm.addBox();
-				restartForm.addInput("restart", Input.Type.HIDDEN);
-				restartForm.addInput(Input.Type.SUBMIT, "restart2", l10n("restartNode"));
+				restartForm.addInput("restart", InputType.HIDDEN);
+				restartForm.addInput(InputType.SUBMIT, "restart2", l10n("restartNode"));
 			}
 			return alertNode;
 		}
@@ -179,26 +180,26 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 		if (request.isPartSet("confirm-reset-to-defaults")) {
 			Page confirmDefaults = ctx.getPageMaker().getPage(l10n("confirmResetTitle"), ctx);
 			Infobox resetWarning = confirmDefaults
-				.addInfobox(Infobox.Type.WARNING, Identifier.RESETCONFIRM,
+				.addInfobox(InfoboxType.WARNING, Identifier.RESETCONFIRM,
 					l10n("confirmResetTitle"));
 			resetWarning.body.addText(l10n("confirmReset"));
 			HTMLNode formNode = ctx.addFormChild(resetWarning.body, path(), "yes-button");
 			String subconfig = request.getPartAsStringFailsafe("subconfig",
 				MAX_PARAM_VALUE_SIZE);
-			formNode.addInput(Input.Type.HIDDEN, "subconfig", subconfig);
+			formNode.addInput(InputType.HIDDEN, "subconfig", subconfig);
 			// Persist visible fields so that they are reset to default or
 			// unsaved changes are persisted.
 			for (String part : request.getParts()) {
 				if (part.startsWith(subconfig)) {
-					formNode.addInput(Input.Type.HIDDEN,
+					formNode.addInput(InputType.HIDDEN,
 							part,
 							request.getPartAsStringFailsafe(part,
 								MAX_PARAM_VALUE_SIZE));
 				}
 			}
-			formNode.addInput(Input.Type.SUBMIT, "reset-to-defaults",
+			formNode.addInput(InputType.SUBMIT, "reset-to-defaults",
 				NodeL10n.getBase().getString("Toadlet.yes"));
-			formNode.addInput(Input.Type.SUBMIT, "decline-default-reset",
+			formNode.addInput(InputType.SUBMIT, "decline-default-reset",
 				NodeL10n.getBase().getString("Toadlet.no"));
 			writeHTMLReply(ctx, 200, "OK", confirmDefaults.generate());
 			return;
@@ -328,7 +329,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 		Page configAppliedPage = ctx.getPageMaker().getPage(l10n("appliedTitle"), ctx);
 		if (errbuf.length() == 0) {
 			Infobox successMessage = configAppliedPage.content
-				.addInfobox(Infobox.Type.SUCCESS, Identifier.CONFIGURATIONAPPLIED,
+				.addInfobox(InfoboxType.SUCCESS, Identifier.CONFIGURATIONAPPLIED,
 					l10n("appliedTitle"));
 			successMessage.body.addText(l10n("appliedSuccess"));
 			if (needRestart) {
@@ -338,8 +339,8 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 					successMessage.body.addLineBreak();
 					HTMLNode restartForm = ctx.addFormChild(successMessage.body, "/",
 						"restartForm");
-					restartForm.addInput("restart", Input.Type.HIDDEN);
-					restartForm.addInput(Input.Type.SUBMIT, "restart2",//
+					restartForm.addInput("restart", InputType.HIDDEN);
+					restartForm.addInput(InputType.SUBMIT, "restart2",//
 							l10n("restartNode"));
 				}
 				if (needRestartUserAlert == null) {
@@ -349,14 +350,14 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 			}
 		} else {
 			Infobox failedMessage = configAppliedPage.content
-				.addInfobox(Infobox.Type.ERROR, Identifier.CONFIGURATIONERROR,
+				.addInfobox(InfoboxType.ERROR, Identifier.CONFIGURATIONERROR,
 					l10n("appliedFailureTitle"));
 			failedMessage.body.addText(l10n("appliedFailureExceptions"));
 			failedMessage.body.addLineBreak();
 			failedMessage.body.addText(errbuf.toString());
 		}
 		Infobox destinationMessage = configAppliedPage.content
-			.addInfobox(Infobox.Type.NORMAL, Category.CONFIGURATIONPOSSIBILITIES,
+			.addInfobox(InfoboxType.NORMAL, Category.CONFIGURATIONPOSSIBILITIES,
 				l10n("possibilitiesTitle"));
 		destinationMessage.body.addLink(path(), l10n("shortTitle"), l10n("returnToNodeConfig"));
 		destinationMessage.body.addLineBreak();
@@ -381,13 +382,13 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 		Page configPage = ctx.getPageMaker().getPage(NodeL10n.getBase().getString("ConfigToadlet.fullTitle"),
 			ctx);
 		configPage.content.addChild(core.alerts.createSummary());
-		Infobox configformcontainer = new Infobox(Infobox.Type.NORMAL, l10n("title"));
+		Infobox configformcontainer = new Infobox(InfoboxType.NORMAL, l10n("title"));
 		configPage.content.addChild(configformcontainer);
 		HTMLNode formNode = ctx.addFormChild(configformcontainer.body, path(), "configForm");
 		// Invisible apply button at the top so that an enter keypress will
 		// apply settings instead of
 		// going to a directory browser if present.
-		formNode.addInput(Input.Type.SUBMIT, l10n("apply"), Category.INVISIBLE);
+		formNode.addInput(InputType.SUBMIT, l10n("apply"), Category.INVISIBLE);
 		/*
 		 * Special case: present an option for the wrapper's maximum memory
 		 * under Core configuration, provided the maximum memory property is
@@ -418,7 +419,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 						new String[]{defaultValue})).addChild(
 					NodeL10n.getBase().getHTMLNode(
 						"WrapperConfig." + configName + ".short"));
-				configOption.addInlineBox(Category.CONFIG).addInput(Input.Type.TEXT, configName, curValue, Category.CONFIG);
+				configOption.addInlineBox(Category.CONFIG).addInput(InputType.TEXT, configName, curValue, Category.CONFIG);
 				configOption.addInlineBox(Category.CONFIGLONGDESC).addChild(
 					NodeL10n.getBase().getHTMLNode(
 						"WrapperConfig." + configName + ".long"));
@@ -486,7 +487,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 				}
 				configItemNode.addAttribute("class", optionType.cssClass);
 				configItemNode
-					.addLink(Link.Type.ANCHOR, configName, configName)
+					.addLink(LinkType.ANCHOR, configName, configName)
 					.addInlineBox(Category.CONFIGSHORTDESC,
 						NodeL10n.getBase().getString(
 							"ConfigToadlet.defaultIs",
@@ -521,7 +522,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 					case DIRECTORY:
 						configItemValueNode.addChild(addTextBox(value, fullName, o,
 							false));
-						configItemValueNode.addInput(Input.Type.SUBMIT,
+						configItemValueNode.addInput(InputType.SUBMIT,
 								"select-directory." + fullName,
 								NodeL10n.getBase().getString(
 									"QueueToadlet.browseToChange"));
@@ -545,16 +546,16 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 			formNode.addChild("a", "id", subConfig.getPrefix());
 			formNode.addChild(configGroupUlNode);
 		}
-		formNode.addInput(Input.Type.SUBMIT, l10n("apply"));
-		formNode.addInput(Input.Type.RESET, l10n("undo"));
-		formNode.addInput(Input.Type.HIDDEN, "subconfig", subConfig.getPrefix());
+		formNode.addInput(InputType.SUBMIT, l10n("apply"));
+		formNode.addInput(InputType.RESET, l10n("undo"));
+		formNode.addInput(InputType.HIDDEN, "subconfig", subConfig.getPrefix());
 		// 'Node' prefix options should not be reset to defaults as it is a,
 		// quoting Toad, "very bad idea".
 		// Options whose defaults are not wise to apply include the location of
 		// the master keys file,
 		// the Darknet port number, and the datastore size.
 		if (! subConfig.getPrefix().equals("node")) {
-			formNode.addInput(Input.Type.SUBMIT, "confirm-reset-to-defaults",
+			formNode.addInput(InputType.SUBMIT, "confirm-reset-to-defaults",
 				l10n("resetToDefaults"));
 		}
 		this.writeHTMLReply(ctx, 200, "OK", configPage.generate());
@@ -579,7 +580,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 	 */
 	public static Input addTextBox(String value, String fullName,
 			Option<?> o, boolean disabled) {
-		return new Input(Input.Type.TEXT, fullName, value, Category.CONFIG,  o.getShortDesc(), disabled);
+		return new Input(InputType.TEXT, fullName, value, Category.CONFIG,  o.getShortDesc(), disabled);
 	}
 
 	/**

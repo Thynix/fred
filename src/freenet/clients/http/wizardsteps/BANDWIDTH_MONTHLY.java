@@ -1,6 +1,8 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
+import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.constants.InputType;
 import freenet.clients.http.uielements.*;
 import freenet.config.Config;
 import freenet.config.InvalidConfigValueException;
@@ -33,7 +35,7 @@ public class BANDWIDTH_MONTHLY extends BandwidthManipulator implements Step {
 		}
 
 		//Box for prettiness and explanation of function.
-		Infobox infoBox = contentNode.addInfobox(Infobox.Type.NORMAL,
+		Infobox infoBox = contentNode.addInfobox(InfoboxType.NORMAL,
 			WizardL10n.l10n("bandwidthLimitMonthlyTitle"));
 		NodeL10n.getBase().addL10nSubstitution(infoBox.body, "FirstTimeWizardToadlet.bandwidthLimitMonthly",
 		        new String[] { "bold", "coreSettings" }, new HTMLNode[] { HTMLNode.STRONG, 
@@ -56,17 +58,17 @@ public class BANDWIDTH_MONTHLY extends BandwidthManipulator implements Step {
 			//ISPs are likely to list limits in GB instead of GiB, so display GB here.
 			row.addCell(String.valueOf(cap/GB)+" GB");
 			HTMLNode selectForm = helper.addFormChild(row.addCell(), ".", "limit");
-			selectForm.addInput(Input.Type.HIDDEN, "capTo", String.valueOf(cap));
-			selectForm.addInput(Input.Type.SUBMIT, WizardL10n.l10n("bandwidthSelect"));
+			selectForm.addInput(InputType.HIDDEN, "capTo", String.valueOf(cap));
+			selectForm.addInput(InputType.SUBMIT, WizardL10n.l10n("bandwidthSelect"));
 		}
 
 		//Row for custom entry
 		HTMLNode customForm = helper.addFormChild(table.addRow(), ".", "custom-form");
-		customForm.addChild("td").addInput("capTo", Input.Type.TEXT);
-		customForm.addChild("td").addInput(Input.Type.SUBMIT, WizardL10n.l10n("bandwidthSelect"));
+		customForm.addChild("td").addInput("capTo", InputType.TEXT);
+		customForm.addChild("td").addInput(InputType.SUBMIT, WizardL10n.l10n("bandwidthSelect"));
 
 		HTMLNode backForm = helper.addFormChild(infoBox, ".", "backForm");
-		backForm.addInput(Input.Type.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
+		backForm.addInput(InputType.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
 	}
 
 	@Override

@@ -1,20 +1,12 @@
 package freenet.clients.http.uielements;
 
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.Identifier;
+import freenet.clients.http.constants.ListType;
 public class OutputList extends OutputNode {
 
-	public enum Type {
-		ORDERED("ol"),
-		UNORDERED("ul");
-
-		public final String tagName;
-
-		private Type(String type) {
-			this.tagName = type;
-		}
-	}
-
 	//Constructors
-	public OutputList(Type type, Category category) {
+	public OutputList(ListType type, Category category) {
 		super(type.tagName);
 		addClass(category);
 	}
@@ -30,7 +22,7 @@ public class OutputList extends OutputNode {
 	}
 
 	public OutputList() {
-		super(Type.UNORDERED.tagName);
+		super(ListType.UNORDERED.tagName);
 	}
 
 	//Methods for adding list items

@@ -1,6 +1,7 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.constants.*;
 import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
@@ -176,7 +177,7 @@ public class PproxyToadlet extends Toadlet {
 					pm.removeCachedCopy(pluginSpecification);
 				}
 				Page page = pageMaker.getPage(l10n("plugins"), ctx);
-				Infobox success = page.content.addInfobox(Infobox.Type.SUCCESS, l10n("pluginUnloaded"));
+				Infobox success = page.content.addInfobox(InfoboxType.SUCCESS, l10n("pluginUnloaded"));
 				success.body.addText(l10n("pluginUnloadedWithName", "name", pluginThreadName));
 				success.body.addLineBreak();
 				success.body.addLink("/plugins/", l10n("returnToPluginPage"));
@@ -184,34 +185,34 @@ public class PproxyToadlet extends Toadlet {
 				return;
 			} if (request.getPartAsStringFailsafe("unload", MAX_PLUGIN_NAME_LENGTH).length() > 0) {
 				Page page = pageMaker.getPage(l10n("plugins"), ctx);
-				Infobox query = page.content.addInfobox(Infobox.Type.QUERY, l10n("unloadPluginTitle"));
+				Infobox query = page.content.addInfobox(InfoboxType.QUERY, l10n("unloadPluginTitle"));
 				query.body.addText(l10n("unloadPluginWithName", "name", request.getPartAsStringFailsafe("unload", MAX_PLUGIN_NAME_LENGTH)));
 				HTMLNode unloadForm = ctx.addFormChild(query.body, "/plugins/",
 					"unloadPluginConfirmForm");
-				unloadForm.addInput(Input.Type.HIDDEN, "unloadconfirm", request.getPartAsStringFailsafe("unload", MAX_PLUGIN_NAME_LENGTH));
+				unloadForm.addInput(InputType.HIDDEN, "unloadconfirm", request.getPartAsStringFailsafe("unload", MAX_PLUGIN_NAME_LENGTH));
 				HTMLNode tempNode = unloadForm.addBlockText();
-				tempNode.addInput("purge", Input.Type.CHECKBOX);
+				tempNode.addInput("purge", InputType.CHECKBOX);
 				tempNode.addText(l10n("unloadPurge"));
 				tempNode = unloadForm.addBlockText();
-				tempNode.addInput(Input.Type.SUBMIT, "confirm", l10n("unload"));
+				tempNode.addInput(InputType.SUBMIT, "confirm", l10n("unload"));
 				tempNode.addText(" ");
-				tempNode.addInput(Input.Type.SUBMIT, "cancel", NodeL10n.getBase().getString("Toadlet.cancel"));
+				tempNode.addInput(InputType.SUBMIT, "cancel", NodeL10n.getBase().getString("Toadlet.cancel"));
 				writeHTMLReply(ctx, 200, "OK", page.generate());
 				return;
 			} else if (request.getPartAsStringFailsafe("reload", MAX_PLUGIN_NAME_LENGTH).length() > 0) {
 				Page page = pageMaker.getPage(l10n("plugins"), ctx);
-				Infobox reloadPlugin = page.content.addInfobox(Infobox.Type.QUERY, Identifier.PLUGINRELOAD, l10n("reloadPluginTitle"));
+				Infobox reloadPlugin = page.content.addInfobox(InfoboxType.QUERY, Identifier.PLUGINRELOAD, l10n("reloadPluginTitle"));
 				reloadPlugin.body.addBlockText(l10n("reloadExplanation"));
 				reloadPlugin.body.addBlockText(l10n("reloadWarning"));
 				HTMLNode reloadForm = ctx.addFormChild(reloadPlugin.body, "/plugins/", "reloadPluginConfirmForm");
-				reloadForm.addInput(Input.Type.HIDDEN, "reloadconfirm", request.getPartAsStringFailsafe("reload", MAX_PLUGIN_NAME_LENGTH));
+				reloadForm.addInput(InputType.HIDDEN, "reloadconfirm", request.getPartAsStringFailsafe("reload", MAX_PLUGIN_NAME_LENGTH));
 				HTMLNode tempNode = reloadForm.addBlockText();
-				tempNode.addInput("purge", Input.Type.CHECKBOX);
+				tempNode.addInput("purge", InputType.CHECKBOX);
 				tempNode.addText(l10n("reloadPurgeWarning"));
 				tempNode = reloadForm.addBlockText();
-				tempNode.addInput(Input.Type.SUBMIT, "confirm", l10n("reload"));
+				tempNode.addInput(InputType.SUBMIT, "confirm", l10n("reload"));
 				tempNode.addText(" ");
-				tempNode.addInput(Input.Type.SUBMIT, "cancel", NodeL10n.getBase().getString("Toadlet.cancel"));
+				tempNode.addInput(InputType.SUBMIT, "cancel", NodeL10n.getBase().getString("Toadlet.cancel"));
 				
 				writeHTMLReply(ctx, 200, "OK", page.generate());
 				return;
@@ -422,7 +423,7 @@ public class PproxyToadlet extends Toadlet {
 	private void showStartingPlugins(PluginManager pluginManager, HTMLNode contentNode) {
 		Set<PluginProgress> startingPlugins = pluginManager.getStartingPlugins();
 		if (!startingPlugins.isEmpty()) {
-			Infobox startingPluginsBox = new Infobox(Infobox.Type.NORMAL, l10n("startingPluginsTitle"));
+			Infobox startingPluginsBox = new Infobox(InfoboxType.NORMAL, l10n("startingPluginsTitle"));
 			contentNode.addChild(startingPluginsBox);
 			Table startingPluginsTable = startingPluginsBox.body.addTable();
 			Row startingPluginsHeader = startingPluginsTable.addRow();
@@ -441,7 +442,7 @@ public class PproxyToadlet extends Toadlet {
 	}
 
 	private void showPluginList(ToadletContext ctx, PluginManager pm, HTMLNode contentNode, boolean advancedMode) throws ToadletContextClosedException, IOException {
-		Infobox pluginList = new Infobox(Infobox.Type.NORMAL, NodeL10n.getBase().getString("PluginToadlet.pluginListTitle"));
+		Infobox pluginList = new Infobox(InfoboxType.NORMAL, NodeL10n.getBase().getString("PluginToadlet.pluginListTitle"));
 		contentNode.addChild(pluginList);
 		if (pm.getPlugins().isEmpty()) {
 			pluginList.body.addBox(Category.NONE, l10n("noPlugins"));
@@ -483,18 +484,18 @@ public class PproxyToadlet extends Toadlet {
 					pluginRow.addCell();
 				} else {
 					if (pi.isPproxyPlugin()) {
-						Form visitForm = pluginRow.addCell().addForm(pi.getPluginClassName(), "get", Link.Target.BLANK);
-						visitForm.addInput(Input.Type.HIDDEN, "formPassword", core.formPassword);
-						visitForm.addInput(Input.Type.SUBMIT, NodeL10n.getBase().getString("PluginToadlet.visit"));
+						Form visitForm = pluginRow.addCell().addForm(pi.getPluginClassName(), "get", Target.BLANK);
+						visitForm.addInput(InputType.HIDDEN, "formPassword", core.formPassword);
+						visitForm.addInput(InputType.SUBMIT, NodeL10n.getBase().getString("PluginToadlet.visit"));
 					} else
 						pluginRow.addCell();
 					HTMLNode unloadForm = ctx.addFormChild(pluginRow.addCell(), ".", "unloadPluginForm");
-					unloadForm.addInput(Input.Type.HIDDEN, "unload", pi.getThreadName());
-					unloadForm.addInput(Input.Type.SUBMIT, l10n(
+					unloadForm.addInput(InputType.HIDDEN, "unload", pi.getThreadName());
+					unloadForm.addInput(InputType.SUBMIT, l10n(
 						"unload"));
 					HTMLNode reloadForm = ctx.addFormChild(pluginRow.addCell(), ".", "reloadPluginForm");
-					reloadForm.addInput(Input.Type.HIDDEN, "reload", pi.getThreadName());
-					reloadForm.addInput(Input.Type.SUBMIT, l10n("reload"));
+					reloadForm.addInput(InputType.HIDDEN, "reload", pi.getThreadName());
+					reloadForm.addInput(InputType.SUBMIT, l10n("reload"));
 				}
 			}
 		}
@@ -502,7 +503,7 @@ public class PproxyToadlet extends Toadlet {
 	
 	private void showOfficialPluginLoader(ToadletContext toadletContext, HTMLNode contentNode, Map<String, List<OfficialPluginDescription>> availablePlugins, PluginManager pm, boolean advancedModeEnabled) {
 		/* box for "official" plugins. */
-		Infobox addOfficialPluginBox = new Infobox(Infobox.Type.NORMAL, l10n("loadOfficialPlugin"));
+		Infobox addOfficialPluginBox = new Infobox(InfoboxType.NORMAL, l10n("loadOfficialPlugin"));
 		contentNode.addChild(addOfficialPluginBox);
 		HTMLNode addOfficialForm = toadletContext.addFormChild(addOfficialPluginBox.body, ".", "addOfficialPluginForm");
 		
@@ -516,12 +517,12 @@ public class PproxyToadlet extends Toadlet {
 		
 		boolean loadFromWeb = pm.loadOfficialPluginsFromWeb();
 		
-		HTMLNode input = addOfficialForm.addInput(Input.Type.RADIO, "pluginSource", "freenet");
+		HTMLNode input = addOfficialForm.addInput(InputType.RADIO, "pluginSource", "freenet");
 		if(!loadFromWeb)
 			input.addAttribute("checked", "true");
 		addOfficialForm.addText(l10n("pluginSourceFreenet"));
 		addOfficialForm.addLineBreak();
-		input = addOfficialForm.addInput(Input.Type.RADIO, "pluginSource", "https");
+		input = addOfficialForm.addInput(InputType.RADIO, "pluginSource", "https");
 		if(loadFromWeb)
 			input.addAttribute("checked", "true");
 		addOfficialForm.addText(l10n("pluginSourceHTTPS"));
@@ -543,7 +544,7 @@ public class PproxyToadlet extends Toadlet {
 				HTMLNode pluginNode = pluginGroupNode.addBox(Category.PLUGIN);
 				String pluginName = pluginDescription.name;
 				if(!pm.isPluginLoaded(pluginName)) {
-					HTMLNode option = pluginNode.addInput(Input.Type.RADIO, "plugin-name", pluginName);
+					HTMLNode option = pluginNode.addInput(InputType.RADIO, "plugin-name", pluginName);
 					option.addInlineBox(Category.ITALIC, pluginName);
 					if(pluginDescription.deprecated)
 						option.addInlineBox(Category.BOLD, " (" + l10n("loadLabelDeprecated") + ")");
@@ -556,34 +557,34 @@ public class PproxyToadlet extends Toadlet {
 				}
 			}
 		}
-		addOfficialForm.addBlockText().addInput(Input.Type.SUBMIT, "submit-official", l10n("Load"));
+		addOfficialForm.addBlockText().addInput(InputType.SUBMIT, "submit-official", l10n("Load"));
 	}
 	
 	private void showUnofficialPluginLoader(ToadletContext toadletContext, HTMLNode contentNode) {
 		/* box for unofficial plugins. */
-		Infobox addOtherPluginBox = new Infobox(Infobox.Type.NORMAL, l10n("loadOtherPlugin"));
+		Infobox addOtherPluginBox = new Infobox(InfoboxType.NORMAL, l10n("loadOtherPlugin"));
 		contentNode.addChild(addOtherPluginBox);
 		HTMLNode addOtherForm = toadletContext.addFormChild(addOtherPluginBox.body, ".", "addOtherPluginForm");
 		addOtherForm.addBox(Category.NONE , l10n("loadOtherPluginText"));
 		addOtherForm.addText((l10n("loadOtherURLLabel") + ": "));
-		addOtherForm.addInput(Input.Type.TEXT, "plugin-url", 80);
+		addOtherForm.addInput(InputType.TEXT, "plugin-url", 80);
 		addOtherForm.addText(" ");
-		addOtherForm.addInput(Input.Type.SUBMIT, "submit-other", l10n("Load"));
+		addOtherForm.addInput(InputType.SUBMIT, "submit-other", l10n("Load"));
 		addOtherForm.addLineBreak();
-		addOtherForm.addInput(Input.Type.CHECKBOX, "fileonly", true);
+		addOtherForm.addInput(InputType.CHECKBOX, "fileonly", true);
 		addOtherForm.addText(" " + l10n("fileonly"));
 	}
 	
 	private void showFreenetPluginLoader(ToadletContext toadletContext, HTMLNode contentNode) {
 		/* box for freenet plugins. */
-		Infobox addFreenetPluginBox = new Infobox(Infobox.Type.NORMAL, l10n("loadFreenetPlugin"));
+		Infobox addFreenetPluginBox = new Infobox(InfoboxType.NORMAL, l10n("loadFreenetPlugin"));
 		contentNode.addChild(addFreenetPluginBox);
 		HTMLNode addFreenetForm = toadletContext.addFormChild(addFreenetPluginBox.body, ".", "addFreenetPluginForm");
 		addFreenetForm.addBox(Category.NONE, l10n("loadFreenetPluginText"));
 		addFreenetForm.addText((l10n("loadFreenetURLLabel") + ": "));
-		addFreenetForm.addInput(Input.Type.TEXT, "plugin-uri", 80);
+		addFreenetForm.addInput(InputType.TEXT, "plugin-uri", 80);
 		addFreenetForm.addText(" ");
-		addFreenetForm.addInput(Input.Type.SUBMIT, "submit-freenet", l10n("Load"));
+		addFreenetForm.addInput(InputType.SUBMIT, "submit-freenet", l10n("Load"));
 	}
 
 	@Override

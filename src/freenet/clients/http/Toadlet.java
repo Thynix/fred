@@ -5,6 +5,7 @@ package freenet.clients.http;
 
 import freenet.client.*;
 import freenet.client.async.ClientGetter;
+import freenet.clients.http.constants.InfoboxType;
 import freenet.clients.http.uielements.Infobox;
 import freenet.clients.http.uielements.Page;
 import freenet.clients.http.uielements.Text;
@@ -69,7 +70,7 @@ public abstract class Toadlet {
 	 */
 	private void handleUnhandledRequest(URI uri, Bucket data, ToadletContext toadletContext) throws ToadletContextClosedException, IOException, RedirectException {
 		Page page = toadletContext.getPageMaker().getPage(l10n("notSupportedTitle"), toadletContext);
-		Infobox warningbox = page.content.addInfobox(Infobox.Type.ERROR, l10n("notSupportedTitle"));
+		Infobox warningbox = page.content.addInfobox(InfoboxType.ERROR, l10n("notSupportedTitle"));
 		warningbox.body.setContent(l10n("notSupportedWithClass", "class", getClass().getName()));
 		MultiValueTable<String, String> hdrtbl = new MultiValueTable<String, String>();
 		hdrtbl.put("Allow", findSupportedMethods());
@@ -289,7 +290,7 @@ public abstract class Toadlet {
 	protected void sendErrorPage(ToadletContext ctx, int code, String desc, HTMLNode message)
 		throws ToadletContextClosedException, IOException {
 		Page page = ctx.getPageMaker().getPage(desc, ctx);
-		Infobox errorMessage = page.content.addInfobox(Infobox.Type.ERROR, desc);
+		Infobox errorMessage = page.content.addInfobox(InfoboxType.ERROR, desc);
 		errorMessage.body.addChild(message);
 		errorMessage.body.addLineBreak();
 		errorMessage.body.addLink(".", l10n("returnToPrevPage"));
@@ -311,7 +312,7 @@ public abstract class Toadlet {
 	protected void sendErrorPage(ToadletContext ctx, String desc, String message, Throwable t)
 		throws ToadletContextClosedException, IOException {
 		Page page = ctx.getPageMaker().getPage(desc, ctx);
-		Infobox errorMessage = page.content.addInfobox(Infobox.Type.ERROR, desc);
+		Infobox errorMessage = page.content.addInfobox(InfoboxType.ERROR, desc);
 		errorMessage.body.addText(message);
 		errorMessage.body.addLineBreak();
 		StringWriter sw = new StringWriter();

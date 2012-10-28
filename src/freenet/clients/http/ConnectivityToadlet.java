@@ -16,6 +16,9 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.Identifier;
+import freenet.clients.http.constants.InfoboxType;
 import freenet.clients.http.uielements.*;
 import freenet.io.AddressTracker;
 import freenet.io.AddressTrackerItem;
@@ -63,7 +66,7 @@ public class ConnectivityToadlet extends Toadlet {
 		}
 		// our ports
 		Infobox portInfobox =
-			connectivityPage.content.addInfobox(Infobox.Type.NORMAL, l10nConn("nodePortsTitle"));
+			connectivityPage.content.addInfobox(InfoboxType.NORMAL, l10nConn("nodePortsTitle"));
 		OutputList portInfoList = portInfobox.body.addList();
 		SimpleFieldSet fproxyConfig = node.config.get("fproxy").exportFieldSet(true);
 		SimpleFieldSet fcpConfig = node.config.get("fcp").exportFieldSet(true);
@@ -106,7 +109,7 @@ public class ConnectivityToadlet extends Toadlet {
 		node.ipDetector.addConnectionTypeBox(connectivityPage.content);
 		UdpSocketHandler[] handlers = node.getPacketSocketHandlers();
 		Infobox connectivitySummary = connectivityPage.content
-			.addInfobox(Infobox.Type.WTF, Identifier.CONNECTIVITYSUMMARY,
+			.addInfobox(InfoboxType.WTF, Identifier.CONNECTIVITYSUMMARY,
 				NodeL10n.getBase().getString("ConnectivityToadlet.summaryTitle"));
 		Table SummaryTable = connectivitySummary.body.addTable();
 		for (int i = 0; i < handlers.length; i++) {
@@ -126,7 +129,7 @@ public class ConnectivityToadlet extends Toadlet {
 				// Peers
 				AddressTracker tracker = handlers[i].getAddressTracker();
 				SummaryTable = connectivityPage.content
-					.addInfobox(Infobox.Type.WTF, Category.CONNECTIVITYPORT,
+					.addInfobox(InfoboxType.WTF, Category.CONNECTIVITYPORT,
 						NodeL10n.getBase().getString("ConnectivityToadlet.byPortTitle",
 							new String[]{"port", "status", "tunnelLength"},
 							new String[]{handlers[i].getTitle(), AddressTracker
@@ -168,7 +171,7 @@ public class ConnectivityToadlet extends Toadlet {
 				}
 				// IPs
 				SummaryTable = connectivityPage.content
-					.addInfobox(Infobox.Type.WTF, Category.CONNECTIVITYIP,
+					.addInfobox(InfoboxType.WTF, Category.CONNECTIVITYIP,
 						NodeL10n.getBase()
 						.getString("ConnectivityToadlet.byIPTitle",
 							new String[]{"ip", "status", "tunnelLength"},

@@ -2,7 +2,11 @@ package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.ConfigToadlet;
 import freenet.clients.http.FirstTimeWizardToadlet;
-import freenet.clients.http.uielements.*;
+import freenet.clients.http.constants.InputType;
+import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Cell;
+import freenet.clients.http.uielements.Row;
+import freenet.clients.http.uielements.Table;
 import freenet.config.Config;
 import freenet.config.EnumerableOptionCallback;
 import freenet.config.Option;
@@ -56,7 +60,7 @@ public class WELCOME implements Step {
 		dropDown.addAttribute("onchange", "this.form.submit()");
 		languageForm.addChild(dropDown);
 		//Otherwise fall back to submit button if no Javascript
-		languageForm.addChild("noscript").addInput(Input.Type.SUBMIT);
+		languageForm.addChild("noscript").addInput(InputType.SUBMIT);
 	}
 
 	@Override
@@ -91,7 +95,7 @@ public class WELCOME implements Step {
 		Box centerForm = tableCell.addBox();
 		centerForm.addAttribute("style", "text-align:center;");
 		HTMLNode secForm = helper.addFormChild(centerForm, ".", "SecForm"+preset);
-		secForm.addInput(Input.Type.HIDDEN, "incognito", String.valueOf(incognito));
-		secForm.addInput(Input.Type.SUBMIT, "preset" + preset, WizardL10n.l10n("presetChoose" + preset));
+		secForm.addInput(InputType.HIDDEN, "incognito", String.valueOf(incognito));
+		secForm.addInput(InputType.SUBMIT, "preset" + preset, WizardL10n.l10n("presetChoose" + preset));
 	}
 }

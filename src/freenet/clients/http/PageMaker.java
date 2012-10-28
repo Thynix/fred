@@ -1,6 +1,10 @@
 package freenet.clients.http;
 
 import freenet.client.filter.PushingTagReplacerCallback;
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.Identifier;
+import freenet.clients.http.constants.InputType;
+import freenet.clients.http.constants.Media;
 import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.DarknetPeerNode;
@@ -398,7 +402,7 @@ public final class PageMaker {
 		template.root.body.setID(filterCSSIdentifier("page-" + activePath));
 		//Add a hidden input that has the request's id
 		if (webPushingEnabled) {
-			template.root.body.addInput(Input.Type.HIDDEN, "requestId", ctx.getUniqueId(), Identifier.REQUESTID);
+			template.root.body.addInput(InputType.HIDDEN, "requestId", ctx.getUniqueId(), Identifier.REQUESTID);
 		}
 		// Add the client-side localization only when pushing is enabled
 		if (webPushingEnabled) {
@@ -791,7 +795,7 @@ public final class PageMaker {
 	}
 	
 	private Link getOverrideContent() {
-		return new Link(override, Link.Media.SCREEN, "custom");
+		return new Link(override, Media.SCREEN, "custom");
 	}
 
 	public boolean advancedMode(HTTPRequest req, ToadletContainer container) {

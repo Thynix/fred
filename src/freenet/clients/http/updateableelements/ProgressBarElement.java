@@ -2,8 +2,8 @@ package freenet.clients.http.updateableelements;
 
 import freenet.client.FetchContext;
 import freenet.clients.http.*;
+import freenet.clients.http.constants.Category;
 import freenet.clients.http.uielements.Box;
-import freenet.clients.http.uielements.Category;
 import freenet.keys.FreenetURI;
 import freenet.l10n.NodeL10n;
 import freenet.support.Base64;

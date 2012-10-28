@@ -1,8 +1,8 @@
 package freenet.node;
 
 import freenet.client.DefaultMIMETypes;
+import freenet.clients.http.constants.InputType;
 import freenet.clients.http.uielements.Box;
-import freenet.clients.http.uielements.Input;
 import freenet.clients.http.uielements.Row;
 import freenet.clients.http.uielements.Table;
 import freenet.io.comm.*;
@@ -1185,13 +1185,13 @@ public class DarknetPeerNode extends PeerNode {
 					HTMLNode form = node.clientCore.getToadletContainer().addFormChild(box_, "/friends/", "f2fFileOfferAcceptForm");
 
 					// FIXME node_ is inefficient
-					form.addInput("node_"+DarknetPeerNode.this.hashCode(), Input.Type.HIDDEN);
+					form.addInput("node_"+DarknetPeerNode.this.hashCode(), InputType.HIDDEN);
 
-					form.addInput(Input.Type.HIDDEN, "id", Long.toString(uid));
+					form.addInput(InputType.HIDDEN, "id", Long.toString(uid));
 
-					form.addInput(Input.Type.SUBMIT, "acceptTransfer", l10n("acceptTransferButton"));
+					form.addInput(InputType.SUBMIT, "acceptTransfer", l10n("acceptTransferButton"));
 
-					form.addInput(Input.Type.SUBMIT, "rejectTransfer", l10n("rejectTransferButton"));
+					form.addInput(InputType.SUBMIT, "rejectTransfer", l10n("rejectTransferButton"));
 
 					return box_;
 				}

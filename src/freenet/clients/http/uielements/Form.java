@@ -1,5 +1,7 @@
 package freenet.clients.http.uielements;
 
+import freenet.clients.http.constants.Identifier;
+import freenet.clients.http.constants.Target;
 /**
  * Creates a form element
  */
@@ -7,7 +9,7 @@ public class Form extends OutputNode {
 
 	private String action;
 	private String method;
-	private Link.Target target;
+	private Target target;
 	private String enctype;
 	private String charset;
 	private String name;
@@ -38,7 +40,7 @@ public class Form extends OutputNode {
 		this.setID(id);
 	}
 
-	public Form(String action, String method, Link.Target target) {
+	public Form(String action, String method, Target target) {
 		this(action, method);
 		setTarget(target);
 	}
@@ -58,7 +60,7 @@ public class Form extends OutputNode {
 		this.addAttributes(new String[]{"action", "method"}, new String[]{action, method});
 	}
 
-	private void setTarget(Link.Target target) {
+	private void setTarget(Target target) {
 		this.target = target;
 		this.addAttribute("target", target.value);
 	}

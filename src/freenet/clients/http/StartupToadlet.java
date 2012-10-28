@@ -1,6 +1,7 @@
 package freenet.clients.http;
 
 import freenet.clients.http.PageMaker.RenderParameters;
+import freenet.clients.http.constants.InfoboxType;
 import freenet.clients.http.uielements.Infobox;
 import freenet.clients.http.uielements.Page;
 import freenet.l10n.NodeL10n;
@@ -38,13 +39,13 @@ public class StartupToadlet extends Toadlet {
 			page.root.head.addMeta("refresh", "20; url=");
 			HTMLNode contentNode = page.content;
 			if (! isPRNGReady) {
-				Infobox entropyError = new Infobox(Infobox.Type.ERROR,
+				Infobox entropyError = new Infobox(InfoboxType.ERROR,
 					NodeL10n.getBase().getString("StartupToadlet.entropyErrorTitle"));
 				contentNode.addInfobox(entropyError);
 				entropyError.body.addText(
 					NodeL10n.getBase().getString("StartupToadlet.entropyErrorContent"));
 			}
-			Infobox startingUp = new Infobox(Infobox.Type.ERROR, desc);
+			Infobox startingUp = new Infobox(InfoboxType.ERROR, desc);
 			contentNode.addInfobox(startingUp);
 			startingUp.body.addText(NodeL10n.getBase().getString("StartupToadlet.isStartingUp"));
 			WelcomeToadlet.maybeDisplayWrapperLogfile(ctx, contentNode);

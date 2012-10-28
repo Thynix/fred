@@ -1,52 +1,12 @@
 package freenet.clients.http.uielements;
 
+import freenet.clients.http.constants.*;
 /**
  * Creates an link
  */
 public class Link extends OutputNode {
 
-	public enum Media {
-		ALL("all"),
-		AURAL("aural"),
-		BRAILLE("braille"),
-		EMBOSSED("embossed"),
-		HANDHELD("handheld"),
-		PRINT("print"),
-		PROJECTION("projection"),
-		SCREEN("screen"),
-		TTY("tty"),
-		TV("tv");
-
-		public final String name;
-
-		private Media(String type) {
-			this.name = type;
-		}
-	}
-
-	public enum Type {
-		HYPERLINK("href"),
-		ANCHOR("name");
-
-		public final String attribute;
-
-		private Type(String type) {
-			this.attribute = type;
-		}
-	}
-
-	public enum Target {
-		BLANK("_blank"),
-		NEW("_new");
-
-		public final String value;
-
-		private Target(String type) {
-			this.value = type;
-		}
-	}
-
-	public Type type;
+	public LinkType type;
 	public String data;
 	public Target target;
 	public String title;
@@ -59,7 +19,7 @@ public class Link extends OutputNode {
 	public Link (String data, Media media, String title) {
 		this();
 		this.addAttribute("rel", "stylesheet");
-		this.addAttribute(Type.HYPERLINK.attribute, data);
+		this.addAttribute(LinkType.HYPERLINK.attribute, data);
 		this.addAttribute("type", "text/css");
 		this.addAttribute("media", media.name);
 		this.setTitle(title);
@@ -104,22 +64,22 @@ public class Link extends OutputNode {
 
 	public Link(String data) {
 		this();
-		this.addAttribute(Type.HYPERLINK.attribute, data);
+		this.addAttribute(LinkType.HYPERLINK.attribute, data);
 	}
 
-	public Link(Type type, String data) {
+	public Link(LinkType type, String data) {
 		this();
-		this.addAttribute(Type.HYPERLINK.attribute, data);
+		this.addAttribute(LinkType.HYPERLINK.attribute, data);
 	}
 
-	public Link(Type type, Identifier data) {
+	public Link(LinkType type, Identifier data) {
 		this();
-		this.addAttribute(Type.HYPERLINK.attribute, data.name);
+		this.addAttribute(LinkType.HYPERLINK.attribute, data.name);
 	}
 
-	public Link(Type type, String data, String ID) {
+	public Link(LinkType type, String data, String ID) {
 		this();
-		this.addAttribute(Type.HYPERLINK.attribute, data);
+		this.addAttribute(LinkType.HYPERLINK.attribute, data);
 		this.addAttribute("id", ID);
 	}
 

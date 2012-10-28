@@ -1,6 +1,6 @@
 package freenet.node;
 
-import freenet.clients.http.uielements.Category;
+import freenet.clients.http.constants.Category;
 import freenet.clients.http.uielements.Row;
 import freenet.clients.http.uielements.Table;
 import freenet.config.InvalidConfigValueException;

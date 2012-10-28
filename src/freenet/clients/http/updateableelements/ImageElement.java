@@ -4,8 +4,8 @@ import freenet.client.FetchException;
 import freenet.client.filter.HTMLFilter.ParsedTag;
 import freenet.clients.http.*;
 import freenet.clients.http.FProxyFetchInProgress.REFILTER_POLICY;
-import freenet.clients.http.uielements.Category;
-import freenet.clients.http.uielements.Input;
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.InputType;
 import freenet.keys.FreenetURI;
 import freenet.support.Base64;
 import freenet.support.HTMLNode;
@@ -157,8 +157,8 @@ public class ImageElement extends BaseUpdateableElement {
 				}
 				attr.put("src", "/imagecreator/?text=+"+FProxyToadlet.l10n("imageinitializing")+"+" + sizePart);
 				whenJsEnabled.addChild(makeHtmlNodeForParsedTag(new ParsedTag(originalImg, attr)));
-				whenJsEnabled.addInput(Input.Type.HIDDEN, "fetchedBlocks", String.valueOf(0));
-				whenJsEnabled.addInput(Input.Type.HIDDEN, "requiredBlocks", String.valueOf(1));
+				whenJsEnabled.addInput(InputType.HIDDEN, "fetchedBlocks", String.valueOf(0));
+				whenJsEnabled.addInput(InputType.HIDDEN, "requiredBlocks", String.valueOf(1));
 
 			}
 		} else {
@@ -198,8 +198,8 @@ public class ImageElement extends BaseUpdateableElement {
 						}
 						attr.put("src", "/imagecreator/?text=" + fetchedPercent + "%25" + sizePart);
 						whenJsEnabled.addChild(makeHtmlNodeForParsedTag(new ParsedTag(originalImg, attr)));
-						whenJsEnabled.addInput(Input.Type.HIDDEN, "fetchedBlocks", String.valueOf(fr.fetchedBlocks));
-						whenJsEnabled.addInput(Input.Type.HIDDEN, "requiredBlocks", String.valueOf(fr.requiredBlocks));
+						whenJsEnabled.addInput(InputType.HIDDEN, "fetchedBlocks", String.valueOf(fr.fetchedBlocks));
+						whenJsEnabled.addInput(InputType.HIDDEN, "requiredBlocks", String.valueOf(fr.requiredBlocks));
 					}
 				}
 			} finally {

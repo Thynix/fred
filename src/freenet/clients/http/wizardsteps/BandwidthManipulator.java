@@ -1,5 +1,6 @@
 package freenet.clients.http.wizardsteps;
 
+import freenet.clients.http.constants.InfoboxType;
 import freenet.clients.http.uielements.Infobox;
 import freenet.clients.http.uielements.Text;
 import freenet.config.Config;
@@ -45,7 +46,7 @@ public abstract class BandwidthManipulator {
 	}
 
 	protected void parseErrorBox(HTMLNode parent, PageHelper helper, String parsingFailedOn) {
-		Infobox infoBox = parent.addInfobox(Infobox.Type.WARNING,
+		Infobox infoBox = parent.addInfobox(InfoboxType.WARNING,
 			WizardL10n.l10n("bandwidthCouldNotParseTitle"));
 
 		NodeL10n.getBase().addL10nSubstitution(infoBox.body, "FirstTimeWizardToadlet.bandwidthCouldNotParse",

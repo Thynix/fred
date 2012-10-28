@@ -4,7 +4,12 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
-import freenet.clients.http.uielements.*;
+import freenet.clients.http.constants.Identifier;
+import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.uielements.Cell;
+import freenet.clients.http.uielements.Page;
+import freenet.clients.http.uielements.Table;
+import freenet.clients.http.uielements.Text;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
 import freenet.support.api.HTTPRequest;
@@ -34,7 +39,7 @@ public class SimpleHelpToadlet extends Toadlet {
 		}
 		// Description infobox
 		Text Description = new Text(NodeL10n.getBase().getString("SimpleHelpToadlet.descriptionText"));
-		page.content.addInfobox(Infobox.Type.INFORMATION, Identifier.FREENETDESCRIPTION,
+		page.content.addInfobox(InfoboxType.INFORMATION, Identifier.FREENETDESCRIPTION,
 			NodeL10n.getBase().getString("SimpleHelpToadlet.descriptionTitle"), Description);
 		// Definitions infobox
 		Table Definitions = new Table();
@@ -44,11 +49,11 @@ public class SimpleHelpToadlet extends Toadlet {
 		row.addText(NodeL10n.getBase().getString("SimpleHelpToadlet.SSK"));
 		row.addLineBreak();
 		row.addText(NodeL10n.getBase().getString("SimpleHelpToadlet.USK"));
-		page.content.addInfobox(Infobox.Type.INFORMATION, Identifier.FREENETDESCRIPTION,
+		page.content.addInfobox(InfoboxType.INFORMATION, Identifier.FREENETDESCRIPTION,
 			NodeL10n.getBase().getString("SimpleHelpToadlet.definitionsTitle"), Definitions);
 		// Port forwarding, etc.
 		Text Connectivity = new Text(NodeL10n.getBase().getString("SimpleHelpToadlet.connectivityText"));
-		page.content.addInfobox(Infobox.Type.INFORMATION, Identifier.FREENETDESCRIPTION,
+		page.content.addInfobox(InfoboxType.INFORMATION, Identifier.FREENETDESCRIPTION,
 			NodeL10n.getBase().getString("SimpleHelpToadlet.connectivityTitle"), Connectivity);
 		this.writeHTMLReply(ctx, 200, "OK", page.generate());
 	}

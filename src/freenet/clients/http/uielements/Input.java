@@ -1,11 +1,14 @@
 package freenet.clients.http.uielements;
 
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.Identifier;
+import freenet.clients.http.constants.InputType;
 /**
  * Creates a form element
  */
 public class Input extends OutputNode {
 
-	private Type type;
+	private InputType type;
 	private String name;
 	private String value;
 	private String alt;
@@ -14,120 +17,88 @@ public class Input extends OutputNode {
 	private boolean checked;
 	private boolean disabled;
 
-	public enum Type {
-		BUTTON("button"),
-		CHECKBOX("checkbox"),
-		COLOR("color"),
-		DATE("date"),
-		DATETIME("datetime"),
-		DATETIMELOCAL("datetime-local"),
-		EMAIL("email"),
-		FILE("file"),
-		HIDDEN("hidden"),
-		IMAGE("image"),
-		MONTH("month"),
-		NUMBER("number"),
-		PASSWORD("password"),
-		RADIO("radio"),
-		RANGE("range"),
-		RESET("reset"),
-		SEARCH("search"),
-		SUBMIT("submit"),
-		TEL("tel"),
-		TEXT("text"),
-		TIME("time"),
-		URL("url"),
-		WEEK("week");
-
-		public final String name;
-
-		private Type(String name) {
-			this.name = name;
-		}
-	}
-
-	public Input(Type type, String name, String value, Category category, String alt, Boolean disabled) {
+	public Input(InputType type, String name, String value, Category category, String alt, Boolean disabled) {
 		this(type, name, value, category, alt);
 		this.setAlt(alt);
 	}
 
-	public Input(Type type, String name, String value, int size, short maxlength, Identifier id) {
+	public Input(InputType type, String name, String value, int size, short maxlength, Identifier id) {
 		this(type, name, value, size, maxlength);
 		this.setID(id);
 	}
 
-	public Input(Type type, String name, String value, int size, short maxlength) {
+	public Input(InputType type, String name, String value, int size, short maxlength) {
 		this(type, name, value);
 		this.setSize(size);
 		this.setMaxLength(maxlength);
 	}
 
-	public Input(Type type, String name, String value, Category category, String alt) {
+	public Input(InputType type, String name, String value, Category category, String alt) {
 		this(type, name, value, category);
 		this.setAlt(alt);
 	}
 
-	public Input(Type type, String name, String value, Identifier id, int size) {
+	public Input(InputType type, String name, String value, Identifier id, int size) {
 		this(type, name, value, id);
 		this.setSize(size);
 	}
 
-	public Input(Type type, String name, boolean checked, Identifier id) {
+	public Input(InputType type, String name, boolean checked, Identifier id) {
 		this(type, name, checked);
 		this.setID(id);
 	}
 
-	public Input(Type type, String name, int size, Identifier id) {
+	public Input(InputType type, String name, int size, Identifier id) {
 		this(type, name, size);
 		this.setID(id);
 	}
 
-	public Input(Type type, String name, String value, boolean checked) {
+	public Input(InputType type, String name, String value, boolean checked) {
 		this(type, name, value);
 		this.setChecked(checked);
 	}
 
-	public Input(Type type, String name, String value, Category category) {
+	public Input(InputType type, String name, String value, Category category) {
 		this(type, name, value);
 		this.addClass(category);
 	}
 
-	public Input(Type type, String name, String value, Identifier id) {
+	public Input(InputType type, String name, String value, Identifier id) {
 		this(type, name, value);
 		this.setID(id);
 	}
 
-	public Input(Type type, String name, Identifier id) {
+	public Input(InputType type, String name, Identifier id) {
 		this(type, name);
 		this.setID(id);
 	}
 
-	public Input(Type type, String name, boolean checked) {
+	public Input(InputType type, String name, boolean checked) {
 		this(type, name);
 		this.setChecked(checked);
 	}
 
-	public Input(Type type, String name, String value) {
+	public Input(InputType type, String name, String value) {
 		this(type, name);
 		this.setValue(value);
 	}
 
-	public Input(Type type, String name, int size) {
+	public Input(InputType type, String name, int size) {
 		this(type, name);
 		this.setSize(size);
 	}
 
-	public Input(Type type, String value, Category category) {
+	public Input(InputType type, String value, Category category) {
 		this(type, value);
 		this.addClass(category);
 	}
 
-	public Input(Type type, String value) {
+	public Input(InputType type, String value) {
 		this(type);
 		this.setValue(value);
 	}
 
-	public Input(String name, Type type) {
+	public Input(String name, InputType type) {
 		this(type);
 		this.setName(name);
 	}
@@ -137,7 +108,7 @@ public class Input extends OutputNode {
 		this.setName(name);
 	}
 
-	public Input(Type type) {
+	public Input(InputType type) {
 		this();
 		this.setType(type);
 	}
@@ -180,7 +151,7 @@ public class Input extends OutputNode {
 		this.addAttribute("value", value);
 	}
 
-	private void setType(Type type) {
+	private void setType(InputType type) {
 		this.type = type;
 		this.addAttribute("type", type.name);
 	}

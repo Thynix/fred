@@ -1,8 +1,9 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
+import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.constants.InputType;
 import freenet.clients.http.uielements.Infobox;
-import freenet.clients.http.uielements.Input;
 import freenet.config.Config;
 import freenet.config.ConfigException;
 import freenet.l10n.NodeL10n;
@@ -24,7 +25,7 @@ public class NAME_SELECTION implements Step {
 	@Override
 	public void getStep(HTTPRequest request, PageHelper helper) {
 		Infobox nnameInfoboxContent = helper.getPageContent(WizardL10n.l10n("step2Title")).addInfobox(
-			Infobox.Type.NORMAL,
+			InfoboxType.NORMAL,
 			WizardL10n.l10n("chooseNodeName"));
 
 		nnameInfoboxContent.body.addText(WizardL10n.l10n("chooseNodeNameLong"));
@@ -32,8 +33,8 @@ public class NAME_SELECTION implements Step {
 		nnameForm.addInput("nname");
 
 		HTMLNode lineBelow = nnameForm.addBox();
-		lineBelow.addInput(Input.Type.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
-		lineBelow.addInput(Input.Type.SUBMIT, "next", NodeL10n.getBase().getString("Toadlet.next"));
+		lineBelow.addInput(InputType.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
+		lineBelow.addInput(InputType.SUBMIT, "next", NodeL10n.getBase().getString("Toadlet.next"));
 	}
 
 	@Override

@@ -3,7 +3,10 @@ package freenet.clients.http.wizardsteps;
 import freenet.clients.http.ExternalLinkToadlet;
 import freenet.clients.http.FirstTimeWizardToadlet;
 import freenet.clients.http.SecurityLevelsToadlet;
-import freenet.clients.http.uielements.*;
+import freenet.clients.http.constants.*;
+import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Infobox;
+import freenet.clients.http.uielements.Link;
 import freenet.l10n.NodeL10n;
 import freenet.node.*;
 import freenet.support.HTMLNode;
@@ -47,7 +50,7 @@ public class SECURITY_PHYSICAL implements Step {
 		}
 
 		Infobox physicalThreatLevel = helper.getPageContent(WizardL10n.l10n("physicalSecurityPageTitle")).addInfobox(
-			Infobox.Type.NORMAL,
+			InfoboxType.NORMAL,
 			WizardL10n.l10nSec("physicalThreatLevelShort"));
 		Box infoboxContent = physicalThreatLevel.body;
 		infoboxContent.addBlockText(WizardL10n.l10nSec("physicalThreatLevel"));
@@ -59,7 +62,7 @@ public class SECURITY_PHYSICAL implements Step {
 		NodeL10n.getBase().addL10nSubstitution(swapWarning, "SecurityLevels.physicalThreatLevelTruecrypt",
 		        new String[]{"bold", "truecrypt"},
 		        new HTMLNode[]{HTMLNode.STRONG,
-		                new Link(ExternalLinkToadlet.escape("http://www.truecrypt.org/"), Link.Target.BLANK)});
+		                new Link(ExternalLinkToadlet.escape("http://www.truecrypt.org/"), Target.BLANK)});
 		OperatingSystem os = FileUtil.detectedOS;
 		div.addBlockText(NodeL10n.getBase().getString("SecurityLevels.physicalThreatLevelSwapfile",
 			"operatingSystem",
@@ -69,7 +72,7 @@ public class SECURITY_PHYSICAL implements Step {
 		}
 		for(SecurityLevels.PHYSICAL_THREAT_LEVEL level : SecurityLevels.PHYSICAL_THREAT_LEVEL.values()) {
 			HTMLNode input;
-			input = div.addBlockText().addInput(Input.Type.RADIO, controlName, level.name());
+			input = div.addBlockText().addInput(InputType.RADIO, controlName, level.name());
 			input.addInlineBox(Category.BOLD, WizardL10n.l10nSec("physicalThreatLevel.name." + level));
 			input.addText(": ");
 			NodeL10n.getBase().addL10nSubstitution(input, "SecurityLevels.physicalThreatLevel.choice."+level, new String[] { "bold" }, new HTMLNode[] { HTMLNode.STRONG });
@@ -78,12 +81,12 @@ public class SECURITY_PHYSICAL implements Step {
 				// Add password form on high security if not already at high security.
 				HTMLNode p = div.addBlockText();
 				p.addChild("label", "for", "passwordBox", WizardL10n.l10nSec("setPasswordLabel")+":");
-				p.addInput(Input.Type.PASSWORD, "masterPassword", Identifier.PASSWORDBOX);
+				p.addInput(InputType.PASSWORD, "masterPassword", Identifier.PASSWORDBOX);
 			}
 		}
 		div.addText(WizardL10n.l10nSec("physicalThreatLevelEnd"));
-		form.addInput(Input.Type.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
-		form.addInput(Input.Type.SUBMIT, "next", NodeL10n.getBase().getString("Toadlet.next"));
+		form.addInput(InputType.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
+		form.addInput(InputType.SUBMIT, "next", NodeL10n.getBase().getString("Toadlet.next"));
 	}
 
 	/**
@@ -138,7 +141,7 @@ public class SECURITY_PHYSICAL implements Step {
 			}
 
 			Infobox errorBox = helper.getPageContent(WizardL10n.l10nSec(pageTitleKey)).addInfobox(
-				Infobox.Type.ERROR,
+				InfoboxType.ERROR,
 				WizardL10n.l10nSec(infoboxTitleKey));
 			Box content = errorBox.body;
 
@@ -282,6 +285,6 @@ public class SECURITY_PHYSICAL implements Step {
 	}
 
 	private void addBackToPhysicalSeclevelsButton(HTMLNode form) {
-		form.addBlockText().addInput(Input.Type.SUBMIT, "backToMain", WizardL10n.l10n("backToSecurityLevels"));
+		form.addBlockText().addInput(InputType.SUBMIT, "backToMain", WizardL10n.l10n("backToSecurityLevels"));
 	}
 }

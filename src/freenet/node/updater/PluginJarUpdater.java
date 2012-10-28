@@ -2,9 +2,9 @@ package freenet.node.updater;
 
 import freenet.client.FetchResult;
 import freenet.clients.http.PproxyToadlet;
+import freenet.clients.http.constants.InputType;
 import freenet.clients.http.uielements.Box;
 import freenet.clients.http.uielements.Form;
-import freenet.clients.http.uielements.Input;
 import freenet.keys.FreenetURI;
 import freenet.l10n.NodeL10n;
 import freenet.node.RequestClient;
@@ -183,10 +183,10 @@ public class PluginJarUpdater extends NodeUpdater {
 							// written it yet.
 							Form formNode =
 								updatedPlugin.addForm(PproxyToadlet.PATH, "post");
-							formNode.addInput(Input.Type.HIDDEN, "formPassword",
+							formNode.addInput(InputType.HIDDEN, "formPassword",
 								node.clientCore.formPassword);
-							formNode.addInput(Input.Type.HIDDEN, "update", pluginName);
-							formNode.addInput(Input.Type.SUBMIT, l10n("updatePlugin"));
+							formNode.addInput(InputType.HIDDEN, "update", pluginName);
+							formNode.addInput(InputType.SUBMIT, l10n("updatePlugin"));
 						}
 					}
 					return updatedPlugin;

@@ -3,8 +3,8 @@ package freenet.clients.http.wizardsteps;
 import freenet.clients.http.FirstTimeWizardToadlet;
 import freenet.clients.http.PageMaker.RenderParameters;
 import freenet.clients.http.ToadletContext;
+import freenet.clients.http.constants.InputType;
 import freenet.clients.http.uielements.Box;
-import freenet.clients.http.uielements.Input;
 import freenet.clients.http.uielements.Page;
 import freenet.support.HTMLNode;
 
@@ -70,12 +70,12 @@ public class PageHelper {
 	public HTMLNode addFormChild(HTMLNode parentNode, String target, String id, boolean includeOpennet) {
 		HTMLNode form = toadletContext.addFormChild(parentNode, target, id);
 		if (persistFields.isUsingPreset()) {
-			form.addInput(Input.Type.HIDDEN, "preset", persistFields.preset.name());
+			form.addInput(InputType.HIDDEN, "preset", persistFields.preset.name());
 		}
 		if (includeOpennet) {
-			form.addInput(Input.Type.HIDDEN, "opennet", String.valueOf(persistFields.opennet));
+			form.addInput(InputType.HIDDEN, "opennet", String.valueOf(persistFields.opennet));
 		}
-		form.addInput(Input.Type.HIDDEN, "step", step.name());
+		form.addInput(InputType.HIDDEN, "step", step.name());
 		return form;
 	}
 }

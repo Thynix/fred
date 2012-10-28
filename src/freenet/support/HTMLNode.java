@@ -1,5 +1,6 @@
 package freenet.support;
 
+import freenet.clients.http.constants.*;
 import freenet.clients.http.uielements.*;
 
 import java.util.*;
@@ -602,7 +603,7 @@ public class HTMLNode implements XMLCharacterClasses {
 		addChild(form);
 		return form;
 	}
-	public Form addForm(String action, String method, Link.Target target) {
+	public Form addForm(String action, String method, Target target) {
 		Form form = new Form(action, method, target);
 		addChild(form);
 		return form;
@@ -708,22 +709,22 @@ public class HTMLNode implements XMLCharacterClasses {
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public Infobox addInfobox(Infobox.Type type, String title) {
+	public Infobox addInfobox(InfoboxType type, String title) {
 		Infobox newInfobox = new Infobox(type, title);
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public Infobox addInfobox(Infobox.Type type, Identifier id, String title) {
+	public Infobox addInfobox(InfoboxType type, Identifier id, String title) {
 		Infobox newInfobox = new Infobox(type, id, title);
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public Infobox addInfobox(Infobox.Type type, Identifier id, String title, OutputNode content) {
+	public Infobox addInfobox(InfoboxType type, Identifier id, String title, OutputNode content) {
 		Infobox newInfobox = new Infobox(type, id, title, content);
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public Infobox addInfobox(Infobox.Type type, Identifier id, String title, String content) {
+	public Infobox addInfobox(InfoboxType type, Identifier id, String title, String content) {
 		Infobox newInfobox = new Infobox(type, id, title, content);
 		addChild(newInfobox);
 		return newInfobox;
@@ -733,17 +734,17 @@ public class HTMLNode implements XMLCharacterClasses {
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public Infobox addInfobox(Infobox.Type type, Category category, String title) {
+	public Infobox addInfobox(InfoboxType type, Category category, String title) {
 		Infobox newInfobox = new Infobox(type, category, title);
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public Infobox addInfobox(Infobox.Type type, Category category, String title, OutputNode content) {
+	public Infobox addInfobox(InfoboxType type, Category category, String title, OutputNode content) {
 		Infobox newInfobox = new Infobox(type, category, title, content);
 		addChild(newInfobox);
 		return newInfobox;
 	}
-	public Infobox addInfobox(Infobox.Type type, Category category, String title, String content) {
+	public Infobox addInfobox(InfoboxType type, Category category, String title, String content) {
 		Infobox newInfobox = new Infobox(type, category, title, content);
 		addChild(newInfobox);
 		return newInfobox;
@@ -754,7 +755,7 @@ public class HTMLNode implements XMLCharacterClasses {
 		this.addChild(input);
 		return input;
 	}
-	public Input addInput(Input.Type type){
+	public Input addInput(InputType type){
 		Input newInput = new Input(type);
 		this.addChild(newInput);
 		return newInput;
@@ -764,92 +765,92 @@ public class HTMLNode implements XMLCharacterClasses {
 		this.addChild(newInput);
 		return newInput;
 	}
-	public Input addInput(Input.Type type, String value){
+	public Input addInput(InputType type, String value){
 		Input newInput = new Input(type, value);
 		this.addChild(newInput);
 		return newInput;
 	}
-	public Input addInput(String name, Input.Type type){
+	public Input addInput(String name, InputType type){
 		Input newInput = new Input(name, type);
 		this.addChild(newInput);
 		return newInput;
 	}
-	public Input addInput(Input.Type type, String name, int size){
+	public Input addInput(InputType type, String name, int size){
 		Input newInput = new Input(type, name, size);
 		this.addChild(newInput);
 		return newInput;
 	}
-	public Input addInput(Input.Type type, String name, Category category){
+	public Input addInput(InputType type, String name, Category category){
 		Input newInput = new Input(type, name, category);
 		this.addChild(newInput);
 		return newInput;
 	}
-	public Input addInput(Input.Type type, String name, boolean checked){
+	public Input addInput(InputType type, String name, boolean checked){
 		Input newInput = new Input(type, name, checked);
 		this.addChild(newInput);
 		return newInput;
 	}
-	public Input addInput(Input.Type type, String name, short maxlength){
+	public Input addInput(InputType type, String name, short maxlength){
 		Input newInput = new Input(type, name, maxlength);
 		this.addChild(newInput);
 		return newInput;
 	}
-	public Input addInput(Input.Type type, String name, Identifier id){
+	public Input addInput(InputType type, String name, Identifier id){
 		Input newInput = new Input(type, name, id);
 		this.addChild(newInput);
 		return newInput;
 	}
-	public Input addInput(Input.Type type, String name, String value){
+	public Input addInput(InputType type, String name, String value){
 		Input newInput = new Input(type, name, value);
 		this.addChild(newInput);
 		return newInput;
 	}
-	public Input addInput(Input.Type type, String name, String value, Identifier id){
+	public Input addInput(InputType type, String name, String value, Identifier id){
 		Input newInput = new Input(type, name, value, id);
 		this.addChild(newInput);
 		return newInput;
 	}
-	public Input addInput(Input.Type type, String name, String value, Category category){
+	public Input addInput(InputType type, String name, String value, Category category){
 		Input newInput = new Input(type, name, value, category);
 		this.addChild(newInput);
 		return newInput;
 	}
-	public Input addInput(Input.Type type, String name, String value, boolean checked){
+	public Input addInput(InputType type, String name, String value, boolean checked){
 		Input newInput = new Input(type, name, value, checked);
 		this.addChild(newInput);
 		return newInput;
 	}
-	public Input addInput(Input.Type type, String name, boolean checked, Identifier id){
+	public Input addInput(InputType type, String name, boolean checked, Identifier id){
 		Input newInput = new Input(type, name, checked, id);
 		this.addChild(newInput);
 		return newInput;
 	}
-	public Input addInput(Input.Type type, String name, int size, Identifier id){
+	public Input addInput(InputType type, String name, int size, Identifier id){
 		Input newInput = new Input(type, name, size, id);
 		this.addChild(newInput);
 		return newInput;
 	}
-	public Input addInput(Input.Type type, String name, String value, Identifier id, int size) {
+	public Input addInput(InputType type, String name, String value, Identifier id, int size) {
 		Input newInput = new Input(type, name, value, id, size);
 		this.addChild(newInput);
 		return newInput;
 	}
-	public Input addInput(Input.Type type, String name, String value, Category category, String alt) {
+	public Input addInput(InputType type, String name, String value, Category category, String alt) {
 		Input newInput = new Input(type, name, value, category, alt);
 		this.addChild(newInput);
 		return newInput;
 	}
-	public Input addInput(Input.Type type, String name, String value, int size, short maxlength) {
+	public Input addInput(InputType type, String name, String value, int size, short maxlength) {
 		Input newInput = new Input(type, name, value, size, maxlength);
 		this.addChild(newInput);
 		return newInput;
 	}
-	public Input addInput(Input.Type type, String name, String value, int size, short maxlength, Identifier id) {
+	public Input addInput(InputType type, String name, String value, int size, short maxlength, Identifier id) {
 		Input newInput = new Input(type, name, value, size, maxlength, id);
 		this.addChild(newInput);
 		return newInput;
 	}
-	public Input addInput(Input.Type type, String name, String value, Category category, String alt, boolean disabled) {
+	public Input addInput(InputType type, String name, String value, Category category, String alt, boolean disabled) {
 		Input newInput = new Input(type, name, value, category, alt, disabled);
 		this.addChild(newInput);
 		return newInput;
@@ -872,17 +873,17 @@ public class HTMLNode implements XMLCharacterClasses {
 		addChild(newLink);
 		return newLink;
 	}
-	public Link addLink(Link.Type type, Identifier data) {
+	public Link addLink(LinkType type, Identifier data) {
 		Link newLink = new Link(type, data);
 		addChild(newLink);
 		return newLink;
 	}
-	public Link addLink(Link.Type type, String data) {
+	public Link addLink(LinkType type, String data) {
 		Link newLink = new Link(type, data);
 		addChild(newLink);
 		return newLink;
 	}
-	public Link addLink(Link.Type type, String data, String id) {
+	public Link addLink(LinkType type, String data, String id) {
 		Link newLink = new Link(type, data, id);
 		addChild(newLink);
 		return newLink;
@@ -912,7 +913,7 @@ public class HTMLNode implements XMLCharacterClasses {
 		addChild(newLink);
 		return newLink;
 	}
-	public Link addLink(String data, Link.Target target,  String content) {
+	public Link addLink(String data, Target target,  String content) {
 		Link newLink = new Link(data, target, content);
 		addChild(newLink);
 		return newLink;
@@ -943,7 +944,7 @@ public class HTMLNode implements XMLCharacterClasses {
 		addChild(newList);
 		return newList;
 	}
-	public OutputList addList(OutputList.Type type, Category category) {
+	public OutputList addList(ListType type, Category category) {
 		OutputList newList = new OutputList(type, category);
 		addChild(newList);
 		return newList;

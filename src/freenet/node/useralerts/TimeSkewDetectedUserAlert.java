@@ -3,10 +3,10 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node.useralerts;
 
-import freenet.clients.http.uielements.Category;
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.uielements.Box;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
-import freenet.clients.http.uielements.Box;
 
 /**
  * A simple user alert warning the user about the weird effect a time skew

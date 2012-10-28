@@ -4,8 +4,8 @@
 
 package freenet.node.useralerts;
 
+import freenet.clients.http.constants.Category;
 import freenet.clients.http.uielements.Box;
-import freenet.clients.http.uielements.Category;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 import freenet.support.io.NativeThread;

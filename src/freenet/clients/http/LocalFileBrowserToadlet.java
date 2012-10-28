@@ -4,6 +4,10 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.Identifier;
+import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.constants.InputType;
 import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
@@ -128,8 +132,8 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 	 * @param persistence Additional persistence fields to include.
 	 */
 	protected void createSelectDirectoryButton (HTMLNode node, String absolutePath, HTMLNode persistence) {
-		node.addInput(Input.Type.SUBMIT, selectDir, l10n("insert"));
-		node.addInput(Input.Type.HIDDEN, filenameField(), absolutePath);
+		node.addInput(InputType.SUBMIT, selectDir, l10n("insert"));
+		node.addInput(InputType.HIDDEN, filenameField(), absolutePath);
 		node.addChild(persistence);
 	}
 
@@ -140,8 +144,8 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 	 * @param persistence Additional persistence fields to include.
 	 */
 	protected void createSelectFileButton (HTMLNode node, String absolutePath, HTMLNode persistence) {
-		node.addInput(Input.Type.SUBMIT, selectFile, l10n("insert"));
-		node.addInput(Input.Type.HIDDEN, filenameField(), absolutePath);
+		node.addInput(InputType.SUBMIT, selectFile, l10n("insert"));
+		node.addInput(InputType.HIDDEN, filenameField(), absolutePath);
 		node.addChild(persistence);
 	}
 
@@ -152,8 +156,8 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 	 * @param persistence Additional persistence fields to include.
 	 */
 	private void createChangeDirButton (HTMLNode node, String buttonText, String path, HTMLNode persistence) {
-		node.addInput(Input.Type.SUBMIT, changeDir, buttonText);
-		node.addInput(Input.Type.HIDDEN, "path", path);
+		node.addInput(InputType.SUBMIT, changeDir, buttonText);
+		node.addInput(InputType.HIDDEN, "path", path);
 		node.addChild(persistence);
 	}
 	
@@ -192,7 +196,7 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 		Box result = new Box();
 		result.setID(Identifier.PERSISTENCEFIELDS);
 		for (String key : fieldPairs.keySet()) {
-			result.addInput(Input.Type.HIDDEN, key, fieldPairs.get(key));
+			result.addInput(InputType.HIDDEN, key, fieldPairs.get(key));
 		}
 		return result;
 	}
@@ -274,7 +278,7 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 		PageMaker pageMaker = ctx.getPageMaker();
 		if (currentPath != null && ! allowedDir(currentPath)) {
 			Page page = pageMaker.getPage(l10n("listingTitle", "path", attemptedPath), ctx);
-			page.content.addInfobox(Infobox.Type.ERROR, Identifier.ACCESSDENIED, "Forbidden").
+			page.content.addInfobox(InfoboxType.ERROR, Identifier.ACCESSDENIED, "Forbidden").
 				addText(l10n("dirAccessDenied"));
 			sendErrorPage(ctx, 403, "Forbidden", l10n("dirAccessDenied"));
 			return;
@@ -289,7 +293,7 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 				page.content.addChild(core.alerts.createSummary());
 			}
 			Infobox filelist =
-				page.content.addInfobox(Infobox.Type.NONE, l10n("listing", "path",
+				page.content.addInfobox(InfoboxType.NONE, l10n("listing", "path",
 					currentPath.getAbsolutePath()));
 			File[] files = currentPath.listFiles();
 			if (files == null) {
@@ -394,7 +398,7 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 				page.content.addChild(core.alerts.createSummary());
 			}
 			Infobox filelist = page.content
-				.addInfobox(Infobox.Type.NONE, l10n("listing", "path", attemptedPath));
+				.addInfobox(InfoboxType.NONE, l10n("listing", "path", attemptedPath));
 			filelist.body.addText(l10n("dirCannotBeRead", "path", attemptedPath));
 			OutputList ulNode = filelist.body.addList();
 			ulNode.addItem(l10n("checkPathExist"));

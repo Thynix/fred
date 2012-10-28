@@ -1,6 +1,9 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.constants.Identifier;
+import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.constants.InputType;
 import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
@@ -31,11 +34,11 @@ public class ChatForumsToadlet extends Toadlet implements LinkEnabledCallback {
 		Page chatForum = ctx.getPageMaker().getPage(l10n("title"), ctx);
 		chatForum.content.addChild(alerts.createSummary());
 		Infobox chatList = chatForum.content
-			.addInfobox(Infobox.Type.INFORMATION, Identifier.CHATLIST, l10n("title"));
+			.addInfobox(InfoboxType.INFORMATION, Identifier.CHATLIST, l10n("title"));
 		chatList.body.addBlockText(l10n("freetalkRecommended"));
 		chatList.body.addBlockText(l10n("freetalkCaveat"));
 		ctx.addFormChild(chatList.body, path(), "loadFreetalkButton")
-			.addInput(Input.Type.SUBMIT, "loadFreetalk", l10n("freetalkButton"));
+			.addInput(InputType.SUBMIT, "loadFreetalk", l10n("freetalkButton"));
 		chatList.body.addBlockText(l10n("othersIntro"));
 		OutputList chatPluginList = new OutputList();
 		chatList.body.addChild(chatPluginList);

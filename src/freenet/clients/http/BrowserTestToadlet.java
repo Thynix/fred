@@ -1,7 +1,12 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
-import freenet.clients.http.uielements.*;
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.Identifier;
+import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Infobox;
+import freenet.clients.http.uielements.Page;
 import freenet.node.NodeClientCore;
 import freenet.support.api.HTTPRequest;
 
@@ -191,11 +196,11 @@ public class BrowserTestToadlet extends Toadlet {
 			testPage.content.addChild(core.alerts.createSummary());
 		}
 		// #### Test MIME inline
-		testPage.content.addInfobox(Infobox.Type.WARNING, Category.MIMEINLINETEST, "MIME Inline").
+		testPage.content.addInfobox(InfoboxType.WARNING, Category.MIMEINLINETEST, "MIME Inline").
 			addImage("?mimeTest", "Your browser is probably safe.");
 		// #### Test whether we can have more than 10 simultaneous connections to fproxy
 		Infobox maxConnectionsPerServer =
-			new Infobox(Infobox.Type.WARNING, Category.BROWSERECONNECTIONS,
+			new Infobox(InfoboxType.WARNING, Category.BROWSERECONNECTIONS,
 				"Number of connections");
 		testPage.content.addInfobox(maxConnectionsPerServer);
 		maxConnectionsPerServer.body.addText(
@@ -207,7 +212,7 @@ public class BrowserTestToadlet extends Toadlet {
 		maxConnectionsPerServer.body.addImage("/static/themes/clean/success.gif", "fail!");
 		// #### Test whether JS is available. : should do the test with pictures instead!
 		Infobox jsTestContent =
-			new Infobox(Infobox.Type.WARNING, Identifier.JAVASCRIPTTEST, "Javascript");
+			new Infobox(InfoboxType.WARNING, Identifier.JAVASCRIPTTEST, "Javascript");
 		testPage.content.addInfobox(jsTestContent);
 		Box jsTest = jsTestContent.addBox();
 		jsTest.addImage("/static/themes/clean/success.gif", "fail!").setID(Identifier.JSTEST);

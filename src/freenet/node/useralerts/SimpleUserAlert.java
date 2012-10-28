@@ -3,9 +3,9 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node.useralerts;
 
-import freenet.clients.http.uielements.Category;
-import freenet.l10n.NodeL10n;
+import freenet.clients.http.constants.Category;
 import freenet.clients.http.uielements.Box;
+import freenet.l10n.NodeL10n;
 
 public class SimpleUserAlert extends AbstractUserAlert {
 

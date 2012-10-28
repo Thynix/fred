@@ -1,6 +1,8 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.constants.Identifier;
+import freenet.clients.http.constants.InfoboxType;
 import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
@@ -74,7 +76,7 @@ public class DarknetAddRefToadlet extends Toadlet {
 		Page addDarknetRef = pageMaker.getPage(l10n("title"), ctx);
 		addDarknetRef.content.addChild(core.alerts.createSummary());
 		Infobox darknetExplainations = addDarknetRef.content
-			.addInfobox(Infobox.Type.INFORMATION, Identifier.DARKNETEXPLAINATIONS,
+			.addInfobox(InfoboxType.INFORMATION, Identifier.DARKNETEXPLAINATIONS,
 				l10n("explainBoxTitle"));
 		darknetExplainations.body.addText(l10n("explainBox1"));
 		darknetExplainations.body.addText(l10n("explainBox2"));

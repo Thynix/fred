@@ -1,8 +1,9 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
+import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.constants.InputType;
 import freenet.clients.http.uielements.Infobox;
-import freenet.clients.http.uielements.Input;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
@@ -63,7 +64,7 @@ public class BROWSER_WARNING implements Step {
 		}
 		
 		Infobox infoboxContent = helper.getPageContent(WizardL10n.l10n("browserWarningPageTitle")).addInfobox(
-			Infobox.Type.NORMAL, infoBoxHeader);
+			InfoboxType.NORMAL, infoBoxHeader);
 		if(isOldFirefox) {
 			HTMLNode p = infoboxContent.body.addBlockText();
 			p.addText(WizardL10n.l10n("browserWarningOldFirefox"));
@@ -93,8 +94,8 @@ public class BROWSER_WARNING implements Step {
 		}
 
 		HTMLNode form = helper.addFormChild(infoboxContent.body.addBlockText(), ".", "continueForm");
-		form.addInput(Input.Type.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
-		form.addInput(Input.Type.SUBMIT, "next", NodeL10n.getBase().getString("Toadlet.next"));
+		form.addInput(InputType.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
+		form.addInput(InputType.SUBMIT, "next", NodeL10n.getBase().getString("Toadlet.next"));
 	}
 
 	/**

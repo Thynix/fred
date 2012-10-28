@@ -10,8 +10,8 @@ import freenet.client.filter.FilterCallback;
 import freenet.clients.http.PageMaker;
 import freenet.clients.http.SessionManager;
 import freenet.clients.http.ToadletContainer;
+import freenet.clients.http.constants.InputType;
 import freenet.clients.http.uielements.Form;
-import freenet.clients.http.uielements.Input;
 import freenet.config.SubConfig;
 import freenet.node.Node;
 import freenet.node.RequestStarter;
@@ -81,7 +81,7 @@ public class PluginRespirator {
 	 * @return The form's HTMLNode. */
 	public HTMLNode addFormChild(HTMLNode parentNode, String target, String name) {
 		Form formNode = parentNode.addForm(target, "post", "multipart/form-data", "utf-8", name, name);
-		formNode.addInput(Input.Type.HIDDEN, "formPassword", node.clientCore.formPassword);
+		formNode.addInput(InputType.HIDDEN, "formPassword", node.clientCore.formPassword);
 		return formNode;
 	}
 	

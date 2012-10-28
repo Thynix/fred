@@ -1,5 +1,7 @@
 package freenet.clients.http.uielements;
 
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.Identifier;
 /**
  * Creates a block text element
  */

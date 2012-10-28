@@ -1,6 +1,8 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.constants.Identifier;
+import freenet.clients.http.constants.InfoboxType;
 import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.useralerts.UserAlertManager;
@@ -25,7 +27,7 @@ public class InsertFreesiteToadlet extends Toadlet {
 		Page page = ctx.getPageMaker().getPage(l10n("title"), ctx);
 		page.content.addChild(alerts.createSummary());
 		Infobox insertFreesite =
-			new Infobox(Infobox.Type.INFORMATION, Identifier.FREESITEINSERT, l10n("title"));
+			new Infobox(InfoboxType.INFORMATION, Identifier.FREESITEINSERT, l10n("title"));
 		page.content.addInfobox(insertFreesite);
 		insertFreesite.body.addBlockText(l10n("content1"));
 		NodeL10n.getBase().addL10nSubstitution(insertFreesite.body.addBlockText(),
