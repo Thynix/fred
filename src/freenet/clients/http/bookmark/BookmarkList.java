@@ -41,11 +41,7 @@ public class BookmarkList extends OutputList {
 							"activelink.png";
 						bookmarkItemRow.addCell(Category.BOOKMARKLIST)
 							.addLink('/' + item.getKey())
-							.addChild("img",
-								new String[]{"src", "height", "width", "alt",
-									"title"},
-								new String[]{key, "36", "108", "activelink",
-									item.getDescription()});
+							.addImage(key, "activelink", item.getDescription(), 36, 108);
 					} else {
 						bookmarkItemRow.addCell(Category.BOOKMARKLIST).addText(" ");
 					}
@@ -128,39 +124,31 @@ public class BookmarkList extends OutputList {
 			super(Category.ACTIONS);
 			if (! root) {
 				this.addLink("?action=edit&bookmark=" + catPathEncoded)
-					.addChild("img", new String[]{"src", "alt", "title"},
-						new String[]{"/static/icon/edit.png", edit, edit});
+					.addImage("/static/icon/edit.png", edit, edit);
 				this.addLink("?action=del&bookmark=" + catPathEncoded)
-					.addChild("img", new String[]{"src", "alt", "title"},
-						new String[]{"/static/icon/delete.png", delete, delete});
+					.addImage("/static/icon/delete.png", delete, delete);
 			}
 			this.addLink("?action=addItem&bookmark=" + catPathEncoded)
-				.addChild("img", new String[]{"src", "alt", "title"},
-					new String[]{"/static/icon/bookmark-new.png", addBookmark, addBookmark});
+				.addImage("/static/icon/bookmark-new.png", addBookmark, addBookmark);
 			this.addLink("?action=addCat&bookmark=" + catPathEncoded)
-				.addChild("img", new String[]{"src", "alt", "title"},
-					new String[]{"/static/icon/folder-new.png", addCategory, addCategory});
+				.addImage("/static/icon/folder-new.png", addCategory, addCategory);
 			if (! root) {
 				if (includeCut) {
 					this.addLink("?action=cut&bookmark=" + catPathEncoded)
-						.addChild("img", new String[]{"src", "alt", "title"},
-							new String[]{"/static/icon/cut.png", cut, cut});
+						.addImage("/static/icon/cut.png", cut, cut);
 				}
 				if (includeUp) {
 					this.addLink("?action=up&bookmark=" + catPathEncoded)
-						.addChild("img", new String[]{"src", "alt", "title"},
-							new String[]{"/static/icon/go-up.png", moveUp, moveUp});
+						.addImage("/static/icon/go-up.png", moveUp, moveUp);
 				}
 				if (includeDown) {
 					this.addLink("?action=down&bookmark=" + catPathEncoded)
-						.addChild("img", new String[]{"src", "alt", "title"},
-							new String[]{"/static/icon/go-down.png", moveDown, moveDown});
+						.addImage("/static/icon/go-down.png", moveDown, moveDown);
 				}
 			}
 			if (includePaste) {
 				this.addLink("?action=paste&bookmark=" + catPathEncoded)
-					.addChild("img", new String[]{"src", "alt", "title"},
-						new String[]{"/static/icon/paste.png", paste, paste});
+					.addImage("/static/icon/paste.png", paste, paste);
 			}
 		}
 	}

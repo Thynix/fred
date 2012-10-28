@@ -30,6 +30,7 @@ public enum Identifier {
 	INFOCONTENT("infoContent"),
 	INSERTQUEUE("insert-queue"),
 	JAVASCRIPTTEST("javascript-test"),
+	JSTEST("JSTEST"),
 	KEY("key"),
 	PAGE("page"),
 	PERSISTENCEFIELDS("persistenceFields"),

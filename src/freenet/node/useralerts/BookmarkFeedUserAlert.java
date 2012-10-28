@@ -62,11 +62,7 @@ public class BookmarkFeedUserAlert extends AbstractUserAlert {
 	public HTMLNode getHTMLText() {
 		Box alertNode = new Box();
 		alertNode.addLink("/?newbookmark=" + uri + "&desc=" + name + "&hasAnActivelink=" + hasAnActivelink)
-				.addChild(
-						"img",
-						new String[] { "src", "alt", "title" },
-						new String[] { "/static/icon/bookmark-new.png", l10n("addAsABookmark"),
-								l10n("addAsABookmark") });
+				.addImage("/static/icon/bookmark-new.png", l10n("addAsABookmark"), l10n("addAsABookmark"));
 		alertNode.addLink("/freenet:" + uri.toString()).addText(name);
 		if (description != null && description.length() != 0) {
 			String[] lines = description.split("\n");

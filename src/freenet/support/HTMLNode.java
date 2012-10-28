@@ -630,6 +630,23 @@ public class HTMLNode implements XMLCharacterClasses {
 		return form;
 	}
 
+	//methods for creating Image children
+	public Image addImage(String src, String alt) {
+		Image newImage = new Image(src, alt);
+		addChild(newImage);
+		return newImage;
+	}
+	public Image addImage(String src, String alt, String title) {
+		Image newImage = new Image(src, alt, title);
+		addChild(newImage);
+		return newImage;
+	}
+	public Image addImage(String src, String alt, String title, int height, int width) {
+		Image newImage = new Image(src, alt, title, height, width);
+		addChild(newImage);
+		return newImage;
+	}
+
 	//methods for creating InlineBox children
 	public InlineBox addInlineBox() {
 		InlineBox newInlineBox = new InlineBox();

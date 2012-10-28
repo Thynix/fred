@@ -192,8 +192,7 @@ public class BrowserTestToadlet extends Toadlet {
 		}
 		// #### Test MIME inline
 		testPage.content.addInfobox(Infobox.Type.WARNING, Category.MIMEINLINETEST, "MIME Inline").
-			addChild("img", new String[]{"src", "alt"},
-				new String[]{"?mimeTest", "Your browser is probably safe."});
+			addImage("?mimeTest", "Your browser is probably safe.");
 		// #### Test whether we can have more than 10 simultaneous connections to fproxy
 		Infobox maxConnectionsPerServer =
 			new Infobox(Infobox.Type.WARNING, Category.BROWSERECONNECTIONS,
@@ -203,17 +202,15 @@ public class BrowserTestToadlet extends Toadlet {
 			"If you do not see a green picture below, your browser is probably missconfigured! Ensure " +
 				"it allows more than 10 connections per server.");
 		for (int i = 0; i < 10; i++) {
-			maxConnectionsPerServer.body.addChild("img", "src", ".?wontload");
+			maxConnectionsPerServer.body.addImage(".?wontload", "won't load");
 		}
-		maxConnectionsPerServer.body.addChild("img", new String[]{"src", "alt"},
-			new String[]{"/static/themes/clean/success.gif", "fail!"});
+		maxConnectionsPerServer.body.addImage("/static/themes/clean/success.gif", "fail!");
 		// #### Test whether JS is available. : should do the test with pictures instead!
 		Infobox jsTestContent =
 			new Infobox(Infobox.Type.WARNING, Identifier.JAVASCRIPTTEST, "Javascript");
 		testPage.content.addInfobox(jsTestContent);
 		Box jsTest = jsTestContent.addBox();
-		jsTest.addChild("img", new String[]{"id", "src", "alt"},
-			new String[]{"JSTEST", "/static/themes/clean/success.gif", "fail!"});
+		jsTest.addImage("/static/themes/clean/success.gif", "fail!").setID(Identifier.JSTEST);
 		jsTest.addChild("script", "type", "text/javascript")
 			.addChild("%", "document.getElementById('JSTEST').src = '/static/themes/clean/warning.gif';");
 		this.writeHTMLReply(ctx, 200, "OK", testPage.generate());

@@ -1,5 +1,10 @@
 package freenet.clients.http.geoip;
 
+import freenet.clients.http.StaticToadlet;
+import freenet.node.Node;
+import freenet.support.HTMLNode;
+import freenet.support.Logger;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -8,11 +13,6 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import freenet.clients.http.StaticToadlet;
-import freenet.node.Node;
-import freenet.support.HTMLNode;
-import freenet.support.Logger;
 
 public class IPConverter {
 	// Regex indicating ipranges start
@@ -140,7 +140,7 @@ public class IPConverter {
 		public void renderFlagIcon(HTMLNode parent) {
 			String flagPath = getFlagIconPath();
 			if(flagPath != null)
-				parent.addChild("img", new String[] { "src", "title" }, new String[] { StaticToadlet.ROOT_URL + flagPath, getName()});
+				parent.addImage(StaticToadlet.ROOT_URL + flagPath, "flag", getName());
 		}
 		
 		public boolean hasFlagIcon() {
