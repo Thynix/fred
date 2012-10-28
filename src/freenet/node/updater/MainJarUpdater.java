@@ -1,13 +1,6 @@
 package freenet.node.updater;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Properties;
-
 import com.db4o.ObjectContainer;
-
 import freenet.client.FetchContext;
 import freenet.client.FetchException;
 import freenet.client.FetchResult;
@@ -18,6 +11,8 @@ import freenet.client.events.ClientEvent;
 import freenet.client.events.ClientEventListener;
 import freenet.client.events.SplitfileProgressEvent;
 import freenet.clients.http.QueueToadlet;
+import freenet.clients.http.uielements.Row;
+import freenet.clients.http.uielements.Table;
 import freenet.keys.FreenetURI;
 import freenet.l10n.NodeL10n;
 import freenet.node.RequestClient;
@@ -35,6 +30,12 @@ import freenet.support.Logger;
 import freenet.support.io.Closer;
 import freenet.support.io.FileBucket;
 import freenet.support.io.FileUtil;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Properties;
 
 public class MainJarUpdater extends NodeUpdater implements Deployer {
 	
@@ -223,12 +224,12 @@ public class MainJarUpdater extends NodeUpdater implements Deployer {
 			getter.start(null, clientContext);
 		}
 
-		public synchronized HTMLNode renderRow() {
-			HTMLNode row = new HTMLNode("tr");
-			row.addChild("td").addChild("p", filename.toString());
+		public synchronized Row renderRow() {
+			Row row = new Row();
+			row.addCell().addBlockText(filename.toString());
 			
 			if(uomFetcher != null)
-				row.addChild("td").addChild("#", l10n("fetchingFromUOM"));
+				row.addCell(l10n("fetchingFromUOM"));
 			else if(lastProgress == null)
 				row.addChild(QueueToadlet.createProgressCell(false, true, COMPRESS_STATE.WORKING, 0, 0, 0, 0, 0, false, false));
 			else
@@ -300,10 +301,10 @@ public class MainJarUpdater extends NodeUpdater implements Deployer {
 	public void renderProperties(HTMLNode alertNode) {
 		synchronized(fetchers) {
 			if(!fetchers.isEmpty()) {
-				alertNode.addChild("p", l10n("fetchingDependencies")+":");
-				HTMLNode table = alertNode.addChild("table");
+				alertNode.addBlockText(l10n("fetchingDependencies") + ":");
+				Table table = alertNode.addTable();
 				for(DependencyJarFetcher f : fetchers) {
-					alertNode.addChild(f.renderRow());
+					table.addRow(f.renderRow());
 				}
 			}
 		}

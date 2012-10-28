@@ -23,6 +23,10 @@ public class Table extends OutputNode {
 		this.addChild(newRow);
 		return newRow;
 	}
+	public Row addRow(Row newRow) {
+		this.addChild(newRow);
+		return newRow;
+	}
 	public Row addRow(Category category) {
 		Row newRow = new Row(category);
 		this.addChild(newRow);
