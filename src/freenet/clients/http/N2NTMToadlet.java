@@ -4,10 +4,7 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
-import freenet.clients.http.constants.Category;
-import freenet.clients.http.constants.Identifier;
-import freenet.clients.http.constants.InfoboxType;
-import freenet.clients.http.constants.InputType;
+import freenet.clients.http.constants.*;
 import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.DarknetPeerNode;
@@ -85,7 +82,7 @@ public class N2NTMToadlet extends Toadlet {
 			return;
 		}
 		MultiValueTable<String, String> headers = new MultiValueTable<String, String>();
-		headers.put("Location", "/friends/");
+		headers.put("Location", Path.FRIENDS.url);
 		ctx.sendReplyHeaders(302, "Found", headers, null, 0);
 	}
 
@@ -116,7 +113,7 @@ public class N2NTMToadlet extends Toadlet {
 		peerInfobox.body.addText(message);
 		OutputList peerList = peerInfobox.body.addList();
 		Toadlet.addHomepageLink(peerList);
-		peerList.addItem().addLink("/friends/", l10n("returnToFriends"), l10n("friends"));
+		peerList.addItem().addLink(Path.FRIENDS.url, l10n("returnToFriends"), l10n("friends"));
 		return peerInfobox;
 	}
 
@@ -213,7 +210,7 @@ public class N2NTMToadlet extends Toadlet {
 											peerTableInfobox.body.addList();
 										Toadlet.addHomepageLink(friendList);
 										friendList.addItem().addLink(
-											"/friends/",
+											Path.FRIENDS.url,
 											l10n("returnToFriends"),
 											l10n("friends"));
 										this.writeHTMLReply(ctx, 200, "OK",
@@ -265,12 +262,12 @@ public class N2NTMToadlet extends Toadlet {
 			infoboxContent.addText(message);
 			OutputList list = peerTableInfobox.body.addList();
 			Toadlet.addHomepageLink(list);
-			list.addItem().addLink("/friends/", l10n("returnToFriends"), l10n("friends"));
+			list.addItem().addLink(Path.FRIENDS.url, l10n("returnToFriends"), l10n("friends"));
 			this.writeHTMLReply(ctx, 200, "OK", sendPage.generate());
 			return;
 		}
 		MultiValueTable<String, String> headers = new MultiValueTable<String, String>();
-		headers.put("Location", "/friends/");
+		headers.put("Location", Path.FRIENDS.url);
 		ctx.sendReplyHeaders(302, "Found", headers, null, 0);
 	}
 

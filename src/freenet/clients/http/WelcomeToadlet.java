@@ -10,10 +10,7 @@ import freenet.client.InsertException;
 import freenet.clients.http.PageMaker.RenderParameters;
 import freenet.clients.http.bookmark.BookmarkList;
 import freenet.clients.http.bookmark.BookmarkManager;
-import freenet.clients.http.constants.Category;
-import freenet.clients.http.constants.Identifier;
-import freenet.clients.http.constants.InfoboxType;
-import freenet.clients.http.constants.InputType;
+import freenet.clients.http.constants.*;
 import freenet.clients.http.uielements.*;
 import freenet.keys.FreenetURI;
 import freenet.l10n.NodeL10n;
@@ -103,7 +100,7 @@ public class WelcomeToadlet extends Toadlet {
 		return PATH;
 	}
 
-	public static final String PATH = "/";
+	public static final String PATH = Path.MAIN.url;
 
 	public static void maybeDisplayWrapperLogfile(ToadletContext ctx, HTMLNode contentNode) {
 		final File logs = new File("wrapper.log");
@@ -156,7 +153,7 @@ public class WelcomeToadlet extends Toadlet {
 				.addInfobox(InfoboxType.QUERY, Identifier.UPDATENODECONFIRM,
 					l10n("nodeUpdateConfirmTitle"));
 			content.body.addBlockText(l10n("nodeUpdateConfirm"));
-			HTMLNode updateForm = ctx.addFormChild(content.body, "/", "updateConfirmForm");
+			HTMLNode updateForm = ctx.addFormChild(content.body, Path.MAIN.url, "updateConfirmForm");
 			updateForm.addInput(InputType.SUBMIT, "cancel", NodeL10n.getBase().getString("Toadlet.cancel"));
 			updateForm.addInput(InputType.SUBMIT, "updateconfirm", l10n("update"));
 			writeHTMLReply(ctx, 200, "OK", page.generate());
@@ -201,7 +198,7 @@ public class WelcomeToadlet extends Toadlet {
 					validAlertsRemaining++;
 				}
 			}
-			writePermanentRedirect(ctx, l10n("disabledAlert"), (validAlertsRemaining > 0 ? "/alerts/" : "/"));
+			writePermanentRedirect(ctx, l10n("disabledAlert"), (validAlertsRemaining > 0 ? Path.ALERTS.url : "/"));
 			return;
 		} else if (request.isPartSet("key") && request.isPartSet("filename")) {
 			if (noPassword) {
@@ -314,7 +311,9 @@ public class WelcomeToadlet extends Toadlet {
 			String alertsToDump = request.getPartAsStringFailsafe("events", Integer.MAX_VALUE);
 			String[] alertAnchors = alertsToDump.split(",");
 			HashSet<String> toDump = new HashSet<String>();
-			for(String alertAnchor : alertAnchors) toDump.add(alertAnchor);
+			for (String alertAnchor : alertAnchors) {
+				toDump.add(alertAnchor);
+			}
 			core.alerts.dumpEvents(toDump);
 			redirectToRoot(ctx);
 		} else {
@@ -467,11 +466,11 @@ public class WelcomeToadlet extends Toadlet {
 		} else if(core.node.pluginManager == null || core.node.pluginManager.isPluginLoadedOrLoadingOrWantLoad("Library")) {
 			// Warn that search plugin is not loaded.
 			InlineBox textSpan = searchBox.body.addInlineBox(Category.SEARCHNOTAVAILABLE);
-			NodeL10n.getBase().addL10nSubstitution(textSpan, "WelcomeToadlet.searchPluginLoading", new String[] { "link" }, new HTMLNode[] { new Link("/plugins/") });
+			NodeL10n.getBase().addL10nSubstitution(textSpan, "WelcomeToadlet.searchPluginLoading", new String[] { "link" }, new HTMLNode[] { new Link(Path.PLUGINS.url) });
 		} else {
 			// Warn that search plugin is not loaded.
 			InlineBox textSpan = searchBox.body.addInlineBox(Category.SEARCHNOTAVAILABLE);
-			NodeL10n.getBase().addL10nSubstitution(textSpan, "WelcomeToadlet.searchPluginNotLoaded", new String[] { "link" }, new HTMLNode[] { new Link("/plugins/") });
+			NodeL10n.getBase().addL10nSubstitution(textSpan, "WelcomeToadlet.searchPluginNotLoaded", new String[] { "link" }, new HTMLNode[] { new Link(Path.PLUGINS.url) });
 		}
 		if (!ctx.getPageMaker().getTheme().fetchKeyBoxAboveBookmarks) {
 			this.putFetchKeyBox(ctx, page.content);

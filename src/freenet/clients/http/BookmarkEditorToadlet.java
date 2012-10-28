@@ -2,10 +2,7 @@ package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
 import freenet.clients.http.bookmark.*;
-import freenet.clients.http.constants.Category;
-import freenet.clients.http.constants.Identifier;
-import freenet.clients.http.constants.InfoboxType;
-import freenet.clients.http.constants.InputType;
+import freenet.clients.http.constants.*;
 import freenet.clients.http.uielements.Infobox;
 import freenet.clients.http.uielements.Page;
 import freenet.clients.http.uielements.Row;
@@ -59,9 +56,12 @@ public class BookmarkEditorToadlet extends Toadlet {
 	}
 
 	private void sendBookmarkFeeds(HTTPRequest req, BookmarkItem item, String publicDescription) {
-		for(DarknetPeerNode peer : core.node.getDarknetConnections())
-			if(req.isPartSet("node_" + peer.hashCode()))
-				peer.sendBookmarkFeed(item.getURI(), item.getName(), publicDescription, item.hasAnActivelink());
+		for (DarknetPeerNode peer : core.node.getDarknetConnections()) {
+			if (req.isPartSet("node_" + peer.hashCode())) {
+				peer.sendBookmarkFeed(item.getURI(), item.getName(), publicDescription,
+					item.hasAnActivelink());
+			}
+		}
 	}
 
 	public void handleMethodGET(URI uri, HTTPRequest req, ToadletContext ctx)
@@ -255,7 +255,7 @@ public class BookmarkEditorToadlet extends Toadlet {
 		}
 		if (req.isPartSet("AddDefaultBookmarks")) {
 			bookmarkManager.reAddDefaultBookmarks();
-			this.writeTemporaryRedirect(ctx, "Ok", "/");
+			this.writeTemporaryRedirect(ctx, "Ok", Path.MAIN.url);
 			return;
 		}
 		String bookmarkPath = req.getPartAsStringFailsafe("bookmark", MAX_BOOKMARK_PATH_LENGTH);

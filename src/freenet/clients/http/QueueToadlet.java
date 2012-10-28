@@ -143,7 +143,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 				return;
 			} else if (request.isPartSet("select-location")) {
 				try {
-					throw new RedirectException(LocalDirectoryConfigToadlet.basePath()+"/downloads/");
+					throw new RedirectException(LocalDirectoryConfigToadlet.basePath()+Path.DOWNLOAD.url);
 				} catch (URISyntaxException e) {
 					//Shouldn't happen, path is defined as such.
 				}
@@ -192,7 +192,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 							NodeL10n.getBase().getString("FProxyToadlet.filenameLabel") +
 								" ");
 						if (keyString != null) {
-							line.addLink("/" + keyString, filename);
+							line.addLink(Path.MAIN.url + keyString, filename);
 						} else {
 							line.addText(filename);
 						}
@@ -1937,7 +1937,7 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 	private Cell createIdentifierCell(FreenetURI uri, String identifier, boolean directory) {
 		Cell identifierCell = new Cell(Category.REQUESTIDENTIFIER);
 		if (uri != null) {
-			identifierCell.addInlineBox(Category.IDENTIFIERWITHURI).addLink("/" + uri + (directory ? "/" : ""), identifier);
+			identifierCell.addInlineBox(Category.IDENTIFIERWITHURI).addLink(Path.MAIN.url + uri + (directory ? Path.MAIN.url : ""), identifier);
 		} else {
 			identifierCell.addInlineBox(Category.IDENTIFIERWITHOUTURI, identifier);
 		}
@@ -2506,8 +2506,8 @@ public class QueueToadlet extends Toadlet implements RequestCompletionCallback, 
 		return (!container.publicGatewayMode()) || ((ctx != null) && ctx.isAllowedFullAccess());
 	}
 
-	static final String PATH_UPLOADS = "/uploads/";
-	static final String PATH_DOWNLOADS = "/downloads/";
+	static final String PATH_UPLOADS = Path.UPLOAD.url;
+	static final String PATH_DOWNLOADS = Path.DOWNLOAD.url;
 	
 	static final HTMLNode DOWNLOADS_LINK =
 		new Link(PATH_DOWNLOADS).setReadOnly();

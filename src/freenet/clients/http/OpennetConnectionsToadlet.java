@@ -2,6 +2,7 @@ package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
 import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.Path;
 import freenet.clients.http.uielements.Row;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
@@ -156,7 +157,7 @@ public class OpennetConnectionsToadlet extends ConnectionsToadlet implements Lin
 
 	@Override
 	public String path() {
-		return "/strangers/";
+		return Path.STRANGERS.url;
 	}
 
 	@Override

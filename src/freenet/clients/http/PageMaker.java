@@ -1,10 +1,7 @@
 package freenet.clients.http;
 
 import freenet.client.filter.PushingTagReplacerCallback;
-import freenet.clients.http.constants.Category;
-import freenet.clients.http.constants.Identifier;
-import freenet.clients.http.constants.InputType;
-import freenet.clients.http.constants.Media;
+import freenet.clients.http.constants.*;
 import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.DarknetPeerNode;
@@ -443,14 +440,14 @@ public final class PageMaker {
 				statusbar.addBox(Category.SEPERATOR, "\u00a0");
 				Box secLevels = statusbar.addBox(Identifier.STATUSBARSECLEVELS);
 				secLevels.addText(NodeL10n.getBase().getString("SecurityLevels.statusBarPrefix"));
-				final HTMLNode network = secLevels.addLink("/seclevels/",
+				final HTMLNode network = secLevels.addLink(Path.SECLEVELS.url,
 					SecurityLevels.localisedName(node.securityLevels.getNetworkThreatLevel()) +
 						"\u00a0");
 				network.addAttribute("title",
 					NodeL10n.getBase().getString("SecurityLevels.networkThreatLevelShort"));
 				network.addAttribute("class",
 					node.securityLevels.getNetworkThreatLevel().toString().toLowerCase());
-				final HTMLNode physical = secLevels.addLink("/seclevels/",
+				final HTMLNode physical = secLevels.addLink(Path.SECLEVELS.url,
 					SecurityLevels.localisedName(node.securityLevels.getPhysicalThreatLevel()));
 				physical.addAttribute("title",
 					NodeL10n.getBase().getString("SecurityLevels.physicalThreatLevelShort"));

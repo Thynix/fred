@@ -3,15 +3,16 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.clients.http;
 
+import freenet.clients.http.constants.Path;
+import freenet.support.CurrentTimeUTC;
+import freenet.support.TimeUtil;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
-
-import freenet.support.CurrentTimeUTC;
-import freenet.support.TimeUtil;
 
 /**
  * @author xor (xor@freenetproject.org)
@@ -129,7 +130,7 @@ public class Cookie {
 		
 		String path = domain.getPath();
 		
-		if(!"".equals(path) && !"/".equals(path))
+		if(!"".equals(path) && ! Path.MAIN.url.equals(path))
 			throw new IllegalArgumentException("Illegal cookie domain, contains a path: " + domain);
 		
 		return domain;
@@ -145,7 +146,7 @@ public class Cookie {
 		if(path.isAbsolute())
 			throw new IllegalArgumentException("Illegal cookie path, must be relative: " + path);
 		
-		if(path.toString().startsWith("/") == false)
+		if(path.toString().startsWith(Path.MAIN.url) == false)
 			throw new IllegalArgumentException("Illegal cookie path, must start with /: " + path);
 		
 		// RFC2965: Path is case sensitive!

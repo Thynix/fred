@@ -3,6 +3,7 @@ package freenet.clients.http;
 import freenet.client.HighLevelSimpleClient;
 import freenet.clients.http.constants.Identifier;
 import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.constants.Path;
 import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
@@ -92,7 +93,7 @@ public class DarknetAddRefToadlet extends Toadlet {
 			NodeL10n.getBase().addL10nSubstitution(p, "DarknetAddRefToadlet" +
 				".explainInstallerWindowsNotYet",
 				new String[]{"link"},
-				new HTMLNode[]{new Link("/" + node.nodeUpdater.getInstallerWindowsURI().toString())});
+				new HTMLNode[]{new Link(Path.MAIN.url + node.nodeUpdater.getInstallerWindowsURI().toString())});
 		}
 		installer = node.nodeUpdater.getInstallerNonWindows();
 		shortFilename = NodeUpdateManager.NON_WINDOWS_FILENAME;
@@ -108,10 +109,10 @@ public class DarknetAddRefToadlet extends Toadlet {
 			NodeL10n.getBase()
 				.addL10nSubstitution(p, "DarknetAddRefToadlet.explainInstallerNonWindowsNotYet",
 					new String[]{"link", "shortfilename"}, new HTMLNode[]{
-					new Link("/" + node.nodeUpdater.getInstallerNonWindowsURI().toString()),
+					new Link(Path.MAIN.url + node.nodeUpdater.getInstallerNonWindowsURI().toString()),
 					new Text(shortFilename)});
 		}
-		ConnectionsToadlet.drawAddPeerBox(addDarknetRef.content, ctx, false, "/friends/");
+		ConnectionsToadlet.drawAddPeerBox(addDarknetRef.content, ctx, false, Path.FRIENDS.url);
 		ConnectionsToadlet.drawNoderefBox(addDarknetRef.content, getNoderef(),
 			pageMaker.advancedMode(request, this.container));
 		this.writeHTMLReply(ctx, 200, "OK", addDarknetRef.generate());
@@ -125,7 +126,7 @@ public class DarknetAddRefToadlet extends Toadlet {
 		return NodeL10n.getBase().getString("DarknetAddRefToadlet."+string);
 	}
 
-	static final String PATH = "/addfriend/";
+	static final String PATH = Path.ADDFRIEND.url;
 
 	@Override
 	public String path() {

@@ -5,6 +5,7 @@ package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
 import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.constants.Path;
 import freenet.clients.http.uielements.Infobox;
 import freenet.clients.http.uielements.Page;
 import freenet.l10n.NodeL10n;
@@ -72,6 +73,6 @@ public class UserAlertsToadlet extends Toadlet {
 
 	@Override
 	public String path() {
-		return "/alerts/";
+		return Path.ALERTS.url;
 	}
 }

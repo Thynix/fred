@@ -1,10 +1,7 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
-import freenet.clients.http.constants.Category;
-import freenet.clients.http.constants.Identifier;
-import freenet.clients.http.constants.InfoboxType;
-import freenet.clients.http.constants.InputType;
+import freenet.clients.http.constants.*;
 import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.*;
@@ -199,7 +196,7 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 
 	@Override
 	protected String defaultRedirectLocation() {
-		return "/friends/"; // FIXME
+		return Path.FRIENDS.url; // FIXME
 	}
 
 	/**
@@ -427,7 +424,7 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 								new String[]{"name"},
 								new String[]{peerNodes[i].getName()})));
 						HTMLNode removeForm =
-							ctx.addFormChild(removeDarknetNode.body, "/friends/",
+							ctx.addFormChild(removeDarknetNode.body, Path.FRIENDS.url,
 								"removeConfirmForm");
 						removeForm.addInput(InputType.HIDDEN, "node_" + peerNodes[i].hashCode(),
 								"remove");
@@ -477,7 +474,7 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 
 	private void redirectHere(ToadletContext ctx) throws ToadletContextClosedException, IOException {
 		MultiValueTable<String, String> headers = new MultiValueTable<String, String>();
-		headers.put("Location", "/friends/");
+		headers.put("Location", Path.FRIENDS.url);
 		ctx.sendReplyHeaders(302, "Found", headers, null, 0);
 	}
 
@@ -493,7 +490,7 @@ public class DarknetConnectionsToadlet extends ConnectionsToadlet {
 
 	@Override
 	public String path() {
-		return "/friends/";
+		return Path.FRIENDS.url;
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import freenet.clients.http.PageMaker.THEME;
 import freenet.clients.http.QueueToadlet;
 import freenet.clients.http.Toadlet;
 import freenet.clients.http.constants.InputType;
+import freenet.clients.http.constants.Path;
 import freenet.clients.http.uielements.BlockText;
 import freenet.clients.http.uielements.Box;
 import freenet.clients.http.uielements.Cell;
@@ -554,14 +555,14 @@ public class PluginManager {
 				else
 					p.addText(l10n("officialPluginLoadFailedSuggestTryAgainHTTPS"));
 
-				Form reloadForm = box.addForm("/plugins/", "post");
+				Form reloadForm = box.addForm(Path.PLUGINS.url, "post");
 				reloadForm.addInput(InputType.HIDDEN, "formPassword", node.clientCore.formPassword);
 				reloadForm.addInput(InputType.HIDDEN, "plugin-name", filename);
 				reloadForm.addInput(InputType.HIDDEN, "pluginSource", "https");
 				reloadForm.addInput(InputType.SUBMIT, "submit-official", l10n("officialPluginLoadFailedTryAgain"));
 
 				if(!stillTryingOverFreenet) {
-					reloadForm = box.addForm("/plugins/", "post");
+					reloadForm = box.addForm(Path.PLUGINS.url, "post");
 					reloadForm.addInput(InputType.HIDDEN, "formPassword", node.clientCore.formPassword);
 					reloadForm.addInput(InputType.HIDDEN, "plugin-name", filename);
 					reloadForm.addInput(InputType.HIDDEN, "pluginSource", "freenet");

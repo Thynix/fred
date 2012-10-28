@@ -2,10 +2,7 @@ package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
 import freenet.client.async.ClientRequester;
-import freenet.clients.http.constants.Category;
-import freenet.clients.http.constants.Identifier;
-import freenet.clients.http.constants.InfoboxType;
-import freenet.clients.http.constants.InputType;
+import freenet.clients.http.constants.*;
 import freenet.clients.http.uielements.*;
 import freenet.config.SubConfig;
 import freenet.crypt.ciphers.Rijndael;
@@ -1511,6 +1508,6 @@ public class StatisticsToadlet extends Toadlet {
 
 	@Override
 	public String path() {
-		return "/stats/";
+		return Path.STATS.url;
 	}
 }

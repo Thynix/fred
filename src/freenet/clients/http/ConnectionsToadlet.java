@@ -1,10 +1,7 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
-import freenet.clients.http.constants.Category;
-import freenet.clients.http.constants.Identifier;
-import freenet.clients.http.constants.InfoboxType;
-import freenet.clients.http.constants.InputType;
+import freenet.clients.http.constants.*;
 import freenet.clients.http.geoip.IPConverter;
 import freenet.clients.http.geoip.IPConverter.Country;
 import freenet.clients.http.uielements.*;
@@ -424,7 +421,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 			if (peerNodeStatuses.length == 0) {
 				NodeL10n.getBase().addL10nSubstitution(peerTableInfobox.body,
 					"DarknetConnectionsToadlet.noPeersWithHomepageLink",
-					new String[]{"link"}, new HTMLNode[]{new Link("/")});
+					new String[]{"link"}, new HTMLNode[]{new Link(Path.MAIN.url)});
 			} else {
 				HTMLNode peerForm = null;
 				Table peerTable;
@@ -561,7 +558,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 		} else {
 			if (! isOpennet()) {
 				try {
-					throw new RedirectException("/addfriend/");
+					throw new RedirectException(Path.ADDFRIEND.url);
 				} catch (URISyntaxException e) {
 					Logger.error(this, "Impossible: " + e + " for /addfriend/", e);
 				}
@@ -741,7 +738,7 @@ public abstract class ConnectionsToadlet extends Toadlet {
 				addedNodesPage.content.addInfobox(Identifier.NODEADDED, l10n("reportOfNodeAddition"));
 			nodeAdded.body.addChild(detailedStatusBox);
 			if (! isOpennet()) {
-				nodeAdded.body.addBlockText().addLink("/addfriend/", l10n("addAnotherFriend"));
+				nodeAdded.body.addBlockText().addLink(Path.ADDFRIEND.url, l10n("addAnotherFriend"));
 			}
 			nodeAdded.body.addBlockText().addLink(path(), l10n("goFriendConnectionStatus"));
 			addHomepageLink(nodeAdded.body.addBlockText());
@@ -1066,17 +1063,38 @@ public abstract class ConnectionsToadlet extends Toadlet {
 			peerRow.addCell(Category.PEERIDLE /* FIXME */).addText(peerNodeStatus.getReportedUptimePercentage() + "%");
 			peerRow.addCell(Category.PEERIDLE /* FIXME */).addText(SizeUtil.formatSize(peerNodeStatus.getMessageQueueLengthBytes()) + ":" + TimeUtil.formatTime(peerNodeStatus.getMessageQueueLengthTime()));
 			IncomingLoadSummaryStats loadStatsBulk = peerNodeStatus.incomingLoadStatsBulk;
-			if(loadStatsBulk == null)
+			if (loadStatsBulk == null) {
 				peerRow.addCell(Category.PEERIDLE /* FIXME */);
-			else
-				peerRow.addCell(Category.PEERIDLE /* FIXME */).addText(loadStatsBulk.runningRequestsTotal + "reqs:out:" + SizeUtil.formatSize(loadStatsBulk.usedCapacityOutputBytes) + "/" + SizeUtil.formatSize(loadStatsBulk.othersUsedCapacityOutputBytes) + "/" + SizeUtil.formatSize(loadStatsBulk.peerCapacityOutputBytes) + "/" + SizeUtil.formatSize(loadStatsBulk.totalCapacityOutputBytes) + ":in:" + SizeUtil.formatSize(loadStatsBulk.usedCapacityInputBytes) + "/" + SizeUtil.formatSize(loadStatsBulk.othersUsedCapacityInputBytes) + "/" + SizeUtil.formatSize(loadStatsBulk.peerCapacityInputBytes) + "/" + SizeUtil.formatSize(loadStatsBulk.totalCapacityInputBytes));
+			} else {
+				peerRow.addCell(Category.PEERIDLE /* FIXME */).addText(
+					loadStatsBulk.runningRequestsTotal + "reqs:out:" +
+						SizeUtil.formatSize(loadStatsBulk.usedCapacityOutputBytes) + "/" +
+						SizeUtil.formatSize(loadStatsBulk.othersUsedCapacityOutputBytes) +
+						"/" +
+						SizeUtil.formatSize(loadStatsBulk.peerCapacityOutputBytes) + "/" +
+						SizeUtil.formatSize(loadStatsBulk.totalCapacityOutputBytes) + ":in:" +
+						SizeUtil.formatSize(loadStatsBulk.usedCapacityInputBytes) + "/" +
+						SizeUtil.formatSize(loadStatsBulk.othersUsedCapacityInputBytes) +
+						"/" +
+						SizeUtil.formatSize(loadStatsBulk.peerCapacityInputBytes) + "/" +
+						SizeUtil.formatSize(loadStatsBulk.totalCapacityInputBytes));
+			}
 			IncomingLoadSummaryStats loadStatsRT = peerNodeStatus.incomingLoadStatsRealTime;
-			if(loadStatsRT == null)
+			if (loadStatsRT == null) {
 				peerRow.addCell(Category.PEERIDLE /* FIXME */);
-			else
-				peerRow.addCell(Category.PEERIDLE /* FIXME */).addText(loadStatsRT.runningRequestsTotal + "reqs:out:" + SizeUtil.formatSize(loadStatsRT.usedCapacityOutputBytes) + "/" + SizeUtil.formatSize(loadStatsRT.othersUsedCapacityOutputBytes) + "/" + SizeUtil.formatSize(loadStatsRT.peerCapacityOutputBytes) + "/" + SizeUtil.formatSize(loadStatsRT.totalCapacityOutputBytes) + ":in:" + SizeUtil.formatSize(loadStatsRT.usedCapacityInputBytes) + "/" + SizeUtil.formatSize(loadStatsRT.othersUsedCapacityInputBytes) + "/" + SizeUtil.formatSize(loadStatsRT.peerCapacityInputBytes) + "/" + SizeUtil.formatSize(loadStatsRT.totalCapacityInputBytes));
+			} else {
+				peerRow.addCell(Category.PEERIDLE /* FIXME */).addText(
+					loadStatsRT.runningRequestsTotal + "reqs:out:" +
+						SizeUtil.formatSize(loadStatsRT.usedCapacityOutputBytes) + "/" +
+						SizeUtil.formatSize(loadStatsRT.othersUsedCapacityOutputBytes) + "/" +
+						SizeUtil.formatSize(loadStatsRT.peerCapacityOutputBytes) + "/" +
+						SizeUtil.formatSize(loadStatsRT.totalCapacityOutputBytes) + ":in:" +
+						SizeUtil.formatSize(loadStatsRT.usedCapacityInputBytes) + "/" +
+						SizeUtil.formatSize(loadStatsRT.othersUsedCapacityInputBytes) + "/" +
+						SizeUtil.formatSize(loadStatsRT.peerCapacityInputBytes) + "/" +
+						SizeUtil.formatSize(loadStatsRT.totalCapacityInputBytes));
+			}
 		}
-		
 		if(endCols != null) {
 			for(int i=0;i<endCols.length;i++) {
 				endCols[i].drawColumn(peerRow, peerNodeStatus);

@@ -3,6 +3,7 @@ package freenet.clients.http;
 import freenet.client.HighLevelSimpleClient;
 import freenet.clients.http.constants.Identifier;
 import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.constants.Path;
 import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.useralerts.UserAlertManager;
@@ -79,6 +80,6 @@ public class InsertFreesiteToadlet extends Toadlet {
 
 	@Override
 	public String path() {
-		return "/insertsite/";
+		return Path.INSERT.url;
 	}
 }

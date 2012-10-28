@@ -1,37 +1,14 @@
 package freenet.clients.http;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-
 import freenet.client.HighLevelSimpleClient;
 import freenet.client.async.DatabaseDisabledException;
+import freenet.clients.http.constants.Path;
 import freenet.config.SubConfig;
 import freenet.io.xfer.BlockReceiver;
 import freenet.io.xfer.BlockTransmitter;
 import freenet.l10n.BaseL10n;
-import freenet.node.Node;
-import freenet.node.NodeClientCore;
-import freenet.node.NodeStarter;
-import freenet.node.NodeStats;
-import freenet.node.OpennetManager;
-import freenet.node.PeerManager;
-import freenet.node.PeerNodeStatus;
-import freenet.node.RequestTracker;
-import freenet.node.Version;
-import freenet.node.fcp.DownloadRequestStatus;
-import freenet.node.fcp.FCPServer;
-import freenet.node.fcp.RequestStatus;
-import freenet.node.fcp.UploadDirRequestStatus;
-import freenet.node.fcp.UploadFileRequestStatus;
+import freenet.node.*;
+import freenet.node.fcp.*;
 import freenet.node.stats.DataStoreInstanceType;
 import freenet.node.stats.DataStoreStats;
 import freenet.node.stats.StatsNotAvailableException;
@@ -41,6 +18,14 @@ import freenet.pluginmanager.PluginManager;
 import freenet.support.BandwidthStatsContainer;
 import freenet.support.SizeUtil;
 import freenet.support.api.HTTPRequest;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.*;
 
 public class DiagnosticToadlet extends Toadlet {
 
@@ -58,7 +43,7 @@ public class DiagnosticToadlet extends Toadlet {
 	private final DecimalFormat fix3p1US = new DecimalFormat("##0.0", new DecimalFormatSymbols(Locale.US));
 	private final DecimalFormat fix3pctUS = new DecimalFormat("##0%", new DecimalFormatSymbols(Locale.US));
 	private final DecimalFormat fix6p6 = new DecimalFormat("#####0.0#####");
-	public static final String TOADLET_URL = "/diagnostic/";
+	public static final String TOADLET_URL = Path.DIAGNOSTIC.url;
 	private final BaseL10n baseL10n;
 
 	protected DiagnosticToadlet(Node n, NodeClientCore core, FCPServer fcp, HighLevelSimpleClient client) {

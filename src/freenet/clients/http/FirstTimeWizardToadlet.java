@@ -4,6 +4,7 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.constants.Path;
 import freenet.clients.http.wizardsteps.*;
 import freenet.config.Config;
 import freenet.l10n.NodeL10n;
@@ -166,7 +167,7 @@ public class FirstTimeWizardToadlet extends Toadlet {
 		boolean noPassword = (passwd == null) || !passwd.equals(core.formPassword);
 		if(noPassword) {
 			if(logMINOR) Logger.minor(this, "No password ("+passwd+" should be "+core.formPassword+ ')');
-			super.writeTemporaryRedirect(ctx, "invalid/unhandled data", "/");
+			super.writeTemporaryRedirect(ctx, "invalid/unhandled data", Path.MAIN.url);
 			return;
 		}
 

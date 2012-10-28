@@ -4,6 +4,7 @@ import freenet.client.HighLevelSimpleClient;
 import freenet.clients.http.constants.Identifier;
 import freenet.clients.http.constants.InfoboxType;
 import freenet.clients.http.constants.InputType;
+import freenet.clients.http.constants.Path;
 import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
@@ -132,7 +133,7 @@ public class ChatForumsToadlet extends Toadlet implements LinkEnabledCallback {
 
 	@Override
 	public String path() {
-		return "/chat/";
+		return Path.CHAT.url;
 	}
 
 	@Override

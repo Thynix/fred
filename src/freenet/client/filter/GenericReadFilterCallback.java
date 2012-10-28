@@ -3,6 +3,17 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.client.filter;
 
+import freenet.client.filter.HTMLFilter.ParsedTag;
+import freenet.clients.http.ExternalLinkToadlet;
+import freenet.clients.http.HTTPRequestImpl;
+import freenet.clients.http.StaticToadlet;
+import freenet.clients.http.constants.Path;
+import freenet.keys.FreenetURI;
+import freenet.l10n.NodeL10n;
+import freenet.support.*;
+import freenet.support.Logger.LogLevel;
+import freenet.support.api.HTTPRequest;
+
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -11,20 +22,6 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.regex.Pattern;
-
-import freenet.client.filter.HTMLFilter.ParsedTag;
-import freenet.clients.http.ExternalLinkToadlet;
-import freenet.clients.http.HTTPRequestImpl;
-import freenet.clients.http.StaticToadlet;
-import freenet.keys.FreenetURI;
-import freenet.l10n.NodeL10n;
-import freenet.support.LogThresholdCallback;
-import freenet.support.Logger;
-import freenet.support.URIPreEncoder;
-import freenet.support.URLDecoder;
-import freenet.support.URLEncodedFormatException;
-import freenet.support.Logger.LogLevel;
-import freenet.support.api.HTTPRequest;
 
 public class GenericReadFilterCallback implements FilterCallback, URIProcessor {
 	public static final HashSet<String> allowedProtocols;
@@ -409,7 +406,7 @@ public class GenericReadFilterCallback implements FilterCallback, URIProcessor {
 			cb.onText(s, type, baseURI);
 	}
 
-	static final String PLUGINS_PREFIX = "/plugins/";
+	static final String PLUGINS_PREFIX = Path.PLUGINS.url;
 	
 	/**
 	 * Process a form.

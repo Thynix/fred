@@ -2,6 +2,7 @@ package freenet.node;
 
 import freenet.client.DefaultMIMETypes;
 import freenet.clients.http.constants.InputType;
+import freenet.clients.http.constants.Path;
 import freenet.clients.http.uielements.Box;
 import freenet.clients.http.uielements.Row;
 import freenet.clients.http.uielements.Table;
@@ -1182,7 +1183,7 @@ public class DarknetPeerNode extends PeerNode {
 					// Accept/reject form
 
 					// Hopefully we will have a container when this function is called!
-					HTMLNode form = node.clientCore.getToadletContainer().addFormChild(box_, "/friends/", "f2fFileOfferAcceptForm");
+					HTMLNode form = node.clientCore.getToadletContainer().addFormChild(box_, Path.FRIENDS.url, "f2fFileOfferAcceptForm");
 
 					// FIXME node_ is inefficient
 					form.addInput("node_"+DarknetPeerNode.this.hashCode(), InputType.HIDDEN);

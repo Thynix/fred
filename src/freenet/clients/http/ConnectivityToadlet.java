@@ -19,6 +19,7 @@ import freenet.client.HighLevelSimpleClient;
 import freenet.clients.http.constants.Category;
 import freenet.clients.http.constants.Identifier;
 import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.constants.Path;
 import freenet.clients.http.uielements.*;
 import freenet.io.AddressTracker;
 import freenet.io.AddressTrackerItem;
@@ -225,7 +226,7 @@ public class ConnectivityToadlet extends Toadlet {
 		return NodeL10n.getBase().getString("ConnectivityToadlet."+key);
 	}
 
-	public static final String PATH = "/connectivity/";
+	public static final String PATH = Path.CONNECTION.url;
 	
 	@Override
 	public String path() {

@@ -49,7 +49,7 @@ public class PproxyToadlet extends Toadlet {
 
 		String pass = request.getPartAsStringFailsafe("formPassword", 32);
 		if((pass == null) || !pass.equals(core.formPassword)) {
-			headers.put("Location", "/plugins/");
+			headers.put("Location", Path.PLUGINS.url);
 			ctx.sendReplyHeaders(302, "Found", headers, null, 0);
 			return;
 		}
@@ -62,7 +62,7 @@ public class PproxyToadlet extends Toadlet {
 		String path=request.getPath();
 
 		// remove leading / and plugins/ from path
-		if(path.startsWith("/")) path = path.substring(1);
+		if(path.startsWith(Path.MAIN.url)) path = path.substring(1);
 		if(path.startsWith("plugins/")) path = path.substring("plugins/".length());
 
 		if(logMINOR) Logger.minor(this, "Pproxy received POST on "+path);
@@ -165,7 +165,7 @@ public class PproxyToadlet extends Toadlet {
 				return;
 			}
 			if (request.isPartSet("cancel")){
-				headers.put("Location", "/plugins/");
+				headers.put("Location", Path.PLUGINS.url);
 				ctx.sendReplyHeaders(302, "Found", headers, null, 0);
 				return;
 			}
@@ -180,14 +180,14 @@ public class PproxyToadlet extends Toadlet {
 				Infobox success = page.content.addInfobox(InfoboxType.SUCCESS, l10n("pluginUnloaded"));
 				success.body.addText(l10n("pluginUnloadedWithName", "name", pluginThreadName));
 				success.body.addLineBreak();
-				success.body.addLink("/plugins/", l10n("returnToPluginPage"));
+				success.body.addLink(Path.PLUGINS.url, l10n("returnToPluginPage"));
 				writeHTMLReply(ctx, 200, "OK", page.generate());
 				return;
 			} if (request.getPartAsStringFailsafe("unload", MAX_PLUGIN_NAME_LENGTH).length() > 0) {
 				Page page = pageMaker.getPage(l10n("plugins"), ctx);
 				Infobox query = page.content.addInfobox(InfoboxType.QUERY, l10n("unloadPluginTitle"));
 				query.body.addText(l10n("unloadPluginWithName", "name", request.getPartAsStringFailsafe("unload", MAX_PLUGIN_NAME_LENGTH)));
-				HTMLNode unloadForm = ctx.addFormChild(query.body, "/plugins/",
+				HTMLNode unloadForm = ctx.addFormChild(query.body, Path.PLUGINS.url,
 					"unloadPluginConfirmForm");
 				unloadForm.addInput(InputType.HIDDEN, "unloadconfirm", request.getPartAsStringFailsafe("unload", MAX_PLUGIN_NAME_LENGTH));
 				HTMLNode tempNode = unloadForm.addBlockText();
@@ -204,7 +204,7 @@ public class PproxyToadlet extends Toadlet {
 				Infobox reloadPlugin = page.content.addInfobox(InfoboxType.QUERY, Identifier.PLUGINRELOAD, l10n("reloadPluginTitle"));
 				reloadPlugin.body.addBlockText(l10n("reloadExplanation"));
 				reloadPlugin.body.addBlockText(l10n("reloadWarning"));
-				HTMLNode reloadForm = ctx.addFormChild(reloadPlugin.body, "/plugins/", "reloadPluginConfirmForm");
+				HTMLNode reloadForm = ctx.addFormChild(reloadPlugin.body, Path.PLUGINS.url, "reloadPluginConfirmForm");
 				reloadForm.addInput(InputType.HIDDEN, "reloadconfirm", request.getPartAsStringFailsafe("reload", MAX_PLUGIN_NAME_LENGTH));
 				HTMLNode tempNode = reloadForm.addBlockText();
 				tempNode.addInput("purge", InputType.CHECKBOX);
@@ -301,7 +301,7 @@ public class PproxyToadlet extends Toadlet {
 	public void handleMethodGET(URI uri, HTTPRequest request, ToadletContext ctx)
 	throws ToadletContextClosedException, IOException {
 
-		//String basepath = "/plugins/";
+		//String basepath = Path.PLUGINS.url;
 		String path = request.getPath();
 
 		// remove leading / and plugins/ from path
@@ -592,6 +592,6 @@ public class PproxyToadlet extends Toadlet {
 		return PATH;
 	}
 	
-	public static final String PATH = "/plugins/";
+	public static final String PATH = Path.PLUGINS.url;
 
 }

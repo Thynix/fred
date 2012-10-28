@@ -5,6 +5,7 @@ package freenet.node.useralerts;
 
 import freenet.clients.http.constants.Category;
 import freenet.clients.http.constants.InputType;
+import freenet.clients.http.constants.Path;
 import freenet.clients.http.uielements.*;
 import freenet.config.Option;
 import freenet.config.SubConfig;
@@ -74,11 +75,11 @@ public class IPUndetectedUserAlert extends AbstractUserAlert {
 		if(node.ipDetector.noDetectPlugins()) {
 			HTMLNode p = textNode.addBlockText();
 			NodeL10n.getBase().addL10nSubstitution(p, "IPUndetectedUserAlert.loadDetectPlugins", new String[] { "plugins", "config", },
-					new HTMLNode[] { new Link("/plugins/"), new Link("/config/node") });
+					new HTMLNode[] { new Link(Path.PLUGINS.url), new Link("/config/node") });
 		} else if(!node.ipDetector.hasJSTUN() && !node.ipDetector.isDetecting()) {
 			HTMLNode p = textNode.addBlockText();
 			NodeL10n.getBase().addL10nSubstitution(p, "IPUndetectedUserAlert.loadJSTUN", new String[] { "plugins" },
-					new HTMLNode[] { new Link("/plugins/") });
+					new HTMLNode[] { new Link(Path.PLUGINS.url) });
 		}
 		
 		addPortForwardSuggestion(textNode);

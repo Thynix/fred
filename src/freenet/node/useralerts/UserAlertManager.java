@@ -3,10 +3,7 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node.useralerts;
 
-import freenet.clients.http.constants.Identifier;
-import freenet.clients.http.constants.InfoboxType;
-import freenet.clients.http.constants.InputType;
-import freenet.clients.http.constants.LinkType;
+import freenet.clients.http.constants.*;
 import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
@@ -209,7 +206,7 @@ public class UserAlertManager implements Comparator<UserAlert> {
 		Infobox userAlertNode = new Infobox(getAlertLevelName(level), userAlert.getTitle());
 		userAlertNode.body.addChild(userAlert.getHTMLText());
 		if (userAlert.userCanDismiss()) {
-			Box dismissFormNode = userAlertNode.body.addForm("/alerts/", "post").addBox();
+			Box dismissFormNode = userAlertNode.body.addForm(Path.ALERTS.url, "post").addBox();
 			dismissFormNode.addInput(InputType.HIDDEN, "disable", String.valueOf(userAlert.hashCode()));
 			dismissFormNode.addInput(InputType.HIDDEN, "formPassword", core.formPassword);
 			dismissFormNode.addInput(InputType.SUBMIT, "dismiss-user-alert", userAlert.dismissButtonText());
@@ -238,7 +235,7 @@ public class UserAlertManager implements Comparator<UserAlert> {
 		return createAlerts(true);
 	}
 	
-	static final HTMLNode ALERTS_LINK = new Link("/alerts/").setReadOnly();
+	static final HTMLNode ALERTS_LINK = new Link(Path.ALERTS.url).setReadOnly();
 
 	/**
 	 * Write the alert summary as HTML to a StringBuilder
@@ -336,7 +333,7 @@ public class UserAlertManager implements Comparator<UserAlert> {
 			NodeL10n.getBase().addL10nSubstitution(summaryBox.body, "UserAlertManager.alertsOnAlertsPage",
 				new String[] { "link" }, new HTMLNode[] { ALERTS_LINK });
 		} else {
-			summaryBox.body.addLink("/alerts/", NodeL10n.getBase().getString("StatusBar.alerts") + " " + alertSummaryString.toString());
+			summaryBox.body.addLink(Path.ALERTS.url, NodeL10n.getBase().getString("StatusBar.alerts") + " " + alertSummaryString.toString());
 		}
 		summaryBox.setID(Identifier.MESSAGESUMMARYBOX);
 		return summaryBox;
@@ -385,7 +382,7 @@ public class UserAlertManager implements Comparator<UserAlert> {
 	}
 
 	public String getAtom(String startURI) {
-		String messagesURI = startURI + "/alerts/";
+		String messagesURI = startURI + Path.ALERTS.url;
 		String feedURI = startURI + "/feed/";
 
 		StringBuilder sb = new StringBuilder();

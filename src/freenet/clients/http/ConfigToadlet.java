@@ -68,7 +68,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 
 			if (node.isUsingWrapper()) {
 				alertNode.addLineBreak();
-				Box restartForm = alertNode.addForm("/", "post", "multipart/form-data", "utf-8", Identifier.RESTARTFORM).addBox();
+				Box restartForm = alertNode.addForm(Path.MAIN.url, "post", "multipart/form-data", "utf-8", Identifier.RESTARTFORM).addBox();
 				restartForm.addInput(InputType.HIDDEN, "formPassword", node.clientCore.formPassword );
 				restartForm.addBox();
 				restartForm.addInput("restart", InputType.HIDDEN);
@@ -337,7 +337,7 @@ public class ConfigToadlet extends Toadlet implements LinkEnabledCallback {
 				successMessage.body.addText(l10n("needRestart"));
 				if (node.isUsingWrapper()) {
 					successMessage.body.addLineBreak();
-					HTMLNode restartForm = ctx.addFormChild(successMessage.body, "/",
+					HTMLNode restartForm = ctx.addFormChild(successMessage.body, Path.MAIN.url,
 						"restartForm");
 					restartForm.addInput("restart", InputType.HIDDEN);
 					restartForm.addInput(InputType.SUBMIT, "restart2",//

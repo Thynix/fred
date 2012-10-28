@@ -65,7 +65,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 		String formPassword = request.getPartAsStringFailsafe("formPassword", 32);
 		if((formPassword == null) || !formPassword.equals(core.formPassword)) {
 			MultiValueTable<String,String> headers = new MultiValueTable<String,String>();
-			headers.put("Location", "/seclevels/");
+			headers.put("Location", Path.SECLEVELS.url);
 			ctx.sendReplyHeaders(302, "Found", headers, null, 0);
 			return;
 		}
@@ -352,7 +352,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 				return;
 			} else {
 				MultiValueTable<String, String> headers = new MultiValueTable<String, String>();
-				headers.put("Location", "/seclevels/");
+				headers.put("Location", Path.SECLEVELS.url);
 				ctx.sendReplyHeaders(302, "Found", headers, null, 0);
 				return;
 			}
@@ -395,7 +395,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 			}
 
 			try {
-				throw new RedirectException("/seclevels/");
+				throw new RedirectException(Path.SECLEVELS.url);
 			} catch (URISyntaxException e) {
 				// Impossible
 			}
@@ -428,7 +428,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 		page.content.addInfobox(passwordError);
 		HTMLNode form =
 			forFirstTimeWizard ? ctx.addFormChild(passwordError.body, "/wizard/", "masterPasswordForm") :
-				ctx.addFormChild(passwordError.body, "/seclevels/", "masterPasswordForm");
+				ctx.addFormChild(passwordError.body, Path.SECLEVELS.url, "masterPasswordForm");
 		sendCantDeleteMasterKeysFileInner(passwordError.body, form, filename, physicalSecurityLevel);
 		return page;
 	}
@@ -649,7 +649,7 @@ public class SecurityLevelsToadlet extends Toadlet {
 		p.addInput(InputType.SUBMIT, "changePassword", l10nSec("changePasswordButton"));
 	}
 
-	static final String PATH = "/seclevels/";
+	static final String PATH = Path.SECLEVELS.url;
 
 	@Override
 	public String path() {
