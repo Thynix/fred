@@ -636,6 +636,10 @@ public class HTMLNode implements XMLCharacterClasses {
 		addChild(newInlineBox);
 		return newInlineBox;
 	}
+	public InlineBox addInlineBox(InlineBox newInlineBox) {
+		addChild(newInlineBox);
+		return newInlineBox;
+	}
 	public InlineBox addInlineBox(String content) {
 		InlineBox newInlineBox = new InlineBox(content);
 		addChild(newInlineBox);

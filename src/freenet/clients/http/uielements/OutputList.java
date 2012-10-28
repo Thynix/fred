@@ -49,6 +49,10 @@ public class OutputList extends OutputNode {
 		addChild(newListItem);
 		return newListItem;
 	}
+	public Item addItem(Item newListItem) {
+		addChild(newListItem);
+		return newListItem;
+	}
 	public Item addItem() {
 		Item newListItem = new Item();
 		addChild(newListItem);

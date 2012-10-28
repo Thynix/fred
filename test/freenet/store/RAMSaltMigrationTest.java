@@ -1,7 +1,7 @@
 package freenet.store;
 
+import freenet.crypt.DummyRandomSource;
 import freenet.crypt.RandomSource;
-import freenet.crypy.DummyRandomSource;
 import freenet.keys.*;
 import freenet.node.SemiOrderedShutdownHook;
 import freenet.store.saltedhash.ResizablePersistentIntBuffer;
