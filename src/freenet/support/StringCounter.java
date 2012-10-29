@@ -3,6 +3,9 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.support;
 
+import freenet.clients.http.uielements.Row;
+import freenet.clients.http.uielements.Table;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -76,13 +79,13 @@ public class StringCounter {
 		return sb.toString();
 	}
 	
-	public int toTableRows(HTMLNode table) {
+	public int toTableRows(Table table) {
 		Item[] items = sortedItems(false);
-		for(int i=0;i<items.length;i++) {
+		for (int i=0;i<items.length;i++) {
 			Item it = items[i];
-			HTMLNode row = table.addChild("tr");
-			row.addChild("td", Integer.toString(it.counter)+"\u00a0");
-			row.addChild("td", it.string);
+			Row row = table.addRow();
+			row.addCell(Integer.toString(it.counter)+"\u00a0");
+			row.addCell(it.string);
 		}
 		return items.length;
 	}

@@ -1,9 +1,11 @@
 package freenet.clients.http.wizardsteps;
 
+import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.uielements.Infobox;
+import freenet.clients.http.uielements.Text;
 import freenet.config.Config;
 import freenet.config.ConfigException;
 import freenet.config.InvalidConfigValueException;
-import freenet.config.SubConfig;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
 import freenet.pluginmanager.FredPluginBandwidthIndicator;
@@ -44,11 +46,11 @@ public abstract class BandwidthManipulator {
 	}
 
 	protected void parseErrorBox(HTMLNode parent, PageHelper helper, String parsingFailedOn) {
-		HTMLNode infoBox = helper.getInfobox("infobox-warning", WizardL10n.l10n("bandwidthCouldNotParseTitle"),
-		        parent, null, false);
+		Infobox infoBox = parent.addInfobox(InfoboxType.WARNING,
+			WizardL10n.l10n("bandwidthCouldNotParseTitle"));
 
-		NodeL10n.getBase().addL10nSubstitution(infoBox, "FirstTimeWizardToadlet.bandwidthCouldNotParse",
-		        new String[] { "limit" }, new HTMLNode[] { new HTMLNode("#", parsingFailedOn) });
+		NodeL10n.getBase().addL10nSubstitution(infoBox.body, "FirstTimeWizardToadlet.bandwidthCouldNotParse",
+		        new String[] { "limit" }, new HTMLNode[] { new Text(parsingFailedOn) });
 	}
 
 	protected BandwidthLimit getCurrentBandwidthLimitsOrNull() {

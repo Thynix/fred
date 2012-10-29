@@ -3,6 +3,17 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.client.filter;
 
+import freenet.client.filter.HTMLFilter.ParsedTag;
+import freenet.clients.http.ExternalLinkToadlet;
+import freenet.clients.http.HTTPRequestImpl;
+import freenet.clients.http.StaticToadlet;
+import freenet.clients.http.constants.Path;
+import freenet.keys.FreenetURI;
+import freenet.l10n.NodeL10n;
+import freenet.support.*;
+import freenet.support.Logger.LogLevel;
+import freenet.support.api.HTTPRequest;
+
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -10,20 +21,7 @@ import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.HashSet;
-
-import freenet.client.filter.HTMLFilter.ParsedTag;
-import freenet.clients.http.ExternalLinkToadlet;
-import freenet.clients.http.HTTPRequestImpl;
-import freenet.clients.http.StaticToadlet;
-import freenet.keys.FreenetURI;
-import freenet.l10n.NodeL10n;
-import freenet.support.LogThresholdCallback;
-import freenet.support.Logger;
-import freenet.support.URIPreEncoder;
-import freenet.support.URLDecoder;
-import freenet.support.URLEncodedFormatException;
-import freenet.support.Logger.LogLevel;
-import freenet.support.api.HTTPRequest;
+import java.util.regex.Pattern;
 
 public class GenericReadFilterCallback implements FilterCallback, URIProcessor {
 	public static final HashSet<String> allowedProtocols;
@@ -103,18 +101,23 @@ public class GenericReadFilterCallback implements FilterCallback, URIProcessor {
 	//  unreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~"
 	protected static final String UNRESERVED = "[a-zA-Z0-9\\-\\._~]";
 	//  pct-encoded   = "%" HEXDIG HEXDIG
-	protected static final String PCT_ENCODED = "%[0-9A-Fa-f][0-9A-Fa-f]";
+	protected static final String PCT_ENCODED = "(?:%[0-9A-Fa-f][0-9A-Fa-f])";
 	//  sub-delims    = "!" / "$" / "&" / "'" / "(" / ")"
 	//                / "*" / "+" / "," / ";" / "="
 	protected static final String SUB_DELIMS  = "[\\!\\$&'\\(\\)\\*\\+,;=]";
 	//  pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
-	protected static final String PCHAR      = "(" + UNRESERVED + "|" + PCT_ENCODED + "|" + SUB_DELIMS + "|[:@])";
+	protected static final String PCHAR      = "(?>" + UNRESERVED + "|" + PCT_ENCODED + "|" + SUB_DELIMS + "|[:@])";
 	//  fragment      = *( pchar / "/" / "?" )
-	protected static final String FRAGMENT   = "(" + PCHAR + "|\\/|\\?)*";
+	protected static final String FRAGMENT   = "(?>" + PCHAR + "|\\/|\\?)*";
+
+	private static final Pattern anchorRegex;
+	static {
+	    anchorRegex = Pattern.compile("^#" + FRAGMENT + "$");
+	}
 
 	@Override
 	public String processURI(String u, String overrideType, boolean forBaseHref, boolean inline) throws CommentException {
-		if(u.matches("^#" + FRAGMENT + "$")) {
+		if(anchorRegex.matcher(u).matches()) {
 			// Hack for anchors, see #710
 			return u;
 		}
@@ -403,7 +406,7 @@ public class GenericReadFilterCallback implements FilterCallback, URIProcessor {
 			cb.onText(s, type, baseURI);
 	}
 
-	static final String PLUGINS_PREFIX = "/plugins/";
+	static final String PLUGINS_PREFIX = Path.PLUGINS.url;
 	
 	/**
 	 * Process a form.

@@ -3,64 +3,31 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.pluginmanager;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Vector;
-import java.util.jar.Attributes;
-import java.util.jar.JarException;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
-import java.util.zip.ZipException;
-
-import org.tanukisoftware.wrapper.WrapperManager;
-
 import com.db4o.ObjectContainer;
-
 import freenet.client.HighLevelSimpleClient;
-import freenet.clients.http.QueueToadlet;
 import freenet.clients.http.PageMaker.THEME;
+import freenet.clients.http.QueueToadlet;
 import freenet.clients.http.Toadlet;
+import freenet.clients.http.constants.InputType;
+import freenet.clients.http.constants.Path;
+import freenet.clients.http.uielements.BlockText;
+import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Cell;
+import freenet.clients.http.uielements.Form;
 import freenet.config.Config;
 import freenet.config.InvalidConfigValueException;
 import freenet.config.NodeNeedRestartException;
 import freenet.config.SubConfig;
 import freenet.crypt.SHA256;
 import freenet.keys.FreenetURI;
-import freenet.l10n.NodeL10n;
 import freenet.l10n.BaseL10n.LANGUAGE;
-import freenet.node.Node;
-import freenet.node.NodeClientCore;
-import freenet.node.RequestClient;
-import freenet.node.RequestStarter;
-import freenet.node.SecurityLevelListener;
+import freenet.l10n.NodeL10n;
+import freenet.node.*;
 import freenet.node.SecurityLevels.NETWORK_THREAT_LEVEL;
 import freenet.node.fcp.ClientPut;
 import freenet.node.useralerts.AbstractUserAlert;
 import freenet.node.useralerts.UserAlert;
-import freenet.support.HTMLNode;
-import freenet.support.HexUtil;
-import freenet.support.JarClassLoader;
-import freenet.support.Logger;
-import freenet.support.SerialExecutor;
-import freenet.support.Ticker;
+import freenet.support.*;
 import freenet.support.Logger.LogLevel;
 import freenet.support.api.BooleanCallback;
 import freenet.support.api.HTTPRequest;
@@ -68,6 +35,17 @@ import freenet.support.api.StringArrCallback;
 import freenet.support.io.Closer;
 import freenet.support.io.FileUtil;
 import freenet.support.io.NativeThread;
+import org.tanukisoftware.wrapper.WrapperManager;
+
+import java.io.*;
+import java.net.MalformedURLException;
+import java.security.MessageDigest;
+import java.util.*;
+import java.util.jar.Attributes;
+import java.util.jar.JarException;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+import java.util.zip.ZipException;
 
 public class PluginManager {
 
@@ -120,7 +98,7 @@ public class PluginManager {
 		if(logDEBUG)
 			Logger.debug(this, "Initialize Plugin Manager config");
 
-		client = core.makeClient(PRIO, true);
+		client = core.makeClient(PRIO, true, false);
 
 		// callback executor
 		executor = new SerialExecutor(NativeThread.NORM_PRIORITY);
@@ -563,36 +541,35 @@ public class PluginManager {
 
 		@Override
 		public HTMLNode getHTMLText() {
-			HTMLNode div = new HTMLNode("div");
-			HTMLNode p = div.addChild("p");
-			p.addChild("#", l10n("pluginLoadingFailedWithMessage", new String[] { "name", "message" }, new String[] { filename, message }));
+			Box box = new Box();
+			BlockText p = box.addBlockText();
+			p.addText(l10n("pluginLoadingFailedWithMessage", new String[] { "name", "message" }, new String[] { filename, message }));
 			if(stillTryingOverFreenet) {
-				div.addChild("p", l10n("pluginLoadingFailedStillTryingOverFreenet"));
+				box.addBlockText(l10n("pluginLoadingFailedStillTryingOverFreenet"));
 			}
 
 			if(official) {
-				p = div.addChild("p");
+				p = box.addBlockText();
 				if(officialFromFreenet)
-					p.addChild("#", l10n("officialPluginLoadFailedSuggestTryAgainFreenet"));
+					p.addText(l10n("officialPluginLoadFailedSuggestTryAgainFreenet"));
 				else
-					p.addChild("#", l10n("officialPluginLoadFailedSuggestTryAgainHTTPS"));
+					p.addText(l10n("officialPluginLoadFailedSuggestTryAgainHTTPS"));
 
-				HTMLNode reloadForm = div.addChild("form", new String[] { "action", "method" }, new String[] { "/plugins/", "post" });
-				reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", node.clientCore.formPassword });
-				reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "plugin-name", filename });
-				reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "pluginSource", "https" });
-				reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "submit-official", l10n("officialPluginLoadFailedTryAgain") });
+				Form reloadForm = box.addForm(Path.PLUGINS.url, "post");
+				reloadForm.addInput(InputType.HIDDEN, "formPassword", node.clientCore.formPassword);
+				reloadForm.addInput(InputType.HIDDEN, "plugin-name", filename);
+				reloadForm.addInput(InputType.HIDDEN, "pluginSource", "https");
+				reloadForm.addInput(InputType.SUBMIT, "submit-official", l10n("officialPluginLoadFailedTryAgain"));
 
 				if(!stillTryingOverFreenet) {
-					reloadForm = div.addChild("form", new String[] { "action", "method" }, new String[] { "/plugins/", "post" });
-					reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", node.clientCore.formPassword });
-					reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "plugin-name", filename });
-					reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "pluginSource", "freenet" });
-					reloadForm.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "submit-official", l10n("officialPluginLoadFailedTryAgainFreenet") });
+					reloadForm = box.addForm(Path.PLUGINS.url, "post");
+					reloadForm.addInput(InputType.HIDDEN, "formPassword", node.clientCore.formPassword);
+					reloadForm.addInput(InputType.HIDDEN, "plugin-name", filename);
+					reloadForm.addInput(InputType.HIDDEN, "pluginSource", "freenet");
+					reloadForm.addInput(InputType.SUBMIT, "submit-official", l10n("officialPluginLoadFailedTryAgainFreenet"));
 				}
 			}
-
-			return div;
+			return box;
 		}
 
 		@Override
@@ -781,16 +758,20 @@ public class PluginManager {
 			/* Windows, maybe? */
 			lastSlash = pluginSpecification.lastIndexOf('\\');
 		File pluginDirectory = node.getPluginDir();
-		if(lastSlash == -1)
-			/* it's an official plugin! */
-			pluginFilename = pluginSpecification + ".jar";
-		else
+		if(lastSlash == -1) {
+			/* it's an official plugin or filename without path */
+			if (pluginSpecification.toLowerCase().endsWith(".jar"))
+				pluginFilename = pluginSpecification;
+			else
+				pluginFilename = pluginSpecification + ".jar";
+		} else
 			pluginFilename = pluginSpecification.substring(lastSlash + 1);
 		if(logDEBUG)
-			Logger.minor(this, "Delete plugin - plugname: " + pluginSpecification + "filename: " + pluginFilename, new Exception("debug"));
+			Logger.minor(this, "Delete plugin - plugname: " + pluginSpecification + " filename: " + pluginFilename, new Exception("debug"));
 		File[] cachedFiles = getPreviousInstances(pluginDirectory, pluginFilename);
 		for (File cachedFile : cachedFiles) {
-			cachedFile.delete();
+			if (!cachedFile.delete())
+				if(logMINOR) Logger.minor(this, "Can't delete file " + cachedFile);
 		}
 	}
 
@@ -1082,16 +1063,24 @@ public class PluginManager {
 			this.advanced = advanced;
 		}
 	}
+	
+	public static OfficialPluginDescription getOfficialPlugin(String name) {
+		return officialPlugins.get(name);
+	}
 
-	public static Map<String, OfficialPluginDescription> officialPlugins = new HashMap<String, OfficialPluginDescription>();
+	public static Collection<OfficialPluginDescription> getOfficialPlugins() {
+		return Collections.unmodifiableCollection(officialPlugins.values());
+	}
+	
+	private static Map<String, OfficialPluginDescription> officialPlugins = new HashMap<String, OfficialPluginDescription>();
 
 	static {
 		try {
-		addOfficialPlugin("Freemail", "communication", false, 14, true, new FreenetURI("CHK@SdFaDNxXJ1-SuZJcAxq1vxVo3DEV38oJlv~dG2CO4sQ,f0wSpgekodQaiOitR03fvwjfuKjHFcYQ-J7GWj-t1~U,AAIC--8/Freemail.jar"));
+		addOfficialPlugin("Freemail", "communication", false, 15, true, new FreenetURI("CHK@6dfMgGf7YEfJhF0W~K0HUv0fnbuRwYH6iMqrLIbTI7k,huYBf8oBevwW6lRQnz-0jDP1dl5ej7FKeyVZ3CnH0Ec,AAMC--8/Freemail.jar"));
 		addOfficialPlugin("HelloWorld", "example", false, new FreenetURI("CHK@ZdTXnWV-ikkt25-y8jmhlHjCY-nikDMQwcYlWHww5eg,Usq3uRHpHuIRmMRRlNQE7BNveO1NwNI7oNKdb7cowFM,AAIC--8/HelloWorld.jar"), false, false, true);
 		addOfficialPlugin("HelloFCP", "example", false, new FreenetURI("CHK@0gtXJpw1QUJCmFOhoPRNqhsNbMtVw1CGVe46FUv7-e0,X8QqhtPkHoaFCUd89bgNaKxX1AV0WNBVf3sRgSF51-g,AAIC--8/HelloFCP.jar"), false, false, true);
 		addOfficialPlugin("JSTUN", "connectivity", true, 2, false, new FreenetURI("CHK@STQEzqyYLPtd4mCMIXO2HV38J6jG492hyPcEjTdc1oI,ojl4TCcJpJbo1OcO8nwPjycNCt1mn6zJq3lxCNExIHI,AAIC--8/JSTUN.jar"));
-		addOfficialPlugin("KeyUtils", "technical", false, 5009, false, new FreenetURI("CHK@WI1aBemzqrlOP62cvbVO0A7Ckb0hKSQ0OB1dmEbF9BM,bcnZg1CdaFciYOfmf6CK0-sLJD-I~13CFx4qI831mqY,AAIC--8/KeyUtils.jar"), false, false, true);
+		addOfficialPlugin("KeyUtils", "technical", false, 5017, false, new FreenetURI("CHK@d-nxDvw-jfRQfCTlEj~SjgxrS0ySUAC29pY1HMSSPKk,hcG5IljHb9Zr5PA-NeNQinRvRF1b9sFTL8eaiUJiFP4,AAMC--8/KeyUtils.jar"), false, false, true);
 		addOfficialPlugin("MDNSDiscovery", "connectivity", false, 2, false, new FreenetURI("CHK@wPyhY61bsDM3OW6arFlxYX8~mBKjo~XtOTIAbT0dk88,Vr3MTAzkW5J28SJs2dTxkj6D4GVNm3u8GFsxJgzTL1M,AAIC--8/MDNSDiscovery.jar"));
 		addOfficialPlugin("SNMP", "connectivity", false, new FreenetURI("CHK@EykJIv83UE291zONVzfXqyJYX5t66uCQJHkzQrB61MI,-npuolPZj1fcAWane2~qzRNEjKDERx52aQ5bC6NBQgw,AAIC--8/SNMP.jar"), false, false, true);
 		addOfficialPlugin("TestGallery", "example", false, 1, false, new FreenetURI("CHK@LfJVh1EkCr4ry0yDW74vwxkX-3nkr~ztW2z0SUZHfC0,-mz7l39dC6n0RTUiSokjC~pUDO7PWZ89miYesKH0-WA,AAIC--8/TestGallery.jar"), false, true, false);
@@ -1100,10 +1089,10 @@ public class PluginManager {
 		addOfficialPlugin("XMLLibrarian", "index", false, 26, true, new FreenetURI("CHK@TvjyCaG1dx0xIBSJkXSKA1ZT4I~NkRKeQqwC0a0bhFM,JiQe4CRjF1RwhQRFFQzP-ih9t2i0peV0tBCfJAeFCdk,AAIC--8/XMLLibrarian.jar"), true, false, false);
 		addOfficialPlugin("XMLSpider", "index", false, 47, true, new FreenetURI("CHK@IQU400XKMx~nMEfdXV2YokCzJxx6BeCBmIObzZuq1zo,cY6UJ~KWGESJvaFajXHfr9UZUKJzt7gkmqUKUIZF5SE,AAIC--8/XMLSpider.jar"), true, false, false);
 		addOfficialPlugin("Freereader", "index", false, 4, true, new FreenetURI("CHK@4PuSjXk4Z0Hdu04JLhdPHLyOVLljj8qVbjRn3rHVzvg,bDGYnuYj67Q4uzroPBEWAYWRk26bPzf-iQ4~Uo3S7mg,AAIC--8/Freereader.jar"));
-		addOfficialPlugin("Library", "index", false, 24, true, new FreenetURI("CHK@WtWIvOZXLVZkmDrY5929RxOZ-woRpRoMgE8rdZaQ0VU,rxH~D9VvOOuA7bCnVuzq~eux77i9RR3lsdwVHUgXoOY,AAIC--8/Library.jar"));
+		addOfficialPlugin("Library", "index", false, 26, true, new FreenetURI("CHK@q~V5riY6S4hNm11BSPWgU8C5DA7Bem91upsKkzsV0Ms,qx2WP1hrDiB3iPqquosKln9jm~RRL5lKEEhRsGLThVY,AAIC--8/Library.jar"));
 		addOfficialPlugin("Spider", "index", false, 49, false, new FreenetURI("CHK@7a33HqOQZqqyxBwGhtx-JEPzEMTOaPql4sB-EIuMhjk,2ecFy5ttpAC2sDx5yvS19MDEdowMQpzagpdOg2I~Mh8,AAIC--8/Spider.jar"), false, false, true);
-		addOfficialPlugin("Freetalk", "communication", false, 11, true, new FreenetURI("CHK@XLkj7ou05wE08UMMkYwV0-OoVWeYi--LWurWi1sAazI,WS2jtWMcjx1g7VKO9sGCd4cbaXwLgP1MltBqPc5zVak,AAIC--8/Freetalk.jar"), false, false, false);
-		addOfficialPlugin("WebOfTrust", "communication", false, 11, true, new FreenetURI("CHK@KRaAbMbG9CBjDONo52KcYcOnVIrkTlCWjlxW6ZtN9TM,bryljPiD9bU2HSgG4Ky93s-xQG25d7Z8uvcw07fohlE,AAIC--8/WebOfTrust.jar"), false, false, false);
+		addOfficialPlugin("Freetalk", "communication", false, 13, true, new FreenetURI("CHK@zZDy-KwoZHYy4ZRpK9ZNNQb1vyespIIi9b-RPIyRM0k,EDHJbQpLtGSW4WHA23UHt6MpcoAp--dR7zmX-SGzzis,AAMC--8/Freetalk.jar"), false, false, false);
+		addOfficialPlugin("WebOfTrust", "communication", false, 12, true, new FreenetURI("CHK@Z6jitqIR4tJc9gOXih5cbTJxwnThweDvE5e-pTzetGM,vJfK3hmt06b-dF0yIbovPZlCUqTdgZ5-xsRzcslq1KU,AAIC--8/WebOfTrust.jar"), false, false, false); // from 35617f66afba287d98320843a521a9b395a5fbb3 (WoT build fix for headless)
 		addOfficialPlugin("FlogHelper", "communication", false, 26, true, new FreenetURI("CHK@DBzb9y3RozpB3kKcOallQsye1v83HI1O9wtNJweEzj4,3AXYzfyZI87nKy8uNAflktuOoBQo8Du~gDrRdbOW1z8,AAIC--8/FlogHelper.jar"), false, false, false);
 		} catch (MalformedURLException e) {
 			throw new Error("Malformed hardcoded URL: "+e, e);
@@ -1658,15 +1647,15 @@ public class PluginManager {
 				return toString();
 		}
 
-		public HTMLNode toLocalisedHTML() {
+		public Cell toLocalisedHTML() {
 			if(pluginProgress == PROGRESS_STATE.DOWNLOADING && total > 0) {
 				return QueueToadlet.createProgressCell(false, true, ClientPut.COMPRESS_STATE.WORKING, current, failed, fatallyFailed, minSuccessful, total, finalisedTotal, false);
 			} else if(pluginProgress == PROGRESS_STATE.DOWNLOADING)
-				return new HTMLNode("td", NodeL10n.getBase().getString("PproxyToadlet.startingPluginStatus.downloading"));
+				return new Cell(NodeL10n.getBase().getString("PproxyToadlet.startingPluginStatus.downloading"));
 			else if(pluginProgress == PROGRESS_STATE.STARTING)
-				return new HTMLNode("td", NodeL10n.getBase().getString("PproxyToadlet.startingPluginStatus.starting"));
+				return new Cell(NodeL10n.getBase().getString("PproxyToadlet.startingPluginStatus.starting"));
 			else
-				return new HTMLNode("td", toString());
+				return new Cell(toString());
 		}
 
 		public void setDownloadProgress(int minSuccess, int current, int total, int failed, int fatallyFailed, boolean finalised) {
@@ -1763,4 +1752,5 @@ public class PluginManager {
 		if(!reloading)
 			node.nodeUpdater.stopPluginUpdater(wrapper.getFilename());
 	}
+
 }

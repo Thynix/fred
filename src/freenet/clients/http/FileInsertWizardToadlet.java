@@ -1,16 +1,21 @@
 package freenet.clients.http;
 
-import java.io.IOException;
-import java.net.URI;
-
 import freenet.client.HighLevelSimpleClient;
 import freenet.client.InsertContext;
 import freenet.client.InsertContext.CompatibilityMode;
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.Identifier;
+import freenet.clients.http.constants.InputType;
+import freenet.clients.http.uielements.Infobox;
+import freenet.clients.http.uielements.Page;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
 import freenet.node.SecurityLevels.NETWORK_THREAT_LEVEL;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
+
+import java.io.IOException;
+import java.net.URI;
 
 public class FileInsertWizardToadlet extends Toadlet implements LinkEnabledCallback {
 
@@ -41,135 +46,100 @@ public class FileInsertWizardToadlet extends Toadlet implements LinkEnabledCallb
 		rememberedLastTime = true;
 		wasCanonicalLastTime = false;
 	}
-	
-	public void handleMethodGET (URI uri, final HTTPRequest request, final ToadletContext ctx)
-	        throws ToadletContextClosedException, IOException, RedirectException {
 
-//		// We ensure that we have a FCP server running
-//		if(!fcp.enabled){
-//			writeError(NodeL10n.getBase().getString("QueueToadlet.fcpIsMissing"), NodeL10n.getBase().getString("QueueToadlet.pleaseEnableFCP"), ctx, false);
-//			return;
-//		}
-//		if(!core.hasLoadedQueue()) {
-//			writeError(NodeL10n.getBase().getString("QueueToadlet.notLoadedYetTitle"), NodeL10n.getBase().getString("QueueToadlet.notLoadedYet"), ctx, false);
-//			return;
-//		}
-
-		if (container.publicGatewayMode() && !ctx.isAllowedFullAccess()) {
+	public void handleMethodGET(URI uri, final HTTPRequest request, final ToadletContext ctx)
+		throws ToadletContextClosedException, IOException, RedirectException {
+		if (container.publicGatewayMode() && ! ctx.isAllowedFullAccess()) {
 			super.sendErrorPage(ctx, 403, NodeL10n.getBase().getString("Toadlet.unauthorizedTitle"),
-			        NodeL10n.getBase().getString("Toadlet.unauthorized"));
+				NodeL10n.getBase().getString("Toadlet.unauthorized"));
 			return;
 		}
-		
 		final PageMaker pageMaker = ctx.getPageMaker();
-		
-		final int mode = pageMaker.parseMode(request, this.container);
-		
-		PageNode page = pageMaker.getPageNode(l10n("pageTitle"), ctx);
-		HTMLNode pageNode = page.outer;
-		HTMLNode contentNode = page.content;
-
+		Page insertFilePage = pageMaker.getPage(l10n("pageTitle"), ctx);
 		/* add alert summary box */
-		if (ctx.isAllowedFullAccess()) contentNode.addChild(core.alerts.createSummary());
-
-		contentNode.addChild(createInsertBox(pageMaker, ctx, mode >= PageMaker.MODE_ADVANCED));
-		
-		writeHTMLReply(ctx, 200, "OK", null, pageNode.generate());
+		if (ctx.isAllowedFullAccess()) {
+			insertFilePage.content.addChild(core.alerts.createSummary());
+		}
+		insertFilePage.content.addInfobox(createInsertBox(ctx, ctx.getContainer().isAdvancedModeEnabled()));
+		writeHTMLReply(ctx, 200, "OK", null, insertFilePage.generate());
 	}
-	
-	private HTMLNode createInsertBox (PageMaker pageMaker, ToadletContext ctx, boolean isAdvancedModeEnabled) {
+
+	private Infobox createInsertBox(ToadletContext ctx, boolean isAdvancedModeEnabled) {
 		/* the insert file box */
-		InfoboxNode infobox = pageMaker.getInfobox(
-		        NodeL10n.getBase().getString("QueueToadlet.insertFile"), "insert-queue", true);
-		HTMLNode insertBox = infobox.outer;
-		HTMLNode insertContent = infobox.content;
-		insertContent.addChild("p", l10n("insertIntro"));
+		Infobox insertFileBox = new Infobox(Identifier.INSERTQUEUE,
+			NodeL10n.getBase().getString("QueueToadlet.insertFile"));
+		insertFileBox.body.addText(l10n("insertIntro"));
 		NETWORK_THREAT_LEVEL seclevel = core.node.securityLevels.getNetworkThreatLevel();
-		HTMLNode insertForm = ctx.addFormChild(insertContent, QueueToadlet.PATH_UPLOADS, "queueInsertForm");
-		HTMLNode input = insertForm.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "radio", "keytype", "CHK" });
-		if ((!rememberedLastTime && seclevel == NETWORK_THREAT_LEVEL.LOW) ||
-		        (rememberedLastTime && wasCanonicalLastTime && seclevel != NETWORK_THREAT_LEVEL.MAXIMUM)) {
+		HTMLNode insertForm =
+			ctx.addFormChild(insertFileBox.body, QueueToadlet.PATH_UPLOADS, "queueInsertForm");
+		HTMLNode input = insertForm.addInput(InputType.RADIO, "keytype", "CHK");
+		if ((! rememberedLastTime && seclevel == NETWORK_THREAT_LEVEL.LOW) ||
+			(rememberedLastTime && wasCanonicalLastTime && seclevel != NETWORK_THREAT_LEVEL.MAXIMUM)) {
 			input.addAttribute("checked", "checked");
 		}
-		insertForm.addChild("b", l10n("insertCanonicalTitle"));
-		insertForm.addChild("#", ": "+l10n("insertCanonical"));
-		insertForm.addChild("br");
-		input = insertForm.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "radio", "keytype", "SSK" });
-		if (seclevel == NETWORK_THREAT_LEVEL.MAXIMUM || (rememberedLastTime && !wasCanonicalLastTime)) {
+		insertForm.addInlineBox(Category.BOLD, l10n("insertCanonicalTitle"));
+		insertForm.addText(": " + l10n("insertCanonical"));
+		insertForm.addLineBreak();
+		input = insertForm.addInput(InputType.RADIO, "keytype", "SSK");
+		if (seclevel == NETWORK_THREAT_LEVEL.MAXIMUM || (rememberedLastTime && ! wasCanonicalLastTime)) {
 			input.addAttribute("checked", "checked");
 		}
-		insertForm.addChild("b", l10n("insertRandomTitle"));
-		insertForm.addChild("#", ": "+l10n("insertRandom"));
+		insertForm.addInlineBox(Category.BOLD, l10n("insertRandomTitle"));
+		insertForm.addText(": " + l10n("insertRandom"));
 		if (isAdvancedModeEnabled) {
-			insertForm.addChild("br");
-			insertForm.addChild("input",
-			        new String[] { "type", "name", "value" },
-			        new String[] { "radio", "keytype", "specify" });
-			insertForm.addChild("b", l10n("insertSpecificKeyTitle"));
-			insertForm.addChild("#", ": "+l10n("insertSpecificKey")+" ");
-			insertForm.addChild("input",
-			        new String[] { "type", "name", "value" },
-			        new String[] { "text", "key", "KSK@" });
+			insertForm.addLineBreak();
+			insertForm.addInput(InputType.RADIO, "keytype", "specify");
+			insertForm.addInlineBox(Category.BOLD, l10n("insertSpecificKeyTitle"));
+			insertForm.addText(": " + l10n("insertSpecificKey") + " ");
+			insertForm.addInput(InputType.TEXT, "key", "KSK@");
 		}
 		if (isAdvancedModeEnabled) {
-			insertForm.addChild("br");
-			insertForm.addChild("br");
-			insertForm.addChild("input",
-			        new String[] { "type", "name", "checked" },
-			        new String[] { "checkbox", "compress", "checked" });
-			insertForm.addChild("#", ' ' +
-			        NodeL10n.getBase().getString("QueueToadlet.insertFileCompressLabel"));
+			insertForm.addLineBreak();
+			insertForm.addLineBreak();
+			insertForm.addInput(InputType.CHECKBOX, "compress", true);
+			insertForm.addText(' ' +
+				NodeL10n.getBase().getString("QueueToadlet.insertFileCompressLabel"));
 		} else {
-			insertForm.addChild("input",
-			        new String[] { "type", "value" },
-			        new String[] { "hidden", "true" });
+			insertForm.addInput(InputType.HIDDEN, "compress", "true");
 		}
-		if(isAdvancedModeEnabled) {
-			insertForm.addChild("br");
-			insertForm.addChild("#", NodeL10n.getBase().getString("QueueToadlet.compatModeLabel")+": ");
+		if (isAdvancedModeEnabled) {
+			insertForm.addLineBreak();
+			insertForm.addText(NodeL10n.getBase().getString("QueueToadlet.compatModeLabel") + ": ");
 			HTMLNode select = insertForm.addChild("select", "name", "compatibilityMode");
-			for(CompatibilityMode mode : InsertContext.CompatibilityMode.values()) {
-				if(mode == CompatibilityMode.COMPAT_UNKNOWN) continue;
+			for (CompatibilityMode mode : InsertContext.CompatibilityMode.values()) {
+				if (mode == CompatibilityMode.COMPAT_UNKNOWN) {
+					continue;
+				}
 				// FIXME l10n???
 				HTMLNode option = select.addChild("option", "value", mode.name(),
-				        NodeL10n.getBase().getString("InsertContext.CompatibilityMode."+mode.name()));
-				if (mode == CompatibilityMode.COMPAT_CURRENT) option.addAttribute("selected", "");
+					NodeL10n.getBase().getString("InsertContext.CompatibilityMode." + mode.name
+						()));
+				if (mode == CompatibilityMode.COMPAT_CURRENT) {
+					option.addAttribute("selected", "");
+				}
 			}
-			insertForm.addChild("br");
-			insertForm.addChild("#", l10n("splitfileCryptoKeyLabel")+": ");
-			insertForm.addChild("input",
-			        new String[] { "type", "name", "maxlength" },
-			        new String[] { "text", "overrideSplitfileKey", "64" });
+			insertForm.addLineBreak();
+			insertForm.addText(l10n("splitfileCryptoKeyLabel") + ": ");
+			insertForm.addInput(InputType.TEXT, "overrideSplitfileKey", (short) 64);
 		}
-		insertForm.addChild("br");
-		insertForm.addChild("br");
+		insertForm.addLineBreak();
+		insertForm.addLineBreak();
 		// Local file browser
 		if (ctx.isAllowedFullAccess()) {
-			insertForm.addChild("#",
-			        NodeL10n.getBase().getString("QueueToadlet.insertFileBrowseLabel")+": ");
-			insertForm.addChild("input",
-			        new String[] { "type", "name", "value" },
-			        new String[] { "submit", "insert-local",
-			                NodeL10n.getBase().getString("QueueToadlet.insertFileBrowseButton") + "..." });
-			insertForm.addChild("br");
+			insertForm.addText(NodeL10n.getBase().getString("QueueToadlet.insertFileBrowseLabel") + ": ");
+			insertForm.addInput(InputType.SUBMIT, "insert-local",
+					NodeL10n.getBase().getString("QueueToadlet.insertFileBrowseButton") + "...");
+			insertForm.addLineBreak();
 		}
-		insertForm.addChild("#", NodeL10n.getBase().getString("QueueToadlet.insertFileLabel") + ": ");
-		insertForm.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "file", "filename", "" });
-		insertForm.addChild("#", " \u00a0 ");
-		insertForm.addChild("input", 
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "insert",
-		                NodeL10n.getBase().getString("QueueToadlet.insertFileInsertFileLabel") });
-		insertForm.addChild("#", " \u00a0 ");
-		return insertBox;
+		insertForm.addText(NodeL10n.getBase().getString("QueueToadlet.insertFileLabel") + ": ");
+		insertForm.addInput(InputType.FILE, "filename", "");
+		insertForm.addText(" \u00a0 ");
+		insertForm.addInput(InputType.SUBMIT, "insert",
+			NodeL10n.getBase().getString("QueueToadlet.insertFileInsertFileLabel"));
+		insertForm.addText(" \u00a0 ");
+		return insertFileBox;
 	}
-	
+
 	String l10n (String key) {
 		return NodeL10n.getBase().getString("FileInsertWizardToadlet."+key);
 	}

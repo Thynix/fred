@@ -3,6 +3,9 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node.useralerts;
 
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.InputType;
+import freenet.clients.http.uielements.*;
 import freenet.config.Option;
 import freenet.config.SubConfig;
 import freenet.l10n.NodeL10n;
@@ -37,19 +40,21 @@ public class InvalidAddressOverrideUserAlert extends AbstractUserAlert {
 		SubConfig sc = node.config.get("node");
 		Option<?> o = sc.getOption("ipAddressOverride");
 		
-		HTMLNode textNode = new HTMLNode("div");
+		Box textNode = new Box();
 		NodeL10n.getBase().addL10nSubstitution(textNode, "InvalidAddressOverrideUserAlert.unknownAddressWithConfigLink", 
 				new String[] { "link" }, 
-				new HTMLNode[] { HTMLNode.link("/config/node")});
-		HTMLNode formNode = textNode.addChild("form", new String[] { "action", "method" }, new String[] { "/config/node", "post" });
-		formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", node.clientCore.formPassword });
-		formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "subconfig", sc.getPrefix() });
-		HTMLNode listNode = formNode.addChild("ul", "class", "config");
-		HTMLNode itemNode = listNode.addChild("li");
-		itemNode.addChild("span", "class", "configshortdesc", NodeL10n.getBase().getString(o.getShortDesc())).addChild("input", new String[] { "type", "name", "value" }, new String[] { "text", sc.getPrefix() + ".ipAddressOverride", o.getValueString() });
-		itemNode.addChild("span", "class", "configlongdesc", NodeL10n.getBase().getString(o.getLongDesc()));
-		formNode.addChild("input", new String[] { "type", "value" }, new String[] { "submit", NodeL10n.getBase().getString("UserAlert.apply") });
-		formNode.addChild("input", new String[] { "type", "value" }, new String[] { "reset", NodeL10n.getBase().getString("UserAlert.reset") });
+				new HTMLNode[] { new Link("/config/node")});
+		Form formNode = textNode.addForm("/config/node", "post");
+		formNode.addInput(InputType.HIDDEN, "formPassword", node.clientCore.formPassword);
+		formNode.addInput(InputType.HIDDEN, "subconfig", sc.getPrefix());
+		OutputList listNode = new OutputList(Category.CONFIG);
+		formNode.addChild(listNode);
+		Item itemNode = listNode.addItem();
+		itemNode.addInlineBox(Category.CONFIGSHORTDESC, NodeL10n.getBase().getString(o.getShortDesc())).addInput(
+			InputType.TEXT, sc.getPrefix() + ".ipAddressOverride", o.getValueString());
+		itemNode.addInlineBox(Category.CONFIGLONGDESC, NodeL10n.getBase().getString(o.getLongDesc()));
+		formNode.addInput(InputType.SUBMIT, NodeL10n.getBase().getString("UserAlert.apply"));
+		formNode.addInput(InputType.RESET, NodeL10n.getBase().getString("UserAlert.reset"));
 		return textNode;
 	}
 

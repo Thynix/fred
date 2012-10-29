@@ -1,26 +1,18 @@
 package freenet.clients.http.updateableelements;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Map.Entry;
-
 import freenet.client.FetchException;
 import freenet.client.filter.HTMLFilter.ParsedTag;
-import freenet.clients.http.FProxyFetchInProgress;
+import freenet.clients.http.*;
 import freenet.clients.http.FProxyFetchInProgress.REFILTER_POLICY;
-import freenet.clients.http.FProxyFetchResult;
-import freenet.clients.http.FProxyFetchTracker;
-import freenet.clients.http.FProxyFetchWaiter;
-import freenet.clients.http.FProxyToadlet;
-import freenet.clients.http.SimpleToadletServer;
-import freenet.clients.http.ToadletContext;
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.InputType;
 import freenet.keys.FreenetURI;
 import freenet.support.Base64;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 /** A pushed image, the progress is shown with the ImageCreatorToadlet */
 public class ImageElement extends BaseUpdateableElement {
@@ -165,8 +157,8 @@ public class ImageElement extends BaseUpdateableElement {
 				}
 				attr.put("src", "/imagecreator/?text=+"+FProxyToadlet.l10n("imageinitializing")+"+" + sizePart);
 				whenJsEnabled.addChild(makeHtmlNodeForParsedTag(new ParsedTag(originalImg, attr)));
-				whenJsEnabled.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "fetchedBlocks", String.valueOf(0) });
-				whenJsEnabled.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "requiredBlocks", String.valueOf(1) });
+				whenJsEnabled.addInput(InputType.HIDDEN, "fetchedBlocks", String.valueOf(0));
+				whenJsEnabled.addInput(InputType.HIDDEN, "requiredBlocks", String.valueOf(1));
 
 			}
 		} else {
@@ -177,10 +169,10 @@ public class ImageElement extends BaseUpdateableElement {
 					waiter = tracker.makeFetcher(key, maxSize, null, REFILTER_POLICY.RE_FILTER);
 					fr = waiter.getResultFast();
 				} catch (FetchException fe) {
-					whenJsEnabled.addChild("div", "error");
+					whenJsEnabled.addBox(Category.NONE, "error");
 				}
 				if (fr == null) {
-					whenJsEnabled.addChild("div", "No fetcher found");
+					whenJsEnabled.addBox(Category.NONE, "No fetcher found");
 				} else {
 
 					if (fr.isFinished() && fr.hasData()) {
@@ -206,8 +198,8 @@ public class ImageElement extends BaseUpdateableElement {
 						}
 						attr.put("src", "/imagecreator/?text=" + fetchedPercent + "%25" + sizePart);
 						whenJsEnabled.addChild(makeHtmlNodeForParsedTag(new ParsedTag(originalImg, attr)));
-						whenJsEnabled.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "fetchedBlocks", String.valueOf(fr.fetchedBlocks) });
-						whenJsEnabled.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "requiredBlocks", String.valueOf(fr.requiredBlocks) });
+						whenJsEnabled.addInput(InputType.HIDDEN, "fetchedBlocks", String.valueOf(fr.fetchedBlocks));
+						whenJsEnabled.addInput(InputType.HIDDEN, "requiredBlocks", String.valueOf(fr.requiredBlocks));
 					}
 				}
 			} finally {

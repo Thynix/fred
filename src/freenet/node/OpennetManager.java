@@ -19,6 +19,9 @@ import java.util.EnumMap;
 import java.util.Enumeration;
 import java.util.Map;
 
+import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Row;
+import freenet.clients.http.uielements.Table;
 import freenet.io.comm.ByteCounter;
 import freenet.io.comm.DMT;
 import freenet.io.comm.DisconnectedException;
@@ -42,7 +45,6 @@ import freenet.support.LRUQueue;
 import freenet.support.LogThresholdCallback;
 import freenet.support.Logger;
 import freenet.support.SimpleFieldSet;
-import freenet.support.SizeUtil;
 import freenet.support.TimeSortedHashtable;
 import freenet.support.Logger.LogLevel;
 import freenet.support.io.ByteArrayRandomAccessThing;
@@ -1086,19 +1088,6 @@ public class OpennetManager {
 	}
 
 	static byte[] innerWaitForOpennetNoderef(long xferUID, int paddedLength, int realLength, PeerNode source, boolean isReply, long uid, boolean sendReject, ByteCounter ctr, Node node) {
-		if (paddedLength > OpennetManager.MAX_OPENNET_NODEREF_LENGTH) {
-			Logger.error(OpennetManager.class, "Noderef too big: "+SizeUtil.formatSize(paddedLength)
-					+" real length "+SizeUtil.formatSize(realLength));
-			if(sendReject) rejectRef(uid, source, DMT.NODEREF_REJECTED_TOO_BIG, ctr);
-			return null;
-		}
-		if (realLength > paddedLength) {
-			Logger.error(OpennetManager.class, "Real length larger than padded length: "
-					+ SizeUtil.formatSize(paddedLength)
-					+ " real length "+SizeUtil.formatSize(realLength));
-			if(sendReject) rejectRef(uid, source, DMT.NODEREF_REJECTED_REAL_BIGGER_THAN_PADDED, ctr);
-			return null;
-		}
 		byte[] buf = new byte[paddedLength];
 		ByteArrayRandomAccessThing raf = new ByteArrayRandomAccessThing(buf);
 		PartiallyReceivedBulk prb = new PartiallyReceivedBulk(node.usm, buf.length, Node.PACKET_SIZE, raf, false);
@@ -1206,43 +1195,43 @@ public class OpennetManager {
 			announcer.maybeSendAnnouncementOffThread();
 	}
 
-	public void drawOpennetStatsBox(HTMLNode box) {
-		HTMLNode table = box.addChild("table", "border", "0");
-		HTMLNode row = table.addChild("tr");
+	public void drawOpennetStatsBox(Box box) {
+		Table OpennetStats = box.addTable();
+		Row headerRow = OpennetStats.addRow();
 
-		row.addChild("th");
-		for(ConnectionType type : ConnectionType.values()) {
-			row.addChild("th", type.name());
+		headerRow.addHeader();
+		for (ConnectionType type : ConnectionType.values()) {
+			headerRow.addHeader(type.name());
 		}
 
-		row = table.addChild("tr");
-		row.addChild("td", "Connection attempts");
+		Row row = OpennetStats.addRow();
+		row.addCell("Connection attempts");
 		for(ConnectionType type : ConnectionType.values()) {
-			row.addChild("td", Long.toString(connectionAttempts.get(type)));
+			row.addCell(Long.toString(connectionAttempts.get(type)));
 		}
 
-		row = table.addChild("tr");
-		row.addChild("td", "Connections accepted");
+		row = OpennetStats.addRow();
+		row.addCell("Connections accepted");
 		for(ConnectionType type : ConnectionType.values()) {
-			row.addChild("td", Long.toString(connectionAttemptsAdded.get(type)));
+			row.addCell(Long.toString(connectionAttemptsAdded.get(type)));
 		}
 
-		row = table.addChild("tr");
-		row.addChild("td", "Accepted (free slots)");
+		row = OpennetStats.addRow();
+		row.addCell("Accepted (free slots)");
 		for(ConnectionType type : ConnectionType.values()) {
-			row.addChild("td", Long.toString(connectionAttemptsAddedPlentySpace.get(type)));
+			row.addCell(Long.toString(connectionAttemptsAddedPlentySpace.get(type)));
 		}
 
-		row = table.addChild("tr");
-		row.addChild("td", "Rejected (per-type grace periods)");
+		row = OpennetStats.addRow();
+		row.addCell("Rejected (per-type grace periods)");
 		for(ConnectionType type : ConnectionType.values()) {
-			row.addChild("td", Long.toString(connectionAttemptsRejectedByPerTypeEnforcement.get(type)));
+			row.addCell(Long.toString(connectionAttemptsRejectedByPerTypeEnforcement.get(type)));
 		}
 
-		row = table.addChild("tr");
-		row.addChild("td", "Rejected (no droppable peers)");
+		row = OpennetStats.addRow();
+		row.addCell("Rejected (no droppable peers)");
 		for(ConnectionType type : ConnectionType.values()) {
-			row.addChild("td", Long.toString(connectionAttemptsRejectedNoPeersDroppable.get(type)));
+			row.addCell(Long.toString(connectionAttemptsRejectedNoPeersDroppable.get(type)));
 		}
 
 	}

@@ -3,19 +3,9 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Vector;
-
+import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Link;
+import freenet.clients.http.uielements.Text;
 import freenet.io.comm.PeerParseException;
 import freenet.io.comm.ReferenceSignatureVerificationException;
 import freenet.l10n.NodeL10n;
@@ -23,15 +13,14 @@ import freenet.node.useralerts.AbstractUserEvent;
 import freenet.node.useralerts.SimpleUserAlert;
 import freenet.node.useralerts.UserAlert;
 import freenet.node.useralerts.UserEvent;
-import freenet.support.ByteArrayWrapper;
-import freenet.support.HTMLNode;
-import freenet.support.Logger;
-import freenet.support.SimpleFieldSet;
-import freenet.support.TimeUtil;
+import freenet.support.*;
 import freenet.support.Logger.LogLevel;
 import freenet.support.io.Closer;
 import freenet.support.transport.ip.IPUtil;
-import java.util.Arrays;
+
+import java.io.*;
+import java.net.InetAddress;
+import java.util.*;
 
 /**
  * Decide whether to announce, and announce if necessary to a node in the
@@ -281,6 +270,44 @@ public class Announcer {
 		return target;
 	}
 
+	private SimpleUserAlert announcementDisabledAlert = 
+		new SimpleUserAlert(false, l10n("announceDisabledTooOldTitle"), l10n("announceDisabledTooOld"), l10n("announceDisabledTooOldShort"), UserAlert.CRITICAL_ERROR) {
+		
+		@Override
+		public HTMLNode getHTMLText() {
+			Box box_ = new Box();
+			box_.addText(l10n("announceDisabledTooOld"));
+			if(!node.nodeUpdater.isEnabled()) {
+				box_.addText(" ");
+				NodeL10n.getBase().addL10nSubstitution(box_, "Announcer.announceDisabledTooOldUpdateDisabled", new String[] { "config" }, new HTMLNode[] { new Link("/config/node.updater") });
+			}
+			// No point with !armed() or blown() because they have their own messages.
+			return box_;
+		}
+		
+		@Override
+		public String getText() {
+			StringBuilder sb = new StringBuilder();
+			sb.append(l10n("announceDisabledTooOld"));
+			sb.append(" ");
+			if(!node.nodeUpdater.isEnabled()) {
+				sb.append(l10n("announceDisabledTooOldUpdateDisabled", new String[] { "config", "/config" }, new String[] { "", "" }));
+			}
+			return sb.toString();
+		}
+		
+		@Override
+		public boolean isValid() {
+			if(node.nodeUpdater.isEnabled()) return false;
+			// If it is enabled but not armed there will be a message from the updater.
+			synchronized(Announcer.this) {
+				return killedAnnouncementTooOld;
+			}
+		}
+		
+	};
+
+	
 	/** @return True if we have enough peers that we don't need to announce. */
 	boolean enoughPeers() {
 		if(om.stopping()) return true;
@@ -315,7 +342,7 @@ public class Announcer {
 				Logger.error(this, "Shutting down announcement as we are older than the current mandatory build and auto-update is disabled or waiting for user input.");
 				System.err.println("Shutting down announcement as we are older than the current mandatory build and auto-update is disabled or waiting for user input.");
 				if(node.clientCore != null)
-					node.clientCore.alerts.register(new SimpleUserAlert(false, l10n("announceDisabledTooOldTitle"), l10n("announceDisabledTooOld"), l10n("announceDisabledTooOldShort"), UserAlert.CRITICAL_ERROR));
+					node.clientCore.alerts.register(announcementDisabledAlert);
 			}
 
 		}
@@ -336,6 +363,11 @@ public class Announcer {
 			});
 			return true;
 		} else {
+			synchronized(this) {
+				killedAnnouncementTooOld = false;
+			}
+			if(node.clientCore != null)
+				node.clientCore.alerts.unregister(announcementDisabledAlert);
 			if(node.nodeUpdater.isEnabled() && node.nodeUpdater.isArmed() &&
 					node.nodeUpdater.uom.fetchingFromTwo() &&
 					node.peers.getPeerNodeStatusSize(PeerManager.PEER_NODE_STATUS_TOO_NEW, false) > 5) {
@@ -630,7 +662,7 @@ public class Announcer {
 
 		@Override
 		public HTMLNode getHTMLText() {
-			return new HTMLNode("#", getText());
+			return new Text(getText());
 		}
 
 		@Override

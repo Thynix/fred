@@ -1,6 +1,13 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.constants.InputType;
+import freenet.clients.http.constants.ListType;
+import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Infobox;
+import freenet.clients.http.uielements.OutputList;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
@@ -12,61 +19,54 @@ public class OPENNET implements Step {
 
 	@Override
 	public void getStep(HTTPRequest request, PageHelper helper) {
-		HTMLNode contentNode = helper.getPageContent(WizardL10n.l10n("opennetChoicePageTitle"));
-		HTMLNode infoboxContent = helper.getInfobox("infobox-normal", WizardL10n.l10n("opennetChoiceTitle"),
-		        contentNode, null, false);
+		Infobox infoboxContent = helper.getPageContent(WizardL10n.l10n("opennetChoicePageTitle")).addInfobox(
+			InfoboxType.NORMAL,
+			WizardL10n.l10n("opennetChoiceTitle"));
 
-		infoboxContent.addChild("p", WizardL10n.l10n("opennetChoiceIntroduction"));
+		infoboxContent.body.addBlockText(WizardL10n.l10n("opennetChoiceIntroduction"));
 
-		HTMLNode form = helper.addFormChild(infoboxContent, ".", "opennetForm", false);
+		HTMLNode form = helper.addFormChild(infoboxContent.body, ".", "opennetForm", false);
 
-		HTMLNode p = form.addChild("p");
-		HTMLNode input = p.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "radio", "opennet", "false" });
-		input.addChild("b", WizardL10n.l10n("opennetChoiceConnectFriends")+":");
-		p.addChild("br");
-		p.addChild("i", WizardL10n.l10n("opennetChoicePro"));
-		p.addChild("#", ": "+WizardL10n.l10n("opennetChoiceConnectFriendsPRO") + "¹");
-		p.addChild("br");
-		p.addChild("i", WizardL10n.l10n("opennetChoiceCon"));
-		p.addChild("#", ": "+WizardL10n.l10n("opennetChoiceConnectFriendsCON", "minfriends", "5"));
+		HTMLNode p = form.addBlockText(Category.ITALIC);
+		HTMLNode input = p.addInput(InputType.RADIO, "opennet", "false");
+		input.addInlineBox(Category.BOLD, WizardL10n.l10n("opennetChoiceConnectFriends") + ":");
+		p.addLineBreak();
+		p.addText(WizardL10n.l10n("opennetChoicePro"));
+		p.addText(": " + WizardL10n.l10n("opennetChoiceConnectFriendsPRO") + "¹");
+		p.addLineBreak();
+		p.addText(WizardL10n.l10n("opennetChoiceCon"));
+		p.addText(": " + WizardL10n.l10n("opennetChoiceConnectFriendsCON", "minfriends", "5"));
 
-		p = form.addChild("p");
-		input = p.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "radio", "opennet", "true" });
-		input.addChild("b", WizardL10n.l10n("opennetChoiceConnectStrangers")+":");
-		p.addChild("br");
-		p.addChild("i", WizardL10n.l10n("opennetChoicePro"));
-		p.addChild("#", ": "+WizardL10n.l10n("opennetChoiceConnectStrangersPRO"));
-		p.addChild("br");
-		p.addChild("i", WizardL10n.l10n("opennetChoiceCon"));
-		p.addChild("#", ": "+WizardL10n.l10n("opennetChoiceConnectStrangersCON"));
+		p = form.addBlockText();
+		input = p.addInput(InputType.RADIO, "opennet", "true");
+		input.addInlineBox(Category.BOLD, WizardL10n.l10n("opennetChoiceConnectStrangers") + ":");
+		p.addLineBreak();
+		p.addText(WizardL10n.l10n("opennetChoicePro"));
+		p.addText(": " + WizardL10n.l10n("opennetChoiceConnectStrangersPRO"));
+		p.addLineBreak();
+		p.addText(WizardL10n.l10n("opennetChoiceCon"));
+		p.addText(": " + WizardL10n.l10n("opennetChoiceConnectStrangersCON"));
 
-		form.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "back", NodeL10n.getBase().getString("Toadlet.back")});
-		form.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "next", NodeL10n.getBase().getString("Toadlet.next")});
+		form.addInput(InputType.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
+		form.addInput(InputType.SUBMIT, "next", NodeL10n.getBase().getString("Toadlet.next"));
 
-		HTMLNode foot = infoboxContent.addChild("div", "class", "toggleable");
-		foot.addChild("i", "¹: " + WizardL10n.l10n("opennetChoiceHowSafeIsFreenetToggle"));
-		HTMLNode footHidden = foot.addChild("div", "class", "hidden");
-		HTMLNode footList = footHidden.addChild("ol");
-		footList.addChild("li", WizardL10n.l10n("opennetChoiceHowSafeIsFreenetStupid"));
-		footList.addChild("li", WizardL10n.l10n("opennetChoiceHowSafeIsFreenetFriends") + "²");
-		footList.addChild("li", WizardL10n.l10n("opennetChoiceHowSafeIsFreenetTrustworthy"));
-		footList.addChild("li", WizardL10n.l10n("opennetChoiceHowSafeIsFreenetNoSuspect"));
-		footList.addChild("li", WizardL10n.l10n("opennetChoiceHowSafeIsFreenetChangeID"));
-		footList.addChild("li", WizardL10n.l10n("opennetChoiceHowSafeIsFreenetSSK"));
-		footList.addChild("li", WizardL10n.l10n("opennetChoiceHowSafeIsFreenetOS"));
-		footList.addChild("li", WizardL10n.l10n("opennetChoiceHowSafeIsFreenetBigPriv"));
-		footList.addChild("li", WizardL10n.l10n("opennetChoiceHowSafeIsFreenetDistant"));
-		footList.addChild("li", WizardL10n.l10n("opennetChoiceHowSafeIsFreenetBugs"));
-		HTMLNode foot2 = footHidden.addChild("p");
-		foot2.addChild("#", "²: " + WizardL10n.l10n("opennetChoiceHowSafeIsFreenetFoot2"));
+		Box foot = new Box(Category.TOGGLEABLE);
+		infoboxContent.addChild(foot);
+		foot.addInlineBox(Category.ITALIC, "¹: " + WizardL10n.l10n("opennetChoiceHowSafeIsFreenetToggle"));
+		Box footHidden = foot.addBox(Category.HIDDEN);
+		OutputList footList = footHidden.addList(ListType.ORDERED, Category.NULL);
+		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetStupid"));
+		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetFriends") + "²");
+		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetTrustworthy"));
+		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetNoSuspect"));
+		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetChangeID"));
+		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetSSK"));
+		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetOS"));
+		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetBigPriv"));
+		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetDistant"));
+		footList.addItem(WizardL10n.l10n("opennetChoiceHowSafeIsFreenetBugs"));
+		HTMLNode foot2 = footHidden.addBlockText();
+		foot2.addText("²: " + WizardL10n.l10n("opennetChoiceHowSafeIsFreenetFoot2"));
 	}
 
 	/**

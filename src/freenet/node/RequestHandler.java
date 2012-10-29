@@ -52,7 +52,6 @@ public class RequestHandler implements PrioRunnable, ByteCounter, RequestSenderL
 			}
 		});
 	}
-	final Message req;
 	final Node node;
 	final long uid;
 	private final short htl;
@@ -86,22 +85,18 @@ public class RequestHandler implements PrioRunnable, ByteCounter, RequestSenderL
 	 * @param key
 	 * @param tag
 	 * @param passedInKeyBlock We ALWAYS look up in the datastore before starting a request.
+	 * SECURITY: Do not pass messages into handler constructors. See note at top of NodeDispatcher.
 	 */
-	public RequestHandler(Message m, PeerNode source, long id, Node n, short htl, Key key, RequestTag tag, KeyBlock passedInKeyBlock, boolean realTimeFlag) {
-		req = m;
+	public RequestHandler(PeerNode source, long id, Node n, short htl, Key key, RequestTag tag, KeyBlock passedInKeyBlock, boolean realTimeFlag, boolean needsPubKey) {
 		node = n;
 		uid = id;
 		this.realTimeFlag = realTimeFlag;
 		this.source = source;
 		this.htl = htl;
 		this.tag = tag;
-		if(htl <= 0)
-			htl = 1;
 		this.key = key;
 		this.passedInKeyBlock = passedInKeyBlock;
-		if(key instanceof NodeSSK)
-			needsPubKey = m.getBoolean(DMT.NEED_PUB_KEY);
-		receivedBytes(m.receivedByteCount());
+		this.needsPubKey = needsPubKey;
 	}
 
 	@Override
@@ -249,13 +244,13 @@ public class RequestHandler implements PrioRunnable, ByteCounter, RequestSenderL
 						if(rs != null && rs.isTransferCoalesced()) {
 							if(logMINOR) Logger.minor(this, "Not cancelling transfer because others want the data on "+RequestHandler.this);
 							// We do need to reassign the tag because the RS has the same UID.
-							node.reassignTagToSelf(tag);
+							node.tracker.reassignTagToSelf(tag);
 							return false;
 						}
 						if(node.failureTable.peersWantKey(key, source)) {
 							// This may indicate downstream is having trouble communicating with us.
 							Logger.error(this, "Downstream transfer successful but upstream transfer to "+source.shortToString()+" failed. Reassigning tag to self because want the data for peers on "+RequestHandler.this);
-							node.reassignTagToSelf(tag);
+							node.tracker.reassignTagToSelf(tag);
 							return false; // Want it
 						}
 						if(node.clientCore != null && node.clientCore.wantKey(key)) {
@@ -282,7 +277,7 @@ public class RequestHandler implements PrioRunnable, ByteCounter, RequestSenderL
 							 * discussion in BlockReceiver's top comments.
 							 */
 							Logger.error(this, "Downstream transfer successful but upstream transfer to "+source.shortToString()+" failed. Reassigning tag to self because want the data for ourselves on "+RequestHandler.this);
-							node.reassignTagToSelf(tag);
+							node.tracker.reassignTagToSelf(tag);
 							return false; // Want it
 						}
 						return true;
@@ -533,9 +528,8 @@ public class RequestHandler implements PrioRunnable, ByteCounter, RequestSenderL
 	private void sendSSK(byte[] headers, final byte[] data, boolean needsPubKey2, DSAPublicKey pubKey) throws NotConnectedException {
 		// SUCCESS requires that BOTH the pubkey AND the data/headers have been received.
 		// The pubKey will have been set on the SSK key, and the SSKBlock will have been constructed.
-		boolean isOldFNP = source.isOldFNP();
 		MultiMessageCallback mcb = null;
-		if(!isOldFNP) mcb = new MultiMessageCallback() {
+		mcb = new MultiMessageCallback() {
 			@Override
 			public void finish(boolean success) {
 				sentPayload(data.length); // FIXME report this at the time when that message is acked for more accurate reporting???
@@ -560,75 +554,34 @@ public class RequestHandler implements PrioRunnable, ByteCounter, RequestSenderL
 			}
 		};
 		Message headersMsg = DMT.createFNPSSKDataFoundHeaders(uid, headers, realTimeFlag);
-		source.sendAsync(headersMsg, isOldFNP ? null : mcb.make(), this);
+		source.sendAsync(headersMsg, mcb.make(), this);
 		final Message dataMsg = DMT.createFNPSSKDataFoundData(uid, data, realTimeFlag);
 		if(needsPubKey) {
 			Message pk = DMT.createFNPSSKPubKey(uid, pubKey, realTimeFlag);
-			source.sendAsync(pk, isOldFNP ? null : mcb.make(), this);
+			source.sendAsync(pk, mcb.make(), this);
 		}
-		if(isOldFNP) {
-			node.executor.execute(new PrioRunnable() {
-				
-				@Override
-				public int getPriority() {
-					return RequestHandler.this.getPriority();
-				}
-				
-				@Override
-				public void run() {
-					try {
-						source.sendThrottledMessage(dataMsg, data.length, RequestHandler.this, 60 * 1000, true, null);
-						applyByteCounts();
-					} catch(NotConnectedException e) {
-						// Okay
-					} catch(WaitedTooLongException e) {
-						// Grrrr
-						Logger.error(this, "Waited too long to send SSK data on " + RequestHandler.this + " because of bwlimiting");
-					} catch(SyncSendWaitedTooLongException e) {
-						Logger.error(this, "Waited too long to send SSK data on " + RequestHandler.this + " because of peer");
-					} catch (PeerRestartedException e) {
-						// :(
-					} finally {
-						unregisterRequestHandlerWithNode();
-					}
-				}
-			}, "Send throttled SSK data for " + RequestHandler.this);
-		} else {
-			source.sendAsync(dataMsg, isOldFNP ? null : mcb.make(), this);
-			if(mcb != null) mcb.arm();
-		}
+		source.sendAsync(dataMsg, mcb.make(), this);
+		if(mcb != null) mcb.arm();
 	}
 
 	static void sendSSK(byte[] headers, byte[] data, boolean needsPubKey, DSAPublicKey pubKey, final PeerNode source, long uid, ByteCounter ctr, boolean realTimeFlag) throws NotConnectedException, WaitedTooLongException, PeerRestartedException, SyncSendWaitedTooLongException {
 		// SUCCESS requires that BOTH the pubkey AND the data/headers have been received.
 		// The pubKey will have been set on the SSK key, and the SSKBlock will have been constructed.
-		boolean isOldFNP = source.isOldFNP();
 		WaitingMultiMessageCallback mcb = null;
-		if(!isOldFNP) mcb = new WaitingMultiMessageCallback();
+		mcb = new WaitingMultiMessageCallback();
 		Message headersMsg = DMT.createFNPSSKDataFoundHeaders(uid, headers, realTimeFlag);
-		source.sendAsync(headersMsg, isOldFNP ? null : mcb.make(), ctr);
+		source.sendAsync(headersMsg, mcb.make(), ctr);
 		final Message dataMsg = DMT.createFNPSSKDataFoundData(uid, data, realTimeFlag);
-		if(isOldFNP) {
-			try {
-				source.sendThrottledMessage(dataMsg, data.length, ctr, 60 * 1000, false, null);
-			} catch(SyncSendWaitedTooLongException e) {
-				// Impossible
-				throw new Error(e);
-			}
-		} else {
-			source.sendAsync(dataMsg, isOldFNP ? null : mcb.make(), ctr);
-		}
+		source.sendAsync(dataMsg, mcb.make(), ctr);
 
 		if(needsPubKey) {
 			Message pk = DMT.createFNPSSKPubKey(uid, pubKey, realTimeFlag);
-			source.sendAsync(pk, isOldFNP ? null : mcb.make(), ctr);
+			source.sendAsync(pk, mcb.make(), ctr);
 		}
 		
-		if(!isOldFNP) {
-			mcb.arm();
-			mcb.waitFor();
-			ctr.sentPayload(data.length);
-		}
+		mcb.arm();
+		mcb.waitFor();
+		ctr.sentPayload(data.length);
 	}
 
 	/**

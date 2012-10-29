@@ -3,23 +3,19 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node.useralerts;
 
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
-
+import freenet.clients.http.constants.*;
+import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
 import freenet.node.fcp.FCPConnectionHandler;
 import freenet.support.Base64;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
+
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * Collection of UserAlert's.
@@ -179,7 +175,7 @@ public class UserAlertManager implements Comparator<UserAlert> {
 	 * Write the alerts as HTML.
 	 */
 	public HTMLNode createAlerts(boolean showOnlyErrors) {
-		HTMLNode alertsNode = new HTMLNode("div");
+		Box alertsNode = new Box();
 		UserAlert[] alerts = getAlerts();
 		int totalNumber = 0;
 		for (int i = 0; i < alerts.length; i++) {
@@ -189,11 +185,11 @@ public class UserAlertManager implements Comparator<UserAlert> {
 			if (!alert.isValid())
 				continue;
 			totalNumber++;
-			alertsNode.addChild("a", "name", alert.anchor());
+			alertsNode.addLink(LinkType.ANCHOR, alert.anchor());
 			alertsNode.addChild(renderAlert(alert));
 		}
 		if (totalNumber == 0) {
-			return new HTMLNode("#", "");
+			return new Text("");
 		}
 		return alertsNode;
 	}
@@ -206,34 +202,30 @@ public class UserAlertManager implements Comparator<UserAlert> {
 	 * @return The rendered HTML node
 	 */
 	public HTMLNode renderAlert(UserAlert userAlert) {
-		HTMLNode userAlertNode = null;
 		short level = userAlert.getPriorityClass();
-		userAlertNode = new HTMLNode("div", "class", "infobox infobox-"+getAlertLevelName(level));
-
-		userAlertNode.addChild("div", "class", "infobox-header", userAlert.getTitle());
-		HTMLNode alertContentNode = userAlertNode.addChild("div", "class", "infobox-content");
-		alertContentNode.addChild(userAlert.getHTMLText());
+		Infobox userAlertNode = new Infobox(getAlertLevelName(level), userAlert.getTitle());
+		userAlertNode.body.addChild(userAlert.getHTMLText());
 		if (userAlert.userCanDismiss()) {
-			HTMLNode dismissFormNode = alertContentNode.addChild("form", new String[] { "action", "method" }, new String[] { "/alerts/", "post" }).addChild("div");
-			dismissFormNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "disable", String.valueOf(userAlert.hashCode()) });
-			dismissFormNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", core.formPassword });
-			dismissFormNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "submit", "dismiss-user-alert", userAlert.dismissButtonText() });
+			Box dismissFormNode = userAlertNode.body.addForm(Path.ALERTS.url, "post").addBox();
+			dismissFormNode.addInput(InputType.HIDDEN, "disable", String.valueOf(userAlert.hashCode()));
+			dismissFormNode.addInput(InputType.HIDDEN, "formPassword", core.formPassword);
+			dismissFormNode.addInput(InputType.SUBMIT, "dismiss-user-alert", userAlert.dismissButtonText());
 		}
 		return userAlertNode;
 	}
 
-	private String getAlertLevelName(short level) {
+	private InfoboxType getAlertLevelName(short level) {
 		if (level <= UserAlert.CRITICAL_ERROR)
-			return "error";
+			return InfoboxType.ERROR;
 		else if (level <= UserAlert.ERROR)
-			return "alert";
+			return InfoboxType.ALERT;
 		else if (level <= UserAlert.WARNING)
-			return "warning";
+			return InfoboxType.WARNING;
 		else if (level <= UserAlert.MINOR)
-			return "minor";
+			return InfoboxType.MINOR;
 		else {
 			Logger.error(this, "Unknown alert level: "+level, new Exception("debug"));
-			return "error";
+			return InfoboxType.ERROR;
 		}
 	}
 
@@ -243,12 +235,12 @@ public class UserAlertManager implements Comparator<UserAlert> {
 		return createAlerts(true);
 	}
 	
-	static final HTMLNode ALERTS_LINK = new HTMLNode("a", "href", "/alerts/").setReadOnly();
+	static final HTMLNode ALERTS_LINK = new Link(Path.ALERTS.url).setReadOnly();
 
 	/**
 	 * Write the alert summary as HTML to a StringBuilder
 	 */
-	public HTMLNode createSummary(boolean oneLine) {
+	public OutputNode createSummary(boolean oneLine) {
 		short highestLevel = 99;
 		int numberOfCriticalError = 0;
 		int numberOfError = 0;
@@ -278,7 +270,7 @@ public class UserAlertManager implements Comparator<UserAlert> {
 			return null;
 
 		if (totalNumber == 0)
-			return new HTMLNode("#", "");
+			return new Text("");
 
 		boolean separatorNeeded = false;
 		String separator = oneLine?", ":" | ";
@@ -323,28 +315,27 @@ public class UserAlertManager implements Comparator<UserAlert> {
 				alertSummaryString.append(separator);
 			alertSummaryString.append(l10n("totalLabel")).append(' ').append(totalNumber);
 		}
-		HTMLNode summaryBox = null;
-
-		String classes = oneLine?"alerts-line contains-":"infobox infobox-";
-
-		if (highestLevel <= UserAlert.CRITICAL_ERROR && !oneLine)
-			summaryBox = new HTMLNode("div", "class", classes + "error");
-		else if (highestLevel <= UserAlert.ERROR && !oneLine)
-			summaryBox = new HTMLNode("div", "class", classes + "alert");
-		else if (highestLevel <= UserAlert.WARNING)
-			summaryBox = new HTMLNode("div", "class", classes + "warning");
-		else if (highestLevel <= UserAlert.MINOR)
-			summaryBox = new HTMLNode("div", "class", classes + "information");
-		summaryBox.addChild("div", "class", "infobox-header", l10n("alertsTitle"));
-		HTMLNode summaryContent = summaryBox.addChild("div", "class", "infobox-content");
+		Infobox summaryBox = null;
+		if (highestLevel <= UserAlert.CRITICAL_ERROR && !oneLine) {
+			summaryBox = new Infobox(InfoboxType.ERROR, null);
+		} else if (highestLevel <= UserAlert.ERROR && !oneLine) {
+			summaryBox = new Infobox(InfoboxType.ALERT, null);
+		} else if (highestLevel <= UserAlert.WARNING) {
+			summaryBox = oneLine ? new AlertLine(AlertLine.Type.WARNING, null) : new Infobox(
+				InfoboxType.WARNING, null);
+		} else if (highestLevel <= UserAlert.MINOR) {
+			summaryBox = oneLine ? new AlertLine(AlertLine.Type.INFORMATION, null) : new Infobox(
+				InfoboxType.INFORMATION, null);
+		}
+		summaryBox.setTitle(l10n("alertsTitle"));
 		if(!oneLine) {
-			summaryContent.addChild("#", alertSummaryString.toString() + separator + " ");
-			NodeL10n.getBase().addL10nSubstitution(summaryContent, "UserAlertManager.alertsOnAlertsPage",
+			summaryBox.body.addText(alertSummaryString.toString() + separator + " ");
+			NodeL10n.getBase().addL10nSubstitution(summaryBox.body, "UserAlertManager.alertsOnAlertsPage",
 				new String[] { "link" }, new HTMLNode[] { ALERTS_LINK });
 		} else {
-			summaryContent.addChild("a", "href", "/alerts/", NodeL10n.getBase().getString("StatusBar.alerts") + " " + alertSummaryString.toString());
+			summaryBox.body.addLink(Path.ALERTS.url, NodeL10n.getBase().getString("StatusBar.alerts") + " " + alertSummaryString.toString());
 		}
-		summaryBox.addAttribute("id", "messages-summary-box");
+		summaryBox.setID(Identifier.MESSAGESUMMARYBOX);
 		return summaryBox;
 	}
 
@@ -391,7 +382,7 @@ public class UserAlertManager implements Comparator<UserAlert> {
 	}
 
 	public String getAtom(String startURI) {
-		String messagesURI = startURI + "/alerts/";
+		String messagesURI = startURI + Path.ALERTS.url;
 		String feedURI = startURI + "/feed/";
 
 		StringBuilder sb = new StringBuilder();

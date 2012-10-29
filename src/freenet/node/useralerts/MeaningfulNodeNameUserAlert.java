@@ -3,6 +3,12 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node.useralerts;
 
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.InputType;
+import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Form;
+import freenet.clients.http.uielements.Item;
+import freenet.clients.http.uielements.OutputList;
 import freenet.config.Option;
 import freenet.config.SubConfig;
 import freenet.l10n.NodeL10n;
@@ -40,23 +46,19 @@ public class MeaningfulNodeNameUserAlert extends AbstractUserAlert {
 	public HTMLNode getHTMLText() {
 		SubConfig sc = node.config.get("node");
 		Option<?> o = sc.getOption("name");
-
-		HTMLNode alertNode = new HTMLNode("div");
-		HTMLNode textNode = alertNode.addChild("div");
-		textNode.addChild("#", l10n("noNodeNick"));
-		HTMLNode formNode = alertNode.addChild("form", new String[] { "action", "method" }, new String[] { "/config/"+sc.getPrefix(), "post" });
-		formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", node.clientCore.formPassword });
-		formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "subconfig", sc.getPrefix() });
-		HTMLNode listNode = formNode.addChild("ul", "class", "config");
-		HTMLNode itemNode = listNode.addChild("li");
-		itemNode.addChild("span", new String[]{ "class", "title", "style" },
-				new String[]{ "configshortdesc", NodeL10n.getBase().getString("ConfigToadlet.defaultIs", new String[] { "default" }, new String[] { o.getDefault() }), 
-				"cursor: help;" }).addChild(NodeL10n.getBase().getHTMLNode(o.getShortDesc()));
-		itemNode.addChild("input", new String[] { "type", "class", "alt", "name", "value" }, new String[] { "text", "config", o.getShortDesc(), "node.name", o.getValueString() });
-		itemNode.addChild("span", "class", "configlongdesc").addChild(NodeL10n.getBase().getHTMLNode(o.getLongDesc()));
-		formNode.addChild("input", new String[] { "type", "value" }, new String[] { "submit", NodeL10n.getBase().getString("UserAlert.apply") });
-		formNode.addChild("input", new String[] { "type", "value" }, new String[] { "reset", NodeL10n.getBase().getString("UserAlert.reset") });
-
+		Box alertNode = new Box();
+		HTMLNode textNode = alertNode.addBox();
+		textNode.addText(l10n("noNodeNick"));
+		Form formNode = alertNode.addForm("/config/" + sc.getPrefix(), "post");
+		formNode.addInput(InputType.HIDDEN, "formPassword", node.clientCore.formPassword);
+		formNode.addInput(InputType.HIDDEN, "subconfig", sc.getPrefix());
+		OutputList listNode = formNode.addList(Category.CONFIG);
+		Item itemNode = listNode.addItem();
+		itemNode.addInlineBox(NodeL10n.getBase().getString("ConfigToadlet.defaultIs"), Category.CONFIGSHORTDESC).addChild(NodeL10n.getBase().getHTMLNode(o.getShortDesc()));
+		itemNode.addInput(InputType.TEXT, "node.name", o.getValueString(), Category.CONFIG, o.getShortDesc());
+		itemNode.addInlineBox(Category.CONFIGLONGDESC).addChild(NodeL10n.getBase().getHTMLNode(o.getLongDesc()));
+		formNode.addInput(InputType.SUBMIT, NodeL10n.getBase().getString("UserAlert.apply"));
+		formNode.addInput(InputType.RESET, NodeL10n.getBase().getString("UserAlert.reset"));
 		return alertNode;
 	}
 

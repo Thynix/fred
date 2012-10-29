@@ -4,6 +4,11 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.Identifier;
+import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.constants.InputType;
+import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
 import freenet.support.HTMLNode;
@@ -127,12 +132,8 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 	 * @param persistence Additional persistence fields to include.
 	 */
 	protected void createSelectDirectoryButton (HTMLNode node, String absolutePath, HTMLNode persistence) {
-		node.addChild("input",
-		        new String[]{"type", "name", "value"},
-		        new String[]{"submit", selectDir, l10n("insert")});
-		node.addChild("input",
-		        new String[]{"type", "name", "value"},
-		        new String[]{"hidden", filenameField(), absolutePath});
+		node.addInput(InputType.SUBMIT, selectDir, l10n("insert"));
+		node.addInput(InputType.HIDDEN, filenameField(), absolutePath);
 		node.addChild(persistence);
 	}
 
@@ -143,12 +144,8 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 	 * @param persistence Additional persistence fields to include.
 	 */
 	protected void createSelectFileButton (HTMLNode node, String absolutePath, HTMLNode persistence) {
-		node.addChild("input",
-		        new String[]{"type", "name", "value"},
-		        new String[]{"submit", selectFile, l10n("insert")});
-		node.addChild("input",
-		        new String[]{"type", "name", "value"},
-		        new String[]{"hidden", filenameField(), absolutePath});
+		node.addInput(InputType.SUBMIT, selectFile, l10n("insert"));
+		node.addInput(InputType.HIDDEN, filenameField(), absolutePath);
 		node.addChild(persistence);
 	}
 
@@ -159,12 +156,8 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 	 * @param persistence Additional persistence fields to include.
 	 */
 	private void createChangeDirButton (HTMLNode node, String buttonText, String path, HTMLNode persistence) {
-		node.addChild("input",
-		        new String[]{"type", "name", "value"},
-		        new String[]{"submit", changeDir, buttonText});
-		node.addChild("input",
-		        new String[]{"type", "name", "value"},
-		        new String[]{"hidden", "path", path});
+		node.addInput(InputType.SUBMIT, changeDir, buttonText);
+		node.addInput(InputType.HIDDEN, "path", path);
 		node.addChild(persistence);
 	}
 	
@@ -200,11 +193,10 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 	 * @return result HTMLNode containing hidden persistence fields
 	 */
 	private HTMLNode renderPersistenceFields (Hashtable<String, String> fieldPairs) {
-		HTMLNode result = new HTMLNode("div", "id", "persistenceFields");
+		Box result = new Box();
+		result.setID(Identifier.PERSISTENCEFIELDS);
 		for (String key : fieldPairs.keySet()) {
-			result.addChild("input", 
-			        new String[] { "type", "name", "value" },
-			        new String[] { "hidden", key, fieldPairs.get(key)});
+			result.addInput(InputType.HIDDEN, key, fieldPairs.get(key));
 		}
 		return result;
 	}
@@ -252,9 +244,9 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 	 * @param path current path to display
 	 * @param ctx context used for rendering
 	 * @param filename a filename if a file or directory is selected, NULL if not.
-	 * @throws ToadletContextClosedException
-	 * @throws IOException
-	 * @throws RedirectException
+	 * @throws freenet.clients.http.ToadletContextClosedException
+	 * @throws java.io.IOException
+	 * @throws freenet.clients.http.RedirectException
 	 */
 	private void renderPage (Hashtable<String, String> fieldPairs, String path, final ToadletContext ctx, String filename)
 	        throws ToadletContextClosedException, IOException, RedirectException {
@@ -266,7 +258,6 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 			else lastSuccessful = file.getParentFile().getAbsoluteFile();
 
 			try {
-				System.out.println(postTo());
 				throw new RedirectException(postTo());
 			} catch (URISyntaxException e) {
 				sendErrorPage(ctx, 500, NodeL10n.getBase().getString("Toadlet.internalErrorPleaseReport"),
@@ -281,152 +272,140 @@ public abstract class LocalFileBrowserToadlet extends Toadlet {
 				path = startingDir();
 			}
 		}
-
 		File currentPath = new File(path).getCanonicalFile();
 		//For use in error messages.
 		String attemptedPath = currentPath == null ? "null" : currentPath.getAbsolutePath();
-
 		PageMaker pageMaker = ctx.getPageMaker();
-
-		if (currentPath != null && !allowedDir(currentPath)) {
-			PageNode page = pageMaker.getPageNode(l10n("listingTitle", "path", attemptedPath), ctx);
-			pageMaker.getInfobox("infobox-error",  "Forbidden", page.content, "access-denied", true).
-			        addChild("#", l10n("dirAccessDenied"));
-
+		if (currentPath != null && ! allowedDir(currentPath)) {
+			Page page = pageMaker.getPage(l10n("listingTitle", "path", attemptedPath), ctx);
+			page.content.addInfobox(InfoboxType.ERROR, Identifier.ACCESSDENIED, "Forbidden").
+				addText(l10n("dirAccessDenied"));
 			sendErrorPage(ctx, 403, "Forbidden", l10n("dirAccessDenied"));
 			return;
 		}
-		
-		HTMLNode pageNode;
-
-		if (currentPath != null && currentPath.exists() && currentPath.isDirectory() && currentPath.canRead()) {
-			PageNode page = pageMaker.getPageNode(l10n("listingTitle", "path",
-			        currentPath.getAbsolutePath()), ctx);
-			pageNode = page.outer;
-			HTMLNode contentNode = page.content;
-			if (ctx.isAllowedFullAccess()) contentNode.addChild(core.alerts.createSummary());
-			
-			HTMLNode infoboxDiv = contentNode.addChild("div", "class", "infobox");
-			infoboxDiv.addChild("div", "class", "infobox-header", l10n("listing", "path",
-			        currentPath.getAbsolutePath()));
-			HTMLNode listingDiv = infoboxDiv.addChild("div", "class", "infobox-content");
-			
+		Page filesPage;
+		if (currentPath != null && currentPath.exists() && currentPath.isDirectory() && currentPath.canRead
+			()) {
+			Page page = pageMaker.getPage(l10n("listingTitle", "path",
+				currentPath.getAbsolutePath()), ctx);
+			filesPage = page;
+			if (ctx.isAllowedFullAccess()) {
+				page.content.addChild(core.alerts.createSummary());
+			}
+			Infobox filelist =
+				page.content.addInfobox(InfoboxType.NONE, l10n("listing", "path",
+					currentPath.getAbsolutePath()));
 			File[] files = currentPath.listFiles();
-			
 			if (files == null) {
 				sendErrorPage(ctx, 403, "Forbidden", l10n("dirAccessDenied"));
 				return;
 			}
-			
 			Arrays.sort(files, new Comparator<File>() {
 				@Override
 				public int compare(File firstFile, File secondFile) {
 					/* Put directories above files, sorting each alphabetically and
 					 * case-insensitively.
 					 */
-					if (firstFile.isDirectory() && !secondFile.isDirectory()) {
-						return -1;
+					if (firstFile.isDirectory() && ! secondFile.isDirectory()) {
+						return - 1;
 					}
-					if (!firstFile.isDirectory() && secondFile.isDirectory()) {
+					if (! firstFile.isDirectory() && secondFile.isDirectory()) {
 						return 1;
 					}
 					return firstFile.getName().compareToIgnoreCase(secondFile.getName());
 				}
 			});
-			HTMLNode listingTable = listingDiv.addChild("table");
-			HTMLNode headerRow = listingTable.addChild("tr");
-			headerRow.addChild("th");
-			headerRow.addChild("th", l10n("fileHeader"));
-			headerRow.addChild("th", l10n("sizeHeader"));
+			Table listingTable = filelist.body.addTable();
+			Row headerRow = listingTable.addRow();
+			headerRow.addHeader();
+			headerRow.addHeader(l10n("fileHeader"));
+			headerRow.addHeader(l10n("sizeHeader"));
 			/* add filesystem roots (fsck windows) */
 			for (File currentRoot : File.listRoots()) {
 				if (allowedDir(currentRoot)) {
-				HTMLNode rootRow = listingTable.addChild("tr");
-				rootRow.addChild("td");
-				HTMLNode rootLinkCellNode = rootRow.addChild("td");
-				HTMLNode rootLinkFormNode = ctx.addFormChild(rootLinkCellNode, path(),
-				        "insertLocalFileForm");
+					Row rootRow = listingTable.addRow();
+					rootRow.addCell();
+					HTMLNode rootLinkCellNode = rootRow.addCell();
+					HTMLNode rootLinkFormNode = ctx.addFormChild(rootLinkCellNode, path(),
+						"insertLocalFileForm");
 					createChangeDirButton(rootLinkFormNode, currentRoot.getCanonicalPath(),
-					        currentRoot.getAbsolutePath(), persistenceFields);
-				rootRow.addChild("td");
+						currentRoot.getAbsolutePath(), persistenceFields);
+					rootRow.addCell();
 				}
 			}
 			/* add back link */
 			if (currentPath.getParent() != null) {
 				if (allowedDir(currentPath.getParentFile())) {
-				HTMLNode backlinkRow = listingTable.addChild("tr");
-				backlinkRow.addChild("td");
-				HTMLNode backLinkCellNode = backlinkRow.addChild("td");
-				HTMLNode backLinkFormNode = ctx.addFormChild(backLinkCellNode, path(),
-				        "insertLocalFileForm");
-					createChangeDirButton(backLinkFormNode, "..", currentPath.getParent(), persistenceFields);
-				backlinkRow.addChild("td");
+					Row backlinkRow = listingTable.addRow();
+					backlinkRow.addCell();
+					HTMLNode backLinkCellNode = backlinkRow.addCell();
+					HTMLNode backLinkFormNode = ctx.addFormChild(backLinkCellNode, path(),
+						"insertLocalFileForm");
+					createChangeDirButton(backLinkFormNode, "..", currentPath.getParent(),
+						persistenceFields);
+					backlinkRow.addCell();
 				}
 			}
 			for (File currentFile : files) {
-				HTMLNode fileRow = listingTable.addChild("tr");
+				Row fileRow = listingTable.addRow();
 				if (currentFile.isDirectory()) {
 					if (currentFile.canRead()) {
 						// Select directory
 						if (allowedDir(currentFile)) {
-						HTMLNode cellNode = fileRow.addChild("td");
-						HTMLNode formNode = ctx.addFormChild(cellNode, path(),
-						        "insertLocalFileForm");
-
-							createSelectDirectoryButton(formNode, currentFile.getAbsolutePath(),
-							        persistenceFields);
-
-						// Change directory
-						HTMLNode directoryCellNode = fileRow.addChild("td");
-						HTMLNode directoryFormNode = ctx.addFormChild(directoryCellNode, path(),
-						        "insertLocalFileForm");
-							createChangeDirButton(directoryFormNode, currentFile.getName(),
-							        currentFile.getAbsolutePath(), persistenceFields);
+							Cell cellNode = fileRow.addCell();
+							HTMLNode formNode = ctx.addFormChild(cellNode, path(),
+								"insertLocalFileForm");
+							createSelectDirectoryButton(formNode,
+								currentFile.getAbsolutePath(),
+								persistenceFields);
+							// Change directory
+							Cell directoryCellNode = fileRow.addCell();
+							HTMLNode directoryFormNode =
+								ctx.addFormChild(directoryCellNode, path(),
+									"insertLocalFileForm");
+							createChangeDirButton(directoryFormNode,
+								currentFile.getName(),
+								currentFile.getAbsolutePath(), persistenceFields);
 						}
 					} else {
-						fileRow.addChild("td");
-						fileRow.addChild("td", "class", "unreadable-file",
-						        currentFile.getName());
+						fileRow.addCell();
+						fileRow.addCell(Category.UNREADABLEFILE, currentFile.getName());
 					}
-					fileRow.addChild("td");
+					fileRow.addCell();
 				} else {
 					if (currentFile.canRead()) {
 						//Select file
-						HTMLNode cellNode = fileRow.addChild("td");
+						Cell cellNode = fileRow.addCell();
 						HTMLNode formNode = ctx.addFormChild(cellNode, path(),
-						        "insertLocalFileForm");
+							"insertLocalFileForm");
 						createSelectFileButton(formNode, currentFile.getAbsolutePath(),
-						        persistenceFields);
-						
-						fileRow.addChild("td", currentFile.getName());
-						fileRow.addChild("td", "class", "right-align",
-						        String.valueOf(currentFile.length()));
+							persistenceFields);
+						fileRow.addCell(currentFile.getName());
+						fileRow.addCell(Category.ALIGNRIGHT,
+							String.valueOf(currentFile.length()));
 					} else {
-						fileRow.addChild("td");
-						fileRow.addChild("td", "class", "unreadable-file",
-						        currentFile.getName());
-						fileRow.addChild("td", "class", "right-align",
-						        String.valueOf(currentFile.length()));
+						fileRow.addCell();
+						fileRow.addCell(Category.UNREADABLEFILE, currentFile.getName());
+						fileRow.addCell(Category.ALIGNRIGHT,
+							String.valueOf(currentFile.length()));
 					}
 				}
 			}
 		} else {
-			PageNode page = pageMaker.getPageNode(l10n("listingTitle", "path", attemptedPath), ctx);
-			pageNode = page.outer;
-			HTMLNode contentNode = page.content;
-			if (ctx.isAllowedFullAccess()) contentNode.addChild(core.alerts.createSummary());
-			
-			HTMLNode infoboxDiv = contentNode.addChild("div", "class", "infobox");
-			infoboxDiv.addChild("div", "class", "infobox-header", l10n("listing", "path", attemptedPath));
-			HTMLNode listingDiv = infoboxDiv.addChild("div", "class", "infobox-content");
-
-			listingDiv.addChild("#", l10n("dirCannotBeRead", "path", attemptedPath));
-			HTMLNode ulNode = listingDiv.addChild("ul");
-			ulNode.addChild("li", l10n("checkPathExist"));
-			ulNode.addChild("li", l10n("checkPathIsDir"));
-			ulNode.addChild("li", l10n("checkPathReadable"));
+			Page page = pageMaker.getPage(l10n("listingTitle", "path", attemptedPath), ctx);
+			filesPage = page;
+			if (ctx.isAllowedFullAccess()) {
+				page.content.addChild(core.alerts.createSummary());
+			}
+			Infobox filelist = page.content
+				.addInfobox(InfoboxType.NONE, l10n("listing", "path", attemptedPath));
+			filelist.body.addText(l10n("dirCannotBeRead", "path", attemptedPath));
+			OutputList ulNode = filelist.body.addList();
+			ulNode.addItem(l10n("checkPathExist"));
+			ulNode.addItem(l10n("checkPathIsDir"));
+			ulNode.addItem(l10n("checkPathReadable"));
 		}
-		writeHTMLReply(ctx, 200, "OK", pageNode.generate());
+		writeHTMLReply(ctx, 200, "OK", filesPage.generate());
 	}
 
 	private String l10n (String key, String pattern, String value) {

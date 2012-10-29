@@ -141,6 +141,7 @@ public class DMT {
 	public static final String STORE_SIZE = "storeSize";
 	public static final String LINK_LENGTHS = "linkLengths";
 	public static final String UPTIME_PERCENT = "uptimePercent";
+	public static final String EXPECTED_HASH = "expectedHash";
 	
 	/** Very urgent */
 	public static final short PRIORITY_NOW=0;
@@ -1234,85 +1235,6 @@ public class DMT {
 		return msg;
 	}
 
-	public static final MessageType FNPRHProbeRequest = new MessageType("FNPRHProbeRequest", PRIORITY_HIGH) {{
-		addField(UID, Long.class);
-		addField(TARGET_LOCATION, Double.class);
-		addField(NEAREST_LOCATION, Double.class);
-		addField(BEST_LOCATION, Double.class);
-		addField(HTL, Short.class);
-	}};
-	
-	public static Message createFNPRHProbeRequest(long uid, double target, double nearest,
-			double best, short htl) {
-		Message msg = new Message(FNPRHProbeRequest);
-		msg.set(UID, uid);
-		msg.set(TARGET_LOCATION, target);
-		msg.set(NEAREST_LOCATION, nearest);
-		msg.set(BEST_LOCATION, best);
-		msg.set(HTL, htl);
-		return msg;
-	}
-
-	public static final MessageType FNPRHReturnSubMessage = new MessageType("FNPRHReturnSubMessage", PRIORITY_HIGH) {{
-		addField(NEAREST_LOCATION, Double.class);
-		addField(BEST_LOCATION, Double.class);
-		addField(COUNTER, Short.class);
-		addField(UNIQUE_COUNTER, Short.class);
-		addField(LINEAR_COUNTER, Short.class);
-		addField(REASON, String.class);
-	}};
-	
-	public static Message createFNPRHReturnSubMessage(double nearest, double best, short counter, short uniqueCounter, short linearCounter, String reason) {
-		Message msg = new Message(FNPRHReturnSubMessage);
-		msg.set(NEAREST_LOCATION, nearest);
-		msg.set(BEST_LOCATION, best);
-		msg.set(COUNTER, counter);
-		msg.set(UNIQUE_COUNTER, uniqueCounter);
-		msg.set(LINEAR_COUNTER, linearCounter);
-		msg.set(REASON, reason);
-		return msg;
-	}
-	
-	public static final MessageType FNPRHProbeTrace = new MessageType("FNPRHProbeTrace", PRIORITY_HIGH) {{
-		addField(UID, Long.class);
-		addField(NEAREST_LOCATION, Double.class);
-		addField(BEST_LOCATION, Double.class);
-		addField(HTL, Short.class);
-		addField(COUNTER, Short.class);
-		addField(UNIQUE_COUNTER, Short.class);
-		addField(LOCATION, Double.class);
-		addField(MY_UID, Long.class);
-		addField(PEER_LOCATIONS, ShortBuffer.class);
-		addField(PEER_UIDS, ShortBuffer.class);
-		addField(FORK_COUNT, Short.class);
-		addField(LINEAR_COUNTER, Short.class);
-		addField(REASON, String.class);
-		addField(PREV_UID, Long.class);
-	}};
-
-	public static Message createFNPRHProbeTrace(long uid, double nearest, double best, short htl, short counter, short uniqueCounter, double myLoc, long swapIdentifier, double[] peerLocs, long[] peerUIDs, short forkCount, short linearCounter, String reason, long prevUID) {
-		return createFNPRHProbeTrace(uid, nearest, best, htl, counter, uniqueCounter, myLoc, swapIdentifier, new ShortBuffer(Fields.doublesToBytes(peerLocs)), new ShortBuffer(Fields.longsToBytes(peerUIDs)), forkCount, linearCounter, reason, prevUID);
-	}
-	
-	public static Message createFNPRHProbeTrace(long uid, double nearest, double best, short htl, short counter, short uniqueCounter, double myLoc, long swapIdentifier, ShortBuffer peerLocs, ShortBuffer peerUIDs, short forkCount, short linearCounter, String reason, long prevUID) {
-		Message msg = new Message(FNPRHProbeTrace);
-		msg.set(UID, uid);
-		msg.set(NEAREST_LOCATION, nearest);
-		msg.set(BEST_LOCATION, best);
-		msg.set(HTL, htl);
-		msg.set(COUNTER, counter);
-		msg.set(UNIQUE_COUNTER, uniqueCounter);
-		msg.set(LOCATION, myLoc);
-		msg.set(MY_UID, swapIdentifier);
-		msg.set(PEER_LOCATIONS, peerLocs);
-		msg.set(PEER_UIDS, peerUIDs);
-		msg.set(FORK_COUNT, forkCount);
-		msg.set(LINEAR_COUNTER, linearCounter);
-		msg.set(REASON, reason);
-		msg.set(PREV_UID, prevUID);
-		return msg;
-	}
-
 	public static final MessageType FNPProbeRequest = new MessageType("FNPProbeRequest", PRIORITY_HIGH) {{
 		addField(UID, Long.class);
 		addField(TARGET_LOCATION, Double.class);
@@ -1463,57 +1385,6 @@ public class DMT {
 		return msg;
 	}
 	
-	public static final MessageType FNPSecretPing = new MessageType("FNPSecretPing", PRIORITY_LOW) {{
-		addRoutedToNodeMessageFields();
-		addField(COUNTER, Integer.class);
-		addField(DAWN_HTL, Short.class);
-	}};
-	
-	
-	public static Message createFNPSecretPing(long uid, double targetLocation, short htl, short dawnHtl, int counter, byte[] nodeIdentity) {
-		Message msg = new Message(FNPSecretPing);
-		msg.setRoutedToNodeFields(uid, targetLocation, htl, nodeIdentity);
-		msg.set(COUNTER, counter);
-		msg.set(DAWN_HTL, dawnHtl);
-		return msg;
-	}
-	
-	public static final MessageType FNPSecretPong = new MessageType("FNPSecretPong", PRIORITY_LOW) {{
-		addField(UID, Long.class);
-		addField(COUNTER, Integer.class);
-		addField(SECRET, Long.class);
-	}};
-	
-	public static Message createFNPSecretPong(long uid, int counter, long secret) {
-		Message msg = new Message(FNPSecretPong);
-		msg.set(UID, uid);
-		msg.set(COUNTER, counter);
-		msg.set(SECRET, secret);
-		return msg;
-	}
-	
-	public static final MessageType FNPStoreSecret = new MessageType("FNPStoreSecret", PRIORITY_LOW) {{
-		addField(UID, Long.class);
-		addField(SECRET, Long.class);
-	}};
-	
-	public static Message createFNPStoreSecret(long uid, long secret) {
-		Message msg = new Message(FNPStoreSecret);
-		msg.set(UID, uid);
-		msg.set(SECRET, secret);
-		return msg;
-	}
-	
-	public static final MessageType FNPNetworkID = new MessageType("FNPNetworkID", PRIORITY_LOW) {{
-		addField(UID, Integer.class);
-	}};
-	
-	public static Message createFNPNetworkID(int id) {
-		Message msg = new Message(FNPNetworkID);
-		msg.set(UID, id);
-		return msg;
-	}
-	
 	public static final MessageType FNPRoutedRejected = new MessageType("FNPRoutedRejected", PRIORITY_UNSPECIFIED) {{
 		addField(UID, Long.class);
 		addField(HTL, Short.class);
@@ -1615,7 +1486,43 @@ public class DMT {
 	// level, and will be sent, and parsed, even if the node is out of date. Should be stable 
 	// long-term.
 	
-	// Sent on connect
+	public static final MessageType UOMAnnouncement = new MessageType("UOMAnnouncement", PRIORITY_LOW) {{
+		addField(MAIN_JAR_KEY, String.class);
+		addField(REVOCATION_KEY, String.class);
+		addField(HAVE_REVOCATION_KEY, Boolean.class);
+		addField(MAIN_JAR_VERSION, Long.class);
+		// Last time (ms ago) we had 3 DNFs in a row on the revocation checker.
+		addField(REVOCATION_KEY_TIME_LAST_TRIED, Long.class);
+		// Number of DNFs so far this time.
+		addField(REVOCATION_KEY_DNF_COUNT, Integer.class);
+		// For convenience, may change
+		addField(REVOCATION_KEY_FILE_LENGTH, Long.class);
+		addField(MAIN_JAR_FILE_LENGTH, Long.class);
+		addField(PING_TIME, Integer.class);
+		addField(BWLIMIT_DELAY_TIME, Integer.class);
+	}};
+	
+	public static Message createUOMAnnouncement(String mainKey, String revocationKey,
+			boolean haveRevocation, long mainJarVersion, long timeLastTriedRevocationFetch,
+			int revocationDNFCount, long revocationKeyLength, long mainJarLength, int pingTime, int bwlimitDelayTime) {
+		Message msg = new Message(UOMAnnouncement);
+		
+		msg.set(MAIN_JAR_KEY, mainKey);
+		msg.set(REVOCATION_KEY, revocationKey);
+		msg.set(HAVE_REVOCATION_KEY, haveRevocation);
+		msg.set(MAIN_JAR_VERSION, mainJarVersion);
+		msg.set(REVOCATION_KEY_TIME_LAST_TRIED, timeLastTriedRevocationFetch);
+		msg.set(REVOCATION_KEY_DNF_COUNT, revocationDNFCount);
+		msg.set(REVOCATION_KEY_FILE_LENGTH, revocationKeyLength);
+		msg.set(MAIN_JAR_FILE_LENGTH, mainJarLength);
+		msg.set(PING_TIME, pingTime);
+		msg.set(BWLIMIT_DELAY_TIME, bwlimitDelayTime);
+		
+		return msg;
+	}
+	
+	// Legacy UOM message. Kept to enable old nodes to UOM to 1421.
+	// After that they can use the modern UOM system. FIXME remove eventually.
 	public static final MessageType UOMAnnounce = new MessageType("UOMAnnounce", PRIORITY_LOW) {{
 		addField(MAIN_JAR_KEY, String.class);
 		addField(EXTRA_JAR_KEY, String.class);
@@ -1635,6 +1542,7 @@ public class DMT {
 		addField(BWLIMIT_DELAY_TIME, Integer.class);
 	}};
 
+	// We need to be able to create these to announce to old nodes.
 	public static Message createUOMAnnounce(String mainKey, String extraKey, String revocationKey,
 			boolean haveRevocation, long mainJarVersion, long extraJarVersion, long timeLastTriedRevocationFetch,
 			int revocationDNFCount, long revocationKeyLength, long mainJarLength, long extraJarLength, int pingTime, int bwlimitDelayTime) {
@@ -1657,6 +1565,7 @@ public class DMT {
 		return msg;
 	}
 	
+	// Same for old and new, handled by new UOM.
 	public static final MessageType UOMRequestRevocation = new MessageType("UOMRequestRevocation", PRIORITY_HIGH) {{
 		addField(UID, Long.class);
 	}};
@@ -1666,27 +1575,30 @@ public class DMT {
 		msg.set(UID, uid);
 		return msg;
 	}
-	
+
+	// Used by old UOM. We need to be able to distinguish it easily for dispatcher.
+	// FIXME remove eventually.
 	public static final MessageType UOMRequestMain = new MessageType("UOMRequestMain", PRIORITY_LOW) {{
 		addField(UID, Long.class);
 	}};
 	
-	public static Message createUOMRequestMain(long uid) {
-		Message msg = new Message(UOMRequestMain);
+	// Used by new UOM.
+	public static final MessageType UOMRequestMainJar = new MessageType("UOMRequestMainJar", PRIORITY_LOW) {{
+		addField(UID, Long.class);
+	}};
+	
+	public static Message createUOMRequestMainJar(long uid) {
+		Message msg = new Message(UOMRequestMainJar);
 		msg.set(UID, uid);
 		return msg;
 	}
-	
+
+	// Used only by legacy UOM. FIXME remove eventually.
 	public static final MessageType UOMRequestExtra = new MessageType("UOMRequestExtra", PRIORITY_LOW) {{
 		addField(UID, Long.class);
 	}};
 	
-	public static Message createUOMRequestExtra(long uid) {
-		Message msg = new Message(UOMRequestExtra);
-		msg.set(UID, uid);
-		return msg;
-	}
-	
+	// Used by both old and new UOM.
 	public static final MessageType UOMSendingRevocation = new MessageType("UOMSendingRevocation", PRIORITY_HIGH) {{
 		addField(UID, Long.class);
 		// Probably excessive, but lengths are always long's, and wasting a few bytes here
@@ -1702,7 +1614,8 @@ public class DMT {
 		msg.set(REVOCATION_KEY, key);
 		return msg;
 	}
-	
+
+	// Used by old UOM. We need to distinguish them in NodeDispatcher. FIXME remove eventually.
 	public static final MessageType UOMSendingMain = new MessageType("UOMSendingMain", PRIORITY_LOW) {{
 		addField(UID, Long.class);
 		addField(FILE_LENGTH, Long.class);
@@ -1719,6 +1632,24 @@ public class DMT {
 		return msg;
 	}
 	
+	// Used by new UOM. We need to distinguish them in NodeDispatcher.
+	public static final MessageType UOMSendingMainJar = new MessageType("UOMSendingMainJar", PRIORITY_LOW) {{
+		addField(UID, Long.class);
+		addField(FILE_LENGTH, Long.class);
+		addField(MAIN_JAR_KEY, String.class);
+		addField(MAIN_JAR_VERSION, Integer.class);
+	}};
+	
+	public static Message createUOMSendingMainJar(long uid, long length, String key, int version) {
+		Message msg = new Message(UOMSendingMainJar);
+		msg.set(UID, uid);
+		msg.set(FILE_LENGTH, length);
+		msg.set(MAIN_JAR_KEY, key);
+		msg.set(MAIN_JAR_VERSION, version);
+		return msg;
+	}
+	
+	// Used only by legacy UOM. FIXME remove eventually.
 	public static final MessageType UOMSendingExtra = new MessageType("UOMSendingExtra", PRIORITY_LOW) {{
 		addField(UID, Long.class);
 		addField(FILE_LENGTH, Long.class);
@@ -1732,6 +1663,24 @@ public class DMT {
 		msg.set(FILE_LENGTH, length);
 		msg.set(EXTRA_JAR_KEY, key);
 		msg.set(EXTRA_JAR_VERSION, version);
+		return msg;
+	}
+	
+	/** Used to fetch a file required for deploying an update. The client
+	 * knows both the size and hash of the file. If we don't want to send
+	 * the data we should send an FNPBulkReceiveAborted, otherwise we just
+	 * send the data as a BulkTransmitter transfer. */
+	public static final MessageType UOMFetchDependency = new MessageType("UOMFetchDependency", PRIORITY_LOW) {{
+		addField(UID, Long.class); // This will be used for the transfer.
+		addField(EXPECTED_HASH, ShortBuffer.class); // Fetch by hash
+		addField(FILE_LENGTH, Long.class); // Length is known by both sides.
+	}};
+	
+	public static Message createUOMFetchDependency(long uid, byte[] hash, long length) {
+		Message msg = new Message(UOMFetchDependency);
+		msg.set(UID, uid);
+		msg.set(EXPECTED_HASH, new ShortBuffer(hash));
+		msg.set(FILE_LENGTH, length);
 		return msg;
 	}
 	

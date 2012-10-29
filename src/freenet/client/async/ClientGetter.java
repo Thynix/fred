@@ -92,6 +92,9 @@ public class ClientGetter extends BaseClientGetter implements WantsCooldownCallb
 	private SnoopBucket snoopBucket;
 	private HashResult[] hashes;
 	private final Bucket initialMetadata;
+	/** If set, and filtering is enabled, the MIME type we filter with must 
+	 * be compatible with this extension. */
+	final String forceCompatibleExtension;
 
 	// Shorter constructors for convenience and backwards compatibility.
 
@@ -115,6 +118,11 @@ public class ClientGetter extends BaseClientGetter implements WantsCooldownCallb
 		this(client, uri, ctx, priorityClass, clientContext, returnBucket, binaryBlobWriter, false, initialMetadata);
 	}
 
+	public ClientGetter(ClientGetCallback client,
+			FreenetURI uri, FetchContext ctx, short priorityClass, RequestClient clientContext, Bucket returnBucket, BinaryBlobWriter binaryBlobWriter, boolean dontFinalizeBlobWriter, Bucket initialMetadata) {
+		this(client, uri, ctx, priorityClass, clientContext, returnBucket, binaryBlobWriter, dontFinalizeBlobWriter, initialMetadata, null);
+	}
+	
 	/**
 	 * Fetch a key.
 	 * @param client The callback we will call when it is completed.
@@ -131,7 +139,7 @@ public class ClientGetter extends BaseClientGetter implements WantsCooldownCallb
 	 * @param dontFinalizeBlobWriter If true, the caller is responsible for BlobWriter finalization
 	 */
 	public ClientGetter(ClientGetCallback client,
-			FreenetURI uri, FetchContext ctx, short priorityClass, RequestClient clientContext, Bucket returnBucket, BinaryBlobWriter binaryBlobWriter, boolean dontFinalizeBlobWriter, Bucket initialMetadata) {
+			FreenetURI uri, FetchContext ctx, short priorityClass, RequestClient clientContext, Bucket returnBucket, BinaryBlobWriter binaryBlobWriter, boolean dontFinalizeBlobWriter, Bucket initialMetadata, String forceCompatibleExtension) {
 		super(priorityClass, clientContext);
 		this.clientCallback = client;
 		this.returnBucket = returnBucket;
@@ -143,6 +151,7 @@ public class ClientGetter extends BaseClientGetter implements WantsCooldownCallb
 		this.dontFinalizeBlobWriter = dontFinalizeBlobWriter;
 		this.initialMetadata = initialMetadata;
 		archiveRestarts = 0;
+		this.forceCompatibleExtension = forceCompatibleExtension;
 	}
 
 	public void start(ObjectContainer container, ClientContext context) throws FetchException {
@@ -259,11 +268,24 @@ public class ClientGetter extends BaseClientGetter implements WantsCooldownCallb
 			onFailure(new FetchException(FetchException.BUCKET_ERROR, "Failed to close binary blob stream, already closed: "+e, e), null, container, context);
 			return;
 		}
-		String mimeType;
+		String mimeType = clientMetadata == null ? null : clientMetadata.getMIMEType();
+		
+		if(persistent())
+			container.activate(ctx, 1);
+		
+		if(forceCompatibleExtension != null && ctx.filterData) {
+			try {
+				checkCompatibleExtension(mimeType);
+			} catch (FetchException e) {
+				onFailure(e, null, container, context);
+			}
+		}
+
 		synchronized(this) {
 			finished = true;
 			currentState = null;
-			mimeType = expectedMIME = clientMetadata.getMIMEType();
+			expectedMIME = mimeType;
+				
 		}
 		if(persistent()) {
 			container.store(this);
@@ -289,7 +311,6 @@ public class ClientGetter extends BaseClientGetter implements WantsCooldownCallb
 
 		if(persistent()) {
 			container.activate(returnBucket, 5);
-			container.activate(ctx, 1);
 			container.activate(state, 1);
 			container.activate(clientCallback, 1);
 			if(hashes != null) container.activate(hashes, Integer.MAX_VALUE);
@@ -457,11 +478,30 @@ public class ClientGetter extends BaseClientGetter implements WantsCooldownCallb
 	public void onFailure(FetchException e, ClientGetState state, ObjectContainer container, ClientContext context, boolean force) {
 		if(logMINOR)
 			Logger.minor(this, "Failed from "+state+" : "+e+" on "+this, e);
-		if(persistent())
+		if(persistent()) {
 			container.activate(uri, 5);
+			container.activate(ctx, 1);
+		}
 		ClientGetState oldState = null;
 		if(expectedSize > 0 && (e.expectedSize <= 0 || finalBlocksTotal != 0))
 			e.expectedSize = expectedSize;
+		
+		if(e.mode == FetchException.TOO_BIG && ctx.filterData) {
+			// Check for MIME type issues first. Because of the filtering behaviour the user needs to see these first.
+			if(e.finalizedSize()) {
+				// Since the size is finalized, so must the MIME type be.
+				String mime = e.getExpectedMimeType();
+				if(ctx.overrideMIME != null)
+					mime = ctx.overrideMIME;
+				if(mime != null && !"".equals(mime)) {
+					// Even if it's the default, it is set because we have the final size.
+					UnsafeContentTypeException unsafe = ContentFilter.checkMIMEType(mime);
+					if(unsafe != null)
+						e = new FetchException(unsafe.getFetchErrorCode(), e.expectedSize, unsafe, mime);
+				}
+			}
+		}
+		
 		while(true) {
 			if(e.mode == FetchException.ARCHIVE_RESTART) {
 				int ar;
@@ -730,20 +770,13 @@ public class ClientGetter extends BaseClientGetter implements WantsCooldownCallb
 			container.activate(ctx, 1);
 		}
 		expectedMIME = ctx.overrideMIME == null ? mime : ctx.overrideMIME;
-		if(!(expectedMIME == null || expectedMIME.equals("") || expectedMIME.equals(DefaultMIMETypes.DEFAULT_MIME_TYPE))) {
-			MIMEType handler = ContentFilter.getMIMEType(expectedMIME);
-			if((handler == null || (handler.readFilter == null && !handler.safeToRead)) && ctx.filterData) {
-				UnsafeContentTypeException e;
-				if(handler == null) {
-					if(logMINOR) Logger.minor(this, "Unable to get filter handler for MIME type "+expectedMIME);
-					e = new UnknownContentTypeException(expectedMIME);
-				}
-				else {
-					if(logMINOR) Logger.minor(this, "Unable to filter unsafe MIME type "+expectedMIME);
-					e = new KnownUnsafeContentTypeException(handler);
-				}
+		if(ctx.filterData && !(expectedMIME == null || expectedMIME.equals("") || expectedMIME.equals(DefaultMIMETypes.DEFAULT_MIME_TYPE))) {
+			UnsafeContentTypeException e = ContentFilter.checkMIMEType(expectedMIME);
+			if(e != null) {
 				throw new FetchException(e.getFetchErrorCode(), expectedSize, e, expectedMIME);
 			}
+			if(forceCompatibleExtension != null)
+				checkCompatibleExtension(mime);
 		}
 		if(persistent()) {
 			container.store(this);
@@ -751,6 +784,15 @@ public class ClientGetter extends BaseClientGetter implements WantsCooldownCallb
 		}
 		ctx.eventProducer.produceEvent(new ExpectedMIMEEvent(mime), container, context);
 
+	}
+
+	private void checkCompatibleExtension(String mimeType) throws FetchException {
+		MIMEType type = ContentFilter.getMIMEType(mimeType);
+		if(type == null)
+			// Not our problem, will be picked up elsewhere.
+			return;
+		if(!DefaultMIMETypes.isValidExt(mimeType, forceCompatibleExtension))
+			throw new FetchException(FetchException.MIME_INCOMPATIBLE_WITH_EXTENSION);
 	}
 
 	/** Called when we have some idea of the length of the final data */
@@ -869,7 +911,9 @@ public class ClientGetter extends BaseClientGetter implements WantsCooldownCallb
 			this.hashes = hashes;
 		}
 		if(persistent()) container.store(this);
-		ctx.eventProducer.produceEvent(new ExpectedHashesEvent(hashes), container, context);
+		HashResult[] clientHashes = hashes;
+		if(persistent()) clientHashes = HashResult.copy(hashes);
+		ctx.eventProducer.produceEvent(new ExpectedHashesEvent(clientHashes), container, context);
 	}
 
 	@Override

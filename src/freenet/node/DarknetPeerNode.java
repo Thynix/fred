@@ -1,59 +1,30 @@
 package freenet.node;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
+import freenet.client.DefaultMIMETypes;
+import freenet.clients.http.constants.InputType;
+import freenet.clients.http.constants.Path;
+import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Row;
+import freenet.clients.http.uielements.Table;
+import freenet.io.comm.*;
+import freenet.io.xfer.BulkReceiver;
+import freenet.io.xfer.BulkTransmitter;
+import freenet.io.xfer.PartiallyReceivedBulk;
+import freenet.keys.FreenetURI;
+import freenet.l10n.NodeL10n;
+import freenet.node.useralerts.*;
+import freenet.support.*;
+import freenet.support.Logger.LogLevel;
+import freenet.support.api.HTTPUploadedFile;
+import freenet.support.io.*;
+
+import java.io.*;
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
-
-import freenet.client.DefaultMIMETypes;
-import freenet.io.comm.DMT;
-import freenet.io.comm.DisconnectedException;
-import freenet.io.comm.FreenetInetAddress;
-import freenet.io.comm.Message;
-import freenet.io.comm.NotConnectedException;
-import freenet.io.comm.Peer;
-import freenet.io.comm.PeerParseException;
-import freenet.io.comm.ReferenceSignatureVerificationException;
-import freenet.io.comm.RetrievalException;
-import freenet.io.xfer.BulkReceiver;
-import freenet.io.xfer.BulkTransmitter;
-import freenet.io.xfer.PartiallyReceivedBulk;
-import freenet.keys.FreenetURI;
-import freenet.l10n.NodeL10n;
-import freenet.node.useralerts.AbstractUserAlert;
-import freenet.node.useralerts.BookmarkFeedUserAlert;
-import freenet.node.useralerts.DownloadFeedUserAlert;
-import freenet.node.useralerts.N2NTMUserAlert;
-import freenet.node.useralerts.UserAlert;
-import freenet.support.Base64;
-import freenet.support.Fields;
-import freenet.support.HTMLNode;
-import freenet.support.IllegalBase64Exception;
-import freenet.support.Logger;
-import freenet.support.SimpleFieldSet;
-import freenet.support.SizeUtil;
-import freenet.support.Logger.LogLevel;
-import freenet.support.api.HTTPUploadedFile;
-import freenet.support.io.BucketTools;
-import freenet.support.io.ByteArrayRandomAccessThing;
-import freenet.support.io.FileUtil;
-import freenet.support.io.RandomAccessFileWrapper;
-import freenet.support.io.RandomAccessThing;
 
 public class DarknetPeerNode extends PeerNode {
 
@@ -92,7 +63,7 @@ public class DarknetPeerNode extends PeerNode {
 	private LinkedHashSet<Integer> queuedToSendN2NMExtraPeerDataFileNumbers;
 
 	private FRIEND_TRUST trustLevel;
-	
+
 	private FRIEND_VISIBILITY ourVisibility;
 	private FRIEND_VISIBILITY theirVisibility;
 
@@ -111,16 +82,16 @@ public class DarknetPeerNode extends PeerNode {
 		}
 
 	}
-	
+
 	public enum FRIEND_VISIBILITY {
 		YES((short)0), // Visible
 		NAME_ONLY((short)1), // Only the name is visible, but other friends can ask for a connection
 		NO((short)2); // Not visible to our other friends at all
-		
-		/** The codes are persistent and used to communicate between nodes, so they must not change. 
+
+		/** The codes are persistent and used to communicate between nodes, so they must not change.
 		 * Which is why we are not using ordinal(). */
 		final short code;
-		
+
 		FRIEND_VISIBILITY(short code) {
 			this.code = code;
 		}
@@ -138,7 +109,7 @@ public class DarknetPeerNode extends PeerNode {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Create a darknet PeerNode from a SimpleFieldSet
 	 * @param fs The SimpleFieldSet to parse
@@ -183,7 +154,7 @@ public class DarknetPeerNode extends PeerNode {
 				theirVisibility = FRIEND_VISIBILITY.valueOf(s);
 			} else {
 				theirVisibility = FRIEND_VISIBILITY.NO;
-			} 
+			}
 		} else {
 			if(trust == null) throw new IllegalArgumentException();
 			trustLevel = trust;
@@ -321,7 +292,7 @@ public class DarknetPeerNode extends PeerNode {
 			isDisabled = true;
 		}
 		if(isConnected()) {
-			forceDisconnect(true);
+			forceDisconnect();
 		}
 		stopARKFetcher();
 		setPeerNodeStatus(System.currentTimeMillis());
@@ -401,10 +372,6 @@ public class DarknetPeerNode extends PeerNode {
 		setPeerNodeStatus(System.currentTimeMillis());
 		node.peers.writePeersDarknetUrgent();
 
-	}
-
-	public boolean isIgnoreSourcePort() {
-		return ignoreSourcePort;
 	}
 
 	@Override
@@ -571,7 +538,7 @@ public class DarknetPeerNode extends PeerNode {
 			if(peerNoteType == Node.PEER_NOTE_TYPE_PRIVATE_DARKNET_COMMENT) {
 				synchronized(privateDarknetComment) {
 				  	try {
-						privateDarknetComment = new String(Base64.decode(fs.get("privateDarknetComment")));
+						privateDarknetComment = Base64.decodeUTF8(fs.get("privateDarknetComment"));
 					} catch (IllegalBase64Exception e) {
 						Logger.error(this, "Bad Base64 encoding when decoding a private darknet comment SimpleFieldSet", e);
 						return false;
@@ -816,11 +783,7 @@ public class DarknetPeerNode extends PeerNode {
 		}
 		SimpleFieldSet fs = new SimpleFieldSet(true);
 		fs.put("peerNoteType", Node.PEER_NOTE_TYPE_PRIVATE_DARKNET_COMMENT);
-		try {
-			fs.putSingle("privateDarknetComment", Base64.encode(comment.getBytes("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			throw new Error("Impossible: JVM doesn't support UTF-8: " + e, e);
-		}
+		fs.putSingle("privateDarknetComment", Base64.encodeUTF8(comment));
 		if(localFileNumber == -1) {
 			localFileNumber = writeNewExtraPeerDataFile(fs, Node.EXTRA_PEER_DATA_TYPE_PEER_NOTE);
 			synchronized(privateDarknetComment) {
@@ -895,6 +858,8 @@ public class DarknetPeerNode extends PeerNode {
 		final String filename;
 		final String mimeType;
 		final String comment;
+		/** Only valid if amIOffering == false. Set when start receiving. */
+		private File destination;
 		private RandomAccessThing data;
 		final long size;
 		/** Who is offering it? True = I am offering it, False = I am being offered it */
@@ -920,14 +885,14 @@ public class DarknetPeerNode extends PeerNode {
 			size = fs.getLong("size");
 			mimeType = fs.get("metadata.contentType");
 			filename = FileUtil.sanitize(fs.get("filename"), mimeType);
+			destination = null;
 			String s = fs.get("comment");
 			if(s != null) {
 				try {
-					s = new String(Base64.decode(s), "UTF-8");
-				} catch (UnsupportedEncodingException e) {
-					throw new Error("Impossible: JVM doesn't support UTF-8: " + e, e);
+					s = Base64.decodeUTF8(s);
 				} catch (IllegalBase64Exception e) {
 					// Maybe it wasn't encoded? FIXME remove
+					Logger.error(this, "Bad Base64 encoding when decoding a private darknet comment SimpleFieldSet", e);
 				}
 			}
 			comment = s;
@@ -938,11 +903,7 @@ public class DarknetPeerNode extends PeerNode {
 			fs.put("uid", uid);
 			fs.putSingle("filename", filename);
 			fs.putSingle("metadata.contentType", mimeType);
-			try {
-				fs.putSingle("comment", Base64.encode(comment.getBytes("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				throw new Error("Impossible: JVM doesn't support UTF-8: " + e, e);
-			}
+			fs.putSingle("comment", Base64.encodeUTF8(comment));
 			fs.put("size", size);
 		}
 
@@ -950,6 +911,7 @@ public class DarknetPeerNode extends PeerNode {
 			acceptedOrRejected = true;
 			final String baseFilename = "direct-"+FileUtil.sanitize(getName())+"-"+filename;
 			final File dest = node.clientCore.downloadsDir().file(baseFilename+".part");
+			destination = node.clientCore.downloadsDir().file(baseFilename);
 			try {
 				data = new RandomAccessFileWrapper(dest, "rw");
 			} catch (FileNotFoundException e) {
@@ -1045,15 +1007,15 @@ public class DarknetPeerNode extends PeerNode {
 				}
 				@Override
 				public HTMLNode getHTMLText() {
-					HTMLNode div = new HTMLNode("div");
+					Box box_ = new Box();
 
-					div.addChild("p", l10n("failedReceiveHeader", new String[] { "filename", "node" },
-							new String[] { filename, getName() }));
+					box_.addBlockText( l10n("failedReceiveHeader", new String[]{"filename", "node"},
+						new String[]{filename, getName()}));
 
 					// Descriptive table
-					describeFile(div);
+					describeFile(box_);
 
-					return div;
+					return box_;
 				}
 
 				@Override
@@ -1138,17 +1100,17 @@ public class DarknetPeerNode extends PeerNode {
 				}
 				@Override
 				public HTMLNode getHTMLText() {
-					HTMLNode div = new HTMLNode("div");
+					Box box_ = new Box();
 
 					// FIXME localise!!!
 
-					div.addChild("p", l10n("succeededReceiveHeader", new String[] { "filename", "node" },
-							new String[] { filename, getName() }));
+					box_.addBlockText( l10n("succeededReceiveHeader", new String[]{"filename", "node"},
+						new String[]{filename, getName()}));
 
 					// Descriptive table
-					describeFile(div);
+					describeFile(box_);
 
-					return div;
+					return box_;
 				}
 
 				@Override
@@ -1211,32 +1173,28 @@ public class DarknetPeerNode extends PeerNode {
 				}
 				@Override
 				public HTMLNode getHTMLText() {
-					HTMLNode div = new HTMLNode("div");
+					Box box_ = new Box();
 
-					div.addChild("p", l10n("offeredFileHeader", "name", getName()));
+					box_.addBlockText( l10n("offeredFileHeader", "name", getName()));
 
 					// Descriptive table
-					describeFile(div);
+					describeFile(box_);
 
 					// Accept/reject form
 
 					// Hopefully we will have a container when this function is called!
-					HTMLNode form = node.clientCore.getToadletContainer().addFormChild(div, "/friends/", "f2fFileOfferAcceptForm");
+					HTMLNode form = node.clientCore.getToadletContainer().addFormChild(box_, Path.FRIENDS.url, "f2fFileOfferAcceptForm");
 
 					// FIXME node_ is inefficient
-					form.addChild("input", new String[] { "type", "name" },
-							new String[] { "hidden", "node_"+DarknetPeerNode.this.hashCode() });
+					form.addInput("node_"+DarknetPeerNode.this.hashCode(), InputType.HIDDEN);
 
-					form.addChild("input", new String[] { "type", "name", "value" },
-							new String[] { "hidden", "id", Long.toString(uid) });
+					form.addInput(InputType.HIDDEN, "id", Long.toString(uid));
 
-					form.addChild("input", new String[] { "type", "name", "value" },
-							new String[] { "submit", "acceptTransfer", l10n("acceptTransferButton") });
+					form.addInput(InputType.SUBMIT, "acceptTransfer", l10n("acceptTransferButton"));
 
-					form.addChild("input", new String[] { "type", "name", "value" },
-							new String[] { "submit", "rejectTransfer", l10n("rejectTransferButton") });
+					form.addInput(InputType.SUBMIT, "rejectTransfer", l10n("rejectTransferButton"));
 
-					return div;
+					return box_;
 				}
 				@Override
 				public short getPriorityClass() {
@@ -1288,9 +1246,9 @@ public class DarknetPeerNode extends PeerNode {
 		protected void addComment(HTMLNode node) {
 			String[] lines = comment.split("\n");
 			for (int i = 0, c = lines.length; i < c; i++) {
-				node.addChild("#", lines[i]);
+				node.addText(lines[i]);
 				if(i != lines.length - 1)
-					node.addChild("br");
+					node.addLineBreak();
 			}
 		}
 
@@ -1333,23 +1291,29 @@ public class DarknetPeerNode extends PeerNode {
 		}
 
 		private void describeFile(HTMLNode div) {
-			HTMLNode table = div.addChild("table", "border", "0");
-			HTMLNode row = table.addChild("tr");
-			row.addChild("td").addChild("#", l10n("fileLabel"));
-			row.addChild("td").addChild("#", filename);
-			row = table.addChild("tr");
-			row.addChild("td").addChild("#", l10n("sizeLabel"));
-			row.addChild("td").addChild("#", SizeUtil.formatSize(size));
-			row = table.addChild("tr");
-			row.addChild("td").addChild("#", l10n("mimeLabel"));
-			row.addChild("td").addChild("#", mimeType);
-			row = table.addChild("tr");
-			row.addChild("td").addChild("#", l10n("senderLabel"));
-			row.addChild("td").addChild("#", getName());
-			row = table.addChild("tr");
+			Table table = new Table();
+			div.addChild(table);
+			Row row = table.addRow();
+			row.addCell().addText(l10n("fileLabel"));
+			row.addCell().addText(filename);
+			if(destination != null) {
+				row = table.addRow();
+				row.addCell().addText(l10n("fileSavedToLabel"));
+				row.addCell().addText(destination.getPath());
+			}
+			row = table.addRow();
+			row.addCell().addText(l10n("sizeLabel"));
+			row.addCell().addText(SizeUtil.formatSize(size));
+			row = table.addRow();
+			row.addCell().addText(l10n("mimeLabel"));
+			row.addCell().addText(mimeType);
+			row = table.addRow();
+			row.addCell().addText(l10n("senderLabel"));
+			row.addCell().addText(getName());
+			row = table.addRow();
 			if(comment != null && comment.length() > 0) {
-				row.addChild("td").addChild("#", l10n("commentLabel"));
-				addComment(row.addChild("td"));
+				row.addCell().addText(l10n("commentLabel"));
+				addComment(row.addCell());
 			}
 		}
 	}
@@ -1362,12 +1326,7 @@ public class DarknetPeerNode extends PeerNode {
 		fs.put("composedTime", now);
 		fs.put("hasAnActivelink", hasAnActiveLink);
 		if(description != null)
-			try {
-				fs.putSingle("Description", Base64.encode(description.getBytes("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				throw new Error("Impossible: JVM doesn't support UTF-8: " + e, e);
-
-			}
+			fs.putSingle("Description", Base64.encodeUTF8(description));
 		fs.put("type", Node.N2N_TEXT_MESSAGE_TYPE_BOOKMARK);
 		sendNodeToNodeMessage(fs, Node.N2N_MESSAGE_TYPE_FPROXY, true, now, true);
 		setPeerNodeStatus(System.currentTimeMillis());
@@ -1379,12 +1338,8 @@ public class DarknetPeerNode extends PeerNode {
 		SimpleFieldSet fs = new SimpleFieldSet(true);
 		fs.putSingle("URI", URI.toString());
 		fs.put("composedTime", now);
-		if(description != null)
-			try {
-				fs.putSingle("Description", Base64.encode(description.getBytes("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				throw new Error("Impossible: JVM doesn't support UTF-8: " + e, e);
-
+		if(description != null) {
+			fs.putSingle("Description", Base64.encodeUTF8(description));
 		}
 		fs.put("type", Node.N2N_TEXT_MESSAGE_TYPE_DOWNLOAD);
 		sendNodeToNodeMessage(fs, Node.N2N_MESSAGE_TYPE_FPROXY, true, now, true);
@@ -1396,15 +1351,11 @@ public class DarknetPeerNode extends PeerNode {
 		long now = System.currentTimeMillis();
 		SimpleFieldSet fs = new SimpleFieldSet(true);
 		fs.put("type", Node.N2N_TEXT_MESSAGE_TYPE_USERALERT);
-		try {
-			fs.putSingle("text", Base64.encode(message.getBytes("UTF-8")));
-			fs.put("composedTime", now);
-			sendNodeToNodeMessage(fs, Node.N2N_MESSAGE_TYPE_FPROXY, true, now, true);
-			this.setPeerNodeStatus(System.currentTimeMillis());
-			return getPeerNodeStatus();
-		} catch (UnsupportedEncodingException e) {
-			throw new Error("Impossible: JVM doesn't support UTF-8: " + e, e);
-		}
+		fs.putSingle("text", Base64.encodeUTF8(message));
+		fs.put("composedTime", now);
+		sendNodeToNodeMessage(fs, Node.N2N_MESSAGE_TYPE_FPROXY, true, now, true);
+		this.setPeerNodeStatus(System.currentTimeMillis());
+		return getPeerNodeStatus();
 	}
 
 	public int sendFileOfferAccepted(long uid) {
@@ -1477,7 +1428,7 @@ public class DarknetPeerNode extends PeerNode {
 		long sentTime = fs.getLong("sentTime", -1);
 		long receivedTime = fs.getLong("receivedTime", -1);
 	  	try {
-			text = new String(Base64.decode(fs.get("text")));
+			text = Base64.decodeUTF8(fs.get("text"));
 		} catch (IllegalBase64Exception e) {
 			Logger.error(this, "Bad Base64 encoding when decoding a N2NTM SimpleFieldSet", e);
 			return;
@@ -1597,7 +1548,7 @@ public class DarknetPeerNode extends PeerNode {
 		long receivedTime = fs.getLong("receivedTime", -1);
 		try {
 			if(fs.get("Description") != null)
-				description = new String(Base64.decode(fs.get("Description")));
+				description = Base64.decodeUTF8(fs.get("Description"));
 			uri = new FreenetURI(fs.get("URI"));
 		} catch (MalformedURLException e) {
 			Logger.error(this, "Malformed URI in N2NTM Bookmark Feed message");
@@ -1618,7 +1569,7 @@ public class DarknetPeerNode extends PeerNode {
 		long receivedTime = fs.getLong("receivedTime", -1);
 		try {
 			if(fs.get("Description") != null)
-				description = new String(Base64.decode(fs.get("Description")));
+				description = Base64.decodeUTF8(fs.get("Description"));
 			uri = new FreenetURI(fs.get("URI"));
 		} catch (MalformedURLException e) {
 			Logger.error(this, "Malformed URI in N2NTM File Feed message");
@@ -1727,7 +1678,7 @@ public class DarknetPeerNode extends PeerNode {
 		System.err.println("Your friend node \""+getName()+"\" ("+getPeer()+" version "+getVersion()+") is having severe problems. We have disconnected to try to limit the effect on us. It will reconnect soon.");
 		// FIXME post a useralert
 		// Disconnect.
-		forceDisconnect(true);
+		forceDisconnect();
 	}
 
 	public synchronized FRIEND_TRUST getTrustLevel() {
@@ -1748,7 +1699,7 @@ public class DarknetPeerNode extends PeerNode {
 		node.peers.writePeersDarknetUrgent();
 	}
 
-	/** FIXME This should be the worse of our visibility for the peer and that which the peer has told us. 
+	/** FIXME This should be the worse of our visibility for the peer and that which the peer has told us.
 	 * I.e. visibility is reciprocal. */
 	public synchronized FRIEND_VISIBILITY getVisibility() {
 		// ourVisibility can't be null.
@@ -1772,7 +1723,7 @@ public class DarknetPeerNode extends PeerNode {
 			Logger.normal(this, "Disconnected while sending visibility update");
 		}
 	}
-	
+
 	private void sendVisibility() throws NotConnectedException {
 		sendAsync(DMT.createFNPVisibility(getOurVisibility().code), null, node.nodeStats.initialMessagesCtr);
 	}
@@ -1794,14 +1745,14 @@ public class DarknetPeerNode extends PeerNode {
 		if(theirVisibility == null) return FRIEND_VISIBILITY.NO;
 		return theirVisibility;
 	}
-	
+
 	@Override
 	boolean dontKeepFullFieldSet() {
 		return false;
 	}
-	
+
 	private boolean sendingFullNoderef;
-	
+
 	public void sendFullNoderef() {
 		synchronized(this) {
 			if(sendingFullNoderef) return; // DoS????
@@ -1857,7 +1808,7 @@ public class DarknetPeerNode extends PeerNode {
 						}
 					}
 				}
-				
+
 			});
 		} catch (RuntimeException e) {
 			synchronized(this) {
@@ -1873,7 +1824,7 @@ public class DarknetPeerNode extends PeerNode {
 	}
 
 	private boolean receivingFullNoderef;
-	
+
 	public void handleFullNoderef(Message m) {
 		if(this.dontKeepFullFieldSet()) return;
 		long uid = m.getLong(DMT.UID);
@@ -1938,7 +1889,7 @@ public class DarknetPeerNode extends PeerNode {
 						}
 					}
 				}
-			});				
+			});
 		} catch (RuntimeException e) {
 			synchronized(this) {
 				receivingFullNoderef = false;

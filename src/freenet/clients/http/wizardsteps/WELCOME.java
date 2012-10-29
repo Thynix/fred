@@ -1,6 +1,12 @@
 package freenet.clients.http.wizardsteps;
 
-import freenet.clients.http.*;
+import freenet.clients.http.ConfigToadlet;
+import freenet.clients.http.FirstTimeWizardToadlet;
+import freenet.clients.http.constants.InputType;
+import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Cell;
+import freenet.clients.http.uielements.Row;
+import freenet.clients.http.uielements.Table;
 import freenet.config.Config;
 import freenet.config.EnumerableOptionCallback;
 import freenet.config.Option;
@@ -28,12 +34,13 @@ public class WELCOME implements Step {
 	 */
 	@Override
 	public void getStep(HTTPRequest request, PageHelper helper) {
-		HTMLNode contentNode = helper.getPageContent(WizardL10n.l10n("homepageTitle"));
+		Box contentNode = helper.getPageContent(WizardL10n.l10n("homepageTitle"));
 		boolean incognito = request.isParameterSet("incognito");
 
-		HTMLNode optionsTable = contentNode.addChild("table");
-		HTMLNode tableHeader = optionsTable.addChild("tr");
-		HTMLNode tableRow = optionsTable.addChild("tr");
+		Table optionsTable = new Table();
+		contentNode.addChild(optionsTable);
+		Row tableHeader = optionsTable.addRow();
+		Row tableRow = optionsTable.addRow();
 
 		//Low security option
 		addSecurityTableCell(tableHeader, tableRow, "Low", helper, incognito);
@@ -53,7 +60,7 @@ public class WELCOME implements Step {
 		dropDown.addAttribute("onchange", "this.form.submit()");
 		languageForm.addChild(dropDown);
 		//Otherwise fall back to submit button if no Javascript
-		languageForm.addChild("noscript").addChild("input", "type", "submit");
+		languageForm.addChild("noscript").addInput(InputType.SUBMIT);
 	}
 
 	@Override
@@ -75,23 +82,20 @@ public class WELCOME implements Step {
 
 	/**
 	 * Adds a table cell with information about a given security level and button.
-	 * @param row "tr" node to add cell content to
-	 * @param header "tr" node to add header to
+	 * @param row Row object to add cell content to
+	 * @param header Header object to add header to
 	 * @param preset suffix for security level keys.
 	 * @param helper used to add a form
 	 * @param incognito whether incognito mode is enabled
 	 */
-	private void addSecurityTableCell(HTMLNode header, HTMLNode row, String preset, PageHelper helper, boolean incognito) {
-		header.addChild("th", "width", "33%", WizardL10n.l10n("presetTitle"+preset));
-		HTMLNode tableCell = row.addChild("td");
-		tableCell.addChild("p", WizardL10n.l10n("preset" + preset));
-		HTMLNode centerForm = tableCell.addChild("div", "style", "text-align:center;");
+	private void addSecurityTableCell(Row header, Row row, String preset, PageHelper helper, boolean incognito) {
+		header.addHeader("33%", WizardL10n.l10n("presetTitle"+preset));
+		Cell tableCell = row.addCell();
+		tableCell.addBlockText( WizardL10n.l10n("preset" + preset));
+		Box centerForm = tableCell.addBox();
+		centerForm.addAttribute("style", "text-align:center;");
 		HTMLNode secForm = helper.addFormChild(centerForm, ".", "SecForm"+preset);
-		secForm.addChild("input",
-		        new String[]{"type", "name", "value", },
-		        new String[]{"hidden", "incognito", String.valueOf(incognito), });
-		secForm.addChild("input",
-		        new String[]{"type", "name", "value"},
-		        new String[]{"submit", "preset" + preset, WizardL10n.l10n("presetChoose" + preset)});
+		secForm.addInput(InputType.HIDDEN, "incognito", String.valueOf(incognito));
+		secForm.addInput(InputType.SUBMIT, "preset" + preset, WizardL10n.l10n("presetChoose" + preset));
 	}
 }

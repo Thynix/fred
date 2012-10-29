@@ -1,10 +1,9 @@
 package freenet.clients.http;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Comparator;
-
 import freenet.client.HighLevelSimpleClient;
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.Path;
+import freenet.clients.http.uielements.Row;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
 import freenet.node.NodeClientCore;
@@ -15,6 +14,10 @@ import freenet.support.SimpleFieldSet;
 import freenet.support.TimeUtil;
 import freenet.support.api.HTTPRequest;
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.Comparator;
+
 public class OpennetConnectionsToadlet extends ConnectionsToadlet implements LinkEnabledCallback {
 
 	protected OpennetConnectionsToadlet(Node n, NodeClientCore core, HighLevelSimpleClient client) {
@@ -22,13 +25,13 @@ public class OpennetConnectionsToadlet extends ConnectionsToadlet implements Lin
 	}
 
 	@Override
-	protected void drawNameColumn(HTMLNode peerRow,
+	protected void drawNameColumn(Row peerRow,
 			PeerNodeStatus peerNodeStatus, boolean advanced) {
 		// Do nothing - no names on opennet
 	}
 
 	@Override
-	protected void drawPrivateNoteColumn(HTMLNode peerRow,
+	protected void drawPrivateNoteColumn(Row peerRow,
 			PeerNodeStatus peerNodeStatus, boolean fProxyJavascriptEnabled) {
 		// Do nothing - no private notes either (no such thing as negative trust in cyberspace)
 	}
@@ -127,33 +130,34 @@ public class OpennetConnectionsToadlet extends ConnectionsToadlet implements Lin
 	@Override
 	SimpleColumn[] endColumnHeaders(boolean advancedMode) {
 		if(!advancedMode) return null;
-		return new SimpleColumn[] { 
-				new SimpleColumn() {
+		return new SimpleColumn[] {
+			new SimpleColumn() {
 
-					@Override
-					protected void drawColumn(HTMLNode peerRow, PeerNodeStatus peerNodeStatus) {
-						OpennetPeerNodeStatus status = (OpennetPeerNodeStatus) peerNodeStatus;
-						long tLastSuccess = status.timeLastSuccess;
-						peerRow.addChild("td", "class", "peer-last-success", tLastSuccess > 0 ? TimeUtil.formatTime(System.currentTimeMillis() - tLastSuccess) : "NEVER");
-					}
-					@Override
-					public String getExplanationKey() {
-						return "OpennetConnectionsToadlet.successTime";
-					}
-					@Override
-					public String getSortString() {
-						return "successTime";
-					}
-					@Override
-					public String getTitleKey() {
-						return "OpennetConnectionsToadlet.successTimeTitle";
-					}
-				}};
+				@Override
+				protected void drawColumn(Row peerRow, PeerNodeStatus peerNodeStatus) {
+					OpennetPeerNodeStatus status = (OpennetPeerNodeStatus) peerNodeStatus;
+					long tLastSuccess = status.timeLastSuccess;
+					peerRow.addCell(Category.PEERLASTSUCCESS, tLastSuccess > 0 ? TimeUtil.formatTime(System.currentTimeMillis() - tLastSuccess) : "NEVER");
+				}
+				@Override
+				public String getExplanationKey() {
+					return "OpennetConnectionsToadlet.successTime";
+				}
+				@Override
+				public String getSortString() {
+					return "successTime";
+				}
+				@Override
+				public String getTitleKey() {
+					return "OpennetConnectionsToadlet.successTimeTitle";
+				}
+			}
+		};
 	}
 
 	@Override
 	public String path() {
-		return "/strangers/";
+		return Path.STRANGERS.url;
 	}
 
 	@Override

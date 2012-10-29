@@ -3,18 +3,16 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node;
 
-import java.util.ArrayList;
-
-import freenet.config.EnumerableOptionCallback;
-import freenet.config.InvalidConfigValueException;
-import freenet.config.NodeNeedRestartException;
-import freenet.config.PersistentConfig;
-import freenet.config.SubConfig;
+import freenet.clients.http.constants.InputType;
+import freenet.clients.http.uielements.Box;
+import freenet.config.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.DarknetPeerNode.FRIEND_TRUST;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.api.StringCallback;
+
+import java.util.ArrayList;
 
 /**
  * We have 3 basic security settings. The user chooses these in the first-time 
@@ -245,50 +243,51 @@ public class SecurityLevels {
 	public HTMLNode getConfirmWarning(NETWORK_THREAT_LEVEL newThreatLevel, String checkboxName) {
 		if(newThreatLevel == networkThreatLevel)
 			return null; // Not going to be changed.
-		HTMLNode parent = new HTMLNode("div");
+		Box parent = new Box();
 		if((newThreatLevel == NETWORK_THREAT_LEVEL.HIGH && networkThreatLevel != NETWORK_THREAT_LEVEL.MAXIMUM) || 
 				newThreatLevel == NETWORK_THREAT_LEVEL.MAXIMUM) {
 			if(node.peers.getDarknetPeers().length == 0) {
-				parent.addChild("p", l10n("noFriendsWarning"));
+				parent.addBlockText( l10n("noFriendsWarning"));
 				if(newThreatLevel == NETWORK_THREAT_LEVEL.MAXIMUM) {
-					HTMLNode p = parent.addChild("p");
+					HTMLNode p = parent.addBlockText();
 					NodeL10n.getBase().addL10nSubstitution(p, "SecurityLevels.maximumNetworkThreatLevelWarning", new String[] { "bold" },
 							new HTMLNode[] { HTMLNode.STRONG });
 				}
-				parent.addChild("input", new String[] { "type", "name", "value" }, new String[] { "checkbox", checkboxName, "off" }, l10n("noFriendsCheckbox"));
+				parent.addInput(InputType.CHECKBOX, checkboxName, "off").setContent(l10n("noFriendsCheckbox"));
 				return parent;
 			} else if(node.peers.countConnectedDarknetPeers() == 0) {
-				parent.addChild("p", l10n("noConnectedFriendsWarning", "added", Integer.toString(node.peers.getDarknetPeers().length)));
+				parent.addBlockText( l10n("noConnectedFriendsWarning", "added", Integer.toString(node.peers.getDarknetPeers().length)));
 				if(newThreatLevel == NETWORK_THREAT_LEVEL.MAXIMUM) {
-					HTMLNode p = parent.addChild("p");
+					HTMLNode p = parent.addBlockText();
 					NodeL10n.getBase().addL10nSubstitution(p, "SecurityLevels.maximumNetworkThreatLevelWarning", new String[] { "bold" },
 							new HTMLNode[] { HTMLNode.STRONG });
 				}
-				parent.addChild("input", new String[] { "type", "name", "value" }, new String[] { "checkbox", checkboxName, "off" }, l10n("noConnectedFriendsCheckbox"));
+				parent.addInput(InputType.CHECKBOX, checkboxName, "off").setContent(l10n("noConnectedFriendsCheckbox"));
 				return parent;
 			} else if(node.peers.countConnectedDarknetPeers() < 10) {
-				parent.addChild("p", l10n("fewConnectedFriendsWarning", new String[] { "connected", "added" }, new String[] { Integer.toString(node.peers.countConnectedDarknetPeers()), Integer.toString(node.peers.getDarknetPeers().length)}));
+				parent.addBlockText( l10n("fewConnectedFriendsWarning", new String[] { "connected", "added" }, new String[] { Integer.toString(node.peers.countConnectedDarknetPeers()), Integer.toString(node.peers.getDarknetPeers().length)}));
 				if(newThreatLevel == NETWORK_THREAT_LEVEL.MAXIMUM) {
-					HTMLNode p = parent.addChild("p");
+					HTMLNode p = parent.addBlockText();
 					NodeL10n.getBase().addL10nSubstitution(p, "SecurityLevels.maximumNetworkThreatLevelWarning", new String[] { "bold" },
 							new HTMLNode[] { HTMLNode.STRONG });
 				}
-				parent.addChild("input", new String[] { "type", "name", "value" }, new String[] { "checkbox", checkboxName, "off" }, l10n("fewConnectedFriendsCheckbox"));
+				parent.addInput(InputType.CHECKBOX, checkboxName, "off").setContent(l10n("fewConnectedFriendsCheckbox"));
 				return parent;
 			}
 		} else if(newThreatLevel == NETWORK_THREAT_LEVEL.LOW) {
-			parent.addChild("p", l10n("networkThreatLevelLowWarning"));
-			parent.addChild("input", new String[] { "type", "name", "value" }, new String[] { "checkbox", checkboxName, "off" }, l10n("networkThreatLevelLowCheckbox"));
+			parent.addBlockText( l10n("networkThreatLevelLowWarning"));
+			parent.addInput(InputType.CHECKBOX, checkboxName, "off").setContent(l10n("networkThreatLevelLowCheckbox"));
 			return parent;
 		} // Don't warn on switching to NORMAL.
 		if(newThreatLevel == NETWORK_THREAT_LEVEL.MAXIMUM) {
-			HTMLNode p = parent.addChild("p");
+			HTMLNode p = parent.addBlockText();
 			NodeL10n.getBase().addL10nSubstitution(p, "SecurityLevels.maximumNetworkThreatLevelWarning", new String[] { "bold" },
 					new HTMLNode[] { HTMLNode.STRONG });
-			p.addChild("#", " ");
+			p.addText(" ");
 			NodeL10n.getBase().addL10nSubstitution(p, "SecurityLevels.maxSecurityYouNeedFriends", new String[] { "bold" },
 					new HTMLNode[] { HTMLNode.STRONG });
-			parent.addChild("input", new String[] { "type", "name", "value" }, new String[] { "checkbox", checkboxName, "off" }, l10n("maximumNetworkThreatLevelCheckbox"));
+			parent.addInput(InputType.CHECKBOX, checkboxName, "off").setContent(
+				l10n("maximumNetworkThreatLevelCheckbox"));
 			return parent;
 		}
 		return null;

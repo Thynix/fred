@@ -3,6 +3,10 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node.useralerts;
 
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.constants.InputType;
+import freenet.clients.http.constants.Path;
+import freenet.clients.http.uielements.*;
 import freenet.config.Option;
 import freenet.config.SubConfig;
 import freenet.l10n.NodeL10n;
@@ -56,39 +60,40 @@ public class IPUndetectedUserAlert extends AbstractUserAlert {
 
 	@Override
 	public HTMLNode getHTMLText() {
-		HTMLNode textNode = new HTMLNode("div");
+		Box textNode = new Box();
 		SubConfig sc = node.config.get("node");
 		Option<?> o = sc.getOption("tempIPAddressHint");
 		
 		NodeL10n.getBase().addL10nSubstitution(textNode, "IPUndetectedUserAlert."+(node.ipDetector.isDetecting() ? "detectingWithConfigLink" : "unknownAddressWithConfigLink"), 
 				new String[] { "link" },
-				new HTMLNode[] { HTMLNode.link("/config/"+sc.getPrefix()) });
+				new HTMLNode[] { new Link("/config/"+sc.getPrefix()) });
 		
 		int peers = node.peers.getDarknetPeers().length;
 		if(peers > 0)
-			textNode.addChild("p", l10n("noIPMaybeFromPeers", "number", Integer.toString(peers)));
+			textNode.addBlockText( l10n("noIPMaybeFromPeers", "number", Integer.toString(peers)));
 		
 		if(node.ipDetector.noDetectPlugins()) {
-			HTMLNode p = textNode.addChild("p");
+			HTMLNode p = textNode.addBlockText();
 			NodeL10n.getBase().addL10nSubstitution(p, "IPUndetectedUserAlert.loadDetectPlugins", new String[] { "plugins", "config", },
-					new HTMLNode[] { HTMLNode.link("/plugins/"), HTMLNode.link("/config/node") });
+					new HTMLNode[] { new Link(Path.PLUGINS.url), new Link("/config/node") });
 		} else if(!node.ipDetector.hasJSTUN() && !node.ipDetector.isDetecting()) {
-			HTMLNode p = textNode.addChild("p");
+			HTMLNode p = textNode.addBlockText();
 			NodeL10n.getBase().addL10nSubstitution(p, "IPUndetectedUserAlert.loadJSTUN", new String[] { "plugins" },
-					new HTMLNode[] { HTMLNode.link("/plugins/") });
+					new HTMLNode[] { new Link(Path.PLUGINS.url) });
 		}
 		
 		addPortForwardSuggestion(textNode);
 		
-		HTMLNode formNode = textNode.addChild("form", new String[] { "action", "method" }, new String[] { "/config/"+sc.getPrefix(), "post" });
-		formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "formPassword", node.clientCore.formPassword });
-		formNode.addChild("input", new String[] { "type", "name", "value" }, new String[] { "hidden", "subconfig", sc.getPrefix() });
-		HTMLNode listNode = formNode.addChild("ul", "class", "config");
-		HTMLNode itemNode = listNode.addChild("li");
-		itemNode.addChild("span", "class", "configshortdesc", NodeL10n.getBase().getString(o.getShortDesc())).addChild("input", new String[] { "type", "name", "value" }, new String[] { "text", sc.getPrefix() + ".tempIPAddressHint", o.getValueString() });
-		itemNode.addChild("span", "class", "configlongdesc", NodeL10n.getBase().getString(o.getLongDesc()));
-		formNode.addChild("input", new String[] { "type", "value" }, new String[] { "submit", NodeL10n.getBase().getString("UserAlert.apply") });
-		formNode.addChild("input", new String[] { "type", "value" }, new String[] { "reset", NodeL10n.getBase().getString("UserAlert.reset") });
+		Form formNode = textNode.addForm("/config/"+sc.getPrefix(), "post");
+		formNode.addInput(InputType.HIDDEN, "formPassword", node.clientCore.formPassword);
+		formNode.addInput(InputType.HIDDEN, "subconfig", sc.getPrefix());
+		OutputList listNode =formNode.addList(Category.CONFIG);
+		Item itemNode = listNode.addItem();
+		itemNode.addInlineBox(Category.CONFIGSHORTDESC, NodeL10n.getBase().getString(o.getShortDesc())).addInput(
+			InputType.TEXT, sc.getPrefix() + ".tempIPAddressHint", o.getValueString());
+		itemNode.addInlineBox(Category.CONFIGLONGDESC, NodeL10n.getBase().getString(o.getLongDesc()));
+		formNode.addInput(InputType.SUBMIT, NodeL10n.getBase().getString("UserAlert.apply"));
+		formNode.addInput(InputType.RESET, NodeL10n.getBase().getString("UserAlert.reset"));
 		
 		return textNode;
 	}
@@ -98,10 +103,10 @@ public class IPUndetectedUserAlert extends AbstractUserAlert {
 		int darknetPort = node.getDarknetPortNumber();
 		int opennetPort = node.getOpennetFNPPort();
 		if(opennetPort <= 0) {
-			textNode.addChild("#", " "+l10n("suggestForwardPort", "port", Integer.toString(darknetPort)));
+			textNode.addText(" " + l10n("suggestForwardPort", "port", Integer.toString(darknetPort)));
 		} else {
-			textNode.addChild("#", " "+l10n("suggestForwardTwoPorts", new String[] { "port1", "port2" }, 
-					new String[] { Integer.toString(darknetPort), Integer.toString(opennetPort) }));
+			textNode.addText(" " + l10n("suggestForwardTwoPorts", new String[]{"port1", "port2"},
+				new String[]{Integer.toString(darknetPort), Integer.toString(opennetPort)}));
 		}
 	}
 

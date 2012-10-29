@@ -1,14 +1,10 @@
 package freenet.node;
 
-import java.net.InetAddress;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-
 import freenet.clients.http.ConnectivityToadlet;
 import freenet.clients.http.ExternalLinkToadlet;
+import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Link;
+import freenet.clients.http.uielements.Text;
 import freenet.io.AddressTracker;
 import freenet.io.AddressTracker.Status;
 import freenet.io.comm.FreenetInetAddress;
@@ -18,19 +14,16 @@ import freenet.node.useralerts.AbstractUserAlert;
 import freenet.node.useralerts.ProxyUserAlert;
 import freenet.node.useralerts.SimpleUserAlert;
 import freenet.node.useralerts.UserAlert;
-import freenet.pluginmanager.DetectedIP;
-import freenet.pluginmanager.ForwardPort;
-import freenet.pluginmanager.ForwardPortCallback;
-import freenet.pluginmanager.ForwardPortStatus;
-import freenet.pluginmanager.FredPlugin;
-import freenet.pluginmanager.FredPluginIPDetector;
-import freenet.pluginmanager.FredPluginPortForward;
+import freenet.pluginmanager.*;
 import freenet.support.HTMLEncoder;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
-import freenet.support.OOMHandler;
 import freenet.support.Logger.LogLevel;
+import freenet.support.OOMHandler;
 import freenet.support.transport.ip.IPUtil;
+
+import java.net.InetAddress;
+import java.util.*;
 
 /**
  * Tracks all known IP address detection plugins, and runs them when appropriate.
@@ -59,7 +52,7 @@ public class IPDetectorPluginManager implements ForwardPortCallback {
 
 		@Override
 		public HTMLNode getHTMLText() {
-			HTMLNode div = new HTMLNode("div");
+			Box box_ = new Box();
 			String url = ExternalLinkToadlet.escape(HTMLEncoder.encode(l10n("portForwardHelpURL")));
 			boolean maybeForwarded = true;
 			for(int i=0;i<portsNotForwarded.length;i++) {
@@ -67,23 +60,23 @@ public class IPDetectorPluginManager implements ForwardPortCallback {
 			}
 			String keySuffix = maybeForwarded ? "MaybeForwarded" : "NotForwarded";
 			if(portsNotForwarded.length == 1) {
-				NodeL10n.getBase().addL10nSubstitution(div, "IPDetectorPluginManager.forwardPort"+keySuffix, 
+				NodeL10n.getBase().addL10nSubstitution(box_, "IPDetectorPluginManager.forwardPort"+keySuffix,
 				        new String[] { "port", "link" },
-				        new HTMLNode[] { HTMLNode.text(Math.abs(portsNotForwarded[0])), HTMLNode.link(url) });
+				        new HTMLNode[] { new Text(Math.abs(portsNotForwarded[0])), new Link(url) });
 			} else if(portsNotForwarded.length == 2) {
-				NodeL10n.getBase().addL10nSubstitution(div, "IPDetectorPluginManager.forwardTwoPorts"+keySuffix, 
+				NodeL10n.getBase().addL10nSubstitution(box_, "IPDetectorPluginManager.forwardTwoPorts"+keySuffix,
 				        new String[] { "port1", "port2", "link", "connectivity" },
-				        new HTMLNode[] { HTMLNode.text(Math.abs(portsNotForwarded[0])),
-				                HTMLNode.text(Math.abs(portsNotForwarded[1])),
-				                HTMLNode.link(url),
-				                HTMLNode.link(ConnectivityToadlet.PATH) });
+				        new HTMLNode[] { new Text(Math.abs(portsNotForwarded[0])),
+				                new Text(Math.abs(portsNotForwarded[1])),
+				                new Link(url),
+				                new Link(ConnectivityToadlet.PATH) });
 			} else {
 				Logger.error(this, "Unknown number of ports to forward: "+portsNotForwarded.length);
 			}
 			if(innerGetPriorityClass() == UserAlert.ERROR) {
-				div.addChild("#", " " + l10n("symmetricPS"));
+				box_.addText(" " + l10n("symmetricPS"));
 			}
-			return div;
+			return box_;
 		}
 
 		@Override
@@ -209,27 +202,27 @@ public class IPDetectorPluginManager implements ForwardPortCallback {
 
 		@Override
 		public HTMLNode getHTMLText() {
-			HTMLNode div = new HTMLNode("div");
-			div.addChild("#", super.getText());
+			Box box_ = new Box();
+			box_.addText(super.getText());
 			if(suggestPortForward) {
 				if(portsNotForwarded.length == 1) {
-					NodeL10n.getBase().addL10nSubstitution(div,
+					NodeL10n.getBase().addL10nSubstitution(box_,
 					        "IPDetectorPluginManager.suggestForwardPortWithLink",
 					        new String[] { "link", "port" },
-					        new HTMLNode[] { HTMLNode.link(ExternalLinkToadlet.escape(
+					        new HTMLNode[] { new Link(ExternalLinkToadlet.escape(
 					                "http://wiki.freenetproject.org/FirewallAndRouterIssues")),
-					                HTMLNode.text(portsNotForwarded[0])});
+					                new Text(portsNotForwarded[0])});
 				} else {
-					NodeL10n.getBase().addL10nSubstitution(div,
+					NodeL10n.getBase().addL10nSubstitution(box_,
 					        "IPDetectorPluginManager.suggestForwardTwoPortsWithLink",
 					        new String[] { "link", "port1", "port2" },
-					        new HTMLNode[] { HTMLNode.link(ExternalLinkToadlet.escape(
+					        new HTMLNode[] { new Link(ExternalLinkToadlet.escape(
 					                "http://wiki.freenetproject.org/FirewallAndRouterIssues")),
-					                HTMLNode.text(portsNotForwarded[0]),
-					                HTMLNode.text(portsNotForwarded[1]) });
+					                new Text(portsNotForwarded[0]),
+					                new Text(portsNotForwarded[1]) });
 				}
 			}
-			return div;
+			return box_;
 		}
 
 		@Override

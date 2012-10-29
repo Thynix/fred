@@ -4,6 +4,8 @@
 
 package freenet.node.useralerts;
 
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.uielements.Box;
 import freenet.l10n.NodeL10n;
 import freenet.support.HTMLNode;
 import freenet.support.io.NativeThread;
@@ -41,7 +43,7 @@ public class NotEnoughNiceLevelsUserAlert extends AbstractUserAlert {
 
 	@Override
 	public HTMLNode getHTMLText() {
-		return new HTMLNode("div", getText());
+		return new Box(Category.NONE, getText());
 	}
 
 }

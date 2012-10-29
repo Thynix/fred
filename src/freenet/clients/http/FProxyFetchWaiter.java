@@ -9,7 +9,7 @@ public class FProxyFetchWaiter {
 		hasWaited = progress.hasWaited();
 	}
 
-	public final FProxyFetchInProgress progress;
+	final FProxyFetchInProgress progress;
 	
 	private boolean hasWaited;
 	private boolean finished;
@@ -32,6 +32,11 @@ public class FProxyFetchWaiter {
 					}
 				}
 			} else {
+				/* Wait for 5 seconds or until something happens. The
+				 * most common something other than finishing is a callback
+				 * because the request has finished checking the datastore
+				 * and has been sent to the network, in which case we want
+				 * to show the progress bar. */
 				if(!(finished || hasWaited || awoken)) {
 					awoken = false;
 					try {
@@ -51,6 +56,10 @@ public class FProxyFetchWaiter {
 	/** Returns the result, without waiting*/
 	public FProxyFetchResult getResultFast(){
 		return progress.innerGetResult(false);
+	}
+	
+	public FProxyFetchInProgress getProgress() {
+		return progress;
 	}
 
 	public void close() {

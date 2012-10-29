@@ -3,21 +3,12 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.clients.http;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
-import java.net.URI;
-
-import freenet.client.FetchContext;
-import freenet.client.FetchException;
-import freenet.client.FetchResult;
-import freenet.client.FetchWaiter;
-import freenet.client.HighLevelSimpleClient;
-import freenet.client.InsertBlock;
-import freenet.client.InsertException;
+import freenet.client.*;
 import freenet.client.async.ClientGetter;
+import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.uielements.Infobox;
+import freenet.clients.http.uielements.Page;
+import freenet.clients.http.uielements.Text;
 import freenet.keys.FreenetURI;
 import freenet.l10n.NodeL10n;
 import freenet.node.RequestClient;
@@ -26,6 +17,13 @@ import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.MultiValueTable;
 import freenet.support.api.Bucket;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
+import java.net.URI;
 
 /**
  * Replacement for servlets. Just an easy to use HTTP interface, which is
@@ -71,19 +69,13 @@ public abstract class Toadlet {
 	 * TODO: not used?!
 	 */
 	private void handleUnhandledRequest(URI uri, Bucket data, ToadletContext toadletContext) throws ToadletContextClosedException, IOException, RedirectException {
-		PageNode page = toadletContext.getPageMaker().getPageNode(l10n("notSupportedTitle"), toadletContext);
-		HTMLNode pageNode = page.outer;
-		HTMLNode contentNode = page.content;
-
-		HTMLNode infobox = contentNode.addChild("div", "class", "infobox infobox-error");
-		infobox.addChild("div", "class", "infobox-header", l10n("notSupportedTitle"));
-		infobox.addChild("div", "class", "infobox-content", l10n("notSupportedWithClass", "class", getClass().getName()));
-
+		Page page = toadletContext.getPageMaker().getPage(l10n("notSupportedTitle"), toadletContext);
+		Infobox warningbox = page.content.addInfobox(InfoboxType.ERROR, l10n("notSupportedTitle"));
+		warningbox.body.setContent(l10n("notSupportedWithClass", "class", getClass().getName()));
 		MultiValueTable<String, String> hdrtbl = new MultiValueTable<String, String>();
 		hdrtbl.put("Allow", findSupportedMethods());
-
 		StringBuilder pageBuffer = new StringBuilder();
-		pageNode.generate(pageBuffer);
+		page.generate(pageBuffer);
 		toadletContext.sendReplyHeaders(405, "Operation not Supported", hdrtbl, "text/html; charset=utf-8", pageBuffer.length());
 		toadletContext.writeData(pageBuffer.toString().getBytes("UTF-8"));
 	}
@@ -289,56 +281,51 @@ public abstract class Toadlet {
 	 * Send a simple error page.
 	 */
 	protected void sendErrorPage(ToadletContext ctx, int code, String desc, String message) throws ToadletContextClosedException, IOException {
-		sendErrorPage(ctx, code, desc, new HTMLNode("#", message));
+		sendErrorPage(ctx, code, desc, new Text(message));
 	}
 
 	/**
 	 * Send a slightly more complex error page.
 	 */
-	protected void sendErrorPage(ToadletContext ctx, int code, String desc, HTMLNode message) throws ToadletContextClosedException, IOException {
-		PageNode page = ctx.getPageMaker().getPageNode(desc, ctx);
-		HTMLNode pageNode = page.outer;
-		HTMLNode contentNode = page.content;
-		
-		HTMLNode infoboxContent = ctx.getPageMaker().getInfobox("infobox-error", desc, contentNode, null, true);
-		infoboxContent.addChild(message);
-		infoboxContent.addChild("br");
-		infoboxContent.addChild("a", "href", ".", l10n("returnToPrevPage"));
-		infoboxContent.addChild("br");
-		addHomepageLink(infoboxContent);
-		
-		writeHTMLReply(ctx, code, desc, pageNode.generate());
+	protected void sendErrorPage(ToadletContext ctx, int code, String desc, HTMLNode message)
+		throws ToadletContextClosedException, IOException {
+		Page page = ctx.getPageMaker().getPage(desc, ctx);
+		Infobox errorMessage = page.content.addInfobox(InfoboxType.ERROR, desc);
+		errorMessage.body.addChild(message);
+		errorMessage.body.addLineBreak();
+		errorMessage.body.addLink(".", l10n("returnToPrevPage"));
+		errorMessage.body.addLineBreak();
+		addHomepageLink(errorMessage.body);
+		writeHTMLReply(ctx, code, desc, page.generate());
 	}
 
 	/**
 	 * Send an error page from an exception.
-	 * @param ctx The context object for this request.
-	 * @param desc The title of the error page
+	 *
+	 * @param ctx     The context object for this request.
+	 * @param desc    The title of the error page
 	 * @param message The message to be sent to the user. The stack trace will follow.
-	 * @param t The Throwable which caused the error.
-	 * @throws IOException If there is an error writing the reply.
+	 * @param t       The Throwable which caused the error.
+	 * @throws IOException                   If there is an error writing the reply.
 	 * @throws ToadletContextClosedException If the context has already been closed.
 	 */
-	protected void sendErrorPage(ToadletContext ctx, String desc, String message, Throwable t) throws ToadletContextClosedException, IOException {
-		PageNode page = ctx.getPageMaker().getPageNode(desc, ctx);
-		HTMLNode pageNode = page.outer;
-		HTMLNode contentNode = page.content;
-		
-		HTMLNode infoboxContent = ctx.getPageMaker().getInfobox("infobox-error", desc, contentNode, null, true);
-		infoboxContent.addChild("#", message);
-		infoboxContent.addChild("br");
+	protected void sendErrorPage(ToadletContext ctx, String desc, String message, Throwable t)
+		throws ToadletContextClosedException, IOException {
+		Page page = ctx.getPageMaker().getPage(desc, ctx);
+		Infobox errorMessage = page.content.addInfobox(InfoboxType.ERROR, desc);
+		errorMessage.body.addText(message);
+		errorMessage.body.addLineBreak();
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		pw.println(t);
 		t.printStackTrace(pw);
 		pw.close();
 		// FIXME what is the modern (CSS/XHTML) equivalent of <pre>?
-		infoboxContent.addChild("pre", sw.toString());
-		infoboxContent.addChild("br");
-		infoboxContent.addChild("a", "href", ".", l10n("returnToPrevPage"));
-		addHomepageLink(infoboxContent);
-		
-		writeHTMLReply(ctx, 500, desc, pageNode.generate());
+		errorMessage.body.addChild("pre", sw.toString());
+		errorMessage.body.addLineBreak();
+		errorMessage.body.addLink(".", l10n("returnToPrevPage"));
+		addHomepageLink(errorMessage.body);
+		writeHTMLReply(ctx, 500, desc, page.generate());
 	}
 
 	protected void writeInternalError(Throwable t, ToadletContext ctx) throws ToadletContextClosedException, IOException {
@@ -354,7 +341,7 @@ public abstract class Toadlet {
 	}
 	
 	protected static void addHomepageLink(HTMLNode content) {
-		content.addChild("a", new String[]{"href", "title"}, new String[]{"/", l10n("homepage")}, l10n("returnToNodeHomepage"));
+		content.addLink("/", l10n("homepage"), l10n("returnToNodeHomepage"));
 	}
 
 	/**

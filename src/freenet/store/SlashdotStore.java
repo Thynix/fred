@@ -12,7 +12,7 @@ import com.sleepycat.je.DatabaseException;
 import freenet.keys.KeyVerifyException;
 import freenet.node.stats.StoreAccessStats;
 import freenet.support.ByteArrayWrapper;
-import freenet.support.LRUHashtable;
+import freenet.support.LRUMap;
 import freenet.support.LogThresholdCallback;
 import freenet.support.Logger;
 import freenet.support.Ticker;
@@ -60,7 +60,7 @@ public class SlashdotStore<T extends StorableBlock> implements FreenetStore<T> {
 	
 	private final Ticker ticker;
 	
-	private final LRUHashtable<ByteArrayWrapper, DiskBlock> blocksByRoutingKey;
+	private final LRUMap<ByteArrayWrapper, DiskBlock> blocksByRoutingKey;
 	
 	private final StoreCallback<T> callback;
 	
@@ -76,7 +76,7 @@ public class SlashdotStore<T extends StorableBlock> implements FreenetStore<T> {
 	
 	public SlashdotStore(StoreCallback<T> callback, int maxKeys, long maxLifetime, long purgePeriod, Ticker ticker, TempBucketFactory tbf) {
 		this.callback = callback;
-		this.blocksByRoutingKey = new LRUHashtable<ByteArrayWrapper, DiskBlock>();
+		this.blocksByRoutingKey = LRUMap.createSafeMap(ByteArrayWrapper.FAST_COMPARATOR);
 		this.maxKeys = maxKeys;
 		this.bf = tbf;
 		this.ticker = ticker;
@@ -201,7 +201,7 @@ public class SlashdotStore<T extends StorableBlock> implements FreenetStore<T> {
 	}
 
 	@Override
-	public void setMaxKeys(long maxStoreKeys, boolean shrinkNow) throws DatabaseException, IOException {
+	public void setMaxKeys(long maxStoreKeys, boolean shrinkNow) throws IOException {
 		if(maxStoreKeys > Integer.MAX_VALUE) throw new IllegalArgumentException();
 		this.maxKeys = (int) maxStoreKeys;
 		if(shrinkNow) {

@@ -3,23 +3,13 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.clients.http;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.SocketException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Iterator;
-import java.util.LinkedList;
-
-import org.tanukisoftware.wrapper.WrapperManager;
-
 import freenet.client.filter.HTMLFilter;
 import freenet.client.filter.LinkFilterExceptionProvider;
 import freenet.clients.http.FProxyFetchInProgress.REFILTER_POLICY;
 import freenet.clients.http.PageMaker.THEME;
 import freenet.clients.http.bookmark.BookmarkManager;
+import freenet.clients.http.constants.InputType;
+import freenet.clients.http.constants.Path;
 import freenet.clients.http.updateableelements.PushDataManager;
 import freenet.config.EnumerableOptionCallback;
 import freenet.config.InvalidConfigValueException;
@@ -38,20 +28,18 @@ import freenet.node.SecurityLevelListener;
 import freenet.node.SecurityLevels.NETWORK_THREAT_LEVEL;
 import freenet.node.SecurityLevels.PHYSICAL_THREAT_LEVEL;
 import freenet.pluginmanager.FredPluginL10n;
-import freenet.support.Executor;
-import freenet.support.HTMLNode;
-import freenet.support.LogThresholdCallback;
-import freenet.support.Logger;
-import freenet.support.OOMHandler;
-import freenet.support.Ticker;
+import freenet.support.*;
 import freenet.support.Logger.LogLevel;
-import freenet.support.api.BooleanCallback;
-import freenet.support.api.BucketFactory;
-import freenet.support.api.IntCallback;
-import freenet.support.api.LongCallback;
-import freenet.support.api.StringCallback;
+import freenet.support.api.*;
 import freenet.support.io.ArrayBucketFactory;
 import freenet.support.io.NativeThread;
+import org.tanukisoftware.wrapper.WrapperManager;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.*;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /** 
  * The Toadlet (HTTP) Server
@@ -85,6 +73,7 @@ public final class SimpleToadletServer implements ToadletContainer, Runnable, Li
 	// ACL
 	private final AllowedHosts allowedFullAccess;
 	private boolean publicGatewayMode;
+	private final boolean wasPublicGatewayMode;
 	
 	// Theme 
 	private THEME cssTheme;
@@ -158,17 +147,31 @@ public final class SimpleToadletServer implements ToadletContainer, Runnable, Li
 		}
 	}
 	
-	private static class FProxyPassthruMaxSize extends LongCallback {
+	private static class FProxyPassthruMaxSizeNoProgress extends LongCallback {
 		@Override
 		public Long get() {
-			return FProxyToadlet.MAX_LENGTH;
+			return FProxyToadlet.MAX_LENGTH_NO_PROGRESS;
 		}
 		
 		@Override
 		public void set(Long val) throws InvalidConfigValueException {
 			if (get().equals(val))
 				return;
-			FProxyToadlet.MAX_LENGTH = val;
+			FProxyToadlet.MAX_LENGTH_NO_PROGRESS = val;
+		}
+	}
+
+	private static class FProxyPassthruMaxSizeProgress extends LongCallback {
+		@Override
+		public Long get() {
+			return FProxyToadlet.MAX_LENGTH_WITH_PROGRESS;
+		}
+		
+		@Override
+		public void set(Long val) throws InvalidConfigValueException {
+			if (get().equals(val))
+				return;
+			FProxyToadlet.MAX_LENGTH_WITH_PROGRESS = val;
 		}
 	}
 
@@ -404,7 +407,7 @@ public final class SimpleToadletServer implements ToadletContainer, Runnable, Li
 		
 		pushDataManager=new PushDataManager(getTicker());
 		intervalPushManager=new IntervalPusherManager(getTicker(), pushDataManager);
-		bookmarkManager = new BookmarkManager(core);
+		bookmarkManager = new BookmarkManager(core, publicGatewayMode());
 		try {
 			FProxyToadlet.maybeCreateFProxyEtc(core, core.node, core.node.config, this, bookmarkManager);
 		} catch (IOException e) {
@@ -550,11 +553,13 @@ public final class SimpleToadletServer implements ToadletContainer, Runnable, Li
 
 			@Override
 			public void set(Boolean val) throws InvalidConfigValueException, NodeNeedRestartException {
+				if(publicGatewayMode == val) return;
 				publicGatewayMode = val;
+				throw new NodeNeedRestartException(l10n("publicGatewayModeNeedsRestart"));
 			}
 			
 		});
-		publicGatewayMode = fproxyConfig.getBoolean("publicGatewayMode");
+		wasPublicGatewayMode = publicGatewayMode = fproxyConfig.getBoolean("publicGatewayMode");
 		
 		// This is OFF BY DEFAULT because for example firefox has a limit of 2 persistent 
 		// connections per server, but 8 non-persistent connections per server. We need 8 conns
@@ -620,8 +625,11 @@ public final class SimpleToadletServer implements ToadletContainer, Runnable, Li
 		});
 		enableActivelinks = fproxyConfig.getBoolean("enableActivelinks");
 		
-		fproxyConfig.register("passthroughMaxSize", (2L*1024*1024*11)/10, configItemOrder++, true, false, "SimpleToadletServer.passthroughMaxSize", "SimpleToadletServer.passthroughMaxSizeLong", new FProxyPassthruMaxSize(), true);
-		FProxyToadlet.MAX_LENGTH = fproxyConfig.getLong("passthroughMaxSize");
+		fproxyConfig.register("passthroughMaxSize", FProxyToadlet.MAX_LENGTH_NO_PROGRESS, configItemOrder++, true, false, "SimpleToadletServer.passthroughMaxSize", "SimpleToadletServer.passthroughMaxSizeLong", new FProxyPassthruMaxSizeNoProgress(), true);
+		FProxyToadlet.MAX_LENGTH_NO_PROGRESS = fproxyConfig.getLong("passthroughMaxSize");
+		fproxyConfig.register("passthroughMaxSizeProgress", FProxyToadlet.MAX_LENGTH_WITH_PROGRESS, configItemOrder++, true, false, "SimpleToadletServer.passthroughMaxSizeProgress", "SimpleToadletServer.passthroughMaxSizeProgressLong", new FProxyPassthruMaxSizeProgress(), true);
+		FProxyToadlet.MAX_LENGTH_WITH_PROGRESS = fproxyConfig.getLong("passthroughMaxSizeProgress");
+		System.out.println("Set fproxy max length to "+FProxyToadlet.MAX_LENGTH_NO_PROGRESS+" and max length with progress to "+FProxyToadlet.MAX_LENGTH_WITH_PROGRESS+" = "+fproxyConfig.getLong("passthroughMaxSizeProgress"));
 		
 		fproxyConfig.register("allowedHosts", "127.0.0.1,0:0:0:0:0:0:0:1", configItemOrder++, true, true, "SimpleToadletServer.allowedHosts", "SimpleToadletServer.allowedHostsLong",
 				new FProxyAllowedHostsCallback());
@@ -792,7 +800,7 @@ public final class SimpleToadletServer implements ToadletContainer, Runnable, Li
 	
 	@Override
 	public boolean publicGatewayMode() {
-		return publicGatewayMode;
+		return wasPublicGatewayMode;
 	}
 	
 	public void start() {
@@ -844,7 +852,11 @@ public final class SimpleToadletServer implements ToadletContainer, Runnable, Li
 	public void register(Toadlet t, String menu, String urlPrefix, boolean atFront, boolean fullOnly) {
 		register(t, menu, urlPrefix, atFront, null, null, fullOnly, null, null);
 	}
-	
+
+	public void register(Toadlet t, Path path, LinkEnabledCallback cb) {
+		register(t, path.menu, path.url, path.priority, path.name, path.title, path.fullOnly, cb, null);
+	}
+
 	@Override
 	public void register(Toadlet t, String menu, String urlPrefix, boolean atFront, String name, String title, boolean fullOnly, LinkEnabledCallback cb) {
 		register(t, menu, urlPrefix, atFront, name, title, fullOnly, cb, null);
@@ -1082,12 +1094,9 @@ public final class SimpleToadletServer implements ToadletContainer, Runnable, Li
 	@Override
 	public HTMLNode addFormChild(HTMLNode parentNode, String target, String id) {
 		HTMLNode formNode =
-			parentNode.addChild("div")
-			.addChild("form", new String[] { "action", "method", "enctype", "id",  "accept-charset" }, 
-					new String[] { target, "post", "multipart/form-data", id, "utf-8"} );
-		formNode.addChild("input", new String[] { "type", "name", "value" }, 
-				new String[] { "hidden", "formPassword", getFormPassword() });
-		
+			parentNode.addBox()
+			.addForm(target, "post", "multipart/form-data", "utf-8", id);
+		formNode.addInput(InputType.HIDDEN, "formPassword", getFormPassword());
 		return formNode;
 	}
 

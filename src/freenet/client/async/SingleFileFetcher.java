@@ -831,30 +831,13 @@ public class SingleFileFetcher extends SimpleSingleFileFetcher {
 							redirectedCryptoKey))
 						redirectedCryptoKey = null;
 					// not splitfile, synthesize CompatibilityMode event
-					if (metadata.getParsedVersion() == 0)
-						rcb.onSplitfileCompatibilityMode(
-								CompatibilityMode.COMPAT_1250_EXACT,
-								CompatibilityMode.COMPAT_1251,
-								null,
-								!((ClientCHK)redirectedKey).isCompressed(),
-								true, true,
-								container, context);
-					else if (metadata.getParsedVersion() == 1)
-						rcb.onSplitfileCompatibilityMode(
-								CompatibilityMode.COMPAT_1255,
-								CompatibilityMode.COMPAT_1255,
-								redirectedCryptoKey,
-								!((ClientCHK)redirectedKey).isCompressed(),
-								true, true,
-								container, context);
-					else
-						rcb.onSplitfileCompatibilityMode(
-								CompatibilityMode.COMPAT_UNKNOWN,
-								CompatibilityMode.COMPAT_UNKNOWN,
-								redirectedCryptoKey,
-								!((ClientCHK)redirectedKey).isCompressed(),
-								true, true,
-								container, context);
+					rcb.onSplitfileCompatibilityMode(
+							metadata.getMinCompatMode(),
+							metadata.getMaxCompatMode(),
+							redirectedCryptoKey,
+							!((ClientCHK)redirectedKey).isCompressed(),
+							true, true,
+							container, context);
 				}
 				if(metadata.isCompressed()) {
 					COMPRESSOR_TYPE codec = metadata.getCompressionCodec();
@@ -1275,6 +1258,8 @@ public class SingleFileFetcher extends SimpleSingleFileFetcher {
 				cbWasActive = container.ext().isActive(rcb);
 				container.activate(rcb, 1);
 			}
+			// This is fetching an archive, which may or may not contain the file we are looking for (it includes metadata).
+			// So we are definitely not the bottom layer nor definitive.
 			rcb.onSplitfileCompatibilityMode(min, max, splitfileKey, dontCompress, false, false, container, context);
 			if(!wasActive)
 				container.deactivate(SingleFileFetcher.this, 1);
@@ -1460,6 +1445,8 @@ public class SingleFileFetcher extends SimpleSingleFileFetcher {
 				cbWasActive = container.ext().isActive(rcb);
 				container.activate(rcb, 1);
 			}
+			// Pass through definitiveAnyway as the top block may include the details.
+			// Hence we can get them straight away rather than waiting for the bottom layer.
 			rcb.onSplitfileCompatibilityMode(min, max, splitfileKey, dontCompress, false, definitiveAnyway, container, context);
 			if(!wasActive)
 				container.deactivate(SingleFileFetcher.this, 1);

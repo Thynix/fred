@@ -2,6 +2,7 @@ package freenet.clients.http;
 
 import freenet.support.HTMLNode;
 
+@Deprecated
 public class PageNode extends InfoboxNode {
 	
 	public final HTMLNode headNode;

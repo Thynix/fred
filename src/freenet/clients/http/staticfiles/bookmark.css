@@ -1,3 +1,7 @@
+.bookmark-list {
+	border: none;
+}
+
 ul#bookmarks ul {
 	padding-left: 20px;
 }

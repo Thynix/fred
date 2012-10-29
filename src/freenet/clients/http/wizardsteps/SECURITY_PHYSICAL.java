@@ -3,17 +3,18 @@ package freenet.clients.http.wizardsteps;
 import freenet.clients.http.ExternalLinkToadlet;
 import freenet.clients.http.FirstTimeWizardToadlet;
 import freenet.clients.http.SecurityLevelsToadlet;
+import freenet.clients.http.constants.*;
+import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Infobox;
+import freenet.clients.http.uielements.Link;
 import freenet.l10n.NodeL10n;
-import freenet.node.MasterKeysFileSizeException;
-import freenet.node.MasterKeysWrongPasswordException;
-import freenet.node.Node;
-import freenet.node.NodeClientCore;
-import freenet.node.SecurityLevels;
+import freenet.node.*;
 import freenet.support.HTMLNode;
 import freenet.support.Logger;
 import freenet.support.api.HTTPRequest;
+import freenet.support.io.FileUtil;
+import freenet.support.io.FileUtil.OperatingSystem;
 
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -48,45 +49,44 @@ public class SECURITY_PHYSICAL implements Step {
 			//Problem generating error page; generate default.
 		}
 
-		HTMLNode contentNode = helper.getPageContent(WizardL10n.l10n("physicalSecurityPageTitle"));
-		HTMLNode infoboxContent = helper.getInfobox("infobox-normal",
-		        WizardL10n.l10nSec("physicalThreatLevelShort"), contentNode, null, false);
-		infoboxContent.addChild("p", WizardL10n.l10nSec("physicalThreatLevel"));
+		Infobox physicalThreatLevel = helper.getPageContent(WizardL10n.l10n("physicalSecurityPageTitle")).addInfobox(
+			InfoboxType.NORMAL,
+			WizardL10n.l10nSec("physicalThreatLevelShort"));
+		Box infoboxContent = physicalThreatLevel.body;
+		infoboxContent.addBlockText(WizardL10n.l10nSec("physicalThreatLevel"));
 
 		HTMLNode form = helper.addFormChild(infoboxContent, ".", "physicalSecurityForm");
-		HTMLNode div = form.addChild("div", "class", "opennetDiv");
+		HTMLNode div = form.addBox(Category.OPENNETDIV);
 		String controlName = "security-levels.physicalThreatLevel";
-		HTMLNode swapWarning = div.addChild("p").addChild("i");
-		NodeL10n.getBase().addL10nSubstitution(swapWarning, "SecurityLevels.physicalThreatLevelSwapfile",
+		HTMLNode swapWarning = div.addBlockText(Category.ITALIC);
+		NodeL10n.getBase().addL10nSubstitution(swapWarning, "SecurityLevels.physicalThreatLevelTruecrypt",
 		        new String[]{"bold", "truecrypt"},
 		        new HTMLNode[]{HTMLNode.STRONG,
-		                HTMLNode.linkInNewWindow(ExternalLinkToadlet.escape("http://www.truecrypt.org/"))});
-		if(File.separatorChar == '\\') {
-			swapWarning.addChild("#", " " + WizardL10n.l10nSec("physicalThreatLevelSwapfileWindows"));
+		                new Link(ExternalLinkToadlet.escape("http://www.truecrypt.org/"), Target.BLANK)});
+		OperatingSystem os = FileUtil.detectedOS;
+		div.addBlockText(NodeL10n.getBase().getString("SecurityLevels.physicalThreatLevelSwapfile",
+			"operatingSystem",
+			NodeL10n.getBase().getString("OperatingSystemName." + os.name())));
+		if(os == FileUtil.OperatingSystem.Windows) {
+			swapWarning.addText(" " + WizardL10n.l10nSec("physicalThreatLevelSwapfileWindows"));
 		}
 		for(SecurityLevels.PHYSICAL_THREAT_LEVEL level : SecurityLevels.PHYSICAL_THREAT_LEVEL.values()) {
 			HTMLNode input;
-			input = div.addChild("p").addChild("input",
-			        new String[] { "type", "name", "value" },
-			        new String[] { "radio", controlName, level.name() });
-			input.addChild("b", WizardL10n.l10nSec("physicalThreatLevel.name." + level));
-			input.addChild("#", ": ");
+			input = div.addBlockText().addInput(InputType.RADIO, controlName, level.name());
+			input.addInlineBox(Category.BOLD, WizardL10n.l10nSec("physicalThreatLevel.name." + level));
+			input.addText(": ");
 			NodeL10n.getBase().addL10nSubstitution(input, "SecurityLevels.physicalThreatLevel.choice."+level, new String[] { "bold" }, new HTMLNode[] { HTMLNode.STRONG });
 			if(level == SecurityLevels.PHYSICAL_THREAT_LEVEL.HIGH &&
 			        core.node.securityLevels.getPhysicalThreatLevel() != level) {
 				// Add password form on high security if not already at high security.
-				HTMLNode p = div.addChild("p");
+				HTMLNode p = div.addBlockText();
 				p.addChild("label", "for", "passwordBox", WizardL10n.l10nSec("setPasswordLabel")+":");
-				p.addChild("input", new String[] { "id", "type", "name" }, new String[] { "passwordBox", "password", "masterPassword" });
+				p.addInput(InputType.PASSWORD, "masterPassword", Identifier.PASSWORDBOX);
 			}
 		}
-		div.addChild("#", WizardL10n.l10nSec("physicalThreatLevelEnd"));
-		form.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "back", NodeL10n.getBase().getString("Toadlet.back")});
-		form.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "next", NodeL10n.getBase().getString("Toadlet.next")});
+		div.addText(WizardL10n.l10nSec("physicalThreatLevelEnd"));
+		form.addInput(InputType.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
+		form.addInput(InputType.SUBMIT, "next", NodeL10n.getBase().getString("Toadlet.next"));
 	}
 
 	/**
@@ -140,13 +140,13 @@ public class SECURITY_PHYSICAL implements Step {
 					return false;
 			}
 
-			HTMLNode contentNode = helper.getPageContent(WizardL10n.l10nSec(pageTitleKey));
-
-			HTMLNode content = helper.getInfobox("infobox-error", WizardL10n.l10nSec(infoboxTitleKey),
-			        contentNode, null, true);
+			Infobox errorBox = helper.getPageContent(WizardL10n.l10nSec(pageTitleKey)).addInfobox(
+				InfoboxType.ERROR,
+				WizardL10n.l10nSec(infoboxTitleKey));
+			Box content = errorBox.body;
 
 			if (type == PASSWORD_PROMPT.SET_BLANK || type == PASSWORD_PROMPT.DECRYPT_BLANK) {
-				content.addChild("p", WizardL10n.l10nSec("passwordNotZeroLength"));
+				content.addBlockText(WizardL10n.l10nSec("passwordNotZeroLength"));
 			}
 
 			HTMLNode form = helper.addFormChild(content, ".", "masterPasswordForm");
@@ -285,8 +285,6 @@ public class SECURITY_PHYSICAL implements Step {
 	}
 
 	private void addBackToPhysicalSeclevelsButton(HTMLNode form) {
-		form.addChild("p").addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "backToMain", WizardL10n.l10n("backToSecurityLevels")});
+		form.addBlockText().addInput(InputType.SUBMIT, "backToMain", WizardL10n.l10n("backToSecurityLevels"));
 	}
 }

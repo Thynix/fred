@@ -1,11 +1,16 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
+import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.constants.InputType;
+import freenet.clients.http.uielements.*;
 import freenet.config.Config;
 import freenet.config.InvalidConfigValueException;
 import freenet.l10n.NodeL10n;
 import freenet.node.NodeClientCore;
-import freenet.support.*;
+import freenet.support.Fields;
+import freenet.support.HTMLNode;
+import freenet.support.URLEncoder;
 import freenet.support.api.HTTPRequest;
 
 /**
@@ -23,56 +28,47 @@ public class BANDWIDTH_MONTHLY extends BandwidthManipulator implements Step {
 
 	@Override
 	public void getStep(HTTPRequest request, PageHelper helper) {
-		HTMLNode contentNode = helper.getPageContent(WizardL10n.l10n("bandwidthLimit"));
+		Box contentNode = helper.getPageContent(WizardL10n.l10n("bandwidthLimit"));
 
 		if (request.isParameterSet("parseError")) {
 			parseErrorBox(contentNode, helper, request.getParam("parseTarget"));
 		}
 
 		//Box for prettiness and explanation of function.
-		HTMLNode infoBox = helper.getInfobox("infobox-normal", WizardL10n.l10n("bandwidthLimitMonthlyTitle"),
-		        contentNode, null, false);
-		NodeL10n.getBase().addL10nSubstitution(infoBox, "FirstTimeWizardToadlet.bandwidthLimitMonthly",
+		Infobox infoBox = contentNode.addInfobox(InfoboxType.NORMAL,
+			WizardL10n.l10n("bandwidthLimitMonthlyTitle"));
+		NodeL10n.getBase().addL10nSubstitution(infoBox.body, "FirstTimeWizardToadlet.bandwidthLimitMonthly",
 		        new String[] { "bold", "coreSettings" }, new HTMLNode[] { HTMLNode.STRONG, 
-		                new HTMLNode("#", NodeL10n.getBase().getString("ConfigToadlet.node"))});
+		                new Text(NodeL10n.getBase().getString("ConfigToadlet.node"))});
 
 		//TODO: Might want to detect bandwidth limit and hide those too high to reach.
 		//TODO: The user can always set a custom limit. At least one limit should be displayed in order to
 		//TODO: demonstrate how to specify the limit, though.
 
 		//Table header
-		HTMLNode table = infoBox.addChild("table");
-		HTMLNode headerRow = table.addChild("tr");
-		headerRow.addChild("th", WizardL10n.l10n("bandwidthLimitMonthlyTitle"));
-		headerRow.addChild("th", WizardL10n.l10n("bandwidthSelect"));
+		Table table = new Table();
+		infoBox.addChild(table);
+		Row headerRow = table.addRow();
+		headerRow.addHeader(WizardL10n.l10n("bandwidthLimitMonthlyTitle"));
+		headerRow.addHeader(WizardL10n.l10n("bandwidthSelect"));
 
 		//Row for each cap
 		for (long cap : caps) {
-			HTMLNode row = table.addChild("tr");
+			Row row = table.addRow();
 			//ISPs are likely to list limits in GB instead of GiB, so display GB here.
-			row.addChild("td", String.valueOf(cap/GB)+" GB");
-			HTMLNode selectForm = helper.addFormChild(row.addChild("td"), ".", "limit");
-			selectForm.addChild("input",
-			        new String[] { "type", "name", "value" },
-			        new String[] { "hidden", "capTo", String.valueOf(cap)});
-			selectForm.addChild("input",
-			        new String[] { "type", "value" },
-			        new String[] { "submit", WizardL10n.l10n("bandwidthSelect")});
+			row.addCell(String.valueOf(cap/GB)+" GB");
+			HTMLNode selectForm = helper.addFormChild(row.addCell(), ".", "limit");
+			selectForm.addInput(InputType.HIDDEN, "capTo", String.valueOf(cap));
+			selectForm.addInput(InputType.SUBMIT, WizardL10n.l10n("bandwidthSelect"));
 		}
 
 		//Row for custom entry
-		HTMLNode customForm = helper.addFormChild(table.addChild("tr"), ".", "custom-form");
-		customForm.addChild("td").addChild("input",
-			new String[]{"type", "name"},
-			new String[]{"text", "capTo"});
-		customForm.addChild("td").addChild("input",
-			new String[]{"type", "value"},
-			new String[]{"submit", WizardL10n.l10n("bandwidthSelect")});
+		HTMLNode customForm = helper.addFormChild(table.addRow(), ".", "custom-form");
+		customForm.addChild("td").addInput("capTo", InputType.TEXT);
+		customForm.addChild("td").addInput(InputType.SUBMIT, WizardL10n.l10n("bandwidthSelect"));
 
 		HTMLNode backForm = helper.addFormChild(infoBox, ".", "backForm");
-		backForm.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "back", NodeL10n.getBase().getString("Toadlet.back")});
+		backForm.addInput(InputType.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
 	}
 
 	@Override

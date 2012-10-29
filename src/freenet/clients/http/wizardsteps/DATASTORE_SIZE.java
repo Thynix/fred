@@ -1,6 +1,8 @@
 package freenet.clients.http.wizardsteps;
 
 import freenet.clients.http.FirstTimeWizardToadlet;
+import freenet.clients.http.constants.InputType;
+import freenet.clients.http.uielements.Infobox;
 import freenet.config.Config;
 import freenet.config.ConfigException;
 import freenet.config.Option;
@@ -29,12 +31,11 @@ public class DATASTORE_SIZE implements Step {
 
 	@Override
 	public void getStep(HTTPRequest request, PageHelper helper) {
-		HTMLNode contentNode = helper.getPageContent(WizardL10n.l10n("step4Title"));
-		HTMLNode bandwidthInfoboxContent = helper.getInfobox("infobox-header", WizardL10n.l10n("datastoreSize"),
-		        contentNode, null, false);
+		Infobox bandwidthInfoboxContent = helper.getPageContent(WizardL10n.l10n("step4Title")).addInfobox(
+			WizardL10n.l10n("datastoreSize"));
 
-		bandwidthInfoboxContent.addChild("#", WizardL10n.l10n("datastoreSizeLong"));
-		HTMLNode bandwidthForm = helper.addFormChild(bandwidthInfoboxContent, ".", "dsForm");
+		bandwidthInfoboxContent.body.addText(WizardL10n.l10n("datastoreSizeLong"));
+		HTMLNode bandwidthForm = helper.addFormChild(bandwidthInfoboxContent.body, ".", "dsForm");
 		HTMLNode result = bandwidthForm.addChild("select", "name", "ds");
 
 		long maxSize = maxDatastoreSize();
@@ -78,13 +79,9 @@ public class DATASTORE_SIZE implements Step {
 
 
 		//Put buttons below dropdown.
-		HTMLNode below = bandwidthForm.addChild("div");
-		below.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "back", NodeL10n.getBase().getString("Toadlet.back")});
-		below.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "next", NodeL10n.getBase().getString("Toadlet.next")});
+		HTMLNode below = bandwidthForm.addBox();
+		below.addInput(InputType.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
+		below.addInput(InputType.SUBMIT, "next", NodeL10n.getBase().getString("Toadlet.next"));
 	}
 
 	@Override

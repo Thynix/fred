@@ -1,8 +1,9 @@
 package freenet.clients.http.wizardsteps;
 
-import java.text.DecimalFormat;
-
 import freenet.clients.http.FirstTimeWizardToadlet;
+import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.constants.InputType;
+import freenet.clients.http.uielements.*;
 import freenet.config.Config;
 import freenet.config.InvalidConfigValueException;
 import freenet.l10n.NodeL10n;
@@ -12,6 +13,8 @@ import freenet.support.Logger;
 import freenet.support.SizeUtil;
 import freenet.support.URLEncoder;
 import freenet.support.api.HTTPRequest;
+
+import java.text.DecimalFormat;
 
 /**
  * Allows the user to set bandwidth limits with an emphasis on limiting to certain download and upload rates.
@@ -58,7 +61,7 @@ public class BANDWIDTH_RATE extends BandwidthManipulator implements Step {
 
 	@Override
 	public void getStep(HTTPRequest request, PageHelper helper) {
-		HTMLNode contentNode = helper.getPageContent(WizardL10n.l10n("bandwidthLimit"));
+		Box contentNode = helper.getPageContent(WizardL10n.l10n("bandwidthLimit"));
 		
 		HTMLNode formNode = helper.addFormChild(contentNode, ".", "limit");
 
@@ -66,19 +69,19 @@ public class BANDWIDTH_RATE extends BandwidthManipulator implements Step {
 			parseErrorBox(contentNode, helper, request.getParam("parseTarget"));
 		}
 
-		HTMLNode infoBox = helper.getInfobox("infobox-normal", WizardL10n.l10n("bandwidthLimitRateTitle"),
-		        formNode, null, false);
-		NodeL10n.getBase().addL10nSubstitution(infoBox, "FirstTimeWizardToadlet.bandwidthLimitRate",
+		Infobox infoBox = formNode.addInfobox(InfoboxType.NORMAL,
+			WizardL10n.l10n("bandwidthLimitRateTitle"));
+		NodeL10n.getBase().addL10nSubstitution(infoBox.body, "FirstTimeWizardToadlet.bandwidthLimitRate",
 		        new String[] { "bold", "coreSettings" }, new HTMLNode[] { HTMLNode.STRONG, 
-		                new HTMLNode("#", NodeL10n.getBase().getString("ConfigToadlet.node"))});
+		                new Text(NodeL10n.getBase().getString("ConfigToadlet.node"))});
 
 		//Table header
-		HTMLNode table = infoBox.addChild("table");
-		HTMLNode headerRow = table.addChild("tr");
-		headerRow.addChild("th", WizardL10n.l10n("bandwidthConnectionHeader"));
-		headerRow.addChild("th", WizardL10n.l10n("bandwidthDownloadHeader"));
-		headerRow.addChild("th", WizardL10n.l10n("bandwidthUploadHeader"));
-		headerRow.addChild("th", WizardL10n.l10n("bandwidthSelect"));
+		Table table = infoBox.body.addTable();
+		Row headerRow = table.addRow();
+		headerRow.addHeader(WizardL10n.l10n("bandwidthConnectionHeader"));
+		headerRow.addHeader(WizardL10n.l10n("bandwidthDownloadHeader"));
+		headerRow.addHeader(WizardL10n.l10n("bandwidthUploadHeader"));
+		headerRow.addHeader(WizardL10n.l10n("bandwidthSelect"));
 
 		boolean addedDefault = false;
 		
@@ -101,26 +104,16 @@ public class BANDWIDTH_RATE extends BandwidthManipulator implements Step {
 		}
 
 		//Add custom option.
-		HTMLNode customForm = table.addChild("tr");
-		customForm.addChild("td", WizardL10n.l10n("bandwidthCustom"));
-		customForm.addChild("td").addChild("input",
-		        new String[] { "type", "name" },
-		        new String[] { "text", "customDown" });
-		customForm.addChild("td").addChild("input",
-		        new String[] { "type", "name" },
-		        new String[] { "text", "customUp" });
+		Row customForm = table.addRow();
+		customForm.addCell(WizardL10n.l10n("bandwidthCustom"));
+		customForm.addCell().addInput("customDown", InputType.TEXT);
+		customForm.addCell().addInput("customUp", InputType.TEXT);
 		// This is valid if it's filled in. So don't show the selector.
 		// FIXME javascript to auto-select it?
-//		customForm.addChild("td").addChild("input",
-//				new String[] { "type", "name", "value" },
-//				new String[] { "radio", "bandwidth", "custom" });
+//		customForm.addCell().addInput(Input.Type.RADIO, "bandwidth", "custom");
 
-		infoBox.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "back", NodeL10n.getBase().getString("Toadlet.back")});
-		infoBox.addChild("input",
-		        new String[] { "type", "name", "value" },
-		        new String[] { "submit", "next", NodeL10n.getBase().getString("Toadlet.next")});
+		infoBox.addInput(InputType.SUBMIT, "back", NodeL10n.getBase().getString("Toadlet.back"));
+		infoBox.addInput(InputType.SUBMIT, "next", NodeL10n.getBase().getString("Toadlet.next"));
 	}
 
 	@Override
@@ -225,9 +218,9 @@ public class BANDWIDTH_RATE extends BandwidthManipulator implements Step {
 	 * @param limit Limit to display.
 	 * @param recommended Whether to mark the limit with (Recommended) next to the select button.
 	 */
-	private void addLimitRow(HTMLNode table, PageHelper helper, BandwidthLimit limit, boolean recommended, boolean useMaybeDefault) {
-		HTMLNode row = table.addChild("tr");
-		row.addChild("td", WizardL10n.l10n(limit.descriptionKey));
+	private void addLimitRow(Table table, PageHelper helper, BandwidthLimit limit, boolean recommended, boolean useMaybeDefault) {
+		Row row = table.addRow();
+		row.addCell(WizardL10n.l10n(limit.descriptionKey));
 		String downColumn = SizeUtil.formatSize(limit.downBytes)+WizardL10n.l10n("bandwidthPerSecond");
 		if(limit.downBytes >= 32*1024) {
 			downColumn += " (= ";
@@ -237,19 +230,17 @@ public class BANDWIDTH_RATE extends BandwidthManipulator implements Step {
 				downColumn += ((limit.downBytes*8)/(1024*1024));
 			downColumn+="Mbps)";
 		}
-		row.addChild("td", downColumn);
-		row.addChild("td", SizeUtil.formatSize(limit.upBytes)+WizardL10n.l10n("bandwidthPerSecond"));
+		row.addCell(downColumn);
+		row.addCell(SizeUtil.formatSize(limit.upBytes) + WizardL10n.l10n("bandwidthPerSecond"));
 
-		HTMLNode buttonCell = row.addChild("td");
+		Cell buttonCell = row.addCell();
 		
 		HTMLNode radio = 
-			buttonCell.addChild("input",
-					new String[] { "type", "name", "value" },
-					new String[] { "radio", "bandwidth", limit.downBytes+"/"+limit.upBytes });
+			buttonCell.addInput(InputType.RADIO, "bandwidth", limit.downBytes+"/"+limit.upBytes);
 		if(recommended || (useMaybeDefault && limit.maybeDefault))
 			radio.addAttribute("checked", "checked");
 		if (recommended) {
-			buttonCell.addChild("#", WizardL10n.l10n("autodetectedSuggestedLimit"));
+			buttonCell.addText(WizardL10n.l10n("autodetectedSuggestedLimit"));
 		}
 	}
 }

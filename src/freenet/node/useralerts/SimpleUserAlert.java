@@ -3,8 +3,9 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.node.useralerts;
 
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.uielements.Box;
 import freenet.l10n.NodeL10n;
-import freenet.support.HTMLNode;
 
 public class SimpleUserAlert extends AbstractUserAlert {
 
@@ -13,7 +14,7 @@ public class SimpleUserAlert extends AbstractUserAlert {
 	}
 	
 	public SimpleUserAlert(boolean canDismiss, String title, String text, String shortText, short type, Object userIdentifier) {
-		super(canDismiss, title, text, shortText, new HTMLNode("div", text), type, true, NodeL10n.getBase().getString("UserAlert.hide"), true, userIdentifier);
+		super(canDismiss, title, text, shortText, new Box(Category.NONE, text), type, true, NodeL10n.getBase().getString("UserAlert.hide"), true, userIdentifier);
 	}
 
 	@Override

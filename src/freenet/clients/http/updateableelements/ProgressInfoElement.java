@@ -1,14 +1,9 @@
 package freenet.clients.http.updateableelements;
 
 import freenet.client.FetchContext;
-import freenet.clients.http.FProxyFetchInProgress;
-import freenet.clients.http.FProxyFetchResult;
-import freenet.clients.http.FProxyFetchTracker;
-import freenet.clients.http.FProxyFetchWaiter;
-import freenet.clients.http.FProxyToadlet;
-import freenet.clients.http.SimpleToadletServer;
-import freenet.clients.http.ToadletContext;
+import freenet.clients.http.*;
 import freenet.clients.http.complexhtmlnodes.SecondCounterNode;
+import freenet.clients.http.constants.Category;
 import freenet.keys.FreenetURI;
 import freenet.support.Base64;
 import freenet.support.HTMLNode;
@@ -45,10 +40,10 @@ public class ProgressInfoElement extends BaseUpdateableElement {
 		FProxyFetchWaiter waiter = tracker.makeWaiterForFetchInProgress(key, maxSize, fctx);
 		FProxyFetchResult fr = waiter.getResult();
 		if (fr == null) {
-			addChild("div", "No fetcher found");
+			addBox(Category.NONE, "No fetcher found");
 		}
 		
-		addChild("#", FProxyToadlet.l10n("filenameLabel")+ " ");
+		addText(FProxyToadlet.l10n("filenameLabel")+ " ");
 		addChild("a", "href", "/"+key.toString(false, false), key.getPreferredFilename());
 		if(fr.mimeType != null) addChild("br", FProxyToadlet.l10n("contentTypeLabel")+" "+fr.mimeType);
 		if(fr.size > 0) addChild("br", "Size: "+SizeUtil.formatSize(fr.size));
@@ -58,16 +53,16 @@ public class ProgressInfoElement extends BaseUpdateableElement {
 					new String[] { Integer.toString(fr.fetchedBlocks), Integer.toString(fr.requiredBlocks), Integer.toString(fr.totalBlocks), Integer.toString(fr.failedBlocks), Integer.toString(fr.fatallyFailedBlocks) }));
 		}
 		long elapsed = System.currentTimeMillis() - fr.timeStarted;
-		addChild("br");
+		addLineBreak();
 		addChild(new SecondCounterNode(elapsed, true, FProxyToadlet.l10n("timeElapsedLabel") + " "));
 		long eta = fr.eta - elapsed;
 		if (eta > 0) {
-			addChild("br");
+			addLineBreak();
 			addChild(new SecondCounterNode(eta, false, "ETA: "));
 		}
 		if (ctx.getContainer().isFProxyJavascriptEnabled()) {
 			HTMLNode lastRefreshNode = new HTMLNode("span", "class", "jsonly");
-			lastRefreshNode.addChild("br");
+			lastRefreshNode.addLineBreak();
 			lastRefreshNode.addChild(new SecondCounterNode(0, true, FProxyToadlet.l10n("lastRefresh")));
 			addChild(lastRefreshNode);
 		}

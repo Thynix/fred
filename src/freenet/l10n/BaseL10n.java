@@ -3,6 +3,15 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.l10n;
 
+import freenet.clients.http.TranslationToadlet;
+import freenet.clients.http.uielements.Text;
+import freenet.support.HTMLEncoder;
+import freenet.support.HTMLNode;
+import freenet.support.Logger;
+import freenet.support.SimpleFieldSet;
+import freenet.support.io.Closer;
+import freenet.support.io.FileUtil;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,14 +20,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.MissingResourceException;
-
-import freenet.clients.http.TranslationToadlet;
-import freenet.support.HTMLEncoder;
-import freenet.support.HTMLNode;
-import freenet.support.Logger;
-import freenet.support.SimpleFieldSet;
-import freenet.support.io.Closer;
-import freenet.support.io.FileUtil;
 
 /**
  * This is the core of all the localization stuff. This method can get
@@ -416,12 +417,11 @@ public class BaseL10n {
 	public HTMLNode getHTMLNode(String key) {
 		String value = this.getString(key, true);
 		if (value != null) {
-			return new HTMLNode("#", value);
+			return new Text(value);
 		}
 		HTMLNode translationField = new HTMLNode("span", "class", "translate_it");
-		translationField.addChild("#", getDefaultString(key));
-		translationField.addChild("a", "href", TranslationToadlet.TOADLET_URL + "?translate=" + key).addChild("small", " (translate it in your native language!)");
-
+		translationField.addText(getDefaultString(key));
+		translationField.addLink(TranslationToadlet.TOADLET_URL + "?translate=" + key).addChild("small", " (translate it in your native language!)");
 		return translationField;
 	}
 
@@ -517,7 +517,7 @@ public class BaseL10n {
 		for (int i = 0; i < patterns.length; i++) {
 			result = result.replaceAll("\\$\\{" + patterns[i] + "\\}", quoteReplacement(values[i]));
 		}
-		node.addChild("%", result);
+		node.addText(result);
 	}
 	
 	public void addL10nSubstitution(HTMLNode node, String key, String[] patterns, HTMLNode[] values) {
@@ -538,7 +538,7 @@ public class BaseL10n {
 	 * Example:
 	 * 
 	 * addL10nSubstitution(html, "TranslationLookup.string", new String[] { "link", "text" },
-	 *   new HTMLNode[] { HTMLNode.link("/KSK@gpl.txt"), HTMLNode.text("blah") })
+	 *   new HTMLNode[] { new Link("/KSK@gpl.txt"), new Text("blah") })
 	 * 
 	 * TranslationLookup.string=This is a ${link}link${/link} about ${text}.
 	 */
@@ -547,7 +547,7 @@ public class BaseL10n {
 		while(!value.equals("") && (x = value.indexOf("${")) != -1) {
 			String before = value.substring(0, x);
 			if(before.length() > 0)
-				node.addChild("#", before);
+				node.addText(before);
 			value = value.substring(x);
 			int y = value.indexOf('}');
 			if(y == -1) {
@@ -592,7 +592,7 @@ public class BaseL10n {
 			}
 		}
 		if(!value.equals(""))
-			node.addChild("#", value);
+			node.addText(value);
 	}
 	
 	public String[] getAllNamesWithPrefix(String prefix){

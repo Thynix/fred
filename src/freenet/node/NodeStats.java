@@ -1,14 +1,8 @@
 package freenet.node;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.Map;
-
+import freenet.clients.http.constants.Category;
+import freenet.clients.http.uielements.Row;
+import freenet.clients.http.uielements.Table;
 import freenet.config.InvalidConfigValueException;
 import freenet.config.NodeNeedRestartException;
 import freenet.config.SubConfig;
@@ -19,30 +13,23 @@ import freenet.io.comm.Message;
 import freenet.io.xfer.BlockTransmitter.BlockTimeCallback;
 import freenet.io.xfer.BulkTransmitter;
 import freenet.l10n.NodeL10n;
-import freenet.node.Node.CountedRequests;
+import freenet.node.RequestTracker.CountedRequests;
+import freenet.node.RequestTracker.WaitingForSlots;
 import freenet.node.SecurityLevels.NETWORK_THREAT_LEVEL;
 import freenet.node.stats.StatsNotAvailableException;
 import freenet.node.stats.StoreLocationStats;
 import freenet.store.CHKStore;
-import freenet.support.HTMLNode;
-import freenet.support.Histogram2;
-import freenet.support.LogThresholdCallback;
-import freenet.support.Logger;
+import freenet.support.*;
 import freenet.support.Logger.LogLevel;
-import freenet.support.SimpleFieldSet;
-import freenet.support.SizeUtil;
-import freenet.support.StringCounter;
-import freenet.support.TimeUtil;
-import freenet.support.TokenBucket;
 import freenet.support.api.BooleanCallback;
 import freenet.support.api.IntCallback;
 import freenet.support.api.LongCallback;
 import freenet.support.io.NativeThread;
-import freenet.support.math.BootstrappingDecayingRunningAverage;
-import freenet.support.math.DecayingKeyspaceAverage;
-import freenet.support.math.RunningAverage;
-import freenet.support.math.TimeDecayingRunningAverage;
-import freenet.support.math.TrivialRunningAverage;
+import freenet.support.math.*;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.*;
 
 /** Node (as opposed to NodeClientCore) level statistics. Includes shouldRejectRequest(), but not limited
  * to stuff required to implement that. */
@@ -746,7 +733,7 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 			
 			boolean ignoreLocalVsRemote = ignoreLocalVsRemoteBandwidthLiability();
 			
-			RunningRequestsSnapshot runningLocal = new RunningRequestsSnapshot(node, peer, false, ignoreLocalVsRemote, transfersPerInsert, realTimeFlag);
+			RunningRequestsSnapshot runningLocal = new RunningRequestsSnapshot(node.tracker, peer, false, ignoreLocalVsRemote, transfersPerInsert, realTimeFlag);
 			
 			int peers = node.peers.countConnectedPeers();
 			
@@ -772,7 +759,7 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 			
 			this.averageTransfersOutPerInsert = transfersPerInsert;
 			
-			RunningRequestsSnapshot runningGlobal = new RunningRequestsSnapshot(node, ignoreLocalVsRemote, transfersPerInsert, realTimeFlag);
+			RunningRequestsSnapshot runningGlobal = new RunningRequestsSnapshot(node.tracker, ignoreLocalVsRemote, transfersPerInsert, realTimeFlag);
 			expectedTransfersInCHK = runningGlobal.expectedTransfersInCHK - runningLocal.expectedTransfersInCHK;
 			expectedTransfersInSSK = runningGlobal.expectedTransfersInSSK - runningLocal.expectedTransfersInSSK;
 			expectedTransfersOutCHK = runningGlobal.expectedTransfersOutCHK - runningLocal.expectedTransfersOutCHK;
@@ -858,23 +845,23 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 		final int averageTransfersPerInsert;
 		final boolean realTimeFlag;
 		
-		RunningRequestsSnapshot(Node node, boolean ignoreLocalVsRemote, int transfersPerInsert, boolean realTimeFlag) {
+		RunningRequestsSnapshot(RequestTracker tracker, boolean ignoreLocalVsRemote, int transfersPerInsert, boolean realTimeFlag) {
 			this.averageTransfersPerInsert = transfersPerInsert;
 			this.realTimeFlag = realTimeFlag;
 			CountedRequests countCHK = new CountedRequests();
 			CountedRequests countSSK = new CountedRequests();
 			CountedRequests countCHKSR = new CountedRequests();
 			CountedRequests countSSKSR = new CountedRequests();
-			node.countRequests(true, false, false, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countCHK, countCHKSR);
-			node.countRequests(true, true, false, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countSSK, countSSKSR);
-			node.countRequests(true, false, true, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countCHK, countCHKSR);
-			node.countRequests(true, true, true, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countSSK, countSSKSR);
-			node.countRequests(false, false, false, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countCHK, countCHKSR);
-			node.countRequests(false, true, false, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countSSK, countSSKSR);
-			node.countRequests(false, false, true, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countCHK, countCHKSR);
-			node.countRequests(false, true, true, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countSSK, countSSKSR);
-			node.countRequests(false, false, false, true, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countCHK, countCHKSR);
-			node.countRequests(false, true, false, true, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countSSK, countSSKSR);
+			tracker.countRequests(true, false, false, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countCHK, countCHKSR);
+			tracker.countRequests(true, true, false, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countSSK, countSSKSR);
+			tracker.countRequests(true, false, true, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countCHK, countCHKSR);
+			tracker.countRequests(true, true, true, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countSSK, countSSKSR);
+			tracker.countRequests(false, false, false, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countCHK, countCHKSR);
+			tracker.countRequests(false, true, false, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countSSK, countSSKSR);
+			tracker.countRequests(false, false, true, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countCHK, countCHKSR);
+			tracker.countRequests(false, true, true, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countSSK, countSSKSR);
+			tracker.countRequests(false, false, false, true, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countCHK, countCHKSR);
+			tracker.countRequests(false, true, false, true, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countSSK, countSSKSR);
 			this.expectedTransfersInCHK = countCHK.expectedTransfersIn;
 			this.expectedTransfersInSSK = countSSK.expectedTransfersIn;
 			this.expectedTransfersOutCHK = countCHK.expectedTransfersOut;
@@ -897,12 +884,12 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 		 * according to the *SR totals, and only compare the non-SR requests when
 		 * deciding whether the peer is over the limit. The updated limits are 
 		 * sent to the downstream node so that it can send the right number of requests.
-		 * @param node We need this to count the requests.
+		 * @param tracker We need this to count the requests.
 		 * @param source The peer we are interested in.
 		 * @param requestsToNode If true, count requests sent to the node and currently
 		 * running. If false, count requests originated by the node.
 		 */
-		RunningRequestsSnapshot(Node node, PeerNode source, boolean requestsToNode, boolean ignoreLocalVsRemote, int transfersPerInsert, boolean realTimeFlag) {
+		RunningRequestsSnapshot(RequestTracker tracker, PeerNode source, boolean requestsToNode, boolean ignoreLocalVsRemote, int transfersPerInsert, boolean realTimeFlag) {
 			this.averageTransfersPerInsert = transfersPerInsert;
 			this.realTimeFlag = realTimeFlag;
 			// We are calculating what part of their resources we use. Therefore, we have
@@ -918,16 +905,16 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 				countCHKSR = new CountedRequests();
 				countSSKSR = new CountedRequests();
 			}
-			node.countRequests(source, requestsToNode, true, false, false, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countCHK, countCHKSR);
-			node.countRequests(source, requestsToNode, true, true, false, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countSSK, countSSKSR);
-			node.countRequests(source, requestsToNode, true, false, true, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countCHK, countCHKSR);
-			node.countRequests(source, requestsToNode, true, true, true, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countSSK, countSSKSR);
-			node.countRequests(source, requestsToNode, false, false, false, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countCHK, countCHKSR);
-			node.countRequests(source, requestsToNode, false, true, false, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countSSK, countSSKSR);
-			node.countRequests(source, requestsToNode, false, false, true, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countCHK, countCHKSR);
-			node.countRequests(source, requestsToNode, false, true, true, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countSSK, countSSKSR);
-			node.countRequests(source, requestsToNode, false, false, false, true, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countCHK, countCHKSR);
-			node.countRequests(source, requestsToNode, false, true, false, true, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countSSK, countSSKSR);
+			tracker.countRequests(source, requestsToNode, true, false, false, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countCHK, countCHKSR);
+			tracker.countRequests(source, requestsToNode, true, true, false, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countSSK, countSSKSR);
+			tracker.countRequests(source, requestsToNode, true, false, true, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countCHK, countCHKSR);
+			tracker.countRequests(source, requestsToNode, true, true, true, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countSSK, countSSKSR);
+			tracker.countRequests(source, requestsToNode, false, false, false, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countCHK, countCHKSR);
+			tracker.countRequests(source, requestsToNode, false, true, false, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countSSK, countSSKSR);
+			tracker.countRequests(source, requestsToNode, false, false, true, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countCHK, countCHKSR);
+			tracker.countRequests(source, requestsToNode, false, true, true, false, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countSSK, countSSKSR);
+			tracker.countRequests(source, requestsToNode, false, false, false, true, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countCHK, countCHKSR);
+			tracker.countRequests(source, requestsToNode, false, true, false, true, realTimeFlag, transfersPerInsert, ignoreLocalVsRemote, countSSK, countSSKSR);
 			if(!requestsToNode) {
 				this.expectedTransfersInCHKSR = countCHKSR.expectedTransfersIn;
 				this.expectedTransfersInSSKSR = countSSKSR.expectedTransfersIn;
@@ -1151,7 +1138,7 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 		int transfersPerInsert = outwardTransfersPerInsert();
 		
 		/** Requests running, globally */
-		RunningRequestsSnapshot requestsSnapshot = new RunningRequestsSnapshot(node, ignoreLocalVsRemoteBandwidthLiability, transfersPerInsert, realTimeFlag);
+		RunningRequestsSnapshot requestsSnapshot = new RunningRequestsSnapshot(node.tracker, ignoreLocalVsRemoteBandwidthLiability, transfersPerInsert, realTimeFlag);
 		
 		// Don't need to decrement because it won't be counted until setAccepted() below.
 
@@ -1182,7 +1169,7 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 		 * which are not included in the count, and are decremented from the peer limit
 		 * before it is used and sent to the peer. This ensures that the peer
 		 * doesn't use more than it should after a restart. */
-		RunningRequestsSnapshot peerRequestsSnapshot = new RunningRequestsSnapshot(node, source, false, ignoreLocalVsRemoteBandwidthLiability, transfersPerInsert, realTimeFlag);
+		RunningRequestsSnapshot peerRequestsSnapshot = new RunningRequestsSnapshot(node.tracker, source, false, ignoreLocalVsRemoteBandwidthLiability, transfersPerInsert, realTimeFlag);
 		if(logMINOR)
 			peerRequestsSnapshot.log(source);
 		
@@ -1459,7 +1446,6 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 	 * limit. However, the node is only guaranteed its fair share, which is defined as its
 	 * fraction of the part of the total that is above the lower limit.
 	 * @param input
-	 * @param dontTellPeer
 	 * @param transfersPerInsert
 	 * @param realTimeFlag
 	 * @param peers
@@ -1892,18 +1878,20 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 
 		fs.put("numberOfTransferringRequestSenders", node.getNumTransferringRequestSenders());
 		fs.put("numberOfARKFetchers", node.getNumARKFetchers());
+		
+		RequestTracker tracker = node.tracker;
 
-		fs.put("numberOfLocalCHKInserts", node.getNumLocalCHKInserts());
-		fs.put("numberOfRemoteCHKInserts", node.getNumRemoteCHKInserts());
-		fs.put("numberOfLocalSSKInserts", node.getNumLocalSSKInserts());
-		fs.put("numberOfRemoteSSKInserts", node.getNumRemoteSSKInserts());
-		fs.put("numberOfLocalCHKRequests", node.getNumLocalCHKRequests());
-		fs.put("numberOfRemoteCHKRequests", node.getNumRemoteCHKRequests());
-		fs.put("numberOfLocalSSKRequests", node.getNumLocalSSKRequests());
-		fs.put("numberOfRemoteSSKRequests", node.getNumRemoteSSKRequests());
+		fs.put("numberOfLocalCHKInserts", tracker.getNumLocalCHKInserts());
+		fs.put("numberOfRemoteCHKInserts", tracker.getNumRemoteCHKInserts());
+		fs.put("numberOfLocalSSKInserts", tracker.getNumLocalSSKInserts());
+		fs.put("numberOfRemoteSSKInserts", tracker.getNumRemoteSSKInserts());
+		fs.put("numberOfLocalCHKRequests", tracker.getNumLocalCHKRequests());
+		fs.put("numberOfRemoteCHKRequests", tracker.getNumRemoteCHKRequests());
+		fs.put("numberOfLocalSSKRequests", tracker.getNumLocalSSKRequests());
+		fs.put("numberOfRemoteSSKRequests", tracker.getNumRemoteSSKRequests());
 		fs.put("numberOfTransferringRequestHandlers", node.getNumTransferringRequestHandlers());
-		fs.put("numberOfCHKOfferReplys", node.getNumCHKOfferReplies());
-		fs.put("numberOfSSKOfferReplys", node.getNumSSKOfferReplies());
+		fs.put("numberOfCHKOfferReplys", tracker.getNumCHKOfferReplies());
+		fs.put("numberOfSSKOfferReplys", tracker.getNumSSKOfferReplies());
 
 		fs.put("delayTimeLocalRT", nlmDelayRTLocal.currentValue());
 		fs.put("delayTimeRemoteRT", nlmDelayRTRemote.currentValue());
@@ -1917,9 +1905,9 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 		    fs.put("allocatedSlotRemote",allocatedSlotRemote);
 		}
 
-		int[] waitingSlots = node.countRequestsWaitingForSlots();
-		fs.put("RequestsWaitingSlotsLocal", waitingSlots[0]);
-		fs.put("RequestsWaitingSlotsRemote", waitingSlots[1]);
+		WaitingForSlots waitingSlots = tracker.countRequestsWaitingForSlots();
+		fs.put("RequestsWaitingSlotsLocal", waitingSlots.local);
+		fs.put("RequestsWaitingSlotsRemote", waitingSlots.remote);
 
 		fs.put("successfulLocalCHKFetchTimeBulk", successfulLocalCHKFetchTimeAverageBulk.currentValue());
 		fs.put("successfulLocalCHKFetchTimeRT", successfulLocalCHKFetchTimeAverageRT.currentValue());
@@ -2124,11 +2112,11 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 		return node.isTestnetEnabled();
 	}
 
-	public boolean getRejectReasonsTable(HTMLNode table) {
+	public boolean getRejectReasonsTable(Table table) {
 		return preemptiveRejectReasons.toTableRows(table) > 0;
 	}
 
-	public boolean getLocalRejectReasonsTable(HTMLNode table) {
+	public boolean getLocalRejectReasonsTable(Table table) {
 		return localPreemptiveRejectReasons.toTableRows(table) > 0;
 	}
 
@@ -2153,7 +2141,8 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 	private final NumberFormat thousandPoint = NumberFormat.getInstance();
 
 	public void fillSuccessRateBox(HTMLNode parent) {
-		HTMLNode list = parent.addChild("table", "border", "0");
+		Table fillSuccessRate = new Table();
+		parent.addChild(fillSuccessRate);
 		final RunningAverage[] averages = new RunningAverage[] {
 				globalFetchPSuccess,
 				chkLocalFetchPSuccess,
@@ -2176,29 +2165,30 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 				l10n("blockTransfersLocal"),
 				l10n("transfersTimedOut")
 		};
-		HTMLNode row = list.addChild("tr");
-		row.addChild("th", l10n("group"));
-		row.addChild("th", l10n("pSuccess"));
-		row.addChild("th", l10n("count"));
+		Row headerRow = fillSuccessRate.addRow();
+		headerRow.addHeader(l10n("group"));
+		headerRow.addHeader(l10n("pSuccess"));
+		headerRow.addHeader(l10n("count"));
 
+		Row row;
 		for(int i=0;i<averages.length;i++) {
-			row = list.addChild("tr");
-			row.addChild("td", names[i]);
+			row = fillSuccessRate.addRow();
+			row.addCell(names[i]);
 			if (averages[i].countReports()==0) {
-				row.addChild("td", "-");
-				row.addChild("td", "0");
+				row.addCell("-");
+				row.addCell("0");
 			} else {
-				row.addChild("td", fix3p3pct.format(averages[i].currentValue()));
-				row.addChild("td", thousandPoint.format(averages[i].countReports()));
+				row.addCell(fix3p3pct.format(averages[i].currentValue()));
+				row.addCell(thousandPoint.format(averages[i].countReports()));
 			}
 		}
 
-		row = list.addChild("tr");
+		fillSuccessRate.addRow();
 		long[] bulkSuccess = BulkTransmitter.transferSuccess();
-		row = list.addChild("tr");
-		row.addChild("td", l10n("bulkSends"));
-		row.addChild("td", fix3p3pct.format(((double)bulkSuccess[1])/((double)bulkSuccess[0])));
-		row.addChild("td", Long.toString(bulkSuccess[0]));
+		row = fillSuccessRate.addRow();
+		row.addCell(l10n("bulkSends"));
+		row.addCell(fix3p3pct.format(((double) bulkSuccess[1]) / ((double) bulkSuccess[0])));
+		row.addCell(Long.toString(bulkSuccess[0]));
 	}
 
 	/* Total bytes sent by requests and inserts, excluding payload */
@@ -2925,29 +2915,30 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 	}
 
 	public void fillDetailedTimingsBox(HTMLNode html) {
-		HTMLNode table = html.addChild("table");
-		HTMLNode row = table.addChild("tr");
-		row.addChild("td");
-		row.addChild("td", "colspan", "2", "CHK");
-		row.addChild("td", "colspan", "2", "SSK");
-		row = table.addChild("tr");
-		row.addChild("td", l10n("successfulHeader"));
-		row.addChild("td", TimeUtil.formatTime((long)successfulLocalCHKFetchTimeAverageBulk.currentValue(), 2, true));
-		row.addChild("td", TimeUtil.formatTime((long)successfulLocalCHKFetchTimeAverageRT.currentValue(), 2, true));
-		row.addChild("td", TimeUtil.formatTime((long)successfulLocalSSKFetchTimeAverageBulk.currentValue(), 2, true));
-		row.addChild("td", TimeUtil.formatTime((long)successfulLocalSSKFetchTimeAverageRT.currentValue(), 2, true));
-		row = table.addChild("tr");
-		row.addChild("td", l10n("unsuccessfulHeader"));
-		row.addChild("td", TimeUtil.formatTime((long)unsuccessfulLocalCHKFetchTimeAverageBulk.currentValue(), 2, true));
-		row.addChild("td", TimeUtil.formatTime((long)unsuccessfulLocalCHKFetchTimeAverageRT.currentValue(), 2, true));
-		row.addChild("td", TimeUtil.formatTime((long)unsuccessfulLocalSSKFetchTimeAverageBulk.currentValue(), 2, true));
-		row.addChild("td", TimeUtil.formatTime((long)unsuccessfulLocalSSKFetchTimeAverageRT.currentValue(), 2, true));
-		row = table.addChild("tr");
-		row.addChild("td", l10n("averageHeader"));
-		row.addChild("td", TimeUtil.formatTime((long)localCHKFetchTimeAverageBulk.currentValue(), 2, true));
-		row.addChild("td", TimeUtil.formatTime((long)localCHKFetchTimeAverageRT.currentValue(), 2, true));
-		row.addChild("td", TimeUtil.formatTime((long)localSSKFetchTimeAverageBulk.currentValue(), 2, true));
-		row.addChild("td", TimeUtil.formatTime((long)localSSKFetchTimeAverageRT.currentValue(), 2, true));
+		Table table = new Table();
+		html.addChild(table);
+		Row row = table.addRow();
+		row.addCell();
+		row.addCell(2, "CHK");
+		row.addCell(2, "SSK");
+		row = table.addRow();
+		row.addCell(l10n("successfulHeader"));
+		row.addCell(TimeUtil.formatTime((long) successfulLocalCHKFetchTimeAverageBulk.currentValue(), 2, true));
+		row.addCell(TimeUtil.formatTime((long) successfulLocalCHKFetchTimeAverageRT.currentValue(), 2, true));
+		row.addCell(TimeUtil.formatTime((long) successfulLocalSSKFetchTimeAverageBulk.currentValue(), 2, true));
+		row.addCell(TimeUtil.formatTime((long) successfulLocalSSKFetchTimeAverageRT.currentValue(), 2, true));
+		row = table.addRow();
+		row.addCell(l10n("unsuccessfulHeader"));
+		row.addCell(TimeUtil.formatTime((long) unsuccessfulLocalCHKFetchTimeAverageBulk.currentValue(), 2, true));
+		row.addCell(TimeUtil.formatTime((long) unsuccessfulLocalCHKFetchTimeAverageRT.currentValue(), 2, true));
+		row.addCell(TimeUtil.formatTime((long) unsuccessfulLocalSSKFetchTimeAverageBulk.currentValue(), 2, true));
+		row.addCell(TimeUtil.formatTime((long) unsuccessfulLocalSSKFetchTimeAverageRT.currentValue(), 2, true));
+		row = table.addRow();
+		row.addCell(l10n("averageHeader"));
+		row.addCell(TimeUtil.formatTime((long) localCHKFetchTimeAverageBulk.currentValue(), 2, true));
+		row.addCell(TimeUtil.formatTime((long) localCHKFetchTimeAverageRT.currentValue(), 2, true));
+		row.addCell(TimeUtil.formatTime((long) localSSKFetchTimeAverageBulk.currentValue(), 2, true));
+		row.addCell(TimeUtil.formatTime((long) localSSKFetchTimeAverageRT.currentValue(), 2, true));
 	}
 
 	private HourlyStats hourlyStatsRT;
@@ -3516,7 +3507,7 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 	}
 
 	public RunningRequestsSnapshot getRunningRequestsTo(PeerNode peerNode, int transfersPerInsert, boolean realTimeFlag) {
-		return new RunningRequestsSnapshot(node, peerNode, true, false, outwardTransfersPerInsert(), realTimeFlag);
+		return new RunningRequestsSnapshot(node.tracker, peerNode, true, false, outwardTransfersPerInsert(), realTimeFlag);
 	}
 	
 	public boolean ignoreLocalVsRemoteBandwidthLiability() {
@@ -3615,33 +3606,35 @@ public class NodeStats implements Persistable, BlockTimeCallback {
 	}
 
 	public void drawNewLoadManagementDelayTimes(HTMLNode content) {
-		int[] waitingSlots = node.countRequestsWaitingForSlots();
-		content.addChild("p").addChild("#", l10n("slotsWaiting", new String[] { "local", "remote" }, new String[] { Integer.toString(waitingSlots[0]), Integer.toString(waitingSlots[1]) }));
-		HTMLNode table = content.addChild("table", "border", "0");
-		HTMLNode header = table.addChild("tr");
-		header.addChild("th", l10n("delayTimes"));
-		header.addChild("th", l10n("localHeader"));
-		header.addChild("th", l10n("remoteHeader"));
-		HTMLNode row = table.addChild("tr");
-		row.addChild("th", l10n("realTimeHeader"));
-		row.addChild("td", TimeUtil.formatTime((int)nlmDelayRTLocal.currentValue(), 2, true));
-		row.addChild("td", TimeUtil.formatTime((int)nlmDelayRTRemote.currentValue(), 2, true));
-		row = table.addChild("tr");
-		row.addChild("th", l10n("bulkHeader"));
-		row.addChild("td", TimeUtil.formatTime((int)nlmDelayBulkLocal.currentValue(), 2, true));
-		row.addChild("td", TimeUtil.formatTime((int)nlmDelayBulkRemote.currentValue(), 2, true));
+		WaitingForSlots waitingSlots = node.tracker.countRequestsWaitingForSlots();
+		content.addBlockText().addText(l10n("slotsWaiting", new String[]{"local", "remote"}, new String[]{Integer.toString(waitingSlots.local), Integer.toString(waitingSlots.remote)}));
+		Table table = new Table();
+		content.addChild(table);
+		Row header = table.addRow();
+		header.addHeader(l10n("delayTimes"));
+		header.addHeader(l10n("localHeader"));
+		header.addHeader(l10n("remoteHeader"));
+		Row row = table.addRow();
+		row.addHeader(l10n("realTimeHeader"));
+		row.addCell(TimeUtil.formatTime((int) nlmDelayRTLocal.currentValue(), 2, true));
+		row.addCell(TimeUtil.formatTime((int) nlmDelayRTRemote.currentValue(), 2, true));
+		row = table.addRow();
+		row.addHeader(l10n("bulkHeader"));
+		row.addCell(TimeUtil.formatTime((int) nlmDelayBulkLocal.currentValue(), 2, true));
+		row.addCell(TimeUtil.formatTime((int) nlmDelayBulkRemote.currentValue(), 2, true));
 		
 		synchronized(slotTimeoutsSync) {
 			if(fatalTimeoutsInWaitLocal + fatalTimeoutsInWaitRemote + 
 					allocatedSlotLocal + allocatedSlotRemote > 0) {
-				content.addChild("b", l10n("timeoutFractions"));
-				table = content.addChild("table", "border", "0");
-				header = table.addChild("tr");
-				header.addChild("th", l10n("localHeader"));
-				header.addChild("th", l10n("remoteHeader"));
-				row = table.addChild("tr");
-				row.addChild("td", this.fix3p3pct.format(((double)fatalTimeoutsInWaitLocal)/((double)(fatalTimeoutsInWaitLocal + allocatedSlotLocal))));
-				row.addChild("td", this.fix3p3pct.format(((double)fatalTimeoutsInWaitRemote)/((double)(fatalTimeoutsInWaitRemote + allocatedSlotRemote))));
+				content.addInlineBox(Category.BOLD, l10n("timeoutFractions"));
+				table = new Table();
+				content.addChild(table);
+				header = table.addRow();
+				header.addHeader(l10n("localHeader"));
+				header.addHeader(l10n("remoteHeader"));
+				row = table.addRow();
+				row.addCell(this.fix3p3pct.format(((double)fatalTimeoutsInWaitLocal)/((double)(fatalTimeoutsInWaitLocal + allocatedSlotLocal))));
+				row.addCell(this.fix3p3pct.format(((double)fatalTimeoutsInWaitRemote)/((double)(fatalTimeoutsInWaitRemote + allocatedSlotRemote))));
 			}
 		}
 	}

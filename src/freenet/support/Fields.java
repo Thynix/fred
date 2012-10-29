@@ -804,112 +804,6 @@ public abstract class Fields {
 	}
 
 	/**
-	 * Assumes the array is sorted in ascending order, [begin] is lowest and [end] is highest.
-	 */
-	public static int binarySearch(long[] values, long key, int origBegin, int origEnd) {
-		int begin = origBegin;
-		int end = origEnd;
-		while(true) {
-			if(end < begin)	// so we can use origEnd=length-1 without worrying length=0
-				return -begin - 1;
-
-			int middle = (begin + end) >>> 1;
-			if(values[middle] == key)
-				return middle;
-
-			if(values[middle] > key)
-				end = middle - 1;
-			else if(values[middle] < key)
-				begin = middle + 1;
-		}
-	}
-
-	/**
-	 * Assumes the array is sorted in ascending order, [begin] is lowest and [end] is highest.
-	 */
-	public static int binarySearch(int[] values, int key, int origBegin, int origEnd) {
-		int begin = origBegin;
-		int end = origEnd;
-		while(true) {
-			if(end < begin)	// so we can use origEnd=length-1 without worrying length=0
-				return -begin - 1;
-
-			int middle = (begin + end) >>> 1;
-			if(values[middle] == key)
-				return middle;
-
-			if(values[middle] > key)
-				end = middle - 1;
-			else if(values[middle] < key)
-				begin = middle + 1;
-		}
-	}
-
-	/**
-	** Search a range of the given array using binary search. We use this
-	** because the corresponding method in java.util.Arrays is only available
-	** in JDK6 or later.
-	**
-	** Note that this implementation behaves exactly the same way as the one
-	** from Arrays, as opposed to {@link binarySearch(long[], long, int, int)}.
-	** In particular, the right endpoint here is <b>exclusive</b>.
-	**
-	** TODO JDK6: make this @deprecated when we move to JDK6.
-	**
-	** @throws ClassCastException if the comparator is {@code null} and the
-	**         array contains elements that are not {@link Comparable}, or the
-	**         comparator cannot handle any elements of the array.
-	** @throws IllegalArgumentException if {@code li} > {@code ri}
-	** @throws ArrayIndexOutOfBoundsException if {@code li} < 0 or {@code ri} >
-	**         {@code arr.length}.
-	*/
-	public static <T> int binarySearch(T[] arr, int li, int ri, T key, Comparator<? super T> cmp) {
-		int l = li, r = ri, m = 0;
-
-		if (li > ri) {
-			throw new IllegalArgumentException("L-index must not be greater than R-index");
-		}
-		if (li < 0 || ri > arr.length) {
-			throw new ArrayIndexOutOfBoundsException();
-		}
-
-		if (cmp == null) {
-			// natural ordering
-			while (l<=r) {
-				m = (l+r)>>>1;
-				@SuppressWarnings("unchecked") int c = ((Comparable<T>)arr[m]).compareTo(key);
-
-				if (c == 0) {
-					return m;
-				} else if (c > 0) {
-					r = m-1;
-				} else {
-					l = ++m; // gets the insertion point right on the last loop
-				}
-			}
-			return ~m;
-
-		} else {
-			// comparator
-			while (l<=r) {
-				m = (l+r)>>>1;
-				int c = cmp.compare(arr[m], key);
-
-				if (c == 0) {
-					return m;
-				} else if (c > 0) {
-					r = m-1;
-				} else {
-					l = ++m; // gets the insertion point right on the last loop
-				}
-			}
-			return ~m;
-
-		}
-
-	}
-
-	/**
 	 * Remove empty lines and trim head/trailing space
 	 *
 	 * @param str string to be trimmed
@@ -925,5 +819,63 @@ public abstract class Fields {
 			r.append('\n');
 		}
 		return r.toString();
+	}
+
+	/** Compare two versions. */
+	public static int compareVersion(String x, String y) {
+		// Used by the updater code so I don't want to risk excessive recursion with regexes.
+		int i = 0;
+		int j = 0;
+		boolean wantDigits = false;
+		while(true) {
+			String xDigits = null, yDigits = null;
+			int digits = getDigits(x, i, wantDigits);
+			if(digits > 0) {
+				xDigits = x.substring(i, i+digits);
+				i += digits;
+			}
+			digits = getDigits(y, j, wantDigits);
+			if(digits > 0) {
+				yDigits = y.substring(j, j+digits);
+				j += digits;
+			}
+			if(xDigits != null && yDigits == null)
+				return 1; // numbers > not numbers.
+			if(yDigits != null && xDigits == null)
+				return -1; // numbers > not numbers.
+			if(xDigits != null && yDigits != null) {
+				if(!xDigits.equals(yDigits)) {
+					if(wantDigits) {
+						try {
+							long a = Integer.parseInt(xDigits);
+							long b = Integer.parseInt(yDigits);
+							if(a > b) return 1;
+							if(a < b) return -1;
+							if(xDigits.length() > yDigits.length())
+								return -1; // Extra 0's at beginning.
+							if(yDigits.length() > xDigits.length())
+								return 1; // Extra 0's at beginning.
+						} catch (NumberFormatException e) {
+							// Too many digits!
+							return xDigits.compareTo(yDigits);
+						}
+					} else {
+						return xDigits.compareTo(yDigits);
+					}
+				}
+			}
+			if(i >= x.length() && j >= y.length()) return 0;
+			wantDigits = !wantDigits;
+		}
+		
+	}
+
+	static int getDigits(String x, int i, boolean wantDigits) {
+		int origI = i;
+		for(;i<x.length();i++) {
+			if(Character.isDigit(x.charAt(i)) != wantDigits)
+				break;
+		}
+		return i - origI;
 	}
 }

@@ -3,15 +3,17 @@
  * http://www.gnu.org/ for further details of the GPL. */
 package freenet.support.plugins.helpers1;
 
-import java.util.List;
-
-import freenet.clients.http.InfoboxNode;
 import freenet.clients.http.LinkEnabledCallback;
 import freenet.clients.http.Toadlet;
 import freenet.clients.http.ToadletContext;
+import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.uielements.Box;
+import freenet.clients.http.uielements.Infobox;
 import freenet.keys.FreenetURI;
 import freenet.support.HTMLNode;
 import freenet.support.api.HTTPRequest;
+
+import java.util.List;
 
 public abstract class WebInterfaceToadlet extends Toadlet implements LinkEnabledCallback {
 
@@ -60,7 +62,7 @@ public abstract class WebInterfaceToadlet extends Toadlet implements LinkEnabled
 	protected boolean isFormPassword(HTTPRequest req) {
 		String passwd = req.getParam("formPassword", null);
 		if (passwd == null)
-			passwd = req.getPartAsString("formPassword", 32);
+			passwd = req.getPartAsStringFailsafe("formPassword", 32);
 		return (passwd != null) && passwd.equals(pluginContext.clientCore.formPassword);
 	}
 
@@ -69,17 +71,17 @@ public abstract class WebInterfaceToadlet extends Toadlet implements LinkEnabled
 	}
 
 	public HTMLNode createErrorBox(List<String> errors, String path, FreenetURI retryUri, String extraParams) {
-		InfoboxNode box = pluginContext.pageMaker.getInfobox("infobox-alert", "ERROR");
-		HTMLNode errorBox = box.content;
+		Infobox errorList = new Infobox(InfoboxType.ALERT, "ERROR");
+		Box errorBox = errorList.body;
 		for (String error : errors) {
-			errorBox.addChild("#", error);
-			errorBox.addChild("br");
+			errorBox.addText(error);
+			errorBox.addLineBreak();
 		}
 		if (retryUri != null) {
-			errorBox.addChild("#", "Retry: ");
-			errorBox.addChild(new HTMLNode("a", "href", path + "?key="
-					+ ((extraParams == null) ? retryUri : (retryUri + extraParams)), retryUri.toString(false, false)));
+			errorBox.addText("Retry: ");
+			errorBox.addLink(path + "?key=" + ((extraParams == null) ? retryUri :
+				(retryUri + extraParams)), retryUri.toString(false, false));
 		}
-		return box.outer;
+		return errorList;
 	}
 }
