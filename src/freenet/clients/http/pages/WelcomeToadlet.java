@@ -1,13 +1,17 @@
 /* This code is part of Freenet. It is distributed under the GNU General
  * Public License, version 2 (or at your option any later version). See
  * http://www.gnu.org/ for further details of the GPL. */
-package freenet.clients.http;
+package freenet.clients.http.pages;
 
 import freenet.client.ClientMetadata;
 import freenet.client.HighLevelSimpleClient;
 import freenet.client.InsertBlock;
 import freenet.client.InsertException;
+import freenet.clients.http.ExternalLinkToadlet;
 import freenet.clients.http.PageMaker.RenderParameters;
+import freenet.clients.http.Toadlet;
+import freenet.clients.http.ToadletContext;
+import freenet.clients.http.ToadletContextClosedException;
 import freenet.clients.http.bookmark.BookmarkList;
 import freenet.clients.http.bookmark.BookmarkManager;
 import freenet.clients.http.constants.*;
@@ -47,7 +51,7 @@ public class WelcomeToadlet extends Toadlet {
 		});
 	}
 
-	static HTMLNode sendRestartingPageInner(ToadletContext ctx) {
+	public static HTMLNode sendRestartingPageInner(ToadletContext ctx) {
 		// Tell the user that the node is restarting
 		Page page = ctx.getPageMaker().getPage("Node Restart", ctx,
 			new RenderParameters().renderNavigationLinks(false));
@@ -87,7 +91,7 @@ public class WelcomeToadlet extends Toadlet {
 		writeHTMLReply(ctx, 200, "OK", sendRestartingPageInner(ctx).generate());
 	}
 
-	WelcomeToadlet(HighLevelSimpleClient client, NodeClientCore core, Node node, BookmarkManager bookmarks) {
+	public WelcomeToadlet(HighLevelSimpleClient client, NodeClientCore core, Node node, BookmarkManager bookmarks) {
 		super(client);
 		this.node = node;
 		this.core = core;

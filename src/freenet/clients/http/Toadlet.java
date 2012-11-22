@@ -60,8 +60,8 @@ public abstract class Toadlet {
 		this.client = client;
 	}
 
-	private final HighLevelSimpleClient client;
-	ToadletContainer container;
+	protected final HighLevelSimpleClient client;
+	protected ToadletContainer container;
 
 	private String supportedMethodsCache;
 
@@ -145,7 +145,7 @@ public abstract class Toadlet {
 		return client.getFetchContext(maxSize);
 	}
 
-	FreenetURI insert(InsertBlock insert, String filenameHint, boolean getCHKOnly) throws InsertException {
+	protected FreenetURI insert(InsertBlock insert, String filenameHint, boolean getCHKOnly) throws InsertException {
 		// For now, just run it blocking.
 		insert.desiredURI.checkInsertURI();
 		return client.insert(insert, getCHKOnly, filenameHint);
@@ -226,7 +226,7 @@ public abstract class Toadlet {
 	 * @throws ToadletContextClosedException
 	 * @throws IOException
 	 */
-	static void writePermanentRedirect(ToadletContext ctx, String msg, String location) throws ToadletContextClosedException, IOException {
+	protected static void writePermanentRedirect(ToadletContext ctx, String msg, String location) throws ToadletContextClosedException, IOException {
 		MultiValueTable<String, String> mvt = new MultiValueTable<String, String>();
 		mvt.put("Location", location);
 		if(msg == null) msg = "";

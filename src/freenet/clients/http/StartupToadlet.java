@@ -2,6 +2,7 @@ package freenet.clients.http;
 
 import freenet.clients.http.PageMaker.RenderParameters;
 import freenet.clients.http.constants.InfoboxType;
+import freenet.clients.http.pages.WelcomeToadlet;
 import freenet.clients.http.uielements.Infobox;
 import freenet.clients.http.uielements.Page;
 import freenet.l10n.NodeL10n;

@@ -13,6 +13,7 @@ import freenet.client.filter.ContentFilter;
 import freenet.client.filter.KnownUnsafeContentTypeException;
 import freenet.client.filter.MIMEType;
 import freenet.clients.http.constants.*;
+import freenet.clients.http.pages.WelcomeToadlet;
 import freenet.clients.http.uielements.*;
 import freenet.keys.FreenetURI;
 import freenet.l10n.NodeL10n;

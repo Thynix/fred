@@ -5,6 +5,7 @@ package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
 import freenet.clients.http.constants.Path;
+import freenet.clients.http.pages.WelcomeToadlet;
 import freenet.clients.http.wizardsteps.*;
 import freenet.config.Config;
 import freenet.l10n.NodeL10n;

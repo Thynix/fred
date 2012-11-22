@@ -7,6 +7,7 @@ import freenet.client.filter.*;
 import freenet.clients.http.ajaxpush.*;
 import freenet.clients.http.bookmark.BookmarkManager;
 import freenet.clients.http.constants.*;
+import freenet.clients.http.pages.WelcomeToadlet;
 import freenet.clients.http.uielements.*;
 import freenet.clients.http.updateableelements.ProgressBarElement;
 import freenet.clients.http.updateableelements.ProgressInfoElement;
