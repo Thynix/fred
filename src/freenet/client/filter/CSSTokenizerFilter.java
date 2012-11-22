@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import freenet.clients.http.constants.Site;
 import freenet.support.Logger;
 import freenet.support.api.Bucket;
 import freenet.support.io.Closer;
@@ -4482,7 +4483,7 @@ outer:		for(int i=0;i<value.length;i++) {
             Logger.setupStdoutLogging(Logger.LogLevel.DEBUG, "");
 
             ContentFilter.filter(inputStream, outputStream, "text/css",
-                    new URI("http://127.0.0.1:8888/freenet:USK@ZupQjDFZSc3I4orBpl1iTEAPZKo2733RxCUbZ2Q7iH0,EO8Tuf8SP3lnDjQdAPdCM2ve2RaUEN8m-hod3tQ5oQE,AQACAAE/jFreesite/19/Style/"), null, null, null);
+                    new URI("http://127.0.0.1:8888/freenet:" + Site.JFREESITE.key), null, null, null);
             inputStream.close();
             outputStream.flush();
             outputStream.close();

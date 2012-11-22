@@ -1,10 +1,7 @@
 package freenet.clients.http;
 
 import freenet.client.HighLevelSimpleClient;
-import freenet.clients.http.constants.Identifier;
-import freenet.clients.http.constants.InfoboxType;
-import freenet.clients.http.constants.InputType;
-import freenet.clients.http.constants.Path;
+import freenet.clients.http.constants.*;
 import freenet.clients.http.uielements.*;
 import freenet.l10n.NodeL10n;
 import freenet.node.Node;
@@ -44,27 +41,19 @@ public class ChatForumsToadlet extends Toadlet implements LinkEnabledCallback {
 		OutputList chatPluginList = new OutputList();
 		chatList.body.addChild(chatPluginList);
 		Item chatPlugin = chatPluginList.addItem();
-		chatPlugin.addLink("/USK@0npnMrqZNKRCRoGojZV93UNHCMN-6UU3rRSAmP6jNLE,~BG-edFtdCC1cSH4O3BWdeIYa8Sw5DfyrSV-TKdO5ec,AQACAAE/fms/127/", NodeL10n.getBase().getString("ChatForumsToadlet.fmsname"));
+		chatPlugin.addLink("/" + Site.FMS.key, NodeL10n.getBase().getString("ChatForumsToadlet.fmsname"));
 		chatPlugin.addText(NodeL10n.getBase().getString("ChatForumsToadlet.fmsdescription"));
 		chatPlugin = chatPluginList.addItem();
 		NodeL10n.getBase().addL10nSubstitution(chatPlugin, "ChatForumsToadlet.frost",
 			new String[]{"frost-freenet", "frost-web", "frost-help"},
 			new HTMLNode[]{
-				new Link(
-					"/freenet:USK@QRZAI1nSm~dAY2hTdzVWXmEhkaI~dso0OadnppBR7kE," +
-						"wq5rHGBI7kpChBe4yRmgBChIGDug7Xa5SG9vYGXdxR0,AQACAAE/frost/14/"),
-				new Link(ExternalLinkToadlet.escape("http://jtcfrost.sourceforge.net/")),
-				new Link(
-					"/SSK@ugb~uuscsidMI-Ze8laZe~o3BUIb3S50i25RIwDH99M," +
-						"9T20t3xoG-dQfMO94LGOl9AxRTkaz~TykFY-voqaTQI," +
-						"AQACAAE/FAFS-49/files/frost.htm")});
+				new Link("/" + Site.FROST.key),
+				new Link(ExternalLinkToadlet.escape(Site.FROST.url)),
+				new Link("/" + Site.FROST.helpKey)});
 		chatPlugin = chatPluginList.addItem();
 		NodeL10n.getBase().addL10nSubstitution(chatPlugin, "ChatForumsToadlet.sone",
 			new String[]{"sone"},
-			new HTMLNode[]{
-				new Link(
-					"/USK@nwa8lHa271k2QvJ8aa0Ov7IHAV-DFOCFgmDt3X6BpCI," +
-						"DuQSUZiI~agF8c-6tjsFFGuZ8eICrzWCILB60nT8KKo,AQACAAE/sone/43/")});
+			new HTMLNode[]{new Link("/" + Site.SONE.key)});
 		chatList.body.addBlockText(l10n("content2"));
 		this.writeHTMLReply(ctx, 200, "OK", chatForum.generate());
 	}
