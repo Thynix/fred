@@ -119,7 +119,7 @@ processResources.dependsOn compileVersion
 
 task jarWithVersion(type: Jar) {
     archiveName = "freenet.jar"
-    from (zipTree("$projectDir/build/libs/freenet-without-version.jar")) {
+    from (zipTree("$projectDir/build/libs/freenet-without-version-${gitrev}.jar")) {
         exclude 'freenet/node/Version.class'
         exclude 'freenet/node/Version$1.class'
     }
