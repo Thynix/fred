@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -350,8 +351,12 @@ public class ArchiveManager {
 
 			if(ARCHIVE_TYPE.ZIP == archiveType)
 				handleZIPArchive(ctx, key, is, element, callback, gotElement, throwAtExit, context);
-			else if(ARCHIVE_TYPE.TAR == archiveType)
-				handleTARArchive(ctx, key, is, element, callback, gotElement, throwAtExit, context);
+			else if(ARCHIVE_TYPE.TAR == archiveType) {
+				// COMPRESS-449 workaround
+				byte[] buf = new byte[(int) archiveSize];
+				is.read(buf);
+				handleTARArchive(ctx, key, new ByteArrayInputStream(buf), element, callback, gotElement, throwAtExit, context);
+			}
 		else
 				throw new ArchiveFailureException("Unknown or unsupported archive algorithm " + archiveType);
 			if(wrapper != null) {
