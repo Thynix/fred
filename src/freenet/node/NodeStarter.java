@@ -51,8 +51,8 @@ public class NodeStarter implements WrapperListener {
 	public static final String extRevisionNumber;
 
 	static {
-		extBuildNumber = ExtVersion.extBuildNumber();
-		extRevisionNumber = ExtVersion.extRevisionNumber();
+		extBuildNumber = 0;
+		extRevisionNumber = "";
 	}
 
 	private FreenetFilePersistentConfig cfg;
@@ -109,9 +109,6 @@ public class NodeStarter implements WrapperListener {
 			System.out.println("Usage: $ java freenet.node.Node <configFile>");
 			return Integer.valueOf(-1);
 		}
-		String builtWithMessage = "freenet.jar built with freenet-ext.jar Build #" + ExtVersion.buildNumber + " r" + ExtVersion.cvsRevision+" running with ext build "+extBuildNumber+" r" + extRevisionNumber;
-		Logger.normal(this, builtWithMessage);
-		System.out.println(builtWithMessage);
 
 		File configFilename;
 		if(args.length == 0) {
