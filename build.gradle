@@ -94,8 +94,11 @@ task jar (type: Jar, overwrite: true) {
         exclude 'freenet/node/Version.class'
         exclude 'freenet/node/Version$1.class'
     }
-    preserveFileTimestamps = true
+
+    // Allows for reproducible builds.
+    preserveFileTimestamps = false
     reproducibleFileOrder = true
+
     duplicatesStrategy = "warn"
     archivesBaseName = "freenet"
     manifest {
@@ -270,6 +273,7 @@ task tar(type: Tar) {
 
   into(baseName)
 
+  // Allows for reproducible builds.
   preserveFileTimestamps = false
   reproducibleFileOrder = true
 
